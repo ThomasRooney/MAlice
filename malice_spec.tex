@@ -35,51 +35,6 @@ We are also using `ALPHA` and `DIGIT` from Augmented Backus-Naur Form (ABNF) whi
 % If you do not like numbered sections, use the \texttt{section*\{...\}}
 % environment instead.
 
-\section{BNF Grammar} 
-
-\begin{verbatim}
-  Declaration -> Identifier "was a" Type
-  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
-
-  Assignment -> Identifier "became" Expression
-  AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
-
-  BlockUnit -> "opened" StatementList "closed"
-
-  StatementList -> ε
-           | Statement "."
-                 | Statement Split StatementList
-                 
-  Statement -> DeclarationList
-         | AssignmentList
-         | Expression "said Alice"
-         | Identifier "ate"
-         | Identifier "drank"
-
-  Split = "." | "," | "then"
- 
-    Term -> Identifier
-        | Number
-        | UnaryOperator (Term | Expression)
-  Expression -> Expression BinaryOperator Term
-
-
-  Program -> Function+
-  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
-
-  FunctionType -> Type | "looking-glass"
-  ArgumentList -> "(" [DeclarationList] ")"
-
-  BinaryOperator -> "+" | "-" | "*" | "/" | "%"
-  UnaryOperator -> "~" 
-
-  Value -> Number | Letter
-  Letter -> ALPHA
-  Number -> ["-"] DIGIT+
-  
-  Type -> ALPHA {(ALPHA | "-")}
-
-\end{verbatim}
 
 % To include maths formulas in text put them between \$ symbols like this
 % $f(x) = x \times 5$.
@@ -168,6 +123,55 @@ The formal definitions for variable declaration syntax:
 \section{Assignment}
 
 Variable assignment is also designed to closely mirror the grammatical structure of the English language.
+
+\section{BNF Grammar} 
+
+Beginning here, we look at the formalized BNF Grammar. This utilises Extended BNF and the constructs defined above.
+
+\begin{verbatim}
+  Declaration -> Identifier "was a" Type
+  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
+
+  Assignment -> Identifier "became" Expression
+  AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
+
+  BlockUnit -> "opened" StatementList "closed"
+
+  StatementList -> ε
+           | Statement "."
+                 | Statement Split StatementList
+                 
+  Statement -> DeclarationList
+         | AssignmentList
+         | Expression "said Alice"
+         | Identifier "ate"
+         | Identifier "drank"
+
+  Split = "." | "," | "then"
+ 
+    Term -> Identifier
+        | Number
+        | UnaryOperator (Term | Expression)
+  Expression -> Expression BinaryOperator Term
+
+
+  Program -> Function+
+  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+
+  FunctionType -> Type | "looking-glass"
+  ArgumentList -> "(" [DeclarationList] ")"
+
+  BinaryOperator -> "+" | "-" | "*" | "/" | "%"
+  UnaryOperator -> "~" 
+
+  Value -> Number | Letter
+  Letter -> ALPHA
+  Number -> ["-"] DIGIT+
+  
+  Type -> ALPHA {(ALPHA | "-")}
+
+\end{verbatim}
+
 
 \section{Semantics}
 
