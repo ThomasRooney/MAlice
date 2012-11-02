@@ -130,33 +130,33 @@ Expressions are defined recursively, and are only well-defined over numerical va
 
 Variable declarations follow the form:
 
-\begin{verbatim}
-> **variableIdentifier** was a **variableType**
-\end{verbatim}
+\begin{quote}
+\textbf{identifier} was a \textbf{type}
+\end{quote}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an "and" and no comma. For example, this is a valid variable declaration list:
 
-\begin{verbatim}
-> x was a number, y was a letter and z was a number.
-\end{verbatim}
+\begin{quote}
+x was a number, y was a letter and z was a number
+\end{quote}
 
 whilst this:
 
-\begin{verbatim}
-> x was a number, y was a letter, z was a number.
-\end{verbatim}
+\begin{quote}
+x was a number, y was a letter, z was a number
+\end{quote}
 
 is not. Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with "too", as in:
 
-\begin{verbatim}
-> p was a letter, q was a number and r was a number too.
-\end{verbatim}
+\begin{quote}
+p was a letter, q was a number and r was a number too
+\end{quote}
 
 It is an error to append "too" to a declaration for a variable whose type is different to that of the previous variable declaration's type, as in:
 
-\begin{verbatim}
-> p was a letter, q was a number too and r was a number.
-\end{verbatim}
+\begin{quote}
+p was a letter, q was a number too and r was a number
+\end{quote}
 
 The formal definitions for variable declaration syntax:
 
