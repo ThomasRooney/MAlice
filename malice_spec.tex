@@ -142,7 +142,7 @@ AssignmentList  -> Assignment [{"and" Assignment} "but" Assignment]
 
 BlockUnit       -> "opened" StatementList "closed"
 
-StatementList   -> ε
+StatementList   -> ""
                  | Statement "."
                  | Statement Split StatementList
                
