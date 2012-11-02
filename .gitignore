@@ -21,3 +21,4 @@
 *.backup
 *.kate-swp
 *.swp
+*.synctex.gz
