@@ -127,46 +127,57 @@ Variable assignment is also designed to closely mirror the grammatical structure
 Beginning here, we look at the formalized BNF Grammar. This utilises Extended BNF and the constructs defined above.
 
 \begin{verbatim}
-  Declaration -> Identifier "was a" Type
-  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
 
-  Assignment -> Identifier "became" Expression
-  AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
+Declaration     -> Identifier "was a" Type
+DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
 
-  BlockUnit -> "opened" StatementList "closed"
+Assignment      -> Identifier "became" Expression
+AssignmentList  -> Assignment [{"and" Assignment} "but" Assignment]
 
-  StatementList -> ε
-           | Statement "."
+BlockUnit       -> "opened" StatementList "closed"
+
+StatementList   -> ε
+                 | Statement "."
                  | Statement Split StatementList
-                 
-  Statement -> DeclarationList
-         | AssignmentList
-         | Expression "said Alice"
-         | Identifier "ate"
-         | Identifier "drank"
+               
+Statement       -> DeclarationList
+                 | AssignmentList
+                 | Expression "said Alice"
+                 | Identifier "ate"
+                 | Identifier "drank"
 
-  Split = "." | "," | "then"
- 
-    Term -> Identifier
-        | Number
-        | UnaryOperator (Term | Expression)
-  Expression -> Expression BinaryOperator Term
+Split           -> "."
+                 | ","
+                 | "then"
 
+Term            -> Identifier
+                 | Number
+                 | UnaryOperator (Term | Expression)
+Expression      -> Expression BinaryOperator Term
 
-  Program -> Function+
-  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+Program         -> Function+
+Function        -> "The" FunctionType Identifier ArgumentList BlockUnit
 
-  FunctionType -> Type | "looking-glass"
-  ArgumentList -> "(" [DeclarationList] ")"
+FunctionType    -> Type
+                 | "looking-glass"
+ArgumentList    -> "(" [DeclarationList] ")"
 
-  BinaryOperator -> "+" | "-" | "*" | "/" | "%"
-  UnaryOperator -> "~" 
+BinaryOperator  -> "+"
+                 | "-"
+                 | "*"
+                 | "/" 
+                 | "%"
 
-  Value -> Number | Letter
-  Letter -> ALPHA
-  Number -> ["-"] DIGIT+
-  
-  Type -> "number" | "letter"
+UnaryOperator   -> "~" 
+
+Value           -> Number | Letter
+
+Letter          -> ALPHA
+
+Number          -> ["-"] DIGIT+
+
+Type            -> "number"
+                 | "letter"
 
 \end{verbatim}
 
