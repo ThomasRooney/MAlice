@@ -44,13 +44,11 @@ We are also using `ALPHA` and `DIGIT` from Augmented Backus-Naur Form (ABNF) whi
 % \]
 \section{Types}
 
-MAlice is a strongly typed language. It supports the built-in types `number` and `letter`, but can be extended to support other types. Types names must begin with an alphabetic character, and are then followed by zero or more alphabetic or dash characters.
-
-The special `looking-glass` type is analagous to a "void" type as in C-style languages, and is used to denote that a function does not return a value.
+MAlice is a strongly typed language and supports the primitive types \texttt{number} and \texttt{letter}. The special \texttt{looking-glass} type is analagous to a \texttt{void} type as in C-style languages, and is used to denote that a function does not return a value.
 
 The formal definition for Type:
 \begin{verbatim}
-  Type -> ALPHA {(ALPHA | "-")}
+  Type -> "number" | "letter"
 \end{verbatim}
 
 \section{Functions and Programs}
@@ -168,7 +166,7 @@ Beginning here, we look at the formalized BNF Grammar. This utilises Extended BN
   Letter -> ALPHA
   Number -> ["-"] DIGIT+
   
-  Type -> ALPHA {(ALPHA | "-")}
+  Type -> "number" | "letter"
 
 \end{verbatim}
 
