@@ -81,12 +81,93 @@ We are also using `ALPHA` and `DIGIT` from Augmented Backus-Naur Form (ABNF) whi
 
 \end{verbatim}
 
-To include maths formulas in text put them between \$ symbols like this
-$f(x) = x \times 5$.
-Or to display a formula on a line on its own you do this:
-\[
-    g(y) = y^2
-\]
+% To include maths formulas in text put them between \$ symbols like this
+% $f(x) = x \times 5$.
+% Or to display a formula on a line on its own you do this:
+% \[
+%     g(y) = y^2
+% \]
+\section{Types}
+
+MAlice is a strongly typed language. It supports the built-in types `number` and `letter`, but can be extended to support other types. Types names must begin with an alphabetic character, and are then followed by zero or more alphabetic or dash characters.
+
+The special `looking-glass` type is analagous to a "void" type as in C-style languages, and is used to denote that a function does not return a value.
+
+The formal definition for Type:
+\begin{verbatim}
+  Type -> ALPHA {(ALPHA | "-")}
+\end{verbatim}
+
+\section{Functions and Programs}
+
+Our MAlice dialect supports function declarations. Functions begin with "The" followed by an optional return type, a name and a list of 0 or more parameters. The special `looking-glass` type is analagous to a void return type. Functions are declared in the global scope and cannot be nested.
+
+The special function `hatta` is the entry point for MAlice programs and it is an error to have this function declaration omitted.
+
+A MAlice program is comprised of 1 or more function declarations.
+
+The formal definitions for functions and programs:
+
+\begin{verbatim}
+  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+
+  FunctionType -> Type | "looking-glass"
+  ArgumentList -> "(" [DeclarationList] ")"
+  BlockUnit -> "opened" StatementList "closed"}
+\end{verbatim}
+
+\section{Statements}
+
+Each function in MAlice is comprised 0 or more statements. Statements are separated by either a full-stop, comma or the "then" token.
+  
+\section{Expressions}
+
+Expressions are defined recursively, and are only well-defined over numerical values.
+
+\section{Variable Declarations and Assignment}
+
+\section{Declarations}
+
+Variable declarations follow the form:
+
+\begin{verbatim}
+> **variableIdentifier** was a **variableType**
+\end{verbatim}
+
+Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an "and" and no comma. For example, this is a valid variable declaration list:
+
+\begin{verbatim}
+> x was a number, y was a letter and z was a number.
+\end{verbatim}
+
+whilst this:
+
+\begin{verbatim}
+> x was a number, y was a letter, z was a number.
+\end{verbatim}
+
+is not. Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with "too", as in:
+
+\begin{verbatim}
+> p was a letter, q was a number and r was a number too.
+\end{verbatim}
+
+It is an error to append "too" to a declaration for a variable whose type is different to that of the previous variable declaration's type, as in:
+
+\begin{verbatim}
+> p was a letter, q was a number too and r was a number.
+\end{verbatim}
+
+The formal definitions for variable declaration syntax:
+
+\begin{verbatim}
+  Declaration -> Identifier "was a" Type
+  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
+\end{verbatim}
+
+\section{Assignment}
+
+Variable assignment is also designed to closely mirror the grammatical structure of the English language.
 
 \section{Semantics}
 
