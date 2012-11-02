@@ -38,12 +38,47 @@ We are also using `ALPHA` and `DIGIT` from Augmented Backus-Naur Form (ABNF) whi
 \section{BNF Grammar} 
 
 \begin{verbatim}
-    The verbatim environment outputs the source without changing
-    it in any way. 
-          This
-              includes line breaks
-       and indentation. 
-    It is useful to reproduce code snippets.
+  Declaration -> Identifier "was a" Type
+  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
+
+  Assignment -> Identifier "became" Expression
+  AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
+
+  BlockUnit -> "opened" StatementList "closed"
+
+  StatementList -> ε
+           | Statement "."
+                 | Statement Split StatementList
+                 
+  Statement -> DeclarationList
+         | AssignmentList
+         | Expression "said Alice"
+         | Identifier "ate"
+         | Identifier "drank"
+
+  Split = "." | "," | "then"
+ 
+    Term -> Identifier
+        | Number
+        | UnaryOperator (Term | Expression)
+  Expression -> Expression BinaryOperator Term
+
+
+  Program -> Function+
+  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+
+  FunctionType -> Type | "looking-glass"
+  ArgumentList -> "(" [DeclarationList] ")"
+
+  BinaryOperator -> "+" | "-" | "*" | "/" | "%"
+  UnaryOperator -> "~" 
+
+  Value -> Number | Letter
+  Letter -> ALPHA
+  Number -> ["-"] DIGIT+
+  
+  Type -> ALPHA {(ALPHA | "-")}
+
 \end{verbatim}
 
 To include maths formulas in text put them between \$ symbols like this
