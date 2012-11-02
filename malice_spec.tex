@@ -9,7 +9,7 @@
 
 \title{MAlice Language Specification}
 
-\author{Tim Kimber \and Paul Kelly \and Nicolas Loriant}
+\author{Alex Rozanski and Thomas Rooney}
 
 \date{\today}         % inserts today's date
 
@@ -17,17 +17,23 @@
 
 \section{Introduction}
 
-This is an \emph{introductory comment}.
-\LaTeX\ can typeset some very complex documents, but it is also
-\textbf{quite easy to get started}.
-Try playing around with this file and see. 
-Don't worry that this page looks very spaced out,
-\LaTeX\ arranges the page for you (much less work to do than in Word!)
-so if there was more content it would close up the gaps.
+This is the initial language specification for the Malice language defined by the Imperial Departmnet of Computing. 
 
-To start a new paragraph just leave a blank line.
-If you do not like numbered sections, use the \texttt{section*\{...\}}
-environment instead.
+We are using a combination of Extended Backus-Naur Form (EBNF), which extends BNF by adding constructs such as repetition rules ({ and } for 0 or more occurrences and + for 1 or more occurrences.)
+
+We are also using `ALPHA` and `DIGIT` from Augmented Backus-Naur Form (ABNF) which represent the digits 0-9 and letters A-Za-z respectively. This allows our specification to be more succinct and easier to read.
+
+% This is an \emph{introductory comment}.
+% \LaTeX\ can typeset some very complex documents, but it is also
+% \textbf{quite easy to get started}.
+% Try playing around with this file and see. 
+% Don't worry that this page looks very spaced out,
+% \LaTeX\ arranges the page for you (much less work to do than in Word!)
+% so if there was more content it would close up the gaps.
+
+% To start a new paragraph just leave a blank line.
+% If you do not like numbered sections, use the \texttt{section*\{...\}}
+% environment instead.
 
 \section{BNF Grammar} 
 
