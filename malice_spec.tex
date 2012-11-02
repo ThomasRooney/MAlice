@@ -21,7 +21,7 @@ This is the initial language specification for the Malice language defined by th
 
 We are using a combination of Extended Backus-Naur Form (EBNF), which extends BNF by adding constructs such as repetition rules ({ and } for 0 or more occurrences and + for 1 or more occurrences.)
 
-We are also using `ALPHA` and `DIGIT` from Augmented Backus-Naur Form (ABNF) which represent the digits 0-9 and letters A-Za-z respectively. This allows our specification to be more succinct and easier to read.
+We are also using \texttt{ALPHA} and \texttt{DIGIT} from Augmented Backus-Naur Form (ABNF). \texttt{ALPHA} represents the letters A--Z and a--z and \texttt{DIGIT} represents the digits 0--9. This allows our specification to be more succinct and easier to read.
 
 % This is an \emph{introductory comment}.
 % \LaTeX\ can typeset some very complex documents, but it is also
@@ -53,9 +53,9 @@ The formal definition for Type:
 
 \section{Functions and Programs}
 
-Our MAlice dialect supports function declarations. Functions begin with "The" followed by an optional return type, a name and a list of 0 or more parameters. The special `looking-glass` type is analagous to a void return type. Functions are declared in the global scope and cannot be nested.
+Our MAlice dialect supports function declarations. Functions begin with "The" followed by an optional return type, a name and a list of 0 or more parameters. The special \texttt{looking-glass} type is analagous to a void return type. Functions are declared in the global scope and cannot be nested.
 
-The special function `hatta` is the entry point for MAlice programs and it is an error to have this function declaration omitted.
+The special function \texttt{hatta} is the entry point for MAlice programs and it is an error to have this function declaration omitted.
 
 A MAlice program is comprised of 1 or more function declarations.
 
