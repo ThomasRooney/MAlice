@@ -73,7 +73,15 @@ Function bodies in MAlice are comprised of zero or more statements. Statements a
   
 \section{Expressions}
 
-Expressions are defined recursively, and are only well-defined over numerical values.
+\section{verbatim}
+Expression      -> Expression BinaryOperator Term
+                 | Term
+Term            -> Identifier
+                 | Number
+                 | UnaryOperator (Term | Expression)
+\end{verbatim}
+
+Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators.
 
 \section{Operators}
 
@@ -178,6 +186,7 @@ Term            -> Identifier
                  | Number
                  | UnaryOperator (Term | Expression)
 Expression      -> Expression BinaryOperator Term
+                 | Term
 
 Program         -> Function+
 Function        -> "The" FunctionType Identifier ArgumentList BlockUnit
