@@ -46,7 +46,7 @@ We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} re
 
 MAlice is a strongly typed language and supports the primitive types \texttt{number} and \texttt{letter}. The special \texttt{looking-glass} type is analagous to a \texttt{void} type as in C-style languages, and is used to denote that a function does not return a value.
 
-We define \texttt{type} in BNF as:
+We define \texttt{Type} in BNF as:
 \begin{verbatim}
   Type -> "number" | "letter"
 \end{verbatim}
@@ -70,7 +70,7 @@ We define several BNF productions for function syntax:
 
 \section{Statements}
 
-Each function in MAlice is comprised 0 or more statements. Statements are separated by either a full-stop, comma or the \texttt{then} token. However, the last statement in the list must be followed by a full stop.
+Function bodies in MAlice are comprised of zero or more statements. Statements are separated by either a full-stop, comma or `then'. However, the last statement in a list of one or more statements must be followed by a full stop. A single full stop is both an invalid statement and list of statements.
   
 \section{Expressions}
 
@@ -89,7 +89,7 @@ Assignment      -> Identifier "became" Expression
 Variable declarations follow the form:
 
 \begin{quote}
-\textbf{identifier} \texttt{was a} \textbf{type}
+\textbf{identifier} \texttt{was a} \textbf{typ
 \end{quote}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma. For example, this is a valid variable declaration list:
@@ -104,13 +104,15 @@ whilst this:
 x was a number, y was a letter, z was a number
 \end{verbatim}
 
-is not. Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in:
+is not.
+
+Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in:
 
 \begin{verbatim}
 p was a letter, q was a number and r was a number too
 \end{verbatim}
 
-It is an error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type, as in:
+It is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type, as in:
 
 \begin{verbatim}
 p was a letter, q was a number too and r was a number
@@ -129,7 +131,7 @@ Variable assignment is also designed to closely mirror the grammatical structure
 
 \section{BNF Grammar} 
 
-Beginning here, we look at the formalised BNF Grammar. This utilises Extended BNF and the constructs defined above.
+Beginning here, we look at the formalised BNF Grammar. This utilises constructs from EBNF and ABNF as explained in the introduction to this specification.
 
 \begin{verbatim}
 
