@@ -48,7 +48,7 @@ MAlice is a strongly typed language and supports the primitive types \texttt{num
 
 We define \texttt{Type} in BNF as:
 \begin{verbatim}
-  Type -> "number" | "letter"
+Type -> "number" | "letter"
 \end{verbatim}
 
 \section{Functions and Programs}
@@ -61,11 +61,11 @@ A MAlice program is comprised of 1 or more function declarations.
 
 We define several BNF productions for function syntax:
 \begin{verbatim}
-  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+Function -> "The" FunctionType Identifier ArgumentList BlockUnit
 
-  FunctionType -> Type | "looking-glass"
-  ArgumentList -> "(" [DeclarationList] ")"
-  BlockUnit -> "opened" StatementList "closed"}
+FunctionType -> Type | "looking-glass"
+ArgumentList -> "(" [DeclarationList] ")"
+BlockUnit -> "opened" StatementList "closed"}
 \end{verbatim}
 
 \section{Statements}
