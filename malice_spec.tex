@@ -17,11 +17,11 @@
 
 \section{Introduction}
 
-This is the initial language specification for the Malice language defined by the Imperial Department of Computing. 
+This is our language specification for the MAlice programming language, which encapsulates our understanding and interpretation of the syntax and semantics of the language. This syntax and these semantics will form the basis for our compiler for MAlice programs.
 
-We are using a combination of Extended Backus-Naur Form (EBNF), which extends BNF by adding constructs such as repetition rules ({ and } for 0 or more occurrences and + for 1 or more occurrences.)
+Our definitions of syntax are provided in a semi-formal way: we are using a combination of Extended Backus-Naur Form (EBNF) and Augmented Backus-Naur form (ABNF). We are using the repetition syntax from EBNF, such as expressions surrounded by left and right braces (`{' and `}') which denotes zero or more occurrences of the expression, and left and right square brackets (`[' and `]') which denote optional expressions.
 
-We are also using \texttt{ALPHA} and \texttt{DIGIT} from Augmented Backus-Naur Form (ABNF). \texttt{ALPHA} represents the letters A--Z and a--z and \texttt{DIGIT} represents the digits 0--9. This allows our specification to be more succinct and easier to read.
+We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters A--Z and a--z and \texttt{DIGIT} represents the digits 0--9. This allows our specification to be more succinct and easier to read.
 
 % This is an \emph{introductory comment}.
 % \LaTeX\ can typeset some very complex documents, but it is also
