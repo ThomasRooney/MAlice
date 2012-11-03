@@ -76,6 +76,22 @@ Function bodies in MAlice are comprised of zero or more statements. Statements a
 
 Expressions are defined recursively, and are only well-defined over numerical values.
 
+\section{Operators}
+
+There are two types of operators that Malice allows. These are the Unary Operators, and Binary Operators, named due to their acting respective on one (as a prefix) or two (in the middle) expression.
+
+These Operators, and definitions are:
+
+\begin{itemize}
+
+\item
+Unary Operator: ~ - This essentially means Bitwise NOT, up to the largest BIT + 1.
+i.e. if Expr is equal to 7 == (+)0111, ~Expr is equal to -8 == (-)1000
+or  if Expr is equal to  0 == (+)0, ~Expr is equal to -1 == (-)1
+    
+\end{itemize}
+
+
 \section{Variable Assignment}
 
 Variable Assignment is of the form:
@@ -83,6 +99,8 @@ Variable Assignment is of the form:
 /begin {verbatim}
 Assignment      -> Identifier "became" Expression
 /end {verbatim}
+
+\section {Returning}
 
 \section{Declarations}
 
