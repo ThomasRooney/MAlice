@@ -44,28 +44,27 @@ We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} re
 % \]
 \section{Types}
 
-MAlice is a strongly typed language and supports the primitive types \texttt{number} and \texttt{letter}. The special \texttt{looking-glass} type is analagous to a \texttt{void} type as in C-style languages, and is used to denote that a function does not return a value.
+MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analagous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} is only used when in function declarations to denote that a function does not return a value.
 
-We define \texttt{Type} in BNF as:
+The two type productions, \texttt{Type} and \texttt{FunctionType} are defined in BNF as:
 \begin{verbatim}
-  Type -> "number" | "letter"
+Type -> "number" | "letter"
+FunctionType -> Type | "looking-glass"
 \end{verbatim}
 
 \section{Functions and Programs}
 
-Our MAlice dialect supports function declarations. Functions begin with `The' followed by an optional return type, a name and a list of 0 or more parameters. The special \texttt{looking-glass} type is analagous to a void return type. Functions are declared in the global scope and cannot be nested.
+Our MAlice dialect supports function declarations. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. Functions are declared in the global scope and cannot be nested.
 
-The special function \texttt{hatta} is the entry point for MAlice programs and it is an error to have this function declaration omitted.
-
-A MAlice program is comprised of 1 or more function declarations.
+A MAlice program is comprised of 1 or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs and it is an error to have this function declaration omitted.
 
 We define several BNF productions for function syntax:
 \begin{verbatim}
-  Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+Function -> "The" FunctionType Identifier ArgumentList BlockUnit
 
-  FunctionType -> Type | "looking-glass"
-  ArgumentList -> "(" [DeclarationList] ")"
-  BlockUnit -> "opened" StatementList "closed"}
+FunctionType -> Type | "looking-glass"
+ArgumentList -> "(" [DeclarationList] ")"
+BlockUnit -> "opened" StatementList "closed"}
 \end{verbatim}
 
 \section{Statements}
@@ -96,9 +95,9 @@ or  if Expr is equal to  0 == (+)0, ~Expr is equal to -1 == (-)1
 
 Variable Assignment is of the form:
 
-/begin {verbatim}
-Assignment      -> Identifier "became" Expression
-/end {verbatim}
+\begin{verbatim}
+Assignment -> Identifier "became" Expression
+\end{verbatim}
 
 \section {Returning}
 
@@ -107,7 +106,7 @@ Assignment      -> Identifier "became" Expression
 Variable declarations follow the form:
 
 \begin{quote}
-\textbf{identifier} was a \textbf{type}
+\textbf{identifier} \texttt{was a} \textbf{type}
 \end{quote}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma. For example, this is a valid variable declaration list:
