@@ -17,7 +17,7 @@
 
 \section{Introduction}
 
-This is the initial language specification for the Malice language defined by the Imperial Departmnet of Computing. 
+This is the initial language specification for the Malice language defined by the Imperial Department of Computing. 
 
 We are using a combination of Extended Backus-Naur Form (EBNF), which extends BNF by adding constructs such as repetition rules ({ and } for 0 or more occurrences and + for 1 or more occurrences.)
 
@@ -46,7 +46,7 @@ We are also using \texttt{ALPHA} and \texttt{DIGIT} from Augmented Backus-Naur F
 
 MAlice is a strongly typed language and supports the primitive types \texttt{number} and \texttt{letter}. The special \texttt{looking-glass} type is analagous to a \texttt{void} type as in C-style languages, and is used to denote that a function does not return a value.
 
-The formal definition for Type:
+We define \texttt{type} in BNF as:
 \begin{verbatim}
   Type -> "number" | "letter"
 \end{verbatim}
@@ -59,8 +59,7 @@ The special function \texttt{hatta} is the entry point for MAlice programs and i
 
 A MAlice program is comprised of 1 or more function declarations.
 
-The formal definitions for functions and programs:
-
+We define several BNF productions for function syntax:
 \begin{verbatim}
   Function -> "The" FunctionType Identifier ArgumentList BlockUnit
 
@@ -71,7 +70,7 @@ The formal definitions for functions and programs:
 
 \section{Statements}
 
-Each function in MAlice is comprised 0 or more statements. Statements are separated by either a full-stop, comma or the \texttt{then} token.
+Each function in MAlice is comprised 0 or more statements. Statements are separated by either a full-stop, comma or the \texttt{then} token. However, the last statement in the list must be followed by a full stop.
   
 \section{Expressions}
 
