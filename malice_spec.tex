@@ -63,9 +63,9 @@ ArgumentList -> "(" [DeclarationList] ")"
 BlockUnit -> "opened" StatementList "closed"}
 \end{verbatim}
 
-Our MAlice dialect supports function declarations. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. Functions are declared in the global scope and cannot be nested.
+MAlice allows multiple functions to be declared and implemented. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. This is then followed by `opened', a list of statements which constitute the body, and the closing `closed' keyword. Functions are declared in the global scope and cannot be nested.
 
-A MAlice program is comprised of 1 or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs and it is an error to have this function declaration omitted.
+A MAlice program is comprised of one or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs (similar to \texttt{main} in C programs) and it is a semantic error to have this function declaration omitted.
 
 \section{Statements}
 
