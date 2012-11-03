@@ -44,21 +44,15 @@ We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} re
 % \]
 \section{Types}
 
-MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analagous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} is only used when in function declarations to denote that a function does not return a value.
-
-The two type productions, \texttt{Type} and \texttt{FunctionType} are defined in BNF as:
 \begin{verbatim}
 Type -> "number" | "letter"
 FunctionType -> Type | "looking-glass"
 \end{verbatim}
 
+MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analagous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} is only used when in function declarations to denote that a function does not return a value.
+
 \section{Functions and Programs}
 
-Our MAlice dialect supports function declarations. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. Functions are declared in the global scope and cannot be nested.
-
-A MAlice program is comprised of 1 or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs and it is an error to have this function declaration omitted.
-
-We define several BNF productions for function syntax:
 \begin{verbatim}
 Function -> "The" FunctionType Identifier ArgumentList BlockUnit
 
@@ -66,6 +60,10 @@ FunctionType -> Type | "looking-glass"
 ArgumentList -> "(" [DeclarationList] ")"
 BlockUnit -> "opened" StatementList "closed"}
 \end{verbatim}
+
+Our MAlice dialect supports function declarations. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. Functions are declared in the global scope and cannot be nested.
+
+A MAlice program is comprised of 1 or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs and it is an error to have this function declaration omitted.
 
 \section{Statements}
 
@@ -93,8 +91,6 @@ or  if Expr is equal to  0 == (+)0, ~Expr is equal to -1 == (-)1
 
 \section{Variable Assignment}
 
-Variable Assignment is of the form:
-
 \begin{verbatim}
 Assignment -> Identifier "became" Expression
 \end{verbatim}
@@ -103,11 +99,10 @@ Assignment -> Identifier "became" Expression
 
 \section{Declarations}
 
-Variable declarations follow the form:
-
-\begin{quote}
-\textbf{identifier} \texttt{was a} \textbf{type}
-\end{quote}
+\begin{verbatim}
+  Declaration -> Identifier "was a" Type
+  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
+\end{verbatim}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma. For example, this is a valid variable declaration list:
 
@@ -133,13 +128,6 @@ It is a semantic error to append `too' to a declaration for a variable whose typ
 
 \begin{verbatim}
 p was a letter, q was a number too and r was a number
-\end{verbatim}
-
-The formal definitions for variable declaration syntax:
-
-\begin{verbatim}
-  Declaration -> Identifier "was a" Type
-  DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
 \end{verbatim}
 
 \section{Assignment}
