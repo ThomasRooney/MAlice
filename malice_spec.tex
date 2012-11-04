@@ -37,12 +37,12 @@ The \texttt{number} type is used to represent signed integers, and its size is i
 \section{Functions and Programs}
 
 \begin{verbatim}
-Program -> Function+
-Function -> "The" FunctionType Identifier ArgumentList BlockUnit
+Program      -> Function+
+Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
 
 FunctionType -> Type | "looking-glass"
 ArgumentList -> "(" [DeclarationList] ")"
-BlockUnit -> "opened" StatementList "closed"}
+BlockUnit    -> "opened" StatementList "closed"}
 \end{verbatim}
 
 MAlice programs can implement multiple functions. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. This is then followed by `opened', a list of statements which constitute the body, and the closing `closed' keyword. Functions are declared in the global scope and cannot be nested. The scope in which variables are declared in, is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope.
@@ -53,13 +53,11 @@ A MAlice program is comprised of one or more function declarations. The special 
 
 \begin{verbatim}
 StatementList -> "" | Statement "." | Statement Split StatementList
-Split -> "." | "," | "then" | "and"
+Split         -> "." | "," | "then" | "and"
                
-Statement -> DeclarationList
-           | AssignmentList
-           | Expression "said Alice"
-           | Identifier "ate"
-           | Identifier "drank"
+Statement     -> DeclarationList | AssignmentList
+               | Expression "said Alice"
+               | Identifier "ate" | Identifier "drank"
 \end{verbatim}
 
 Function bodies in MAlice are comprised of zero or more statements. Statements are separated by either a full-stop, comma, `then' or `and'. However, the last statement in a list of one or more statements must be followed by a full stop. A single full stop is an invalid statement list.
@@ -139,7 +137,7 @@ In the "Alice" case, the Expression is evaluated and sent to stdout.
 \section{Declarations}
 
 \begin{verbatim}
-  Declaration -> Identifier "was a" Type
+  Declaration     -> Identifier "was a" Type
   DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
 \end{verbatim}
 
