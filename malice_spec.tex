@@ -68,7 +68,7 @@ A MAlice program is comprised of one or more function declarations. The special 
 \begin{verbatim}
 StatementList -> "" | Statement "." | Statement Split StatementList
 Split         -> "." | "," | "then" | "and"
-               
+
 Statement     -> DeclarationList | AssignmentList
                | Expression "said Alice"
                | Identifier "ate" | Identifier "drank"
@@ -129,33 +129,11 @@ All of the operators are left-associative, except for the exponent operator whic
   DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
 \end{verbatim}
 
-Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma. For example, this is a valid variable declaration list:
+Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
 
-\begin{verbatim}
-x was a number, y was a letter and z was a number
-\end{verbatim}
+Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in \texttt{p was a letter, q was a number and r was a number too}. However, it is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type.
 
-whilst this:
-
-\begin{verbatim}
-x was a number, y was a letter, z was a number
-\end{verbatim}
-
-is not.
-
-Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in:
-
-\begin{verbatim}
-p was a letter, q was a number and r was a number too
-\end{verbatim}
-
-It is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type, as in:
-
-\begin{verbatim}
-p was a letter, q was a number too and r was a number
-\end{verbatim}
-
-Variable Definitions are defined in the scope of the function that they are declared in. They cannot share the same name in one scope.
+Variables are defined in the scope of the function that they are declared in. It is a semantic error for a variable to be declared if a variable with that identifier has already been declared in the same scope.
 
 \section{Variable Assignment}
 
