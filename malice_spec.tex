@@ -86,36 +86,27 @@ Expressions in MAlice are only well-defined over numerical values and are constr
 
 \section{Operators}
 
-There are two types of operators that Malice allows. These are the Unary Operators, and Binary Operators, named due to their acting respective on one (as a prefix) or two (in the middle) expression.
+MAlice supports commonly used unary and binary mathematical operators which we define to act on expressions.
 
-These Operators, and definitions are:
+It supports the bitwise NOT unary operator, which is denoted by the tilde symbol. This performs a bitwise NOT on the evaluated number it is applied to (remembering that the \texttt{number} type in MAlice has a Two's Complement binary representation.)
 
-\begin{itemize}
+MAlice also supports the following binary operators:
 
-\item
-Unary Operator: `$\sim$' - This essentially means Bitwise NOT ( with the number being in two's 
+\begin{list}{} {
+\setlength{\labelsep}{0.75cm}
+\setlength{\leftmargin}{2cm}
+}
 
-\vspace{0.75mm} \hspace{25mm} \hspace{12mm} complement representation ). I.e. :
+\item[\texttt{+}] the mathematical plus operator.
+\item[\texttt{-}] the mathematical minus operator.
+\item[\texttt{*}] the mathematical multiplication operator.
+\item[\texttt{/}] the mathematical division operator.
+\item[\texttt{\%}] the mathematical modulo operator.
+\item[\texttt{\^}] the mathematical exponent operator.
 
-\vspace{0.75mm} \hspace{25mm} \hspace{12mm} if Expr is equal to 7 , $\sim$Expr is equal to -8
+\end{list}
 
-\vspace{0.75mm} \hspace{25mm} \hspace{12mm} or if Expr is equal to  0, $\sim$Expr is equal to -1 
-\item
-Binary Operator `/' \hspace{2mm}- This is the Mathematical Division Operator. I.e. 8 / 2 = 4. In cases 
-
-\vspace{0.75mm} \hspace{25mm} \hspace{12mm} where the result is not an integer, the Floor function can be assumed
-
-\vspace{0.75mm} \hspace{25mm} \hspace{12mm} to operate. I.e. 5/2 = 2.
-\item
-Binary Operator `+' \hspace{1mm}- The Mathematical Plus Operator. i.e. 2 + 3 = 5
-\item 
-Binary Operator `-'\hspace{3mm} - The Mathematical Minus Operator. i.e. 4 - 2 = 2
-\item
-Binary Operator `*'\hspace{2.5mm} - The Mathematical Multiplication Operator. i.e. 2 * 4 = 8
-\item
-Binary Operator `\char`\%'\hspace{1mm} - The Mathmatical Modulus Operator. i.e.  17 \char`\%\hspace{0.57mm} 3 = 2
-
-\end{itemize}
+All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression} and \texttt{Term} productions in the `Expressions' section above.
 
 \section{Variable Declarations}
 
