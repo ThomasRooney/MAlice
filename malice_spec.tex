@@ -72,7 +72,7 @@ A MAlice program is comprised of one or more function declarations. The special 
 
 \begin{verbatim}
 StatementList -> "" | Statement "." | Statement Split StatementList
-Split -> "." | "," | "then"
+Split -> "." | "," | "then" | "and"
                
 Statement -> DeclarationList
            | AssignmentList
@@ -81,7 +81,7 @@ Statement -> DeclarationList
            | Identifier "drank"
 \end{verbatim}
 
-Function bodies in MAlice are comprised of zero or more statements. Statements are separated by either a full-stop, comma or `then'. However, the last statement in a list of one or more statements must be followed by a full stop. A single full stop is both an invalid statement and list of statements.
+Function bodies in MAlice are comprised of zero or more statements. Statements are separated by either a full-stop, comma, `then' or `and'. However, the last statement in a list of one or more statements must be followed by a full stop. A single full stop is both an invalid statement and list of statements.
 
 Valid statements are:
 \begin{itemize}
