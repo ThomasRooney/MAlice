@@ -123,6 +123,14 @@ Assignment -> Identifier "became" Expression
 
 \section {Returning}
 
+The Syntax for returning is done with the `said' keyword. This is used in the form
+\begin{verbatim}
+ReturnExpr -> Expression "said" (Identifier|"Alice")
+\end{verbatim}
+In the Identifier Case, the Identifier must be equal to the function name. The Expression must also have type equivilent to the return type of the function, and fails with an error should the function be a "looking-glass" (aka Void) type.
+
+In the "Alice" case, the Expression is evaluated and sent to stdout.
+
 \section{Declarations}
 
 \begin{verbatim}
