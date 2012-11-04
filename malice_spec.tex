@@ -67,7 +67,7 @@ A MAlice program is comprised of one or more function declarations. The special 
 
 \begin{verbatim}
 StatementList -> "" | Statement "." | Statement Split StatementList
-Split         -> "." | "," | "then" | "and"
+Split         -> "." | "," | "then" | "and" | "but"
 
 Statement     -> DeclarationList | AssignmentList
                | Expression "said Alice"
@@ -139,16 +139,5 @@ Where there are one or more consecutive declarations of variables which share th
 Variables are defined in the scope of the function that they are declared in. It is a semantic error for a variable to be declared if a variable with that identifier has already been declared in the same scope.
 
 Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
-
-\section {Returning}
-
-The Syntax for returning is done with the `said' keyword. This is used in the form
-\begin{verbatim}
-ReturnExpr -> Expression "said" (Identifier|"Alice")
-\end{verbatim}
-In the Identifier Case, the Identifier must be equal to the function name. The Expression must also have type equivilent to the return type of the function, and fails with an error should the function be a \texttt{looking-glass} (aka Void) type.
-
-In the \texttt{Alice} case, the Expression is evaluated and sent to \texttt{stdout}.
-
 
 \end{document}
