@@ -67,7 +67,7 @@ A MAlice program is comprised of one or more function declarations. The special 
 
 \begin{verbatim}
 StatementList -> "" | Statement "." | Statement Split StatementList
-Split         -> "." | "," | "then" | "and"
+Split         -> "." | "," | "then" | "and" | "but"
 
 Statement     -> DeclarationList | AssignmentList
                | Expression "said Alice"
@@ -149,16 +149,5 @@ AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
 This equates to the assignment of the value returned by the evaluation of Expression into the location denoted by Identifier.
 
 Assignments can also be done in a list, with `and' between two assignments but the final two, where `but' is used
-
-\section {Returning}
-
-The Syntax for returning is done with the `said' keyword. This is used in the form
-\begin{verbatim}
-ReturnExpr -> Expression "said" (Identifier|"Alice")
-\end{verbatim}
-In the Identifier Case, the Identifier must be equal to the function name. The Expression must also have type equivilent to the return type of the function, and fails with an error should the function be a \texttt{looking-glass} (aka Void) type.
-
-In the \texttt{Alice} case, the Expression is evaluated and sent to \texttt{stdout}.
-
 
 \end{document}
