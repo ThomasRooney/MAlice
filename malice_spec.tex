@@ -110,16 +110,22 @@ Binary Operator `-'\hspace{3mm} - The Mathematical Minus Operator. i.e. 4 - 2 = 
 \item
 Binary Operator `*'\hspace{2.5mm} - The Mathematical Multiplication Operator. i.e. 2 * 4 = 8
 \item
-Binary Operator `\char`\%'\hspace{1mm} - The Mathmatical Modulus Operator. i.e.  17 % 3 = 2
+Binary Operator `\char`\%'\hspace{1mm} - The Mathmatical Modulus Operator. i.e.  17 \char`\%\hspace{0.57mm} 3 = 2
 
 \end{itemize}
 
 
 \section{Variable Assignment}
 
+This is defined by the BNF Expression:
+
 \begin{verbatim}
 Assignment -> Identifier "became" Expression
 \end{verbatim}
+
+This equates to the assignment of the value returned by the evaluation of Expression into the location denoted by Identifier.
+
+
 
 \section {Returning}
 
