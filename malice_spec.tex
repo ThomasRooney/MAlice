@@ -26,7 +26,7 @@ We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} re
 \section{Types}
 
 \begin{verbatim}
-Type -> "number" | "letter"
+Type         -> "number" | "letter"
 FunctionType -> Type | "looking-glass"
 \end{verbatim}
 
@@ -76,9 +76,9 @@ Valid statements are:
 \section{Expressions}
 
 \begin{verbatim}
-Expression      -> Expression + Term | Expression - Term | Term ^ Expression | Term
-Term            -> Term * Factor | Term / Factor | Factor
-Factor          -> Identifier | Number | "~" (Term | Expression)
+Expression -> Expression + Term | Expression - Term | Term ^ Expression | Term
+Term       -> Term * Factor | Term / Factor | Factor
+Factor     -> Identifier | Number | "~" (Term | Expression)
 
 \end{verbatim}
 
@@ -166,7 +166,7 @@ This equates to the assignment of the value returned by the evaluation of Expres
 
 Assignments can also be done in a list, alike the BNF:
 \begin{verbatim}
-AssignmentList  -> Assignment [{"and" Assignment} "but" Assignment]
+AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
 \end{verbatim}
 
 \section {Returning}
