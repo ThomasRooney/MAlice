@@ -25,7 +25,6 @@ Declaration     -> Identifier "was a" Type
 DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
 
 Assignment      -> Identifier "became" Expression
-AssignmentList  -> Assignment [{"and" Assignment} "but" Assignment]
 
 BlockUnit       -> "opened" StatementList "closed"
 
@@ -34,7 +33,7 @@ StatementList   -> ""
                  | Statement Split StatementList
                
 Statement       -> DeclarationList
-                 | AssignmentList
+                 | Assignment
                  | Expression "said Alice"
                  | Identifier "ate"
                  | Identifier "drank"
