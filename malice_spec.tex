@@ -53,9 +53,9 @@ For example:
 
 \begin{verbatim}
 The looking-glass myFunction ()
-begin
+opened
      ...
-end
+closed
 \end{verbatim}
 
 This declares the function \texttt{myFunction} which has no return type.
@@ -114,7 +114,7 @@ MAlice also supports the following binary operators:
 \item[\texttt{+}] the mathematical plus operator.
 \item[\texttt{-}] the mathematical minus operator.
 \item[\texttt{*}] the mathematical multiplication operator.
-\item[\texttt{/}] the mathematical division operator.
+\item[\texttt{/}] the mathematical division operator. This will throw a runtime error should the right hand operator be equal to zero.
 \item[\texttt{\%}] the mathematical modulo operator.
 \item[\texttt{\^}] the mathematical exponent operator.
 
