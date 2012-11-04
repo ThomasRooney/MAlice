@@ -17,31 +17,12 @@
 
 \section{Introduction}
 
-This is our language specification for the MAlice programming language, which encapsulates our understanding and interpretation of the syntax and semantics of the language. This syntax and these semantics will form the basis for our compiler for MAlice programs.
+This is our language specification for the MAlice programming language, which encapsulates our understanding and interpretation of the syntax and semantics of the language. This specification will form the basis for our compiler for MAlice programs.
 
 Our definitions of syntax are provided in a semi-formal way: we are using a combination of Extended Backus-Naur Form (EBNF) and Augmented Backus-Naur form (ABNF). We are using the repetition syntax from EBNF, such as expressions surrounded by left and right braces (`{' and `}') which denotes zero or more occurrences of the expression, and left and right square brackets (`[' and `]') which denote optional expressions.
 
 We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters A--Z and a--z and \texttt{DIGIT} represents the digits 0--9. This allows our specification to be more succinct and easier to read.
 
-% This is an \emph{introductory comment}.
-% \LaTeX\ can typeset some very complex documents, but it is also
-% \textbf{quite easy to get started}.
-% Try playing around with this file and see. 
-% Don't worry that this page looks very spaced out,
-% \LaTeX\ arranges the page for you (much less work to do than in Word!)
-% so if there was more content it would close up the gaps.
-
-% To start a new paragraph just leave a blank line.
-% If you do not like numbered sections, use the \texttt{section*\{...\}}
-% environment instead.
-
-
-% To include maths formulas in text put them between \$ symbols like this
-% $f(x) = x \times 5$.
-% Or to display a formula on a line on its own you do this:
-% \[
-%     g(y) = y^2
-% \]
 \section{Types}
 
 \begin{verbatim}
@@ -129,18 +110,32 @@ Binary Operator `-'\hspace{3mm} - The Mathematical Minus Operator. i.e. 4 - 2 = 
 \item
 Binary Operator `*'\hspace{2.5mm} - The Mathematical Multiplication Operator. i.e. 2 * 4 = 8
 \item
-Binary Operator `\char`\%'\hspace{1mm} - The Mathmatical Modulus Operator. i.e.  17 % 3 = 2
+Binary Operator `\char`\%'\hspace{1mm} - The Mathmatical Modulus Operator. i.e.  17 \char`\%\hspace{0.57mm} 3 = 2
 
 \end{itemize}
 
 
 \section{Variable Assignment}
 
+This is defined by the BNF Expression:
+
 \begin{verbatim}
 Assignment -> Identifier "became" Expression
 \end{verbatim}
 
+This equates to the assignment of the value returned by the evaluation of Expression into the location denoted by Identifier.
+
+
+
 \section {Returning}
+
+The Syntax for returning is done with the `said' keyword. This is used in the form
+\begin{verbatim}
+ReturnExpr -> Expression "said" (Identifier|"Alice")
+\end{verbatim}
+In the Identifier Case, the Identifier must be equal to the function name. The Expression must also have type equivilent to the return type of the function, and fails with an error should the function be a "looking-glass" (aka Void) type.
+
+In the "Alice" case, the Expression is evaluated and sent to stdout.
 
 \section{Declarations}
 
@@ -239,47 +234,6 @@ Type            -> "number"
 
 \end{verbatim}
 
-
-% \section{Semantics}
-
-% Here is a numbered list.
-
-% \begin{enumerate}
-
-%     \item
-%     This is item 1.
-    
-%     \item
-%     And this is item 2.
-    
-% \end{enumerate}
-
-% And here is a bulleted list.
-
-% \begin{itemize}
-
-%     \item
-%     The parts of the list are called items here too.
-    
-% \end{itemize}
-
-% Finally for this document, if you want to include a reference
-% then you put it into a \texttt{thebibliography\{...\}}
-% environment (see below in source file) and then 
-% cite it like this \cite{lamport94}
-% (you will need to run \texttt{latex} twice to get it to process the citation),
-% or you can use BibTex but that is probably overkill for now.
-
-% \begin{thebibliography}{9}
-
-% \bibitem{lamport94}
-%   Leslie Lamport,
-%   \emph{\LaTeX: A Document Preparation System}.
-%   Addison Wesley, Massachusetts,
-%   2nd Edition,
-%   1994.
-
-% \end{thebibliography}
 
 
 \end{document}
