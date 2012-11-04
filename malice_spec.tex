@@ -129,7 +129,7 @@ All of the operators are left-associative, except for the exponent operator whic
   DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
   
   Assignment      -> Identifier "became" (Expression | Character)
-  Character       -> "'" ALPHA "'"
+  Character       -> "`" ALPHA "'"
 \end{verbatim}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
