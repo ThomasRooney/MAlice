@@ -128,7 +128,10 @@ Assignment -> Identifier "became" Expression
 
 This equates to the assignment of the value returned by the evaluation of Expression into the location denoted by Identifier.
 
-
+Assignments can also be done in a list, alike the BNF:
+\begin{verbatim}
+AssignmentList  -> Assignment [{"and" Assignment} "but" Assignment]
+\end{verbatim}
 
 \section {Returning}
 
