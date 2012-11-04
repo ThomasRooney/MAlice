@@ -122,11 +122,14 @@ MAlice also supports the following binary operators:
 
 All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression} and \texttt{Term} productions in the `Expressions' section above.
 
-\section{Variable Declarations}
+\section{Variable Declaration and Assignment}
 
 \begin{verbatim}
   Declaration     -> Identifier "was a" Type
   DeclarationList -> Declaration [{"," Declaration ["too"]} "and" Declaration ["too"]]
+  
+  Assignment      -> Identifier "became" (Expression | Character)
+  Character       -> "'" ALPHA "'"
 \end{verbatim}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
@@ -135,20 +138,7 @@ Where there are one or more consecutive declarations of variables which share th
 
 Variables are defined in the scope of the function that they are declared in. It is a semantic error for a variable to be declared if a variable with that identifier has already been declared in the same scope.
 
-\section{Variable Assignment}
-
-Variable assignment is designed to closely mirror the grammatical structure of the English language.
-
-It is defined by the BNF Expression:
-
-\begin{verbatim}
-Assignment -> Identifier "became" Expression
-AssignmentList -> Assignment [{"and" Assignment} "but" Assignment]
-\end{verbatim}
-
-This equates to the assignment of the value returned by the evaluation of Expression into the location denoted by Identifier.
-
-Assignments can also be done in a list, with `and' between two assignments but the final two, where `but' is used
+Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
 
 \section {Returning}
 
