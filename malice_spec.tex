@@ -44,10 +44,22 @@ Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
 
 FunctionType -> Type | "looking-glass"
 ArgumentList -> "(" [DeclarationList] ")"
-BlockUnit    -> "opened" StatementList "closed"}
+BlockUnit    -> "opened" StatementList "closed"
 \end{verbatim}
 
-MAlice programs can implement multiple functions. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. This is then followed by `opened', a list of statements which constitute the body, and the closing `closed' keyword. Functions are declared in the global scope and cannot be nested. The scope in which variables are declared in, is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope.
+MAlice programs can implement multiple functions. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. This is then followed by `opened', a list of statements which constitute the body, and the closing `closed' keyword. Functions are declared in the global scope and cannot be nested. The scope in which variables are declared in is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope.
+
+For example:
+
+\begin{verbatim}
+The looking-glass myFunction ()
+begin
+     ...
+end
+\end{verbatim}
+
+This declares the function \texttt{myFunction} which has no return type.
+
 
 A MAlice program is comprised of one or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs (similar to \texttt{main} in C programs) and it is a semantic error to have this function declaration omitted.
 
