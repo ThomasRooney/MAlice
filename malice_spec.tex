@@ -49,13 +49,14 @@ Type -> "number" | "letter"
 FunctionType -> Type | "looking-glass"
 \end{verbatim}
 
-MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analogous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} is only used when in function declarations to denote that a function does not return a value.
+MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analogous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} can only be used in function declarations to denote that a function does not return a value.
 
 The \texttt{number} type is used to represent signed integers, and its size is implementation-defined. The \texttt{letter} type is used to represent the letters A-Z and a-z, where letters are encoded upwards from `A' as 0 to `Z' (25), then `a' as 26 to `z' (51). \texttt{letter} variables are stored in a single byte.
 
 \section{Functions and Programs}
 
 \begin{verbatim}
+Program -> Function+
 Function -> "The" FunctionType Identifier ArgumentList BlockUnit
 
 FunctionType -> Type | "looking-glass"
@@ -63,7 +64,7 @@ ArgumentList -> "(" [DeclarationList] ")"
 BlockUnit -> "opened" StatementList "closed"}
 \end{verbatim}
 
-MAlice allows multiple functions to be declared and implemented. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. This is then followed by `opened', a list of statements which constitute the body, and the closing `closed' keyword. Functions are declared in the global scope and cannot be nested.
+MAlice programs can implement multiple functions. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters. This is then followed by `opened', a list of statements which constitute the body, and the closing `closed' keyword. Functions are declared in the global scope and cannot be nested.
 
 A MAlice program is comprised of one or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs (similar to \texttt{main} in C programs) and it is a semantic error to have this function declaration omitted.
 
