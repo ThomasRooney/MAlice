@@ -78,11 +78,10 @@ Valid statements are:
 \section{Expressions}
 
 \begin{verbatim}
-Expression      -> Expression BinaryOperator Term
-                 | Term
-Term            -> Identifier
-                 | Number
-                 | UnaryOperator (Term | Expression)
+Expression      -> Expression + Term | Expression - Term | Term ^ Expression | Term
+Term            -> Term * Factor | Term / Factor | Factor
+Factor          -> Identifier | Number | "~" (Term | Expression)
+
 \end{verbatim}
 
 Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators.
@@ -202,11 +201,16 @@ Split           -> "."
                  | ","
                  | "then"
 
-Term            -> Identifier
-                 | Number
-                 | UnaryOperator (Term | Expression)
-Expression      -> Expression BinaryOperator Term
+Expression      -> Expression + Term
+                 | Expression - Term
+                 | Term ^ Expression
                  | Term
+Term            -> Term * Factor
+                 | Term / Factor
+                 | Factor
+Factor          -> Identifier
+                 | Number
+                 | "~" (Term | Expression)
 
 Program         -> Function+
 Function        -> "The" FunctionType Identifier ArgumentList BlockUnit
@@ -214,14 +218,6 @@ Function        -> "The" FunctionType Identifier ArgumentList BlockUnit
 FunctionType    -> Type
                  | "looking-glass"
 ArgumentList    -> "(" [DeclarationList] ")"
-
-BinaryOperator  -> "+"
-                 | "-"
-                 | "*"
-                 | "/" 
-                 | "%"
-
-UnaryOperator   -> "~" 
 
 Value           -> Number | Letter
 
