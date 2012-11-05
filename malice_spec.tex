@@ -63,6 +63,14 @@ This declares the function \texttt{myFunction} which has no return type.
 
 A MAlice program is comprised of one or more function declarations. The special function \texttt{hatta} is the entry point for MAlice programs (similar to \texttt{main} in C programs) and it is a semantic error to have this function declaration omitted.
 
+The example programs provided have not specified any syntax which we could interpret to be calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
+
+\begin{verbatim}
+FunctionCall         -> Identifier "(" [FunctionCallList] ")"
+FunctionCallList     -> FunctionCallArgument {("," | "and") FunctionCallArgument}
+FunctionCallArgument -> Expression | Character
+\end{verbatim}
+
 \section{Statements}
 
 \begin{verbatim}
