@@ -23,7 +23,7 @@ This is our language specification for the MAlice programming language, which en
 
 Our definitions of syntax are provided in a semi-formal way: we are using a combination of Extended Backus-Naur Form (EBNF) and Augmented Backus-Naur form (ABNF). We are using the repetition syntax from EBNF, such as expressions surrounded by left and right braces (`\{' and `\}') which denotes zero or more occurrences of the expression, and left and right square brackets (`[' and `]') which denote optional expressions.
 
-We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters \texttt{A-Z} and \texttt{a-z} and \texttt{DIGIT} represents the digits \texttt{0-9}. This allows our specification to be more succinct and easier to read.
+We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters \texttt{A-Z} and \texttt{a-z} and \texttt{DIGIT} represents the digits \texttt{0-9}. We also define and use \texttt{LOWERALPHA} to denote the lowercase alphabetic characters. Using these allows our specification to be more succinct and easier to read.
 
 \section{Types}
 
@@ -79,7 +79,7 @@ StatementList -> "" | Statement "." | Statement Split StatementList
 Split         -> "." | "," | "then" | "and" | "but"
 
 Statement     -> Declaration | Assignment
-               | Expression "said Alice"
+               | (Expression | Character) "said" (Alice| Identifier)
                | Identifier "ate" | Identifier "drank"
 \end{verbatim}
 
@@ -89,9 +89,9 @@ Function bodies in MAlice are comprised of zero or more statements. Statements a
 
 \begin{verbatim}
   Declaration     -> Identifier "was a" Type ["too"]
-  
   Assignment      -> Identifier "became" (Expression | Character)
   Character       -> "`" ALPHA "'"
+  Identifier      -> LOWERALPHA { ALPHA | "-" }
 \end{verbatim}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
@@ -104,9 +104,15 @@ Variable assignments are only semantically correct if a \texttt{number} variable
 
 \subsection{`said' Statement}
 
+The \texttt{said} statement has two uses:
+\begin{itemize}
+\item \textbf{Printing to the Console:} \texttt{said} can be used to print to stdout using the form: $\langle$\texttt{Expression | Character}$\rangle$ \texttt{said Alice}. Should this be an expression, this statement prints out the evaluated result. Otherwise, it prints out the raw character value, enclosed in single quotation marks. None of the included examples demonstrated this case of printing a character, but we decided to add this so as to not limit the language unnecessarily. References to identifiers (be that in an expression or on their own) print out either the numeric or character result, based on the accompanying variable's type.
+\item \textbf{Returning a Value:} \texttt{said} can also be used to return a value for functions which do not have the \texttt{looking-glass} return type. This is not in any of the example programs, but given that we allow implementing functions with a return type other than \texttt{looking-glass} we need syntax and semantics for functions to return a value. The way that \texttt{said} is used to return values is with the format $\langle$\texttt{Expression | Character}$\rangle$ \texttt{said} $\langle$\texttt{Identifier}$\rangle$. This is used to return control immediately back to the calling function, passing it back the result (left hand argument). If \texttt{Identifier} is not equal to the name of the function, this results in a compile-time error. We feel that this syntax preserves the natural language feel of MAlice.
+\end{itemize}
+
 \subsection{`drank' and `ate' Statements}
 
-The `drank' and `ate' keywords follows a variable identifier, and decrements and increments the variable respectively.
+The \texttt{drank} and \texttt{ate} keywords follows a variable identifier, and decrements and increments the variable respectively.
   
 \section{Expressions}
 
