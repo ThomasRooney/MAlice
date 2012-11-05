@@ -85,16 +85,28 @@ Statement     -> Declaration | Assignment
 
 Function bodies in MAlice are comprised of zero or more statements. Statements are separated by either a full-stop, comma, `then' or `and'. However, the last statement in a list of one or more statements must be followed by a full stop. A single full stop is an invalid statement list.
 
-Valid statements are:
-\begin{itemize}
+\subsection{Variable Declaration and Assignment}
 
-\item A list of one or more variable declarations (explained in the `Variable Declarations' section).
-\item A list of one or more assignment statements (explained in the `Variable Assignment' section).
-\item The `said Alice' statement, which takes an expression and prints its value to the console.
-\item the `drank' statement; this follows a variable identifier and decrements the variable.
-\item the `ate' statement; this follows a variable identifier and increments the variable.
+\begin{verbatim}
+  Declaration     -> Identifier "was a" Type ["too"]
+  
+  Assignment      -> Identifier "became" (Expression | Character)
+  Character       -> "`" ALPHA "'"
+\end{verbatim}
 
-\end{itemize}
+Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
+
+Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in \texttt{p was a letter, q was a number and r was a number too}. However, it is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type.
+
+Variables are defined in the scope of the function that they are declared in. It is a semantic error for a variable to be declared if a variable with that identifier has already been declared in the same scope.
+
+Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
+
+\subsection{`said' Statement}
+
+\subsection{`drank' and `ate' Statements}
+
+The `drank' and `ate' keywords follows a variable identifier, and decrements and increments the variable respectively.
   
 \section{Expressions}
 
@@ -107,7 +119,7 @@ Factor     -> Identifier | Number | "~" (Term | Expression)
 
 Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators.
 
-\section{Operators}
+\subsection{Operators}
 
 MAlice supports commonly used unary and binary mathematical operators which we define to act on expressions.
 
@@ -130,22 +142,5 @@ MAlice also supports the following binary operators:
 \end{list}
 
 All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression} and \texttt{Term} productions in the `Expressions' section above.
-
-\section{Variable Declaration and Assignment}
-
-\begin{verbatim}
-  Declaration     -> Identifier "was a" Type ["too"]
-  
-  Assignment      -> Identifier "became" (Expression | Character)
-  Character       -> "`" ALPHA "'"
-\end{verbatim}
-
-Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
-
-Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in \texttt{p was a letter, q was a number and r was a number too}. However, it is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type.
-
-Variables are defined in the scope of the function that they are declared in. It is a semantic error for a variable to be declared if a variable with that identifier has already been declared in the same scope.
-
-Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
 
 \end{document}
