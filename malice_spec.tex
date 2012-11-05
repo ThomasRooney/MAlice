@@ -34,7 +34,9 @@ FunctionType -> Type | "looking-glass"
 
 MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analogous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} can only be used in function declarations to denote that a function does not return a value.
 
-The \texttt{number} type is used to represent signed integers. It is represented internally using Two's Complement format, but its size is implementation-defined. The \texttt{letter} type is used to represent the letters \texttt{A-Z} and \texttt{a-z}, where letters are encoded upwards from `A' (stored as 0) to `Z' (25), then `a' (26) to `z' (51). As such we store \texttt{letter} variables in a single byte.
+The \texttt{number} type is used to represent signed integers. It is represented internally using Two's Complement format, but its size is implementation-defined. When \texttt{number} variables are declared they default to 0.
+
+The \texttt{letter} type is used to represent the letters \texttt{A-Z} and \texttt{a-z}, where letters are encoded upwards from `A' (stored as 0) to `Z' (25), then `a' (26) to `z' (51). As such we store \texttt{letter} variables in a single byte. \texttt{letter} variables default to `A' when they are declared.
 
 \section{Functions and Programs}
 
