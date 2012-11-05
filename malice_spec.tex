@@ -72,6 +72,8 @@ FunctionCallList     -> FunctionCallArgument {("," | "and") FunctionCallArgument
 FunctionCallArgument -> Expression | Character
 \end{verbatim}
 
+Returning a value from a function is done using the `said' statement, which is explained in more detail in the `Statements' section.
+
 \section{Statements}
 
 \begin{verbatim}
@@ -102,7 +104,7 @@ Variables are defined in the scope of the function that they are declared in. It
 
 Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
 
-\subsection{`said' Statement}
+\subsection{The `said' Statement}
 
 The \texttt{said} statement has two uses:
 \begin{itemize}
