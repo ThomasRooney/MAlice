@@ -52,7 +52,7 @@ ArgumentList -> "(" [DeclarationList] ")"
 BlockUnit    -> "opened" StatementList "closed"
 \end{verbatim}
 
-MAlice programs can implement multiple functions, but implement the entry point function, \texttt{hatta}. Omitting this is a semantic compile-time error. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. Functions are declared in the global scope and cannot be nested. 
+MAlice programs can implement multiple functions, but must implement the entry point function, \texttt{hatta}. Omitting this is a semantic compile-time error. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. Functions are declared in the global scope and cannot be nested. 
 
 % For example:
 
@@ -80,7 +80,7 @@ Returning a value from a function is done using the `said' statement, which is e
 \section{Statements}
 
 \begin{verbatim}
-StatementList -> "" | Statement "." | Statement Split StatementList
+StatementList -> "" | Statement Split StatementList
 Split         -> "." | "," | "then" | "and" | "but"
 
 Statement     -> Declaration | Assignment
@@ -128,9 +128,9 @@ The \texttt{drank} and \texttt{ate} keywords can follow a variable identifier, a
 \section{Expressions}
 
 \begin{verbatim}
-Expression -> Expression + Term | Expression - Term | Term
-Term       -> Term * Factor | Term / Factor | Term % Factor | Term2
-Term2      -> Term2 ^ Factor | Factor
+Expression -> Expression "+" Term | Expression "-" Term | Term
+Term       -> Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
+BitTerm    -> BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
 Factor     -> Identifier | Number | "~" Factor | FunctionCall
 
 \end{verbatim}
@@ -139,9 +139,18 @@ Expressions in MAlice are only well-defined over numerical values and are constr
 
 \subsection{Operators}
 
-MAlice supports commonly used unary and binary mathematical operators which we define to act on expressions.
+MAlice supports commonly used unary and binary mathematical operators which we define to act on expressions. It supports the following bitwise operators:
 
-It supports the bitwise NOT unary operator, which is denoted by the tilde symbol. This performs a bitwise NOT on the evaluated number it is applied to (remembering that the \texttt{number} type in MAlice has a Two's Complement binary representation.)
+\begin{itemize}
+
+\item The unary NOT operator ($\sim$).
+\item AND (\texttt{\&}).
+\item OR (\texttt{|}).
+\item XOR (\texttt{\^}).
+
+\end{itemize}
+
+Note that the \texttt{number} type in MAlice has a Two's Complement binary representation, which is important when evaluating expressions involving bitwise operators.
 
 MAlice also supports the following mathematical binary operators:
 
@@ -150,7 +159,6 @@ MAlice also supports the following mathematical binary operators:
 \item Plus (\texttt{+}) and minus (\texttt{-}).
 \item Multiplication (\texttt{*}) and division (\texttt{/}). Division throws a runtime error if the right-hand operand evaluates to zero. As we are using the \texttt{number} type (which stores integers), dividing two values results in the floored value of the mathematical division.
 \item Modulo (\texttt{\%}).
-\item Exponent (\texttt{\^}).
 
 \end{itemize}
 
