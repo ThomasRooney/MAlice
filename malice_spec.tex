@@ -25,11 +25,12 @@ Our definitions of syntax are provided in a semi-formal way: we are using a comb
 
 We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters \texttt{A-Z} and \texttt{a-z} and \texttt{DIGIT} represents the digits \texttt{0-9}. We also define and use \texttt{LOWERALPHA} to denote the lowercase alphabetic characters. Using these allows our specification to be more succinct and easier to read.
 
-\section{Types}
+\section{Types and Identifiers}
 
 \begin{verbatim}
 Type         -> "number" | "letter"
 FunctionType -> Type | "looking-glass"
+Identifier   -> LOWERALPHA [{ ALPHA | "-" } ALPHA]
 \end{verbatim}
 
 MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analogous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} can only be used in function declarations to denote that a function does not return a value.
@@ -37,6 +38,8 @@ MAlice is a strongly typed language. Its primitive types are \texttt{number} and
 The \texttt{number} type is used to represent signed integers. It is represented internally using Two's Complement format, but its size is implementation-defined. When \texttt{number} variables are declared they default to 0.
 
 The \texttt{letter} type is used to represent the letters \texttt{A-Z} and \texttt{a-z}, where letters are encoded upwards from `A' (stored as 0) to `Z' (25), then `a' (26) to `z' (51). As such we store \texttt{letter} variables in a single byte. \texttt{letter} variables default to `A' when they are declared.
+
+Identifiers are used to reference variables and function names. They consist of strings of one or more alphabetic characters and dashes, where the first character is lowercase. Identifiers cannot end with a dash.
 
 \section{Functions and Programs}
 
@@ -93,7 +96,6 @@ Function bodies in MAlice are comprised of zero or more statements. Statements a
   Declaration     -> Identifier "was a" Type ["too"]
   Assignment      -> Identifier "became" (Expression | Character)
   Character       -> "`" ALPHA "'"
-  Identifier      -> LOWERALPHA { ALPHA | "-" }
 \end{verbatim}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
