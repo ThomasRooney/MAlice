@@ -42,14 +42,14 @@ The \texttt{letter} type is used to represent the letters \texttt{A-Z} and \text
 
 \begin{verbatim}
 Program      -> Function+
-Function     -> "The" FunctionType "hatta" ArgumentList BlockUnit
+Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
 
-FunctionType ->  "looking-glass"
+FunctionType ->  Type | "looking-glass"
 ArgumentList -> "(" [DeclarationList] ")"
 BlockUnit    -> "opened" StatementList "closed"
 \end{verbatim}
 
-MAlice programs implement a single function, \texttt{hatta}. Functions begin with `The' followed by the return type (currently limited to looking-glass), a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. The scope in which variables are declared in is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope. Functions are declared in the global scope and cannot be nested. 
+MAlice programs can implement multiple functions, but must have the entry point, \texttt{hatta}. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. The scope in which variables are declared in is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope. Functions are declared in the global scope and cannot be nested. 
 
 % For example:
 
