@@ -46,7 +46,7 @@ Identifiers are used to reference variables and function names. They consist of 
 
 \begin{verbatim}
 Program      ::= Function+
-Function     ::= "The" FunctionType Identifier "(" ArgumentList ")" BlockUnit
+Function     ::= "The" FunctionType Identifier "(" [ArgumentList] ")" BlockUnit
 ArgumentList ::= {Declaration ("," | "and")} Declaration
 BlockUnit    ::= "opened" StatementList "closed"
 \end{verbatim}
@@ -75,7 +75,7 @@ Split         ::= "." | "," | "then" | "and" | "but"
 
 Statement     ::= Declaration | Assignment
                 | FunctionCall
-                | (Expression | Character) "said" (Alice | Identifier)
+                | (Expression | Character) "said" ("Alice" | Identifier)
                 | Identifier "ate" | Identifier "drank"
 \end{verbatim}
 
@@ -120,6 +120,7 @@ Expression ::= Expression "+" Term | Expression "-" Term | Term
 Term       ::= Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
 BitTerm    ::= BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
 Factor     ::= Identifier | Number | "~" Factor | FunctionCall
+Number     ::= ["-"]DIGIT+ 
 \end{verbatim}
 
 Expressions in MAlice are only well-defined over numerical values and can only be constructed from numbers, variable identifiers, function calls and the binary and unary operators we have included above. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
@@ -166,7 +167,7 @@ FunctionType ::= Type | "looking-glass"
 Identifier   ::= LOWERALPHA [{ ALPHA | "-" } ALPHA]
 
 Program      ::= Function+
-Function     ::= "The" FunctionType Identifier "(" ArgumentList ")" BlockUnit
+Function     ::= "The" FunctionType Identifier "(" [ArgumentList] ")" BlockUnit
 ArgumentList ::= {Declaration ("," | "and")} Declaration
 BlockUnit    ::= "opened" StatementList "closed"
 
@@ -179,7 +180,7 @@ Split         ::= "." | "," | "then" | "and" | "but"
 
 Statement     ::= Declaration | Assignment
                 | FunctionCall
-                | (Expression | Character) "said" (Alice| Identifier)
+                | (Expression | Character) "said" ("Alice" | Identifier)
                 | Identifier "ate" | Identifier "drank"
                
 Declaration     ::= Identifier "was a" Type ["too"]
@@ -190,6 +191,7 @@ Expression ::= Expression "+" Term | Expression "-" Term | Term
 Term       ::= Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
 BitTerm    ::= BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
 Factor     ::= Identifier | Number | "~" Factor | FunctionCall
+Number     ::= ["-"]DIGIT+ 
 
 \end{verbatim}
 
