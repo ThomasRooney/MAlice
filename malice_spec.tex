@@ -128,15 +128,14 @@ The \texttt{drank} and \texttt{ate} keywords can follow a variable identifier, a
 \section{Expressions}
 
 \begin{verbatim}
-Expression -> Expression + Term | Expression - Term | Term ^ Expression | Term
-Term       -> Term * Factor | Term / Factor | Term % Factor | Factor
-Factor     -> Identifier | Number | "~" (Term | Expression) | FunctionCall
+Expression -> Expression + Term | Expression - Term | Term
+Term       -> Term * Factor | Term / Factor | Term % Factor | Term2
+Term2      -> Term2 ^ Factor | Factor
+Factor     -> Identifier | Number | "~" Factor | FunctionCall
 
 \end{verbatim}
 
-Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators.
-
-The bitwise NOT has the highest operator precedence, followed by exponentiation and modulo, then multiplication and division, and finally addition and subtraction. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
+Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
 
 \subsection{Operators}
 
@@ -144,22 +143,19 @@ MAlice supports commonly used unary and binary mathematical operators which we d
 
 It supports the bitwise NOT unary operator, which is denoted by the tilde symbol. This performs a bitwise NOT on the evaluated number it is applied to (remembering that the \texttt{number} type in MAlice has a Two's Complement binary representation.)
 
-MAlice also supports the following binary operators:
+MAlice also supports the following mathematical binary operators:
 
-\begin{list}{} {
-\setlength{\labelsep}{0.75cm}
-\setlength{\leftmargin}{2cm}
-}
+\begin{itemize}
 
-\item[\texttt{+}] the mathematical plus operator.
-\item[\texttt{-}] the mathematical minus operator.
-\item[\texttt{*}] the mathematical multiplication operator.
-\item[\texttt{/}] the mathematical division operator. This will throw a runtime error should the right hand operator be equal to zero.
-\item[\texttt{\%}] the mathematical modulo operator.
-\item[\texttt{\^}] the mathematical exponent operator.
+\item Plus (\texttt{+}) and minus (\texttt{-}).
+\item Multiplication (\texttt{*}) and division (\texttt{/}). Division throws a runtime error if the right-hand operand evaluates to zero. As we are using the \texttt{number} type (which stores integers), dividing two values results in the floored value of the mathematical division.
+\item Modulo (\texttt{\%}).
+\item Exponent (\texttt{\^}).
 
-\end{list}
+\end{itemize}
 
 All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression} and \texttt{Term} productions in the `Expressions' section above.
+
+As can be seen by the BNF productions for expressions above, bitwise NOT ($\sim$) has the highest operator precedence, followed by exponentiation, then multiplication, division and modulo, and finally addition and subtraction.
 
 \end{document}
