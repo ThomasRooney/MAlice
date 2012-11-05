@@ -49,28 +49,17 @@ Program      -> Function+
 Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
 
 FunctionType ->  Type | "looking-glass"
-ArgumentList -> "(" [DeclarationList] ")"
+ArgumentList -> "(" {Declaration ("," | "and")} [Declaration] ")"
 BlockUnit    -> "opened" StatementList "closed"
 \end{verbatim}
 
 MAlice programs can implement multiple functions, but must implement the entry point function, \texttt{hatta}. Omitting this is a semantic compile-time error. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. Functions are declared in the global scope and cannot be nested. 
 
-% For example:
-
-% \begin{verbatim}
-% The looking-glass myFunction ()
-% opened
-%      ...
-% closed
-% \end{verbatim}
-
-% This declares the function \texttt{myFunction} which has no return type.
-
 The example programs provided have not specified any syntax which we could use for calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
 
 \begin{verbatim}
 FunctionCall         -> Identifier "(" [FunctionCallList] ")"
-FunctionCallList     -> FunctionCallArgument {("," | "and") FunctionCallArgument}
+FunctionCallList     -> {FunctionCallArgument ("," | "and")} [FunctionCallArgument]
 FunctionCallArgument -> Expression | Character
 \end{verbatim}
 
@@ -95,9 +84,9 @@ Function bodies in MAlice are comprised of zero or more statements. Statements a
 \subsection{Variable Declaration and Assignment}
 
 \begin{verbatim}
-  Declaration     -> Identifier "was a" Type ["too"]
-  Assignment      -> Identifier "became" (Expression | Character)
-  Character       -> "`" ALPHA "'"
+Declaration     -> Identifier "was a" Type ["too"]
+Assignment      -> Identifier "became" (Expression | Character)
+Character       -> "`" ALPHA "'"
 \end{verbatim}
 
 Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
@@ -133,7 +122,6 @@ Expression -> Expression "+" Term | Expression "-" Term | Term
 Term       -> Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
 BitTerm    -> BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
 Factor     -> Identifier | Number | "~" Factor | FunctionCall
-
 \end{verbatim}
 
 Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
@@ -166,5 +154,45 @@ MAlice also supports the following mathematical binary operators:
 All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression} and \texttt{Term} productions in the `Expressions' section above.
 
 As can be seen by the BNF productions for expressions above, bitwise NOT ($\sim$) has the highest operator precedence, followed by exponentiation, then multiplication, division and modulo, and finally addition and subtraction.
+
+\appendix
+
+\section{BNF Reference}
+
+\begin{verbatim}
+
+Type         -> "number" | "letter"
+FunctionType -> Type | "looking-glass"
+Identifier   -> LOWERALPHA [{ ALPHA | "-" } ALPHA]
+
+Program      -> Function+
+Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
+
+FunctionType ->  Type | "looking-glass"
+ArgumentList -> "(" {Declaration ("," | "and")} [Declaration] ")"
+BlockUnit    -> "opened" StatementList "closed"
+
+FunctionCall         -> Identifier "(" [FunctionCallList] ")"
+FunctionCallList     -> {FunctionCallArgument ("," | "and")} [FunctionCallArgument]
+FunctionCallArgument -> Expression | Character
+
+StatementList -> "" | Statement Split StatementList
+Split         -> "." | "," | "then" | "and" | "but"
+
+Statement     -> Declaration | Assignment
+               | FunctionCall
+               | (Expression | Character) "said" (Alice| Identifier)
+               | Identifier "ate" | Identifier "drank"
+               
+Declaration     -> Identifier "was a" Type ["too"]
+Assignment      -> Identifier "became" (Expression | Character)
+Character       -> "`" ALPHA "'"
+
+Expression -> Expression "+" Term | Expression "-" Term | Term
+Term       -> Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
+BitTerm    -> BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
+Factor     -> Identifier | Number | "~" Factor | FunctionCall
+
+\end{verbatim}
 
 \end{document}
