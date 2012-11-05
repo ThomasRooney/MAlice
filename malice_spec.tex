@@ -74,7 +74,6 @@ Returning a value from a function is done using the `said' statement, which is e
 \begin{verbatim}
 StatementList ::= "" | Statement Split StatementList
 Split         ::= "." | "," | "then" | "and" | "but"
-
 Statement     ::= Declaration | Assignment
                 | FunctionCall
                 | (Expression | Character) "said" ("Alice" | Identifier)
@@ -179,7 +178,6 @@ FunctionCallArgument ::= Expression | Character
 
 StatementList ::= "" | Statement Split StatementList
 Split         ::= "." | "," | "then" | "and" | "but"
-
 Statement     ::= Declaration | Assignment
                 | FunctionCall
                 | (Expression | Character) "said" ("Alice" | Identifier)
