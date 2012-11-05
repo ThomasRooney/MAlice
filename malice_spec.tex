@@ -22,16 +22,16 @@
 
 This is our language specification for the MAlice programming language, which encapsulates our understanding and interpretation of the syntax and semantics of the language. This specification will form the basis for our compiler for MAlice programs.
 
-Our definitions of syntax are provided in a semi-formal way: we are using a combination of Extended Backus-Naur Form (EBNF) and Augmented Backus-Naur form (ABNF). We are using the repetition syntax from EBNF, such as expressions surrounded by left and right braces (`\{' and `\}') which denotes zero or more occurrences of the expression, and left and right square brackets (`[' and `]') which denote optional expressions.
+Our syntax definitions are provided in a semi-formal way: we are using a combination of Extended Backus-Naur Form (EBNF) and Augmented Backus-Naur form (ABNF). We are some repetition syntax from EBNF: surrounding expressions with left and right braces (`\{' and `\}') which denotes zero or more occurrences of the expression; surrounding expressions with left and right square brackets (`[' and `]') which denote optional expressions; and appending `+' to an expression which denotes one or more occurrence of that expression.
 
 We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters \texttt{A-Z} and \texttt{a-z} and \texttt{DIGIT} represents the digits \texttt{0-9}. We also define and use \texttt{LOWERALPHA} to denote the lowercase alphabetic characters. Using these allows our specification to be more succinct and easier to read.
 
 \section{Types and Identifiers}
 
 \begin{verbatim}
-Type         -> "number" | "letter"
-FunctionType -> Type | "looking-glass"
-Identifier   -> LOWERALPHA [{ ALPHA | "-" } ALPHA]
+Type         ::= "number" | "letter"
+FunctionType ::= Type | "looking-glass"
+Identifier   ::= LOWERALPHA [{ ALPHA | "-" } ALPHA]
 \end{verbatim}
 
 MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analogous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} can only be used in function declarations to denote that a function does not return a value.
@@ -40,43 +40,43 @@ The \texttt{number} type is used to represent signed integers. It is represented
 
 The \texttt{letter} type is used to represent the letters \texttt{A-Z} and \texttt{a-z}, where letters are encoded upwards from `A' (stored as 0) to `Z' (25), then `a' (26) to `z' (51). As such we store \texttt{letter} variables in a single byte. \texttt{letter} variables default to `A' when they are declared.
 
-Identifiers are used to reference variables and function names. They consist of strings of one or more alphabetic characters and dashes, where the first character is lowercase. Identifiers cannot end with a dash.
+Identifiers are used to reference variables and function names. They consist of strings of one or more alphabetic characters and dashes. The first character must be a lowercase character, and the last character cannot be a dash. Not satisfying one or both of these conditions is a compile-time error.
 
 \section{Functions and Programs}
 
 \begin{verbatim}
-Program      -> Function+
-Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
-
-FunctionType ->  Type | "looking-glass"
-ArgumentList -> "(" {Declaration ("," | "and")} [Declaration] ")"
-BlockUnit    -> "opened" StatementList "closed"
+Program      ::= Function+
+Function     ::= "The" FunctionType Identifier "(" ArgumentList ")" BlockUnit
+ArgumentList ::= {Declaration ("," | "and")} Declaration
+BlockUnit    ::= "opened" StatementList "closed"
 \end{verbatim}
 
-MAlice programs can implement multiple functions, but must implement the entry point function, \texttt{hatta}. Omitting this is a semantic compile-time error. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. Functions are declared in the global scope and cannot be nested. 
+MAlice programs can implement multiple functions, but must implement the entry point function \texttt{hatta}. Omitting this is a semantic compile-time error. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters enclosed in brackets. The method body is then surrounded by the \texttt{opened} and \texttt{closed} keywords. Functions are declared in the global scope and cannot be nested.
 
 The example programs provided have not specified any syntax which we could use for calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
 
 \begin{verbatim}
-FunctionCall         -> Identifier "(" [FunctionCallList] ")"
-FunctionCallList     -> {FunctionCallArgument ("," | "and")} [FunctionCallArgument]
-FunctionCallArgument -> Expression | Character
+FunctionCall         ::= Identifier "(" [FunctionCallList] ")"
+FunctionCallList     ::= {FunctionCallArgument ("," | "and")} FunctionCallArgument
+FunctionCallArgument ::= Expression | Character
 \end{verbatim}
 
-As can be seen in the BNF above, functions are called by referencing their name, then followed by a list of arguments in brackets. If a function with the identifier does not exist in the program, this is a compile-time error. However, calling functions in the program before they are declared is valid. The types and number of arguments in the function call list of arguments must match the argument list for the function. If it does not, this is a compile-time error.
+As can be seen in the BNF above, functions are called by referencing their name, then followed by a list of arguments in brackets which are separated by a comma or `and'. Note that it is a compile-time error for the last argument to be followed by one of these separator terminals.
+
+If a function is called whose identifier does not exist somewhere in the program this generates a compile-time error; however, calling functions in the program before they are declared is valid. The types and number of arguments in the function call list of arguments must also match the types and number of arguments for the function definition of the function. If it does not, this is also a compile-time error.
 
 Returning a value from a function is done using the `said' statement, which is explained in more detail in the `Statements' section.
 
 \section{Statements}
 
 \begin{verbatim}
-StatementList -> "" | Statement Split StatementList
-Split         -> "." | "," | "then" | "and" | "but"
+StatementList ::= "" | Statement Split StatementList
+Split         ::= "." | "," | "then" | "and" | "but"
 
-Statement     -> Declaration | Assignment
-               | FunctionCall
-               | (Expression | Character) "said" (Alice| Identifier)
-               | Identifier "ate" | Identifier "drank"
+Statement     ::= Declaration | Assignment
+                | FunctionCall
+                | (Expression | Character) "said" (Alice | Identifier)
+                | Identifier "ate" | Identifier "drank"
 \end{verbatim}
 
 Function bodies in MAlice are comprised of zero or more statements. Statements are separated by either a full-stop, comma, `then' or `and'. However, the last statement in a list of one or more statements must be followed by a full stop. A single full stop is an invalid statement list.
@@ -84,20 +84,16 @@ Function bodies in MAlice are comprised of zero or more statements. Statements a
 \subsection{Variable Declaration and Assignment}
 
 \begin{verbatim}
-Declaration     -> Identifier "was a" Type ["too"]
-Assignment      -> Identifier "became" (Expression | Character)
-Character       -> "`" ALPHA "'"
+Declaration     ::= Identifier "was a" Type ["too"]
+Assignment      ::= Identifier "became" (Expression | Character)
+Character       ::= "`" ALPHA "'"
 \end{verbatim}
-
-Lists of variable declarations consist of single variable declarations separated by a comma. The only exception to this is the last variable declaration, which is preceded by an `and' and no comma.
-
-Where there are one or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in \texttt{p was a letter, q was a number and r was a number too}. However, it is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type.
 
 Variables are defined in the scope of the function that they are declared in. It is a semantic error for a variable to be declared if a variable with that identifier has already been declared in the same scope.
 
-Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
+Where there are two or more consecutive declarations of variables which share the same type, the second and later declarations can be optionally postfixed with `too', as in \texttt{p was a letter, q was a number and r was a number too}. However, it is a semantic error to append `too' to a declaration for a variable whose type is different to that of the previous variable declaration's type.
 
-The scope in which variables are declared in is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope.
+Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
 
 \subsection{Function Calls}
 
@@ -107,24 +103,26 @@ Functions can be called as explained in the `Functions' section. If the function
 
 The \texttt{said} statement has two uses:
 \begin{itemize}
-\item \textbf{Printing to the Console:} \texttt{said} can be used to print to stdout using the form: $\langle$\texttt{Expression | Character}$\rangle$ \texttt{said Alice}. Should this be an expression, this statement prints out the evaluated result. Otherwise, it prints out the raw character value, enclosed in single quotation marks. None of the included examples demonstrated this case of printing a character, but we decided to add this so as to not limit the language unnecessarily. References to identifiers (be that in an expression or on their own) print out either the numeric or character result, based on the accompanying variable's type.
-\item \textbf{Returning a Value:} \texttt{said} can also be used to return a value for functions which do not have the \texttt{looking-glass} return type. This is not in any of the example programs, but given that we allow implementing functions with a return type other than \texttt{looking-glass} we need syntax and semantics for functions to return a value. The way that \texttt{said} is used to return values is with the format $\langle$\texttt{Expression | Character}$\rangle$ \texttt{said} $\langle$\texttt{Identifier}$\rangle$. This is used to return control immediately back to the calling function, passing it back the result (left hand argument). If \texttt{Identifier} is not equal to the name of the function, this results in a compile-time error. We feel that this syntax preserves the natural language feel of MAlice.
+\item \textbf{Printing to the Console:} \texttt{said} can be used to print to stdout using the form $\langle$\texttt{Expression | Character}$\rangle$ \texttt{said Alice}. Should this be an expression, this statement prints out the evaluated result. Otherwise, it prints out the raw character value, enclosed in single quotation marks. None of the included examples demonstrated this case of printing a character, but we decided to add this so as to not limit the language unnecessarily. References to identifiers (be that in an expression or on their own) print out either the numeric or character result, based on the accompanying variable's type.
+\item \textbf{Returning a value:} \texttt{said} can also be used to return a value for functions which do not have the \texttt{looking-glass} return type. This is not in any of the example programs, but given that we allow implementing functions with a return type other than \texttt{looking-glass} we need syntax and semantics for functions to return a value. The way that \texttt{said} is used to return values is with the format $\langle$\texttt{Expression | Character}$\rangle$ \texttt{said} $\langle$\texttt{Identifier}$\rangle$. This is used to return control immediately back to the calling function, passing it back the result (the \texttt{Expression} or \texttt{Character} in the example).
+
+If the identifier written after `said' is not `Alice' and also not equal to the name of the function it is called in (if used as a return statement), this results in a compile-time error. Overall, we feel that this syntax extension preserves the natural language feel of MAlice.
 \end{itemize}
 
 \subsection{`drank' and `ate' Statements}
 
-The \texttt{drank} and \texttt{ate} keywords can follow a variable identifier, and decrement and increment the value of the variable respectively. This is only well-defined for \texttt{number} variables, and is a semantic compile-time error if the identifier refers to a \texttt{letter} variable.
+The \texttt{drank} and \texttt{ate} keywords can only follow a variable identifier, and decrement and increment the value of the variable respectively. This is only well-defined for \texttt{number} variables, and is a semantic compile-time error if the identifier refers to a \texttt{letter} variable.
   
 \section{Expressions}
 
 \begin{verbatim}
-Expression -> Expression "+" Term | Expression "-" Term | Term
-Term       -> Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
-BitTerm    -> BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
-Factor     -> Identifier | Number | "~" Factor | FunctionCall
+Expression ::= Expression "+" Term | Expression "-" Term | Term
+Term       ::= Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
+BitTerm    ::= BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
+Factor     ::= Identifier | Number | "~" Factor | FunctionCall
 \end{verbatim}
 
-Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
+Expressions in MAlice are only well-defined over numerical values and can only be constructed from numbers, variable identifiers, function calls and the binary and unary operators we have included above. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
 
 \subsection{Operators}
 
@@ -141,20 +139,21 @@ MAlice supports commonly used unary and binary mathematical operators which we d
 
 Note that the \texttt{number} type in MAlice has a Two's Complement binary representation, which is important when evaluating expressions involving bitwise operators.
 
-MAlice also supports the following mathematical binary operators:
+MAlice also supports the following binary operators which are interpreted with their mathematical meaning:
 
 \begin{itemize}
 
 \item Plus (\texttt{+}) and minus (\texttt{-}).
-\item Multiplication (\texttt{*}) and division (\texttt{/}). Division throws a runtime error if the right-hand operand evaluates to zero. As we are using the \texttt{number} type (which stores integers), dividing two values results in the floored value of the mathematical division.
+\item Multiplication (\texttt{*}) and division (\texttt{/}). Division throws a runtime error if the right-hand operand evaluates to zero. As we are using the \texttt{number} type (which stores integers), dividing two values results in the mathematically floored value of the division.
 \item Modulo (\texttt{\%}).
 
 \end{itemize}
 
-All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression} and \texttt{Term} productions in the `Expressions' section above.
+All of the operators are left-associative, except for the exponent operator which is right-associative. These associativities can be seen in the BNF for \texttt{Expression}, \texttt{Term} and \texttt{BitTerm} productions above.
 
-As can be seen by the BNF productions for expressions above, bitwise NOT ($\sim$) has the highest operator precedence, followed by exponentiation, then multiplication, division and modulo, and finally addition and subtraction.
+As can be seen by the BNF productions for expressions above, bitwise NOT ($\sim$) has the highest operator precedence, followed by the other bitwise operators, then multiplication, division and modulo, and finally addition and subtraction.
 
+\newpage	
 \section{Appendix}
 \appendix
 
@@ -162,37 +161,35 @@ As can be seen by the BNF productions for expressions above, bitwise NOT ($\sim$
 
 \begin{verbatim}
 
-Type         -> "number" | "letter"
-FunctionType -> Type | "looking-glass"
-Identifier   -> LOWERALPHA [{ ALPHA | "-" } ALPHA]
+Type         ::= "number" | "letter"
+FunctionType ::= Type | "looking-glass"
+Identifier   ::= LOWERALPHA [{ ALPHA | "-" } ALPHA]
 
-Program      -> Function+
-Function     -> "The" FunctionType Identifier ArgumentList BlockUnit
+Program      ::= Function+
+Function     ::= "The" FunctionType Identifier "(" ArgumentList ")" BlockUnit
+ArgumentList ::= {Declaration ("," | "and")} Declaration
+BlockUnit    ::= "opened" StatementList "closed"
 
-FunctionType ->  Type | "looking-glass"
-ArgumentList -> "(" {Declaration ("," | "and")} [Declaration] ")"
-BlockUnit    -> "opened" StatementList "closed"
+FunctionCall         ::= Identifier "(" [FunctionCallList] ")"
+FunctionCallList     ::= {FunctionCallArgument ("," | "and")} FunctionCallArgument
+FunctionCallArgument ::= Expression | Character
 
-FunctionCall         -> Identifier "(" [FunctionCallList] ")"
-FunctionCallList     -> {FunctionCallArgument ("," | "and")} [FunctionCallArgument]
-FunctionCallArgument -> Expression | Character
+StatementList ::= "" | Statement Split StatementList
+Split         ::= "." | "," | "then" | "and" | "but"
 
-StatementList -> "" | Statement Split StatementList
-Split         -> "." | "," | "then" | "and" | "but"
-
-Statement     -> Declaration | Assignment
-               | FunctionCall
-               | (Expression | Character) "said" (Alice| Identifier)
-               | Identifier "ate" | Identifier "drank"
+Statement     ::= Declaration | Assignment
+                | FunctionCall
+                | (Expression | Character) "said" (Alice| Identifier)
+                | Identifier "ate" | Identifier "drank"
                
-Declaration     -> Identifier "was a" Type ["too"]
-Assignment      -> Identifier "became" (Expression | Character)
-Character       -> "`" ALPHA "'"
+Declaration     ::= Identifier "was a" Type ["too"]
+Assignment      ::= Identifier "became" (Expression | Character)
+Character       ::= "`" ALPHA "'"
 
-Expression -> Expression "+" Term | Expression "-" Term | Term
-Term       -> Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
-BitTerm    -> BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
-Factor     -> Identifier | Number | "~" Factor | FunctionCall
+Expression ::= Expression "+" Term | Expression "-" Term | Term
+Term       ::= Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
+BitTerm    ::= BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
+Factor     ::= Identifier | Number | "~" Factor | FunctionCall
 
 \end{verbatim}
 
