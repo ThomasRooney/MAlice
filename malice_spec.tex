@@ -117,7 +117,7 @@ The \texttt{drank} and \texttt{ate} keywords can only follow a variable identifi
 
 \begin{verbatim}
 Expression ::= Expression "+" Term | Expression "-" Term | Term
-Term       ::= Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
+Term       ::= Term "*" BitTerm | Term "/" BitTerm | Term "%" BitTerm | BitTerm
 BitTerm    ::= BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
 Factor     ::= Identifier | Number | "~" Factor | FunctionCall
 Number     ::= ["-"]DIGIT+ 
@@ -188,7 +188,7 @@ Assignment      ::= Identifier "became" (Expression | Character)
 Character       ::= "`" ALPHA "'"
 
 Expression ::= Expression "+" Term | Expression "-" Term | Term
-Term       ::= Term "*" Factor | Term "/" Factor | Term "%" Factor | BitTerm
+Term       ::= Term "*" BitTerm | Term "/" BitTerm | Term "%" BitTerm | BitTerm
 BitTerm    ::= BitTerm "^" Factor | BitTerm "|" Factor | BitTerm "&" Factor | Factor
 Factor     ::= Identifier | Number | "~" Factor | FunctionCall
 Number     ::= ["-"]DIGIT+ 
