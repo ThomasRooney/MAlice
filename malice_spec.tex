@@ -24,14 +24,14 @@ This is our language specification for the MAlice programming language, which en
 
 Our syntax definitions are provided in a semi-formal way: we are using a combination of Extended Backus-Naur Form (EBNF) and Augmented Backus-Naur form (ABNF). We are some repetition syntax from EBNF: surrounding expressions with left and right braces (`\{' and `\}') which denotes zero or more occurrences of the expression; surrounding expressions with left and right square brackets (`[' and `]') which denote optional expressions; and appending `+' to an expression which denotes one or more occurrence of that expression.
 
-We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters \texttt{A-Z} and \texttt{a-z} and \texttt{DIGIT} represents the digits \texttt{0-9}. We also define and use \texttt{LOWERALPHA} to denote the lowercase alphabetic characters. Using these allows our specification to be more succinct and easier to read.
+We are also using \texttt{ALPHA} and \texttt{DIGIT} from ABNF. \texttt{ALPHA} represents the letters \texttt{A-Z} and \texttt{a-z} and \texttt{DIGIT} represents the digits \texttt{0-9}.
 
 \section{Types and Identifiers}
 
 \begin{verbatim}
 Type         ::= "number" | "letter"
 FunctionType ::= Type | "looking-glass"
-Identifier   ::= LOWERALPHA [{ ALPHA | "-" } ALPHA]
+Identifier   ::= ALPHA [{ ALPHA | "-" } ALPHA]
 \end{verbatim}
 
 MAlice is a strongly typed language. Its primitive types are \texttt{number} and \texttt{letter}, as well as the special \texttt{looking-glass} type which is analogous to a \texttt{void} type as in C-style languages. \texttt{looking-glass} can only be used in function declarations to denote that a function does not return a value.
@@ -40,7 +40,7 @@ The \texttt{number} type is used to represent signed integers. It is represented
 
 The \texttt{letter} type is used to represent the letters \texttt{A-Z} and \texttt{a-z}, where letters are encoded upwards from `A' (stored as 0) to `Z' (25), then `a' (26) to `z' (51). As such we store \texttt{letter} variables in a single byte. \texttt{letter} variables default to `A' when they are declared.
 
-Identifiers are used to reference variables and function names. They consist of strings of one or more alphabetic characters and dashes. The first character must be a lowercase character, and the last character cannot be a dash. Not satisfying one or both of these conditions is a compile-time error.
+Identifiers are used to reference variables and function names. They consist of strings of one or more alphabetic characters and dashes. The first and last characters cannot be a dash. Not satisfying this condition is a compile-time error.
 
 \section{Functions and Programs}
 
@@ -164,7 +164,7 @@ As can be seen by the BNF productions for expressions above, bitwise NOT ($\sim$
 
 Type         ::= "number" | "letter"
 FunctionType ::= Type | "looking-glass"
-Identifier   ::= LOWERALPHA [{ ALPHA | "-" } ALPHA]
+Identifier   ::= ALPHA [{ ALPHA | "-" } ALPHA]
 
 Program      ::= Function+
 Function     ::= "The" FunctionType Identifier "(" [ArgumentList] ")" BlockUnit
