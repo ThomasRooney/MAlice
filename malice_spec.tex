@@ -64,7 +64,7 @@ MAlice programs implement a single function, \texttt{hatta}. Functions begin wit
 
 A MAlice program, in this limited specification, is comprised of only one function declaration. The special function \texttt{hatta}, which  is the entry point for MAlice programs (similar to \texttt{main} in C programs) and it is a compile time error to have this function declaration omitted.
 
-The example programs provided have not specified any syntax which we could interpret to be calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
+The example programs provided have not specified any syntax which we could interpret to be used for calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
 
 \begin{verbatim}
 FunctionCall         -> Identifier "(" [FunctionCallList] ")"
