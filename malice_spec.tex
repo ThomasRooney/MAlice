@@ -52,7 +52,7 @@ ArgumentList -> "(" [DeclarationList] ")"
 BlockUnit    -> "opened" StatementList "closed"
 \end{verbatim}
 
-MAlice programs can implement multiple functions, but must have the entry point, \texttt{hatta}. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. The scope in which variables are declared in is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope. Functions are declared in the global scope and cannot be nested. 
+MAlice programs can implement multiple functions, but implement the entry point function, \texttt{hatta}. Omitting this is a semantic compile-time error. Functions begin with `The' followed by the return type, a name and a list of zero or more parameters, which are enclosed in brackets. The method body is then enclosed by the \texttt{opened} and \texttt{closed} keywords. Functions are declared in the global scope and cannot be nested. 
 
 % For example:
 
@@ -65,15 +65,15 @@ MAlice programs can implement multiple functions, but must have the entry point,
 
 % This declares the function \texttt{myFunction} which has no return type.
 
-A MAlice program, in this limited specification, is comprised of only one function declaration. The special function \texttt{hatta}, which  is the entry point for MAlice programs (similar to \texttt{main} in C programs) and it is a compile time error to have this function declaration omitted.
-
-The example programs provided have not specified any syntax which we could interpret to be used for calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
+The example programs provided have not specified any syntax which we could use for calling functions. However, we assume that this could be done by adding our own syntax, specified with the following BNF productions:
 
 \begin{verbatim}
 FunctionCall         -> Identifier "(" [FunctionCallList] ")"
 FunctionCallList     -> FunctionCallArgument {("," | "and") FunctionCallArgument}
 FunctionCallArgument -> Expression | Character
 \end{verbatim}
+
+As can be seen in the BNF above, functions are called by referencing their name, then followed by a list of arguments in brackets. If a function with the identifier does not exist in the program, this is a compile-time error. However, calling functions in the program before they are declared is valid. The types and number of arguments in the function call list of arguments must match the argument list for the function. If it does not, this is a compile-time error.
 
 Returning a value from a function is done using the `said' statement, which is explained in more detail in the `Statements' section.
 
@@ -84,6 +84,7 @@ StatementList -> "" | Statement "." | Statement Split StatementList
 Split         -> "." | "," | "then" | "and" | "but"
 
 Statement     -> Declaration | Assignment
+               | FunctionCall
                | (Expression | Character) "said" (Alice| Identifier)
                | Identifier "ate" | Identifier "drank"
 \end{verbatim}
@@ -106,6 +107,12 @@ Variables are defined in the scope of the function that they are declared in. It
 
 Variable assignments are only semantically correct if a \texttt{number} variable is assigned an expression and a \texttt{letter} variable is assigned a character (as described in the \texttt{Character} production above).
 
+The scope in which variables are declared in is defined by the function whose \texttt{BlockUnit} they occur in. They cannot be used outside of this scope.
+
+\subsection{Function Calls}
+
+Functions can be called as explained in the `Functions' section. If the function's return type is not \texttt{looking-glass}, this is not used when it is called as a single statement (outside of an expression).
+
 \subsection{The `said' Statement}
 
 The \texttt{said} statement has two uses:
@@ -122,12 +129,14 @@ The \texttt{drank} and \texttt{ate} keywords follows a variable identifier, and 
 
 \begin{verbatim}
 Expression -> Expression + Term | Expression - Term | Term ^ Expression | Term
-Term       -> Term * Factor | Term / Factor | Factor
-Factor     -> Identifier | Number | "~" (Term | Expression)
+Term       -> Term * Factor | Term / Factor | Term \% Factor | Factor
+Factor     -> Identifier | Number | "~" (Term | Expression) | FunctionCall
 
 \end{verbatim}
 
 Expressions in MAlice are only well-defined over numerical values and are constructed from terms and binary and unary operators.
+
+The bitwise NOT has the highest operator precedence, followed by exponentiation and modulo, then multiplication and division, and finally addition and subtraction. If function calls are used in expressions, then their return type has to be \texttt{number}. If not, this is a compile-time type error.
 
 \subsection{Operators}
 
