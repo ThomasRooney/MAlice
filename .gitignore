@@ -22,3 +22,6 @@
 *.kate-swp
 *.swp
 *.synctex.gz
+
+#ignore java files (For antlr)
+*.jar
