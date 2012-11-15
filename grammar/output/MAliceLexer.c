@@ -522,7 +522,7 @@ void mT__10(pMAliceLexer ctx)
     // /Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice/ANTLR/MAlice.g:9:7: ( '' )
     // /Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice/ANTLR/MAlice.g:9:9: ''
     {
-        MATCHC('');
+        MATCHC('*');
         if  (HASEXCEPTION())
         {
             goto ruleT__10Ex;
@@ -1233,7 +1233,7 @@ void mWS(pMAliceLexer ctx)
         }
 
         {
-            self.skip()
+            //self.skip();
         }
 
 
