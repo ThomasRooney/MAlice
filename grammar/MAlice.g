@@ -107,6 +107,13 @@ return_type_clause
 	;
 block_unit
 	:	'opened' 'closed';
+	
+function_invocation
+	:	identifier '(' function_invocation_argument_list? ')'
+	;
+function_invocation_argument_list
+	:	(constant ',')* constant
+	;
 
 
 // Statements
