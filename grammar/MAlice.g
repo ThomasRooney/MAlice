@@ -2,14 +2,12 @@ grammar MAlice;
 
 options {
 	language=C;
-	output=AST;
-	backtrack=true;
-	ASTLabelType=CommonTree;
 }
 
 //expr	:	'+' term expr_left | '-' term expr_left | term;
 
-primary_expr
+/*primary_expr
+	:
 	:	constant
 	|	CHARACTER_LITERAL
 	|	'(' expression ')'
@@ -43,6 +41,7 @@ unary_expr
 	:	unary_operator bitwise_expr
 	|	primary_expr
 	;
+*/
 
 identifier
 	:	LETTER (LETTER | '0'..'9')*
@@ -92,13 +91,13 @@ constant:	DECIMAL_NUMBER
 // Programs and functions
 program	:	function+;
 
-function:	'The' function_type identifier '(' function_argument_list? ')' return_type_clause? block_unit;
+function:	'The' function_type identifier '(' function_argument_list ')' return_type_clause? block_unit;
 function_type
 	:	'room'
 	| 	'looking-glass'
 	;
 function_argument_list
-	:	(function_argument ',')* function_argument?
+	:	function_argument*
 	;
 function_argument
 	:	type identifier
