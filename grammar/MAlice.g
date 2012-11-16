@@ -109,6 +109,10 @@ block_unit
 	:	'opened' 'closed';
 
 
+// Statements
+return	:	'Alice found' constant
+	;
+
 /*
 argumentlist 
 	:	(declaration ('"'|'and'))* declaration;
@@ -158,7 +162,7 @@ LETTER	:	('a'..'z' | 'A'..'Z')
 	;
 
 CHARACTER_LITERAL
-	:	'"' LETTER '"'
+	:	'\'' LETTER '\''
 	;
 	
 	
