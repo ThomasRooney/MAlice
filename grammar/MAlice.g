@@ -97,7 +97,7 @@ function_type
 	| 	'looking-glass'
 	;
 function_argument_list
-	:	function_argument*
+	:	((function_argument ',')* function_argument)?
 	;
 function_argument
 	:	type identifier
