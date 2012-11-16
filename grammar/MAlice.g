@@ -92,10 +92,16 @@ constant:	DECIMAL_NUMBER
 // Programs and functions
 program	:	function+;
 
-function:	'The' function_type identifier '(' ')' return_type_clause? block_unit;
+function:	'The' function_type identifier '(' function_argument_list? ')' return_type_clause? block_unit;
 function_type
 	:	'room'
 	| 	'looking-glass'
+	;
+function_argument_list
+	:	(function_argument ',')* function_argument?
+	;
+function_argument
+	:	type identifier
 	;
 return_type_clause
 	:	'contained a' type
