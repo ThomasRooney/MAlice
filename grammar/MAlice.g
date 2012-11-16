@@ -8,6 +8,7 @@ options {
 
 /*primary_expr
 	:
+	
 	:	constant
 	|	CHARACTER_LITERAL
 	|	'(' expression ')'
@@ -81,10 +82,6 @@ type 	:	'number'
 unary_operator
 	:	'~'
 	;
-
-constant:	DECIMAL_NUMBER
-	|	CHARACTER_LITERAL
-	;
 	
 
 
@@ -112,10 +109,25 @@ block_unit
 function_invocation
 	:	identifier LPAREN function_invocation_argument_list? RPAREN
 	;
+
+constant:	NON_ZERO_DECIMAL_NUMBER
+	|	ZERO_NUMBER
+	|	CHARACTER_LITERAL
+	;
+	
+
+
+// Programs and functions
 function_invocation_argument_list
 	:	(constant ',')* constant
 	;
+//Expression
 
+assignment
+	:	identifier 'became' expression
+	;
+expression
+	:	constant;
 
 // Statements
 statement_list
@@ -197,8 +209,13 @@ CHARACTER_LITERAL
 	;
 	
 	
-DECIMAL_NUMBER
-	:	('0' | '1'..'9' '0'..'9'*)
+// This is a silly solution so antlr interpreter works correctly
+ZERO_NUMBER
+	:	'0'
+	;
+	
+NON_ZERO_DECIMAL_NUMBER
+	:	'1'..'9' '0'..'9'*
 	;
 
 NEWLINE	:	'\r'? '\n' ;
