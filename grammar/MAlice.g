@@ -92,7 +92,7 @@ constant:	DECIMAL_NUMBER
 program	:	(function
 	|	 comment)+;
 
-function:	'The' function_type identifier '(' function_argument_list? ')' return_type_clause? block_unit;
+function:	'The' function_type identifier LPAREN function_argument_list? RPAREN return_type_clause? block_unit;
 function_type
 	:	'room'
 	| 	'looking-glass'
@@ -110,7 +110,7 @@ block_unit
 	:	'opened' (statement_list | function) 'closed';
 	
 function_invocation
-	:	identifier '(' function_invocation_argument_list? ')'
+	:	identifier LPAREN function_invocation_argument_list? RPAREN
 	;
 function_invocation_argument_list
 	:	(constant ',')* constant
@@ -202,3 +202,5 @@ DECIMAL_NUMBER
 	;
 
 NEWLINE	:	'\r'? '\n' ;
+LPAREN	:	'(';
+RPAREN	:	')';
