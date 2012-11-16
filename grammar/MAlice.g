@@ -36,7 +36,7 @@ bitwise_expr
 unary_expr
 	:	unary_operator bitwise_expr
 	|	constant
-	|	'(' additive_expr ')'
+	|	RPARENT additive_expr RPAREN
 	;
 
 
@@ -87,7 +87,7 @@ program	:	(function
 
 
 
-function:	'The' function_type identifier '(' function_argument_list? ')' return_type_clause? block_unit;
+function:	'The' function_type identifier	RPARENT function_argument_list? RPAREN return_type_clause? block_unit;
 function_type
 	:	'room'
 	| 	'looking-glass'
@@ -105,7 +105,7 @@ block_unit
 	:	'opened' (statement_list | function) 'closed';
 	
 function_invocation
-	:	identifier '(' function_invocation_argument_list? ')'
+	:	identifier	RPARENT function_invocation_argument_list? RPAREN
 	;
 
 constant:	NON_ZERO_DECIMAL_NUMBER
@@ -187,7 +187,7 @@ multExpr
 
 atom	:	INT
 	|	ID
-	|	'('! expr ')'!
+	|	RPARENT! expr RPAREN!
 	;*/
 	
 //Expression
@@ -215,3 +215,5 @@ NON_ZERO_DECIMAL_NUMBER
 	;
 
 NEWLINE	:	'\r'? '\n' ;
+LPAREN	:	'(';
+RPAREN	:	')';
