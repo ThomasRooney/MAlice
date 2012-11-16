@@ -82,13 +82,6 @@ unary_operator
 	:	'~'
 	;
 
-constant:	DECIMAL_NUMBER
-	|	CHARACTER_LITERAL
-	;
-	
-
-
-// Programs and functions
 program	:	function+;
 
 function:	'The' function_type identifier '(' function_argument_list? ')' return_type_clause? block_unit;
@@ -111,10 +104,25 @@ block_unit
 function_invocation
 	:	identifier '(' function_invocation_argument_list? ')'
 	;
+
+constant:	NON_ZERO_DECIMAL_NUMBER
+	|	ZERO_NUMBER
+	|	CHARACTER_LITERAL
+	;
+	
+
+
+// Programs and functions
 function_invocation_argument_list
 	:	(constant ',')* constant
 	;
+//Expression
 
+assignment
+	:	identifier 'became' expression
+	;
+expression
+	:	constant;
 
 // Statements
 return	:	'Alice found' constant
@@ -175,8 +183,13 @@ CHARACTER_LITERAL
 	;
 	
 	
-DECIMAL_NUMBER
-	:	('0' | '1'..'9' '0'..'9'*)
+// This is a silly solution so antlr interpreter works correctly
+ZERO_NUMBER
+	:	'0'
+	;
+	
+NON_ZERO_DECIMAL_NUMBER
+	:	'1'..'9' '0'..'9'*
 	;
 
 NEWLINE	:	'\r'? '\n' ;
