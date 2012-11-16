@@ -89,14 +89,15 @@ constant:	DECIMAL_NUMBER
 	
 
 
+// Programs and functions
+program	:	function+;
+
+function:	'The' ('room' | 'looking-glass') IDENTIFIER '(' ')' 'contained a' type block_unit;
+block_unit
+	:	'opened' 'closed';
+
 
 /*
-program :	'The' functiontype ID '(' (argumentlist)* ')' blockunit;
-
-
-functiontype
-	:	'looking-glass' | type;
-
 argumentlist 
 	:	(declaration ('"'|'and'))* declaration;
 	
@@ -141,13 +142,8 @@ atom	:	INT
 //Factor 	:	ID | NUMBER;
 
 // Types
-// ID	:	('a'..'z'|'A'..'Z')+ ;
-LETTER
-	:	//'-'
-//	|	'A'..'Z'
-	|	'a'..'z'
-//	|	'_'
-	;
+IDENTIFIER	
+	:	('a'..'z'|'A'..'Z')+;
 
 CHARACTER_LITERAL
 	:	'"' LETTER '"'	;
@@ -157,8 +153,4 @@ DECIMAL_NUMBER
 	:	('0' | '1'..'9' '0'..'9'*)
 	;
 
-// NUMBER	:	'0'..'9'+ ;
-
 NEWLINE	:	'\r'? '\n' ;
-
-//WS	:	(' '|'\t'|'\n'|'\r')+ {self.skip()} ;
