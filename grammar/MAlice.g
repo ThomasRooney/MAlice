@@ -89,7 +89,8 @@ constant:	DECIMAL_NUMBER
 
 
 // Programs and functions
-program	:	function+;
+program	:	(function
+	|	 comment)+;
 
 function:	'The' function_type identifier '(' function_argument_list? ')' return_type_clause? block_unit;
 function_type
@@ -106,7 +107,7 @@ return_type_clause
 	:	'contained a' type
 	;
 block_unit
-	:	'opened' 'closed';
+	:	'opened' (statement_list | function) 'closed';
 	
 function_invocation
 	:	identifier '(' function_invocation_argument_list? ')'
@@ -117,9 +118,29 @@ function_invocation_argument_list
 
 
 // Statements
+statement_list
+	:	return
+	|	comment
+	|	while_loop
+	|	if_block
+	;
+
 return	:	'Alice found' constant
 	;
+	
 comment	:	'###' .*
+	;
+	
+while_loop
+	:	'eventually' 'because' statement_list 'enough times'
+	;
+	
+if_block
+	:	'perhaps' 'so' statement_list else_block* 'because Alice was unsure which'
+	;
+
+else_block
+	:	'or' ('maybe' 'so')? statement_list
 	;
 
 /*
