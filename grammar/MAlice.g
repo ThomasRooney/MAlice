@@ -6,32 +6,27 @@ options {
 
 //expr	:	'+' term expr_left | '-' term expr_left | term;
 
-/*primary_expr
-	:
-	
-	:	constant
-	|	CHARACTER_LITERAL
-	|	'(' expression ')'
+
+expression
+	:	additive_expr
 	;
 
 
-expression 
-	:	assignment_expr (split assignment_expr)*	
-	;
 
 assignment_expr
-	:	lvalue 'became' assignment_expr
+	:	lvalue 'became' expression
 	;
+	
 
 lvalue	:	identifier
 	;
 
 additive_expr
-	:	(multiplicactive_expr) ('+' multiplicactive_expr  |'-' multiplicactive_expr)*
+	:	(multiplicactive_expr) ('+' multiplicactive_expr  | '-' multiplicactive_expr)*
 	;
 
 multiplicactive_expr
-	:	bitwise_expr ('*' bitwise_expr | '/' bitwise_expr | '%' bitwise_expr)*
+	:	(bitwise_expr) ('*' bitwise_expr | '/' bitwise_expr | '%' bitwise_expr)*
 	;
 
 bitwise_expr
@@ -40,9 +35,10 @@ bitwise_expr
 
 unary_expr
 	:	unary_operator bitwise_expr
-	|	primary_expr
+	|	constant
+	|	'(' additive_expr ')'
 	;
-*/
+
 
 identifier
 	:	LETTER (LETTER | '0'..'9')*
@@ -128,8 +124,6 @@ function_invocation_argument_list
 assignment
 	:	identifier 'became' expression
 	;
-expression
-	:	constant;
 
 // Statements
 statement_list
