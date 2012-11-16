@@ -92,7 +92,14 @@ constant:	DECIMAL_NUMBER
 // Programs and functions
 program	:	function+;
 
-function:	'The' ('room' | 'looking-glass') IDENTIFIER '(' ')' 'contained a' type block_unit;
+function:	'The' function_type identifier '(' ')' return_type_clause? block_unit;
+function_type
+	:	'room'
+	| 	'looking-glass'
+	;
+return_type_clause
+	:	'contained a' type
+	;
 block_unit
 	:	'opened' 'closed';
 
@@ -142,11 +149,12 @@ atom	:	INT
 //Factor 	:	ID | NUMBER;
 
 // Types
-IDENTIFIER	
-	:	('a'..'z'|'A'..'Z')+;
+LETTER	:	('a'..'z' | 'A'..'Z')
+	;
 
 CHARACTER_LITERAL
-	:	'"' LETTER '"'	;
+	:	'"' LETTER '"'
+	;
 	
 	
 DECIMAL_NUMBER
