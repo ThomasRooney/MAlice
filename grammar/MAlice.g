@@ -119,6 +119,8 @@ function_invocation_argument_list
 // Statements
 return	:	'Alice found' constant
 	;
+comment	:	'###' .*
+	;
 
 /*
 argumentlist 
