@@ -119,13 +119,14 @@ function_invocation_argument_list
 
 // Statements
 statement_list
-	:	return
+	:	return_statement
 	|	comment
 	|	while_loop
 	|	if_block
 	;
 
-return	:	'Alice found' constant
+return_statement
+	:	'Alice found' constant
 	;
 	
 comment	:	'###' .*
