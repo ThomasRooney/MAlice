@@ -48,7 +48,8 @@ declarationlist
 	:	declaration split declarationlist;
 */
 type 	:	'number'
-        |       'letter'
+        |   'letter'
+        |	'sentence'
         ;
 
 // Programs and functions
@@ -100,6 +101,7 @@ statement_list
 	|	while_loop
 	|	if_block
 	|	input_statement
+	|	'.'
 	;
 
 return_statement
@@ -124,6 +126,8 @@ variable_declaration
 input_statement
 	:	'what was' IDENTIFIER '?';
 	
+spoke_statement
+	:	expression 'spoke';
 
 	
 // Types
@@ -136,6 +140,9 @@ IDENTIFIER
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
 	;
+	
+STRING_LITERAL
+	:	'"' ~('"')* '"';
 	
 	
 // This is a silly solution so antlr interpreter works correctly
