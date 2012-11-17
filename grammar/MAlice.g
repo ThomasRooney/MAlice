@@ -16,6 +16,7 @@ assignment_expr
 	
 
 lvalue	:	IDENTIFIER
+	|	IDENTIFIER '\'s' ('0'..'9') 'piece'
 	;
 
 additive_expr
