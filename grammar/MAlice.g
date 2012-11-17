@@ -4,9 +4,6 @@ options {
 	language=C;
 }
 
-//expr	:	'+' term expr_left | '-' term expr_left | term;
-
-
 expression
 	:	additive_expr
 	;
@@ -146,51 +143,7 @@ if_block
 else_block
 	:	'or' ('maybe' expression 'so')? statement_list
 	;
-
-/*
-argumentlist 
-	:	(declaration ('"'|'and'))* declaration;
 	
-blockunit
-	:	'opened' statementlist 'closed';
-
-statementlist 
-	:	(statement split statementlist)?;
-
-statement
-	:	declaration | assignment;
-
-assignment
-	:	ID 'became' (expr | character);
-
-character 
-	:	'\'' ['a'..'z'|'A'..'Z'] '\'';
-*/	
-/*prog	: ( stat {print $stat.tree.toStringTree();} )+ ;
-
-stat	:	expr NEWLINE        -> expr
-	|	ID '=' expr NEWLINE -> ^('=' ID expr)
-	|	NEWLINE             ->
-	;
-
-expr	:	multExpr (('+'^|'-'^) multExpr)*
-	;
-
-multExpr
-	:	atom ('*'^ atom)*
-	;
-
-atom	:	INT
-	|	ID
-	|	RPARENT! expr RPAREN!
-	;*/
-	
-//Expression
-//	:	Expression '+' Term | Expression '-' Term | Term;
-//Term	:	Term '*' BitTerm | BitTerm;
-//BitTerm	:	BitTerm '^' Factor | Factor;
-//Factor 	:	ID | NUMBER;
-
 // Types
 LETTER	:	('a'..'z' | 'A'..'Z')
 	;
