@@ -119,7 +119,7 @@ else_block
 	;
 	
 variable_declaration
-	:	IDENTIFIER 'was a' type ('of');
+	:	IDENTIFIER 'was a' type ('of' (expression))?;
 	
 input_statement
 	:	'what was' IDENTIFIER '?';
