@@ -48,7 +48,8 @@ declarationlist
 	:	declaration split declarationlist;
 */
 type 	:	'number'
-        |       'letter'
+        |   'letter'
+        |	'sentence'
         ;
 
 // Programs and functions
