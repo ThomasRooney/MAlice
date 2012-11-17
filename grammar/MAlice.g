@@ -126,7 +126,7 @@ input_statement
 	:	'what was' IDENTIFIER '?';
 	
 spoke_statement
-	:	STRING_LITERAL 'spoke';
+	:	expression 'spoke';
 
 	
 // Types
