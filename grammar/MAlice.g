@@ -125,6 +125,8 @@ variable_declaration
 input_statement
 	:	'what was' IDENTIFIER '?';
 	
+spoke_statement
+	:	STRING_LITERAL 'spoke';
 
 	
 // Types
@@ -137,6 +139,9 @@ IDENTIFIER
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
 	;
+	
+STRING_LITERAL
+	:	'"' ~('"')* '"';
 	
 	
 // This is a silly solution so antlr interpreter works correctly
