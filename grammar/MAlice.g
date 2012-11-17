@@ -30,7 +30,7 @@ multiplicactive_expr
 	;
 
 bitwise_expr
-	:	(unary_expr) ('^' unary_expr | '|' unary_expr |'&' unary_expr)*
+	:	unary_expr //(unary_expr) ('^' unary_expr | '|' unary_expr |'&' unary_expr)*
 	;
 
 unary_expr
@@ -82,8 +82,7 @@ unary_operator
 
 
 // Programs and functions
-program	:	(function
-	|	 comment)+;
+program	:	function+;
 
 
 
@@ -102,7 +101,7 @@ return_type_clause
 	:	'contained a' type
 	;
 block_unit
-	:	'opened' (statement_list | function) 'closed';
+	:	'opened' (statement_list | function)? 'closed';
 	
 function_invocation
 	:	identifier LPAREN function_invocation_argument_list? RPAREN
@@ -128,16 +127,12 @@ assignment
 // Statements
 statement_list
 	:	return_statement
-	|	comment
 	|	while_loop
 	|	if_block
 	;
 
 return_statement
 	:	'Alice found' constant
-	;
-	
-comment	:	'###' .*
 	;
 	
 while_loop
@@ -213,7 +208,13 @@ ZERO_NUMBER
 NON_ZERO_DECIMAL_NUMBER
 	:	'1'..'9' '0'..'9'*
 	;
+	
+// Based on the ANSI-C whitespace grammar.
+WS	:	 (' ' | '\t' | '\r' | '\n') {$channel=HIDDEN;}
+    	;
 
+// Based on the ANSI-C line comment grammar.
+COMMENT	:	'###' ~('\n'|'\r')* NEWLINE {$channel=HIDDEN;};
 NEWLINE	:	'\r'? '\n' ;
 LPAREN	:	'(';
 RPAREN	:	')';
