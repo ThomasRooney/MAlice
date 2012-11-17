@@ -36,7 +36,7 @@ bitwise_expr
 unary_expr
 	:	unary_operator bitwise_expr
 	|	constant
-	|	RPAREN additive_expr RPAREN
+	|	LPAREN additive_expr RPAREN
 	;
 
 
@@ -87,7 +87,7 @@ program	:	(function
 
 
 
-function:	'The' function_type identifier	RPARENT function_argument_list? RPAREN return_type_clause? block_unit;
+function:	'The' function_type identifier LPAREN function_argument_list? RPAREN return_type_clause? block_unit;
 function_type
 	:	'room'
 	| 	'looking-glass'
@@ -105,7 +105,7 @@ block_unit
 	:	'opened' (statement_list | function) 'closed';
 	
 function_invocation
-	:	identifier	RPAREN function_invocation_argument_list? RPAREN
+	:	identifier LPAREN function_invocation_argument_list? RPAREN
 	;
 
 constant:	NON_ZERO_DECIMAL_NUMBER
@@ -145,11 +145,11 @@ while_loop
 	;
 	
 if_block
-	:	'perhaps' 'so' statement_list else_block* 'because Alice was unsure which'
+	:	'perhaps' expression 'so' statement_list else_block* 'because Alice was unsure which'
 	;
 
 else_block
-	:	'or' ('maybe' 'so')? statement_list
+	:	'or' ('maybe' expression 'so')? statement_list
 	;
 
 /*
