@@ -19,19 +19,20 @@ lvalue	:	IDENTIFIER
 	;
 
 additive_expr
-	:	(multiplicactive_expr) ('+' multiplicactive_expr  | '-' multiplicactive_expr)*
+	:	(multiplicactive_expr) (('+'|'-') multiplicactive_expr)*
 	;
 
+
 multiplicactive_expr
-	:	(bitwise_expr) ('*' bitwise_expr | '/' bitwise_expr | '%' bitwise_expr)*
+	:	(bitwise_expr) (('*'|'/'|'%') bitwise_expr)*
 	;
 
 bitwise_expr
-	:	unary_expr //(unary_expr) ('^' unary_expr | '|' unary_expr |'&' unary_expr)*
+	:	(unary_expr) (('^'|'|'|'&') unary_expr)*
 	;
 
 unary_expr
-	:	unary_operator bitwise_expr
+	:	'~' unary_expr
 	|	constant
 	|	LPAREN additive_expr RPAREN
 	;
@@ -49,12 +50,6 @@ declarationlist
 type 	:	'number'
         |       'letter'
         ;
-        
-unary_operator
-	:	'~'
-	;
-	
-
 
 // Programs and functions
 program	:	function+;
