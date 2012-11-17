@@ -15,7 +15,7 @@ assignment_expr
 	;
 	
 
-lvalue	:	identifier
+lvalue	:	IDENTIFIER
 	;
 
 additive_expr
@@ -35,28 +35,6 @@ unary_expr
 	|	constant
 	|	LPAREN additive_expr RPAREN
 	;
-
-
-identifier
-	:	LETTER (LETTER | '0'..'9')*
-	;
-
-
-/*	
-expr_left
-	:	(expr expr_left) | '';
-	
-term 	:	('*' | '/' | '%') bit_term term_left | bit_term;
-term_left
-	:	(term term_left) | '';
-	
-bit_term:	('^' | '|' | '&') factor bit_term_left | factor;
-bit_term_left
-	:	(bit_term bit_term_left) | '';
-*/
-	
-// factor	:	ID | NUMBER | '~' factor;
-
 
 split 	:	('.' | ','|'then'|'and'|'but');
 /*
@@ -83,7 +61,7 @@ program	:	function+;
 
 
 
-function:	'The' function_type identifier LPAREN function_argument_list? RPAREN return_type_clause? block_unit;
+function:	'The' function_type IDENTIFIER LPAREN function_argument_list? RPAREN return_type_clause? block_unit;
 function_type
 	:	'room'
 	| 	'looking-glass'
@@ -92,7 +70,7 @@ function_argument_list
 	:	(function_argument ',')* function_argument
 	;
 function_argument
-	:	type identifier
+	:	type IDENTIFIER
 	;
 return_type_clause
 	:	'contained a' type
@@ -101,7 +79,7 @@ block_unit
 	:	'opened' (statement_list | function)? 'closed';
 	
 function_invocation
-	:	identifier LPAREN function_invocation_argument_list? RPAREN
+	:	IDENTIFIER LPAREN function_invocation_argument_list? RPAREN
 	;
 
 constant:	NON_ZERO_DECIMAL_NUMBER
@@ -118,7 +96,7 @@ function_invocation_argument_list
 //Expression
 
 assignment
-	:	identifier 'became' expression
+	:	IDENTIFIER 'became' expression
 	;
 
 // Statements
@@ -144,9 +122,17 @@ else_block
 	:	'or' ('maybe' expression 'so')? statement_list
 	;
 	
+variable_declaration
+	:	IDENTIFIER 'was a' type ('of');
+	
+
+	
 // Types
 LETTER	:	('a'..'z' | 'A'..'Z')
 	;
+	
+IDENTIFIER
+	:	LETTER (LETTER | '0'..'9' | '-' | '_')*;
 
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
