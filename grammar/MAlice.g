@@ -102,6 +102,8 @@ statement_list
 	|	while_loop
 	|	if_block
 	|	input_statement
+	|	increment_statement
+	|	decrement_statement
 	|	'.'
 	;
 
@@ -130,6 +132,11 @@ input_statement
 spoke_statement
 	:	expression 'spoke';
 
+increment_statement
+	:	IDENTIFIER 'ate';
+	
+decrement_statement
+	:	IDENTIFIER 'drank';
 	
 // Types
 LETTER	:	('a'..'z' | 'A'..'Z')
