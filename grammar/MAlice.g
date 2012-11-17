@@ -35,10 +35,22 @@ bitwise_expr
 unary_expr
 	:	'~' unary_expr
 	|	constant
+//	|	IDENTIFIER
 	|	LPAREN additive_expr RPAREN
 	;
 
 split 	:	('.' | ','|'then'|'and'|'but');
+
+/*boolean_expression
+	:	(expression boolean_comparator expression) (boolean_logic boolean_expression)*
+	;
+
+boolean_logic 
+	:	('&&'|'||');
+	
+boolean_comparator
+	:	'=='|'!=';
+*/	
 /*
 declaration 
 	:	'was a' type declarationleft;
@@ -49,7 +61,7 @@ declarationlist
 	:	declaration split declarationlist;
 */
 type 	:	'number'
-        |   'letter'
+        |   	'letter'
         |	'sentence'
         ;
 
