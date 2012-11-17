@@ -104,6 +104,7 @@ statement_list
 	:	return_statement
 	|	while_loop
 	|	if_block
+	|	input_statement
 	;
 
 return_statement
@@ -124,6 +125,9 @@ else_block
 	
 variable_declaration
 	:	IDENTIFIER 'was a' type ('of');
+	
+input_statement
+	:	'what was' IDENTIFIER '?';
 	
 
 	
