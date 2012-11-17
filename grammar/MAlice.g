@@ -16,7 +16,6 @@ assignment_expr
 	
 
 lvalue	:	IDENTIFIER
-	|	IDENTIFIER '\'s' ('0'..'9') 'piece'
 	;
 
 additive_expr
@@ -41,8 +40,13 @@ unary_expr
 
 split 	:	('.' | ','|'then'|'and'|'but');
 
-/*boolean_expression
-	:	(expression boolean_comparator expression) (boolean_logic boolean_expression)*
+
+boolean_expression
+	:	(single_boolean_expression) (boolean_logic single_boolean_expression)*
+	;
+	
+single_boolean_expression
+	:	(expression boolean_comparator expression)
 	;
 
 boolean_logic 
@@ -50,7 +54,7 @@ boolean_logic
 	
 boolean_comparator
 	:	'=='|'!=';
-*/	
+	
 /*
 declaration 
 	:	'was a' type declarationleft;
@@ -79,7 +83,7 @@ function_argument_list
 	:	(function_argument ',')* function_argument
 	;
 function_argument
-	:	'spider' type IDENTIFIER
+	:	type IDENTIFIER
 	;
 return_type_clause
 	:	'contained a' type
@@ -114,8 +118,6 @@ statement_list
 	|	while_loop
 	|	if_block
 	|	input_statement
-	|	increment_statement
-	|	decrement_statement
 	|	'.'
 	;
 
@@ -144,11 +146,6 @@ input_statement
 spoke_statement
 	:	expression 'spoke';
 
-increment_statement
-	:	IDENTIFIER 'ate';
-	
-decrement_statement
-	:	IDENTIFIER 'drank';
 	
 // Types
 LETTER	:	('a'..'z' | 'A'..'Z')
