@@ -16,6 +16,7 @@ assignment_expr
 	
 
 lvalue	:	IDENTIFIER
+	|	IDENTIFIER '\'s' ('0'..'9') 'piece'
 	;
 
 additive_expr
@@ -78,7 +79,7 @@ function_argument_list
 	:	(function_argument ',')* function_argument
 	;
 function_argument
-	:	type IDENTIFIER
+	:	'spider' type IDENTIFIER
 	;
 return_type_clause
 	:	'contained a' type
@@ -113,6 +114,8 @@ statement_list
 	|	while_loop
 	|	if_block
 	|	input_statement
+	|	increment_statement
+	|	decrement_statement
 	|	'.'
 	;
 
@@ -141,6 +144,11 @@ input_statement
 spoke_statement
 	:	expression 'spoke';
 
+increment_statement
+	:	IDENTIFIER 'ate';
+	
+decrement_statement
+	:	IDENTIFIER 'drank';
 	
 // Types
 LETTER	:	('a'..'z' | 'A'..'Z')
