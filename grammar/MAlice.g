@@ -99,6 +99,7 @@ statement_list
 	:	return_statement
 	|	while_loop
 	|	if_block
+	|	input_statement
 	;
 
 return_statement
@@ -110,7 +111,7 @@ while_loop
 	;
 	
 if_block
-	:	'perhaps' expression 'so' statement_list else_block* 'because Alice was unsure which'
+	:	'perhaps' expression 'so' statement_list else_block* 'because Alice was unsure which' '.'?
 	;
 
 else_block
@@ -119,6 +120,9 @@ else_block
 	
 variable_declaration
 	:	IDENTIFIER 'was a' type ('of');
+	
+input_statement
+	:	'what was' IDENTIFIER '?';
 	
 
 	
