@@ -36,7 +36,7 @@ bitwise_expr
 unary_expr
 	:	unary_operator bitwise_expr
 	|	constant
-	|	RPARENT additive_expr RPAREN
+	|	RPAREN additive_expr RPAREN
 	;
 
 
@@ -105,7 +105,7 @@ block_unit
 	:	'opened' (statement_list | function) 'closed';
 	
 function_invocation
-	:	identifier	RPARENT function_invocation_argument_list? RPAREN
+	:	identifier	RPAREN function_invocation_argument_list? RPAREN
 	;
 
 constant:	NON_ZERO_DECIMAL_NUMBER
