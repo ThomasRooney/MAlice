@@ -67,7 +67,7 @@ function_argument_list
 	:	(function_argument ',')* function_argument
 	;
 function_argument
-	:	type IDENTIFIER
+	:	'spider' type IDENTIFIER
 	;
 return_type_clause
 	:	'contained a' type
