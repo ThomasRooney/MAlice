@@ -105,6 +105,7 @@ statement_list
 	|	while_loop
 	|	if_block
 	|	input_statement
+	|	'.'
 	;
 
 return_statement
