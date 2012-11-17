@@ -115,7 +115,7 @@ while_loop
 	;
 	
 if_block
-	:	'perhaps' expression 'so' statement_list else_block* 'because Alice was unsure which'
+	:	'perhaps' expression 'so' statement_list else_block* 'because Alice was unsure which' '.'?
 	;
 
 else_block
