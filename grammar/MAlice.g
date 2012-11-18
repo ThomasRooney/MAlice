@@ -43,14 +43,14 @@ split 	:	('.' | ','|'then'|'and'|'but');
 
 
 boolean_expression
-	:	(single_boolean_expression) (boolean_logic single_boolean_expression)*
+	:	single_boolean_expression (boolean_operator single_boolean_expression)*
 	;
 	
 single_boolean_expression
 	:	(expression boolean_comparator expression)
 	;
 
-boolean_logic 
+boolean_operator 
 	:	('&&'|'||');
 	
 boolean_comparator
