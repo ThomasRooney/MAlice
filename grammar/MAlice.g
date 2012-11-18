@@ -96,8 +96,7 @@ function_invocation
 	:	IDENTIFIER LPAREN function_invocation_argument_list? RPAREN
 	;
 
-constant:	NON_ZERO_DECIMAL_NUMBER
-	|	ZERO_NUMBER
+constant:	NUMBER_LITERAL
 	|	CHARACTER_LITERAL
 	;
 	
@@ -162,15 +161,8 @@ CHARACTER_LITERAL
 STRING_LITERAL
 	:	'"' ~('"')* '"';
 	
-	
-// This is a silly solution so antlr interpreter works correctly
-ZERO_NUMBER
-	:	'0'
-	;
-	
-NON_ZERO_DECIMAL_NUMBER
-	:	'1'..'9' '0'..'9'*
-	;
+NUMBER_LITERAL
+	:	'0' | '1'..'9' '0'..'9'*;
 	
 // Based on the ANSI-C whitespace grammar.
 WS	:	 (' ' | '\t' | '\r' | '\n') {$channel=HIDDEN;}
