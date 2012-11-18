@@ -142,7 +142,7 @@ variable_declaration
 	:	IDENTIFIER 'was a' type ('of' (expression))?;
 	
 input_statement
-	:	'what was' IDENTIFIER '?';
+	:	'what was' lvalue '?';
 	
 spoke_statement
 	:	expression 'spoke';
