@@ -39,8 +39,6 @@ unary_expr
 	|	LPAREN additive_expr RPAREN
 	;
 
-split 	:	('.' | ','|'then'|'and'|'but');
-
 
 boolean_expression
 	:	single_boolean_expression (boolean_operator single_boolean_expression)*
@@ -81,7 +79,7 @@ return_type_clause
 	:	'contained a' type
 	;
 block_unit
-	:	'opened' (statement_list | function)? 'closed';
+	:	'opened' (statement_list | function)+ 'closed';
 	
 function_invocation
 	:	IDENTIFIER LPAREN function_invocation_argument_list? RPAREN
@@ -105,11 +103,17 @@ assignment
 
 // Statements
 statement_list
+	:	(statement_component split)* statement_component '.'
+	|	'.'
+	;
+	
+split 	:	(',' | 'then' | 'and' | 'but');
+	
+statement_component
 	:	return_statement
 	|	while_loop
 	|	if_block
 	|	input_statement
-	|	'.'
 	;
 
 return_statement
