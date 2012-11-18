@@ -129,7 +129,7 @@ else_block
 	;
 	
 variable_declaration
-	:	IDENTIFIER 'was a' type ('of' (expression))?;
+	:	IDENTIFIER 'was a' type ('of' (expression))? 'too'?;
 	
 input_statement
 	:	'what was' lvalue '?';
