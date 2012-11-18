@@ -20,16 +20,16 @@ lvalue	:	IDENTIFIER
 	;
 
 additive_expr
-	:	(multiplicactive_expr) (('+'|'-') multiplicactive_expr)*
+	:	multiplicactive_expr (('+'|'-') multiplicactive_expr)*
 	;
 
 
 multiplicactive_expr
-	:	(bitwise_expr) (('*'|'/'|'%') bitwise_expr)*
+	:	bitwise_expr (('*'|'/'|'%') bitwise_expr)*
 	;
 
 bitwise_expr
-	:	(unary_expr) (('^'|'|'|'&') unary_expr)*
+	:	unary_expr (('^'|'|'|'&') unary_expr)*
 	;
 
 unary_expr
@@ -47,7 +47,7 @@ boolean_expression
 	;
 	
 single_boolean_expression
-	:	(expression boolean_comparator expression)
+	:	expression boolean_comparator expression
 	;
 
 boolean_operator 
