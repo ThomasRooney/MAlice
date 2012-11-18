@@ -56,15 +56,6 @@ boolean_operator
 boolean_comparator
 	:	'=='|'!=';
 	
-/*
-declaration 
-	:	'was a' type declarationleft;
-declarationleft
-	:	ID declaration;
-	
-declarationlist 
-	:	declaration split declarationlist;
-*/
 type 	:	'number'
         |   	'letter'
         |	'sentence'
