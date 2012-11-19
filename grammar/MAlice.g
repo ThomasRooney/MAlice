@@ -58,11 +58,15 @@ program	:	function+;
 
 
 
-function:	'The' function_type IDENTIFIER LPAREN function_argument_list? RPAREN return_type_clause? block_unit;
-function_type
-	:	'room'
-	| 	'looking-glass'
+function:	'The' function_declaration block_unit;
+
+// This has been written in this form to match the reference compiler; it is a parse error for 'room' functions to not be followed
+// by a return_type_clause.
+function_declaration
+	:	'room' 		IDENTIFIER LPAREN function_argument_list? RPAREN return_type_clause 
+	|	'looking-glass' IDENTIFIER LPAREN function_argument_list? RPAREN
 	;
+	
 function_argument_list
 	:	(function_argument ',')* function_argument
 	;
