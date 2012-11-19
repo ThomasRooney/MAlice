@@ -35,7 +35,7 @@ bitwise_expr
 unary_expr
 	:	('+' | '-' | '~' | '!') unary_expr
 	|	constant
-//	|	IDENTIFIER
+	|	lvalue
 	|	LPAREN additive_expr RPAREN
 	;
 
