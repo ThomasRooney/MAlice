@@ -53,34 +53,31 @@ type 	:	'number'
         |	'sentence'
         ;
 
-// Programs and functions
+// Programs, procedures and functions
 program	:	function+;
 
-
-
-function:	'The' function_declaration block_unit;
-
-// This has been written in this form to match the reference compiler; it is a parse error for 'room' functions to not be followed
-// by a return_type_clause.
-function_declaration
-	:	'room' 		IDENTIFIER LPAREN function_argument_list? RPAREN return_type_clause 
-	|	'looking-glass' IDENTIFIER LPAREN function_argument_list? RPAREN
+function:	'The room' proc_func_declaration 'contained a' type block_unit;
+procedure
+	:	'The looking-glass' proc_func_declaration block_unit;
 	;
 	
-function_argument_list
-	:	(function_argument ',')* function_argument
+proc_func_declaration
+	:	IDENTIFIER LPAREN proc_func_argument_list? RPAREN
 	;
-function_argument
+	
+proc_func_argument_list
+	:	(proc_func_argument ',')* proc_func_argument
+	;
+	
+proc_func_argument
 	:	type IDENTIFIER
 	;
-return_type_clause
-	:	'contained a' type
-	;
+	
 block_unit
 	:	'opened' (statement_list | function)+ 'closed';
-	
-function_invocation
-	:	IDENTIFIER LPAREN function_invocation_argument_list? RPAREN
+
+proc_func_invocation
+	:	IDENTIFIER LPAREN proc_func_invocation_argument_list? RPAREN
 	;
 
 constant:	NUMBER_LITERAL
@@ -90,7 +87,7 @@ constant:	NUMBER_LITERAL
 
 
 // Programs and functions
-function_invocation_argument_list
+proc_func_invocation_argument_list
 	:	(constant ',')* constant
 	;
 //Expression
