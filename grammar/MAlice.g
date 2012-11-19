@@ -19,7 +19,7 @@ program	:	function+;
 
 function:	'The room' IDENTIFIER LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
 procedure
-	:	'The looking-glass' IDENTIFIER LPAREN declaration_argument_list? RPAREN block_unit;
+	:	'The looking-glass' IDENTIFIER LPAREN declaration_argument_list? RPAREN block_unit
 	;
 	
 declaration_argument_list
@@ -31,7 +31,8 @@ declaration_argument
 	;
 	
 block_unit
-	:	'opened' (statement_list | function)+ 'closed';
+	:	'opened' (statement_list | function)+ 'closed'
+;
 
 proc_func_invocation
 	:	IDENTIFIER LPAREN proc_func_invocation_argument_list? RPAREN
