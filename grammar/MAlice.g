@@ -4,72 +4,29 @@ options {
 	language=C;
 }
 
-expression
-	:	additive_expr
-	;
-
-
-
-assignment_expr
-	:	lvalue 'became' expression
-	;
-	
-
-lvalue	:	IDENTIFIER
-	|	IDENTIFIER '\'s' expression 'piece'
-	;
-
-additive_expr
-	:	multiplicactive_expr (('+'|'-') multiplicactive_expr)*
-	;
-
-
-multiplicactive_expr
-	:	bitwise_expr (('*'|'/'|'%') bitwise_expr)*
-	;
-
-bitwise_expr
-	:	unary_expr (('^'|'|'|'&') unary_expr)*
-	;
-
-unary_expr
-	:	('+' | '-' | '~' | '!') unary_expr
-	|	constant
-	|	lvalue
-	|	LPAREN additive_expr RPAREN
-	;
-
-
-boolean_expression
-	:	single_boolean_expression (('&&' | '||') single_boolean_expression)*
-	;
-	
-single_boolean_expression
-	:	expression ('==' | '!=') expression
-	;
-	
+// Types and constants
 type 	:	'number'
         |   	'letter'
         |	'sentence'
         ;
+        
+constant:	NUMBER_LITERAL
+	|	CHARACTER_LITERAL
+	;
 
 // Programs, procedures and functions
 program	:	function+;
 
-function:	'The room' proc_func_declaration 'contained a' type block_unit;
+function:	'The room' IDENTIFIER LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
 procedure
-	:	'The looking-glass' proc_func_declaration block_unit;
+	:	'The looking-glass' IDENTIFIER LPAREN declaration_argument_list? RPAREN block_unit;
 	;
 	
-proc_func_declaration
-	:	IDENTIFIER LPAREN proc_func_argument_list? RPAREN
+declaration_argument_list
+	:	(declaration_argument ',')* declaration_argument
 	;
 	
-proc_func_argument_list
-	:	(proc_func_argument ',')* proc_func_argument
-	;
-	
-proc_func_argument
+declaration_argument
 	:	type IDENTIFIER
 	;
 	
@@ -79,12 +36,6 @@ block_unit
 proc_func_invocation
 	:	IDENTIFIER LPAREN proc_func_invocation_argument_list? RPAREN
 	;
-
-constant:	NUMBER_LITERAL
-	|	CHARACTER_LITERAL
-	;
-	
-
 
 // Programs and functions
 proc_func_invocation_argument_list
@@ -136,8 +87,47 @@ input_statement
 spoke_statement
 	:	expression 'spoke';
 
+// Expressions
+expression
+	:	additive_expr
+	;
+
+assignment_expr
+	:	lvalue 'became' expression
+	;	
+
+lvalue	:	IDENTIFIER
+	|	IDENTIFIER '\'s' expression 'piece'
+	;
+
+additive_expr
+	:	multiplicactive_expr (('+'|'-') multiplicactive_expr)*
+	;
+
+multiplicactive_expr
+	:	bitwise_expr (('*'|'/'|'%') bitwise_expr)*
+	;
+
+bitwise_expr
+	:	unary_expr (('^'|'|'|'&') unary_expr)*
+	;
+
+unary_expr
+	:	('+' | '-' | '~' | '!') unary_expr
+	|	constant
+	|	lvalue
+	|	LPAREN additive_expr RPAREN
+	;
+
+boolean_expression
+	:	single_boolean_expression (('&&' | '||') single_boolean_expression)*
+	;
 	
-// Types
+single_boolean_expression
+	:	expression ('==' | '!=') expression
+	;
+	
+// Lexer rules
 LETTER	:	('a'..'z' | 'A'..'Z')
 	;
 	
