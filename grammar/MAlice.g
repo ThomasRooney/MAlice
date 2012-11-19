@@ -67,19 +67,19 @@ return_statement
 	;
 	
 while_loop
-	:	'eventually' 'because' statement_list 'enough times'
+	:	'eventually' boolean_expression 'because' statement_list 'enough times'
 	;
 	
 if_block
-	:	'perhaps' expression 'so' statement_list else_block* 'because Alice was unsure which' '.'?
+	:	'perhaps' boolean_expression 'so' statement_list else_block* 'because Alice was unsure which' '.'?
 	;
 
 else_block
-	:	'or' ('maybe' expression 'so')? statement_list
+	:	'or' ('maybe' boolean_expression 'so')? statement_list
 	;
 	
 variable_declaration
-	:	IDENTIFIER 'was a' type ('of' (expression))? 'too'?;
+	:	IDENTIFIER 'was a' type ('of' expression)? 'too'?;
 	
 input_statement
 	:	'what was' lvalue '?';
