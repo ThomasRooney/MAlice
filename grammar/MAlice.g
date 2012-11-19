@@ -41,18 +41,12 @@ unary_expr
 
 
 boolean_expression
-	:	single_boolean_expression (boolean_operator single_boolean_expression)*
+	:	single_boolean_expression (('&&' | '||') single_boolean_expression)*
 	;
 	
 single_boolean_expression
-	:	expression boolean_comparator expression
+	:	expression ('==' | '!=') expression
 	;
-
-boolean_operator 
-	:	('&&'|'||');
-	
-boolean_comparator
-	:	'=='|'!=';
 	
 type 	:	'number'
         |   	'letter'
