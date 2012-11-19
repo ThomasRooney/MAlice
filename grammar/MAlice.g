@@ -98,7 +98,7 @@ function_invocation_argument_list
 //Expression
 
 assignment
-	:	IDENTIFIER 'became' expression
+	:	lvalue 'became' expression
 	;
 
 // Statements
