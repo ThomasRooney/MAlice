@@ -56,16 +56,17 @@ assignment
 
 // Statements
 
-declaration_split 	:	(COMMA | THEN | AND | BUT);
+declaration_split 	:	(COMMA | THEN | AND | BUT | split);
 split	:	'.';
 
 statement_component
 	:	(expression SPOKE) => spoke_statement
+	|	(identifier LPAREN) => proc_func_invocation
 	|	return_statement
 	|	while_loop
 	|	if_block	
 	|	assignment_expr
-	|	input_statement
+	|	input_statement	
 	|	'.'
 	;
 statement_list
@@ -124,7 +125,8 @@ bitwise_expr
 	;
 
 unary_expr
-	:	('+' | '-' | '~' | '!') unary_expr
+	:	(identifier LPAREN) => proc_func_invocation
+	| 	('+' | '-' | '~' | '!') unary_expr
 	|	constant
 	|	lvalue
 	|	LPAREN additive_expr RPAREN
