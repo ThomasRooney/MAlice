@@ -47,29 +47,30 @@ proc_func_invocation_argument_list
 //Expression
 
 assignment
-	:	lvalue 'became' expression
+	:	lvalue BECAME expression
 	;
 
 // Statements
 
-split 	:	(',' | 'then' | 'and' | 'but');
+declaration_split 	:	(COMMA | THEN | AND | BUT);
+split	:	'.';
 
 statement_component
 	:	return_statement
 	|	while_loop
-	|	if_block
+	|	if_block	
 	|	assignment_expr
 	|	input_statement
+	|	'.'
 	;
 statement_list
-	:	(statement_component split)*
-	|	'.'
+	:	(statement_component) (split statement_component)*
 	;
 	
 	
 
 return_statement
-	:	'Alice found' constant
+	:	ALICEFOUND constant
 	;
 	
 while_loop
@@ -77,7 +78,7 @@ while_loop
 	;
 	
 if_block
-	:	'perhaps' boolean_expression 'so' statement_list else_block* 'because Alice was unsure which' '.'?
+	:	'perhaps' boolean_expression 'so' statement_list else_block* 'because Alice was unsure which'
 	;
 
 else_block
@@ -85,17 +86,17 @@ else_block
 	;
 	
 declaration_list
-	:	(variable_declaration | procedure)? (split (variable_declaration | procedure))*
+	:	((variable_declaration | procedure) declaration_split)*
 	; 
 	
 variable_declaration
-	:	identifier 'was a' type ('of' expression)? 'too'?;
+	:	identifier WASA type ('of' expression)? 'too'?;
 	
 input_statement
 	:	'what was' lvalue '?';
 	
 spoke_statement
-	:	expression 'spoke';
+	:	expression SPOKE;
 
 // Expressions
 expression
@@ -106,8 +107,7 @@ assignment_expr
 	:	lvalue 'became' expression
 	;	
 
-lvalue	:	identifier
-	|	identifier '\'s' expression 'piece'
+lvalue	:	identifier ('\'s' expression 'piece')?
 	;
 
 additive_expr
@@ -165,6 +165,16 @@ LPAREN	:	'(';
 RPAREN	:	')';
 OPENED 	:	'opened';
 CLOSED	:	'closed';
-THEROOM	:	'The room';
+
 THELOOKINGGLASS
 	:	'The looking-glass';
+THEROOM	:	'The room';
+SPOKE	:	'spoke';
+WASA	:	'was a';
+BECAME	:	'became';
+ALICEFOUND
+	:	'alice found';
+COMMA	:	',';
+THEN	:	'then';
+AND	:	'and';
+BUT	:	'but';
