@@ -5,7 +5,7 @@ options {
 }
 
 // Programs, procedures and functions
-program	:	(function|procedure)+;
+program	:	(variable_declaration declaration_split)* (function|procedure)+;
 
 
 // Types and constants
