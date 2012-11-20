@@ -4,6 +4,10 @@ options {
 	language=Java;
 }
 
+// Programs, procedures and functions
+program	:	(function|procedure)+;
+
+
 // Types and constants
 
 
@@ -16,8 +20,6 @@ constant:	NUMBER_LITERAL
 	|	CHARACTER_LITERAL
 	;
 
-// Programs, procedures and functions
-program	:	(function|procedure)+;
 
 function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
 
