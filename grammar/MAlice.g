@@ -53,21 +53,24 @@ assignment
 // Statements
 
 declaration_split 	:	(COMMA | THEN | AND | BUT | split);
+
+
 split	:	'.';
 
-statement_component
-	:	(identifier LPAREN) => proc_func_invocation
-	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement
-	|	(ALICEFOUND expression) => return_statement
-	|	while_loop
-	|	if_block	
-	|	assignment_expr
-	|	input_statement	
-	|	null_statement
-	;
 statement_list
-	:	statement_component (split statement_component)* split
+	:	statement_component+
 	;
+statement_component
+	:	(identifier LPAREN) => proc_func_invocation split
+	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement split
+	|	(ALICEFOUND expression) => return_statement split
+	|	split
+	|	while_loop split
+	|	if_block split
+	|	assignment_expr split
+	|	input_statement	split
+	;
+
 	
 	
 	
@@ -88,7 +91,7 @@ else_block
 	;
 	
 variable_declaration
-	:	identifier WASA type ('of' expression)? 'too'?;
+	:	identifier (WASA type ('of' expression)? | 'had' expression type) 'too'?;
 	
 input_statement
 	:	'what was' lvalue '?';
@@ -198,4 +201,4 @@ SAIDALICE
 COMMA	:	',';
 THEN	:	'then';
 AND	:	'and';
-fragment BUT	:	'but';
+BUT	:	'but';
