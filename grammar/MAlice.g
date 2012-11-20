@@ -15,27 +15,29 @@ constant:	NUMBER_LITERAL
 	;
 
 // Programs, procedures and functions
-program	:	function+;
+program	:	(function|procedure)+;
 
-function:	'The room' IDENTIFIER LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
-procedure
-	:	'The looking-glass' IDENTIFIER LPAREN declaration_argument_list? RPAREN block_unit
-	;
-	
+function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
+
+
 declaration_argument_list
 	:	(declaration_argument ',')* declaration_argument
 	;
+procedure
+	:	THELOOKINGGLASS identifier LPAREN declaration_argument_list? RPAREN block_unit
+	;
+	
 	
 declaration_argument
-	:	type IDENTIFIER
+	:	type identifier
 	;
 	
 block_unit
-	:	'opened' (statement_list | function)+ 'closed'
-;
+	:	OPENED (declaration_list)? (statement_list)? CLOSED;
+
 
 proc_func_invocation
-	:	IDENTIFIER LPAREN proc_func_invocation_argument_list? RPAREN
+	:	identifier LPAREN proc_func_invocation_argument_list? RPAREN
 	;
 
 // Programs and functions
@@ -49,19 +51,22 @@ assignment
 	;
 
 // Statements
-statement_list
-	:	(statement_component split)* statement_component split
-	|	'.'
-	;
-	
+
 split 	:	(',' | 'then' | 'and' | 'but');
-	
+
 statement_component
 	:	return_statement
 	|	while_loop
 	|	if_block
+	|	assignment_expr
 	|	input_statement
 	;
+statement_list
+	:	(statement_component split)*
+	|	'.'
+	;
+	
+	
 
 return_statement
 	:	'Alice found' constant
@@ -79,8 +84,12 @@ else_block
 	:	'or' ('maybe' boolean_expression 'so')? statement_list
 	;
 	
+declaration_list
+	:	(variable_declaration | procedure)? (split (variable_declaration | procedure))*
+	;
+	
 variable_declaration
-	:	IDENTIFIER 'was a' type ('of' expression)? 'too'?;
+	:	identifier 'was a' type ('of' expression)? 'too'?;
 	
 input_statement
 	:	'what was' lvalue '?';
@@ -97,8 +106,8 @@ assignment_expr
 	:	lvalue 'became' expression
 	;	
 
-lvalue	:	IDENTIFIER
-	|	IDENTIFIER '\'s' expression 'piece'
+lvalue	:	identifier
+	|	identifier '\'s' expression 'piece'
 	;
 
 additive_expr
@@ -128,12 +137,12 @@ single_boolean_expression
 	:	 expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression
 	;
 	
+identifier 
+	:	LETTER (LETTER | '0'..'9' | '-' | '_')*;
+	
 // Lexer rules
 LETTER	:	('a'..'z' | 'A'..'Z')
 	;
-	
-IDENTIFIER
-	:	LETTER (LETTER | '0'..'9' | '-' | '_')*;
 
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
@@ -154,3 +163,8 @@ COMMENT	:	'###' ~('\n'|'\r')* NEWLINE {$channel=HIDDEN;};
 NEWLINE	:	'\r'? '\n' ;
 LPAREN	:	'(';
 RPAREN	:	')';
+OPENED 	:	'opened';
+CLOSED	:	'closed';
+THEROOM	:	'The room';
+THELOOKINGGLASS
+	:	'The looking-glass';
