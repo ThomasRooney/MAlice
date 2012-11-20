@@ -60,7 +60,7 @@ declaration_split 	:	(COMMA | THEN | AND | BUT);
 split	:	'.';
 
 statement_component
-	:	(expression 'spoke') => spoke_statement
+	:	(expression SPOKE) => spoke_statement
 	|	return_statement
 	|	while_loop
 	|	if_block	
@@ -180,4 +180,4 @@ ALICEFOUND
 COMMA	:	',';
 THEN	:	'then';
 AND	:	'and';
-BUT	:	'but';
+fragment BUT	:	'but';
