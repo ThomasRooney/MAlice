@@ -86,7 +86,7 @@ else_block
 	
 declaration_list
 	:	(variable_declaration | procedure)? (split (variable_declaration | procedure))*
-	;
+	; 
 	
 variable_declaration
 	:	identifier 'was a' type ('of' expression)? 'too'?;
