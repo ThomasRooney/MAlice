@@ -62,6 +62,7 @@ split	:	'.';
 statement_component
 	:	(expression SPOKE) => spoke_statement
 	|	(identifier LPAREN) => proc_func_invocation
+	|	(stdout_lvalue SAIDALICE) => stdout_statement
 	|	return_statement
 	|	while_loop
 	|	if_block	
@@ -99,6 +100,15 @@ input_statement
 	
 spoke_statement
 	:	expression SPOKE;
+
+stdout_statement
+	:	(stdout_lvalue SAIDALICE) (AND stdout_lvalue SAIDALICE)*
+	;
+
+stdout_lvalue
+	:	STRING_LITERAL
+	|	expression
+	;
 
 // Expressions
 expression
@@ -179,6 +189,8 @@ WASA	:	'was a';
 BECAME	:	'became';
 ALICEFOUND
 	:	'alice found';
+SAIDALICE
+	:	'said Alice';
 COMMA	:	',';
 THEN	:	'then';
 AND	:	'and';
