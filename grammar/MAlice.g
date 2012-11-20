@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 }
 
 // Types and constants
@@ -35,10 +35,13 @@ declaration_argument
 	;
 	
 block_unit
-options {
-	k = 2;
-}
-	:	OPENED (declaration_list)? statement_list CLOSED;
+	: OPENED body CLOSED;
+	
+body
+	: (identifier WASA) => identifier WASA type body
+	| (THELOOKINGGLASS) => procedure body
+	| (THEROOM) => function body
+	| statement_list;
 
 
 proc_func_invocation
@@ -89,15 +92,6 @@ if_block
 else_block
 	:	'or' ('maybe' boolean_expression 'so')? statement_list
 	;
-	
-declaration_list
-options {
-	k = 2;
-}
-	: 	('The') => (procedure | function) declaration_split declaration_list?
-	| variable_declaration declaration_split declaration_list?
-	|	
-	; 
 	
 variable_declaration
 	:	identifier WASA type ('of' expression)? 'too'?;
