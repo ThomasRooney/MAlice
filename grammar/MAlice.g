@@ -61,12 +61,12 @@ statement_list
 	:	statement_component+
 	;
 statement_component
-	:	(identifier LPAREN) => proc_func_invocation split
+	:	(identifier LPAREN) => proc_func_invocation (options{greedy=true;} : split)?
 	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement split
 	|	(ALICEFOUND expression) => return_statement split
 	|	split
-	|	while_loop split
-	|	if_block split
+	|	while_loop (options{greedy=true;} : split)?
+	|	if_block (options{greedy=true;} : split)?
 	|	assignment_expr split
 	|	input_statement	split
 	;
