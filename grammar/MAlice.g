@@ -19,14 +19,14 @@ constant:	NUMBER_LITERAL
 // Programs, procedures and functions
 program	:	(function|procedure)+;
 
-function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
-
+function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type OPENED body CLOSED
+	;
+procedure
+	:	THELOOKINGGLASS identifier LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
+	;
 
 declaration_argument_list
 	:	(declaration_argument ',')* declaration_argument
-	;
-procedure
-	:	THELOOKINGGLASS identifier LPAREN declaration_argument_list? RPAREN block_unit
 	;
 	
 	
@@ -34,14 +34,8 @@ declaration_argument
 	:	type identifier
 	;
 	
-block_unit
-	: OPENED body CLOSED;
-	
 body
-	: (identifier WASA) => identifier WASA type body
-	| (THELOOKINGGLASS) => procedure body
-	| (THEROOM) => function body
-	| statement_list;
+	: (variable_declaration declaration_split)* statement_list;
 
 
 proc_func_invocation
@@ -72,7 +66,7 @@ statement_component
 	|	'.'
 	;
 statement_list
-	:	(statement_component) (split statement_component)*
+	:	statement_component (split statement_component)* split
 	;
 	
 	
