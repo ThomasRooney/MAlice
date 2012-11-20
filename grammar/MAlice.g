@@ -5,7 +5,7 @@ options {
 }
 
 // Programs, procedures and functions
-program	:	(variable_declaration declaration_split)* (function|procedure)+;
+program	:	(variable_declaration declaration_separator)* (function|procedure)+;
 
 
 // Types and constants
@@ -37,7 +37,7 @@ declaration_argument
 	;
 	
 body
-	: (variable_declaration declaration_split)* statement_list;
+	: (variable_declaration declaration_separator | procedure | function)* statement_list;
 
 
 proc_func_invocation
@@ -52,23 +52,20 @@ assignment
 
 // Statements
 
-declaration_split 	:	(COMMA | THEN | AND | BUT | split);
-
-
-split	:	'.';
+declaration_separator 	:	(COMMA | THEN | AND | BUT | FULL_STOP);
 
 statement_list
 	:	statement_component+
 	;
 statement_component
-	:	(identifier LPAREN) => proc_func_invocation (options{greedy=true;} : split)?
-	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement split
-	|	(ALICEFOUND expression) => return_statement split
-	|	split
-	|	while_loop (options{greedy=true;} : split)?
-	|	if_block (options{greedy=true;} : split)?
-	|	assignment_expr split
-	|	input_statement	split
+	:	(identifier LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
+	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement FULL_STOP
+	|	(ALICEFOUND expression) => return_statement FULL_STOP
+	|	FULL_STOP
+	|	while_loop (options{greedy=true;} : FULL_STOP)?
+	|	if_block (options{greedy=true;} : FULL_STOP)?
+	|	assignment_expr FULL_STOP
+	|	input_statement	FULL_STOP
 	;
 
 	
@@ -206,3 +203,5 @@ COMMA	:	',';
 THEN	:	'then';
 AND	:	'and';
 BUT	:	'but';
+FULL_STOP
+	:	'.' ;
