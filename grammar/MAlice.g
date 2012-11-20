@@ -37,7 +37,7 @@ block	:	OPENED body CLOSED;
 body
 	: (variable_declaration declaration_separator | procedure | function)* statement_list;
 declaration_argument
-	:	type identifier
+	:	SPIDER? type identifier
 	;
 
 
@@ -208,6 +208,7 @@ AND	:	'and';
 BUT	:	'but';
 FULL_STOP
 	:	'.' ;
+SPIDER	:	'spider';
 
 PLUS
 	:	'+'
