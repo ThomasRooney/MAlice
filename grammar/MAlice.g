@@ -5,10 +5,14 @@ options {
 }
 
 // Types and constants
+// $<Group
+
 type 	:	'number'
         |   	'letter'
         |	'sentence'
         ;
+
+// $>Group 
         
 constant:	NUMBER_LITERAL
 	|	CHARACTER_LITERAL
@@ -17,27 +21,30 @@ constant:	NUMBER_LITERAL
 // Programs, procedures and functions
 program	:	(function|procedure)+;
 
-function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
+function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN 'contained a' type block_unit;
 
 
 declaration_argument_list
 	:	(declaration_argument ',')* declaration_argument
 	;
 procedure
-	:	THELOOKINGGLASS identifier LPAREN declaration_argument_list? RPAREN block_unit
+	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN block_unit
 	;
 	
 	
 declaration_argument
-	:	type identifier
+	:	type IDENTIFIER
 	;
 	
 block_unit
-	:	OPENED (declaration_list)? (statement_list)? CLOSED;
+options {
+	k = 2;
+}
+	:	OPENED (declaration_list)? statement_list CLOSED;
 
 
 proc_func_invocation
-	:	identifier LPAREN proc_func_invocation_argument_list? RPAREN
+	:	IDENTIFIER LPAREN proc_func_invocation_argument_list? RPAREN
 	;
 
 // Programs and functions
@@ -86,11 +93,15 @@ else_block
 	;
 	
 declaration_list
-	:	((variable_declaration | procedure) declaration_split)*
+options {
+	k = 2;
+}
+	: 	(IDENTIFIER WASA) => variable_declaration declaration_list?
+	|	('The') => (procedure | function) declaration_split declaration_list?
 	; 
 	
 variable_declaration
-	:	identifier WASA type ('of' expression)? 'too'?;
+	:	IDENTIFIER WASA type ('of' expression)? 'too'? declaration_split declaration_list?;
 	
 input_statement
 	:	'what was' lvalue '?';
@@ -107,7 +118,7 @@ assignment_expr
 	:	lvalue 'became' expression
 	;	
 
-lvalue	:	identifier ('\'s' expression 'piece')?
+lvalue	:	IDENTIFIER ('\'s' expression 'piece')?
 	;
 
 additive_expr
@@ -137,16 +148,18 @@ single_boolean_expression
 	:	 expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression
 	;
 	
-identifier 
-	:	LETTER (LETTER | '0'..'9' | '-' | '_')*;
+
 	
 // Lexer rules
-LETTER	:	('a'..'z' | 'A'..'Z')
+fragment LETTER	:	('a'..'z' | 'A'..'Z')
 	;
 
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
 	;
+
+IDENTIFIER
+	:	LETTER (LETTER | '0'..'9' | '-' | '_')*;
 	
 STRING_LITERAL
 	:	'"' ~('"')* '"';
