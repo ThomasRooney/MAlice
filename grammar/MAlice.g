@@ -21,7 +21,7 @@ constant:	number_literal
 	;
 
 
-function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type OPENED body CLOSED
+function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type block
 	;
 procedure
 	:	THELOOKINGGLASS identifier LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
@@ -32,12 +32,14 @@ declaration_argument_list
 	;
 	
 	
+
+block	:	OPENED body CLOSED;
+body
+	: (variable_declaration declaration_separator | procedure | function)* statement_list;
 declaration_argument
 	:	type identifier
 	;
-	
-body
-	: (variable_declaration declaration_separator | procedure | function)* statement_list;
+
 
 
 proc_func_invocation
@@ -66,6 +68,7 @@ statement_component
 	|	if_block (options{greedy=true;} : FULL_STOP)?
 	|	assignment_expr FULL_STOP
 	|	input_statement	FULL_STOP
+	|	block (options{greedy=true;} : FULL_STOP)?
 	;
 
 	
@@ -94,7 +97,7 @@ input_statement
 	:	'what was' lvalue '?';
 
 io_statement
-	:	print_statement (AND print_statement)* (',' stdin_statement)?
+	:	print_statement ((COMMA | AND) print_statement)* (',' stdin_statement)?
 //	:	stdout_lvalue ((SPOKE|SAIDALICE) (AND stdout_lvalue)?)* (SAIDALICE | ',' stdin_statement) 
 	;
 	
