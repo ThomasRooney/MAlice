@@ -16,7 +16,7 @@ type 	:	'number'
         |	'sentence'
         ;
        
-constant:	NUMBER_LITERAL
+constant:	number_literal
 	|	CHARACTER_LITERAL
 	;
 
@@ -41,13 +41,9 @@ body
 
 
 proc_func_invocation
-	:	identifier LPAREN proc_func_invocation_argument_list? RPAREN
+	:	identifier LPAREN (expression (',' expression)*)? RPAREN
 	;
 
-// Programs and functions
-proc_func_invocation_argument_list
-	:	(constant ',')* constant
-	;
 //Expression
 
 assignment
@@ -60,24 +56,23 @@ declaration_split 	:	(COMMA | THEN | AND | BUT | split);
 split	:	'.';
 
 statement_component
-	:	(expression SPOKE) => spoke_statement
-	|	(identifier LPAREN) => proc_func_invocation
-	|	(stdout_lvalue SAIDALICE) => stdout_statement
-	|	return_statement
+	:	(identifier LPAREN) => proc_func_invocation
+	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement
+	|	(ALICEFOUND expression) => return_statement
 	|	while_loop
 	|	if_block	
 	|	assignment_expr
 	|	input_statement	
-	|	'.'
+	|	null_statement
 	;
 statement_list
 	:	statement_component (split statement_component)* split
 	;
 	
 	
-
+	
 return_statement
-	:	ALICEFOUND constant
+	:	ALICEFOUND expression
 	;
 	
 while_loop
@@ -97,12 +92,13 @@ variable_declaration
 	
 input_statement
 	:	'what was' lvalue '?';
-	
-spoke_statement
-	:	expression SPOKE;
 
-stdout_statement
-	:	(stdout_lvalue SAIDALICE) (AND stdout_lvalue SAIDALICE)*
+io_statement
+	:	stdout_lvalue (SPOKE (AND stdout_lvalue)?)* (SAIDALICE | ',' stdin_statement) 
+	;
+
+stdin_statement
+	:	'what was' identifier '?'
 	;
 
 stdout_lvalue
@@ -147,12 +143,18 @@ boolean_expression
 	;
 	
 single_boolean_expression
-	:	 expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression
+	:	 LPAREN expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression RPAREN
 	;
 
 identifier
 	:	LETTER (LETTER | '0'..'9' | '_')*;	
 	
+number_literal 
+	:	(ZERO_NUMBER) | (NON_ZERO_NUMBER (ZERO_NUMBER | NON_ZERO_NUMBER)*);
+		
+null_statement
+	:	'.';
+
 // Lexer rules
 LETTER	:	('a'..'z' | 'A'..'Z')
 	;
@@ -166,8 +168,10 @@ CHARACTER_LITERAL
 STRING_LITERAL
 	:	'"' ~('"')* '"';
 	
-NUMBER_LITERAL
-	:	'0' | '1'..'9' '0'..'9'*;
+ZERO_NUMBER 
+	:	'0';
+NON_ZERO_NUMBER
+	:	'1'..'9';
 	
 // Based on the ANSI-C whitespace grammar.
 WS	:	 (' ' | '\t' | '\r' | '\n') {$channel=HIDDEN;}
@@ -188,7 +192,7 @@ SPOKE	:	'spoke';
 WASA	:	'was a';
 BECAME	:	'became';
 ALICEFOUND
-	:	'alice found';
+	:	'Alice found';
 SAIDALICE
 	:	'said Alice';
 COMMA	:	',';
