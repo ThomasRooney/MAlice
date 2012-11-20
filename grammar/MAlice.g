@@ -126,7 +126,7 @@ lvalue	:	identifier ('\'s' expression 'piece')?
 	;
 
 additive_expr
-	:	multiplicactive_expr (('+'|'-') multiplicactive_expr)*
+	:	multiplicactive_expr ((PLUS|MINUS) multiplicactive_expr)*
 	;
 
 multiplicactive_expr
@@ -139,7 +139,7 @@ bitwise_expr
 
 unary_expr
 	:	(identifier LPAREN) => proc_func_invocation
-	| 	('+' | '-' | '~' | '!') unary_expr
+	| 	(PLUS | MINUS | TILDE | BANG) unary_expr
 	|	constant
 	|	lvalue
 	|	LPAREN additive_expr RPAREN
@@ -154,7 +154,7 @@ single_boolean_expression
 	;
 
 identifier
-	:	LETTER (LETTER | '0'..'9' | '_')*;	
+	:	LETTER (LETTER | '0'..'9' | UNDERSCORE)*;	
 	
 number_literal 
 	:	(ZERO_NUMBER) | (NON_ZERO_NUMBER (ZERO_NUMBER | NON_ZERO_NUMBER)*);
@@ -208,3 +208,23 @@ AND	:	'and';
 BUT	:	'but';
 FULL_STOP
 	:	'.' ;
+
+PLUS
+	:	'+'
+	;
+
+MINUS
+	:	'-'
+	;
+
+TILDE
+	:	'~'
+	;
+
+BANG
+	:	'!'
+	;
+
+UNDERSCORE
+	:	'_'
+	;
