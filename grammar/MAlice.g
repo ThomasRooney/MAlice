@@ -50,7 +50,7 @@ assignment
 
 // Statements
 statement_list
-	:	(statement_component split)* statement_component '.'
+	:	(statement_component split)* statement_component split
 	|	'.'
 	;
 	
@@ -125,7 +125,7 @@ boolean_expression
 	;
 	
 single_boolean_expression
-	:	expression ('==' | '!=') expression
+	:	 expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression
 	;
 	
 // Lexer rules
