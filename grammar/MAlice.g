@@ -96,7 +96,6 @@ options {
 }
 	: 	('The') => (procedure | function) declaration_split declaration_list?
 	| variable_declaration declaration_split declaration_list?
-	|	
 	; 
 	
 variable_declaration
