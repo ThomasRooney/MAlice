@@ -60,7 +60,8 @@ declaration_split 	:	(COMMA | THEN | AND | BUT);
 split	:	'.';
 
 statement_component
-	:	return_statement
+	:	(expression 'spoke') => spoke_statement
+	|	return_statement
 	|	while_loop
 	|	if_block	
 	|	assignment_expr
