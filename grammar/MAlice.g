@@ -97,8 +97,12 @@ input_statement
 	:	'what was' lvalue '?';
 
 io_statement
-	:	stdout_lvalue (SPOKE (AND stdout_lvalue)?)* (SAIDALICE | ',' stdin_statement) 
+	:	print_statement (AND print_statement)* (',' stdin_statement)?
+//	:	stdout_lvalue ((SPOKE|SAIDALICE) (AND stdout_lvalue)?)* (SAIDALICE | ',' stdin_statement) 
 	;
+	
+print_statement
+	:	stdout_lvalue (SPOKE | SAIDALICE);
 
 stdin_statement
 	:	'what was' identifier '?'
