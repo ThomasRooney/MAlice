@@ -5,7 +5,7 @@ options {
 }
 
 // Programs, procedures and functions
-program	:	(variable_declaration declaration_separator)* (function|procedure)+;
+program	:	(variable_declaration statement_inner_separator)* (function|procedure)+;
 
 
 // Types and constants
@@ -16,15 +16,15 @@ type 	:	'number'
         |	'sentence'
         ;
        
-constant:	number_literal
+constant:	NUMBER_LITERAL
 	|	CHARACTER_LITERAL
 	;
 
 
-function:	THEROOM identifier LPAREN declaration_argument_list? RPAREN 'contained a' type block
+function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN 'contained a' type block
 	;
 procedure
-	:	THELOOKINGGLASS identifier LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
+	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
 	;
 
 declaration_argument_list
@@ -37,13 +37,13 @@ block	:	OPENED body CLOSED;
 body
 	: (variable_declaration statement_inner_separator | procedure | function)* statement_list;
 declaration_argument
-	:	SPIDER? type identifier
+	:	SPIDER? type IDENTIFIER
 	;
 
 
 
 proc_func_invocation
-	:	identifier LPAREN (expression (',' expression)*)? RPAREN
+	:	IDENTIFIER LPAREN (expression (',' expression)*)? RPAREN
 	;
 
 //Expression
@@ -60,8 +60,8 @@ statement_list
 	:	statement_component+
 	;
 statement_component
-	:	(identifier LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
-	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement_list FULL_STOP
+	:	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
+	|	(stdout_lvalue (SAIDALICE | SPOKE) | 'what was') => io_statement_list FULL_STOP
 	|	(ALICEFOUND expression) => return_statement FULL_STOP
 	|	FULL_STOP
 	|	while_loop (options{greedy=true;} : FULL_STOP)?
@@ -90,7 +90,7 @@ else_block
 	;
 	
 variable_declaration
-	:	identifier (WASA type ('of' expression)? | 'had' expression type) 'too'?;
+	:	IDENTIFIER (WASA type ('of' expression)? | 'had' expression type) 'too'?;
 
 io_statement_list
 	: io_statement ((COMMA | THEN | AND) io_statement)*
@@ -103,7 +103,7 @@ print_statement
 	:	stdout_lvalue (SPOKE | SAIDALICE);
 
 stdin_statement
-	:	'what was' identifier '?'
+	:	'what was' lvalue '?'
 	;
 
 stdout_lvalue
@@ -120,7 +120,7 @@ assignment_expr
 	:	lvalue 'became' expression
 	;	
 
-lvalue	:	identifier ('\'s' expression 'piece')?
+lvalue	:	IDENTIFIER ('\'s' expression 'piece')?
 	;
 
 additive_expr
@@ -136,7 +136,7 @@ bitwise_expr
 	;
 
 unary_expr
-	:	(identifier LPAREN) => proc_func_invocation
+	:	(IDENTIFIER LPAREN) => proc_func_invocation
 	| 	(PLUS | MINUS | TILDE | BANG) unary_expr
 	|	constant
 	|	lvalue
@@ -150,33 +150,19 @@ boolean_expression
 single_boolean_expression
 	:	 LPAREN expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression RPAREN
 	;
-
-identifier
-	:	LETTER (LETTER | '0'..'9' | UNDERSCORE)*;	
-	
-number_literal 
-	:	(ZERO_NUMBER) | (NON_ZERO_NUMBER (ZERO_NUMBER | NON_ZERO_NUMBER)*);
 		
 null_statement
 	:	'.';
 
 // Lexer rules
-LETTER	:	('a'..'z' | 'A'..'Z')
-	;
-
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
 	;
-
-
-	
 STRING_LITERAL
 	:	'"' ~('"')* '"';
-	
-ZERO_NUMBER 
-	:	'0';
-NON_ZERO_NUMBER
-	:	'1'..'9';
+NUMBER_LITERAL
+	:	'0' | '1'..'9' DIGIT*
+	;
 	
 // Based on the ANSI-C whitespace grammar.
 WS	:	 (' ' | '\t' | '\r' | '\n') {$channel=HIDDEN;}
@@ -189,7 +175,8 @@ LPAREN	:	'(';
 RPAREN	:	')';
 OPENED 	:	'opened';
 CLOSED	:	'closed';
-
+SPIDER	:	'spider';
+BUT	:	'but';	
 THELOOKINGGLASS
 	:	'The looking-glass';
 THEROOM	:	'The room';
@@ -204,27 +191,22 @@ SAIDALICE
 COMMA	:	',';
 THEN	:	'then';
 AND	:	'and';
-BUT	:	'but';
 FULL_STOP
 	:	'.' ;
-SPIDER	:	'spider';
+	
+IDENTIFIER
+	:	LETTER (LETTER | DIGIT | UNDERSCORE)*;
 
-PLUS
-	:	'+'
-	;
-
-MINUS
-	:	'-'
-	;
-
-TILDE
-	:	'~'
-	;
-
-BANG
-	:	'!'
-	;
-
+PLUS	:	'+';
+MINUS	:	'-';
+TILDE	:	'~';
+BANG	:	'!';
 UNDERSCORE
-	:	'_'
+	:	'_';
+
+fragment LETTER
+	:	('a'..'z' | 'A'..'Z')
+	;
+fragment DIGIT
+	:	'0'..'9'
 	;
