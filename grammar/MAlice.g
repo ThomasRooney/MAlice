@@ -35,7 +35,7 @@ declaration_argument_list
 
 block	:	OPENED body CLOSED;
 body
-	: (variable_declaration declaration_separator | procedure | function)* statement_list;
+	: (variable_declaration statement_inner_separator | procedure | function)* statement_list;
 declaration_argument
 	:	SPIDER? type identifier
 	;
@@ -54,20 +54,19 @@ assignment
 
 // Statements
 
-declaration_separator 	:	(COMMA | THEN | AND | BUT | FULL_STOP);
+statement_inner_separator 	:	(COMMA | THEN | AND | BUT | FULL_STOP);
 
 statement_list
 	:	statement_component+
 	;
 statement_component
 	:	(identifier LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
-	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement FULL_STOP
+	|	(stdout_lvalue (SAIDALICE | SPOKE)) => io_statement_list FULL_STOP
 	|	(ALICEFOUND expression) => return_statement FULL_STOP
 	|	FULL_STOP
 	|	while_loop (options{greedy=true;} : FULL_STOP)?
 	|	if_block (options{greedy=true;} : FULL_STOP)?
 	|	assignment_expr FULL_STOP
-	|	input_statement	FULL_STOP
 	|	block (options{greedy=true;} : FULL_STOP)?
 	;
 
@@ -79,7 +78,7 @@ return_statement
 	;
 	
 while_loop
-	:	'eventually' boolean_expression 'because' statement_list 'enough times'
+	:	'eventually' boolean_expression BECAUSE statement_list 'enough times'
 	;
 	
 if_block
@@ -92,14 +91,13 @@ else_block
 	
 variable_declaration
 	:	identifier (WASA type ('of' expression)? | 'had' expression type) 'too'?;
-	
-input_statement
-	:	'what was' lvalue '?';
 
-io_statement
-	:	print_statement ((COMMA | AND) print_statement)* (',' stdin_statement)?
-//	:	stdout_lvalue ((SPOKE|SAIDALICE) (AND stdout_lvalue)?)* (SAIDALICE | ',' stdin_statement) 
+io_statement_list
+	: io_statement ((COMMA | THEN | AND) io_statement)*
 	;
+	
+io_statement
+	:	print_statement | stdin_statement;
 	
 print_statement
 	:	stdout_lvalue (SPOKE | SAIDALICE);
@@ -200,6 +198,7 @@ WASA	:	'was a';
 BECAME	:	'became';
 ALICEFOUND
 	:	'Alice found';
+BECAUSE	:	'because';
 SAIDALICE
 	:	'said Alice';
 COMMA	:	',';
