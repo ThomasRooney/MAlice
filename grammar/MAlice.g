@@ -61,7 +61,8 @@ statement_list
 	;
 statement_component
 	:	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
-	|	(stdout_lvalue (SAIDALICE | SPOKE) | 'what was') => io_statement_list FULL_STOP
+	|	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator
+	|	input_statement (options{greedy=true;} : FULL_STOP)?
 	|	(ALICEFOUND expression) => return_statement FULL_STOP
 	|	FULL_STOP
 	|	while_loop (options{greedy=true;} : FULL_STOP)?
@@ -92,17 +93,10 @@ else_block
 variable_declaration
 	:	IDENTIFIER (WASA type ('of' expression)? | 'had' expression type) 'too'?;
 
-io_statement_list
-	: io_statement ((COMMA | THEN | AND) io_statement)*
-	;
-	
-io_statement
-	:	print_statement | stdin_statement;
-	
 print_statement
 	:	stdout_lvalue (SPOKE | SAIDALICE);
 
-stdin_statement
+input_statement
 	:	'what was' lvalue '?'
 	;
 
