@@ -10,16 +10,22 @@ tokens {
 	DECLS;
 	PARAMS;
 	BODY;
+	STATEMENTLIST;
 	IFSTATEMENT;
 	PRINTSTATEMENT;
 	INCREMENTSTATEMENT;
 	DECREMENTSTATEMENT;
 	WHILESTATEMENT;
+	RETURNSTATEMENT;
+	ASSIGNMENTSTATEMENT;
+	INVOCATION;
+	FUNCDEFINITION;
+	PROCDEFINITION;
 }
 
 // Programs, procedures and functions
-program	:	(variable_declaration statement_inner_separator)* (i+=function|i+=procedure)+
-		-> ^(PROGRAM ^(DECLS variable_declaration* $i+))
+program	:	(variable_declaration statement_inner_separator)* (func+=function|proc+=procedure)+
+		-> ^(PROGRAM ^(DECLS variable_declaration* $func* $proc*))
 	;
 
 
@@ -37,11 +43,11 @@ constant:	NUMBER_LITERAL
 
 
 function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type block
-		-> ^(IDENTIFIER declaration_argument_list? type block)
+		-> ^(FUNCDEFINITION IDENTIFIER declaration_argument_list? type block)
 	;
 procedure
 	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN block
-		-> ^(IDENTIFIER declaration_argument_list? block)
+		-> ^(PROCDEFINITION IDENTIFIER declaration_argument_list? block)
 	;
 
 declaration_argument_list
@@ -56,8 +62,8 @@ body
 	: body_declarations? statement_list;
 
 body_declarations
-	:	(i+=variable_declaration statement_inner_separator | i+=procedure | i+=function)+
-		-> ^(DECLS $i+)
+	:	(var_decl+=variable_declaration statement_inner_separator | proc+=procedure | func+=function)+
+		-> ^(DECLS $var_decl* $proc* $func*)
 	;
 	
 declaration_argument
@@ -67,13 +73,15 @@ declaration_argument
 
 
 proc_func_invocation
-	:	IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
+	:	IDENTIFIER LPAREN (i+=expression (COMMA i+=expression)*)? RPAREN
+		-> ^(INVOCATION ^(IDENTIFIER $i*))
 	;
 
 //Expression
 
 assignment
 	:	lvalue BECAME expression
+		-> ^(ASSIGNMENTSTATEMENT lvalue expression)
 	;
 
 // Statements
@@ -82,23 +90,25 @@ statement_inner_separator 	:	(COMMA | THEN | AND | BUT | FULL_STOP);
 
 statement_list
 	:	statement_component+
+		-> ^(STATEMENTLIST statement_component+)
 	;
 statement_component
-	:	(EVENTUALLY) => while_loop (options{greedy=true;} : FULL_STOP)?
-	| 	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator
-	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
+	:	(EVENTUALLY) => while_loop (options{greedy=true;} : FULL_STOP!)?
+	| 	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator!
+	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP!)?
 	|	(lvalue ATE) => increment_statement
 	|	(lvalue DRANK) => decrement_statement
-	|	input_statement (options{greedy=true;} : FULL_STOP)?
-	|	(ALICEFOUND expression) => return_statement FULL_STOP
-	|	FULL_STOP
-	|	if_block (options{greedy=true;} : FULL_STOP)?
-	|	assignment_expr FULL_STOP
-	|	block (options{greedy=true;} : FULL_STOP)?
+	|	input_statement (options{greedy=true;} : FULL_STOP!)?
+	|	(ALICEFOUND expression) => return_statement FULL_STOP!
+	|	null_statement
+	|	if_block (options{greedy=true;} : FULL_STOP!)?
+	|	assignment statement_inner_separator!
+	|	block (options{greedy=true;} : FULL_STOP!)?
 	;
 
 return_statement
 	:	ALICEFOUND expression
+		-> ^(RETURNSTATEMENT expression)
 	;
 	
 while_loop
@@ -108,7 +118,7 @@ while_loop
 	
 if_block
 	:	PERHAPS boolean_expression SO statement_list else_block* ALICEWASUNSURE
-		-> ^(IFSTATEMENT boolean_expression statement_list)
+		-> ^(IFSTATEMENT boolean_expression statement_list else_block*)
 	|	EITHER boolean_expression SO statement_list OR statement_list ALICEWASUNSURE
 		-> ^(IFSTATEMENT boolean_expression statement_list statement_list)
 	;
@@ -118,7 +128,12 @@ else_block
 	;
 	
 variable_declaration
-	:	IDENTIFIER (WASA type (OF expression)? | HAD expression type) TOO?
+	:	IDENTIFIER WASA type TOO?
+		-> ^(IDENTIFIER type)
+	|	IDENTIFIER WASA type OF expression TOO?
+		-> ^(IDENTIFIER type expression)
+	|	IDENTIFIER HAD expression type TOO?
+		-> ^(IDENTIFIER type expression)
 	;
 
 print_statement
@@ -150,10 +165,6 @@ decrement_statement
 expression
 	:	additive_expr
 	;
-
-assignment_expr
-	:	lvalue BECAME expression
-	;	
 
 lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
@@ -193,11 +204,20 @@ unary_operator
 	:	(PLUS | MINUS | TILDE | BANG);
 
 boolean_expression
-	:	single_boolean_expression (('&&' | '||') single_boolean_expression)*
+	:	single_boolean_expression (boolean_expression_operator single_boolean_expression)*
+	;
+	
+boolean_expression_operator
+	:	('&&' | '||')
 	;
 	
 single_boolean_expression
-	:	 LPAREN expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression RPAREN
+	:	LPAREN e1=expression single_boolean_expression_operator e2=expression RPAREN
+		-> ^(single_boolean_expression_operator $e1 $e2)
+	;
+	
+single_boolean_expression_operator
+	:	('==' | '!=' | '<' | '<=' | '>' | '>=' )
 	;
 		
 null_statement
