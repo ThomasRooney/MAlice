@@ -172,13 +172,13 @@ lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
 
 additive_expr
-	:	multiplicactive_expr (additive_operator multiplicactive_expr)*
+	:	multiplicative_expr (additive_operator multiplicative_expr)*
 	;
 	
 additive_operator
 	:	(PLUS | MINUS);
 
-multiplicactive_expr
+multiplicative_expr
 	:	bitwise_expr (multiplicative_operator bitwise_expr)*
 	;
 	
