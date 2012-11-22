@@ -21,14 +21,14 @@ constant:	NUMBER_LITERAL
 	;
 
 
-function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN 'contained a' type block
+function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type block
 	;
 procedure
 	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
 	;
 
 declaration_argument_list
-	:	(declaration_argument ',')* declaration_argument
+	:	(declaration_argument COMMA)* declaration_argument
 	;
 	
 	
@@ -43,7 +43,7 @@ declaration_argument
 
 
 proc_func_invocation
-	:	IDENTIFIER LPAREN (expression (',' expression)*)? RPAREN
+	:	IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
 	;
 
 //Expression
@@ -60,7 +60,7 @@ statement_list
 	:	statement_component+
 	;
 statement_component
-	:	('eventually') => while_loop (options{greedy=true;} : FULL_STOP)?
+	:	(EVENTUALLY) => while_loop (options{greedy=true;} : FULL_STOP)?
 	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
 	|	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator
 	|	input_statement (options{greedy=true;} : FULL_STOP)?
@@ -71,34 +71,31 @@ statement_component
 	|	block (options{greedy=true;} : FULL_STOP)?
 	;
 
-	
-	
-	
 return_statement
 	:	ALICEFOUND expression
 	;
 	
 while_loop
-	:	'eventually' boolean_expression BECAUSE statement_list 'enough times'
+	:	EVENTUALLY boolean_expression BECAUSE statement_list ENOUGHTIMES
 	;
 	
 if_block
-	:	'perhaps' boolean_expression 'so' statement_list else_block* 'because Alice was unsure which'
-	|	'either' boolean_expression 'so' statement_list 'or' statement_list 'because Alice was unsure which'
+	:	PERHAPS boolean_expression SO statement_list else_block* ALICEWASUNSURE
+	|	EITHER boolean_expression SO statement_list OR statement_list ALICEWASUNSURE
 	;
 
 else_block
-	:	'or' ('maybe' boolean_expression 'so')? statement_list
+	:	OR (MAYBE boolean_expression SO)? statement_list
 	;
 	
 variable_declaration
-	:	IDENTIFIER (WASA type ('of' expression)? | 'had' expression type) 'too'?;
+	:	IDENTIFIER (WASA type (OF expression)? | HAD expression type) TOO?;
 
 print_statement
 	:	stdout_lvalue (SPOKE | SAIDALICE);
 
 input_statement
-	:	'what was' lvalue '?'
+	:	WHATWAS lvalue QUESTION_MARK
 	;
 
 stdout_lvalue
@@ -112,10 +109,10 @@ expression
 	;
 
 assignment_expr
-	:	lvalue 'became' expression
+	:	lvalue BECAME expression
 	;	
 
-lvalue	:	IDENTIFIER ('\'s' expression 'piece')?
+lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
 
 additive_expr
@@ -187,7 +184,32 @@ COMMA	:	',';
 THEN	:	'then';
 AND	:	'and';
 FULL_STOP
-	:	'.' ;
+	:	'.'
+	;
+CONTAINEDA
+	:	'contained a'
+	;
+EVENTUALLY
+	:	'eventually'
+	;
+ENOUGHTIMES
+	:	'enough times'
+	;
+ALICEWASUNSURE
+	:	'because Alice was unsure which'
+	;
+OR	:	'or';
+SO	:	'so';
+PIECE	:	'piece';
+WHATWAS	:	'what was';
+OF	:	'of';
+TOO	:	'too';
+MAYBE	:	'maybe';
+PERHAPS	:	'perhaps';
+EITHER	:	'either';
+HAD	:	'had';
+QUESTION_MARK
+	:	'?';
 	
 IDENTIFIER
 	:	LETTER (LETTER | DIGIT | UNDERSCORE)*;
