@@ -1,12 +1,33 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 	output=AST;
 }
 
+tokens {
+	PROGRAM;
+	DECLS;
+	PARAMS;
+	BODY;
+	STATEMENTLIST;
+	IFSTATEMENT;
+	PRINTSTATEMENT;
+	INCREMENTSTATEMENT;
+	DECREMENTSTATEMENT;
+	WHILESTATEMENT;
+	RETURNSTATEMENT;
+	ASSIGNMENTSTATEMENT;
+	INVOCATION;
+	FUNCDEFINITION;
+	PROCDEFINITION;
+	INPUTSTATEMENT;
+}
+
 // Programs, procedures and functions
-program	:	(variable_declaration statement_inner_separator)* (function|procedure)+;
+program	:	(variable_declaration statement_inner_separator)* (func+=function|proc+=procedure)+
+		-> ^(PROGRAM ^(DECLS variable_declaration* $func* $proc*))
+	;
 
 
 // Types and constants
@@ -23,20 +44,29 @@ constant:	NUMBER_LITERAL
 
 
 function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type block
+		-> ^(FUNCDEFINITION IDENTIFIER declaration_argument_list? type block)
 	;
 procedure
-	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
+	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN block
+		-> ^(PROCDEFINITION IDENTIFIER declaration_argument_list? block)
 	;
 
 declaration_argument_list
 	:	(declaration_argument COMMA)* declaration_argument
+		-> ^(PARAMS declaration_argument+)
+	;
+
+block	:	OPENED body CLOSED
+		-> ^(BODY body)
+	;
+body
+	: body_declarations? statement_list;
+
+body_declarations
+	:	(var_decl+=variable_declaration statement_inner_separator | proc+=procedure | func+=function)+
+		-> ^(DECLS $var_decl* $proc* $func*)
 	;
 	
-	
-
-block	:	OPENED body CLOSED;
-body
-	: (variable_declaration statement_inner_separator | procedure | function)* statement_list;
 declaration_argument
 	:	SPIDER? type IDENTIFIER
 	;
@@ -44,13 +74,15 @@ declaration_argument
 
 
 proc_func_invocation
-	:	IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
+	:	IDENTIFIER LPAREN (i+=expression (COMMA i+=expression)*)? RPAREN
+		-> ^(INVOCATION ^(IDENTIFIER $i*))
 	;
 
 //Expression
 
 assignment
 	:	lvalue BECAME expression
+		-> ^(ASSIGNMENTSTATEMENT lvalue expression)
 	;
 
 // Statements
@@ -59,46 +91,61 @@ statement_inner_separator 	:	(COMMA | THEN | AND | BUT | FULL_STOP);
 
 statement_list
 	:	statement_component+
+		-> ^(STATEMENTLIST statement_component+)
 	;
 statement_component
-	:	(EVENTUALLY) => while_loop (options{greedy=true;} : FULL_STOP)?
-	| 	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator
-	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
+	:	(EVENTUALLY) => while_loop (options{greedy=true;} : FULL_STOP!)?
+	| 	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator!
+	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP!)?
 	|	(lvalue ATE) => increment_statement
 	|	(lvalue DRANK) => decrement_statement
-	|	input_statement (options{greedy=true;} : FULL_STOP)?
-	|	(ALICEFOUND expression) => return_statement FULL_STOP
-	|	FULL_STOP
-	|	if_block (options{greedy=true;} : FULL_STOP)?
-	|	assignment_expr FULL_STOP
-	|	block (options{greedy=true;} : FULL_STOP)?
+	|	input_statement (options{greedy=true;} : FULL_STOP!)?
+	|	(ALICEFOUND expression) => return_statement FULL_STOP!
+	|	null_statement
+	|	if_block (options{greedy=true;} : FULL_STOP!)?
+	|	assignment statement_inner_separator!
+	|	block (options{greedy=true;} : FULL_STOP!)?
 	;
 
 return_statement
 	:	ALICEFOUND expression
+		-> ^(RETURNSTATEMENT expression)
 	;
 	
 while_loop
 	:	EVENTUALLY boolean_expression BECAUSE statement_list ENOUGHTIMES
+		-> ^(WHILESTATEMENT boolean_expression ^(BODY statement_list))
 	;
 	
 if_block
 	:	PERHAPS boolean_expression SO statement_list else_block* ALICEWASUNSURE
+		-> ^(IFSTATEMENT boolean_expression statement_list else_block*)
 	|	EITHER boolean_expression SO statement_list OR statement_list ALICEWASUNSURE
+		-> ^(IFSTATEMENT boolean_expression statement_list statement_list)
 	;
-
+	
 else_block
 	:	OR (MAYBE boolean_expression SO)? statement_list
+		-> boolean_expression? statement_list
 	;
 	
 variable_declaration
-	:	IDENTIFIER (WASA type (OF expression)? | HAD expression type) TOO?;
+	:	IDENTIFIER WASA type TOO?
+		-> ^(IDENTIFIER type)
+	|	IDENTIFIER WASA type OF expression TOO?
+		-> ^(IDENTIFIER type expression)
+	|	IDENTIFIER HAD expression type TOO?
+		-> ^(IDENTIFIER type expression)
+	;
 
 print_statement
-	:	stdout_lvalue (SPOKE | SAIDALICE);
+	:	stdout_lvalue (SPOKE | SAIDALICE)
+		-> ^(PRINTSTATEMENT stdout_lvalue)
+	;
 
 input_statement
 	:	WHATWAS lvalue QUESTION_MARK
+		-> ^(INPUTSTATEMENT lvalue)
 	;
 
 stdout_lvalue
@@ -108,51 +155,80 @@ stdout_lvalue
 	
 increment_statement
 	:	lvalue ATE
+		-> ^(INCREMENTSTATEMENT lvalue)
 	;
 	
 decrement_statement
-	:	lvalue DRANK;
+	:	lvalue DRANK
+		-> ^(DECREMENTSTATEMENT lvalue)
+	;
 	
 
 // Expressions
 expression
-	:	additive_expr
+	:	additive_expr->additive_expr
 	;
-
-assignment_expr
-	:	lvalue BECAME expression
-	;	
 
 lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
 
 additive_expr
-	:	multiplicactive_expr ((PLUS|MINUS) multiplicactive_expr)*
+	:	multiplicative_expr (additive_operator multiplicative_expr)*
+		-> ^($additive_expr multiplicative_expr (additive_operator multiplicative_expr)*)
 	;
+	
+additive_operator
+	:	(PLUS | MINUS);
 
-multiplicactive_expr
-	:	bitwise_expr (('*'|'/'|'%') bitwise_expr)*
+
+multiplicative_operator
+	:	('*' | '/' | '%');
+multiplicative_expr
+	:	bitwise_expr (multiplicative_operator bitwise_expr)*
+		-> ^($multiplicative_expr bitwise_expr (multiplicative_operator bitwise_expr)*)
 	;
-
+	
+	
 bitwise_expr
-	:	unary_expr (('^'|'|'|'&') unary_expr)*
+	:	unary_expr (bitwise_operator unary_expr)*
+		-> ^($bitwise_expr unary_expr (bitwise_operator unary_expr)*)
 	;
+	
+bitwise_operator
+	:	('^' | '|' | '&');
 
 unary_expr
 	:	(IDENTIFIER LPAREN) => proc_func_invocation
-	| 	(PLUS | MINUS | TILDE | BANG) unary_expr
+	| 	unary_operator unary_expr
+		-> ^(unary_operator unary_expr)
 	|	constant
 	|	lvalue
 	|	LPAREN additive_expr RPAREN
-	;
-
-boolean_expression
-	:	single_boolean_expression (('&&' | '||') single_boolean_expression)*
+		-> additive_expr
 	;
 	
-single_boolean_expression
-	:	 LPAREN expression ('==' | '!=' | '<' | '<=' | '>' | '>=' ) expression RPAREN
+unary_operator
+	:	(PLUS | MINUS | TILDE | BANG);
+
+boolean_expression
+	:	single_boolean_expression (boolean_expression_operator single_boolean_expression)*
 	;
+	
+boolean_expression_operator
+	:	('&&' | '||')
+	;
+	
+
+single_boolean_expression_operator
+	:	('==' | '!=' | '<' | '<=' | '>' | '>=' )
+	;
+single_boolean_expression
+	:	(LPAREN single_boolean_expression) => LPAREN single_boolean_expression RPAREN
+		-> single_boolean_expression
+	|	e1=expression single_boolean_expression_operator e2=expression
+		-> ^(single_boolean_expression_operator $e1 $e2)
+	;
+	
 		
 null_statement
 	:	'.';
@@ -223,10 +299,11 @@ QUESTION_MARK
 	:	'?';
 ATE	:	'ate';
 DRANK	:	'drank';
+
 NUMBER_TYPE
 	:	'number';
 LETTER_TYPE
-	: 	'letter';
+	:	'letter';
 SENTENCE_TYPE
 	:	'sentence';
 	
