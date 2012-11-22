@@ -2,6 +2,7 @@ grammar MAlice;
 
 options {
 	language=C;
+	output=AST;
 }
 
 // Programs, procedures and functions
