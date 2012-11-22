@@ -166,7 +166,7 @@ decrement_statement
 
 // Expressions
 expression
-	:	additive_expr
+	:	additive_expr->additive_expr
 	;
 
 lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
@@ -174,20 +174,24 @@ lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 
 additive_expr
 	:	multiplicative_expr (additive_operator multiplicative_expr)*
+		-> ^($additive_expr multiplicative_expr (additive_operator multiplicative_expr)*)
 	;
 	
 additive_operator
 	:	(PLUS | MINUS);
 
-multiplicative_expr
-	:	bitwise_expr (multiplicative_operator bitwise_expr)*
-	;
-	
+
 multiplicative_operator
 	:	('*' | '/' | '%');
+multiplicative_expr
+	:	bitwise_expr (multiplicative_operator bitwise_expr)*
+		-> ^($multiplicative_expr bitwise_expr (multiplicative_operator bitwise_expr)*)
+	;
+	
 	
 bitwise_expr
 	:	unary_expr (bitwise_operator unary_expr)*
+		-> ^($bitwise_expr unary_expr (bitwise_operator unary_expr)*)
 	;
 	
 bitwise_operator
@@ -214,14 +218,17 @@ boolean_expression_operator
 	:	('&&' | '||')
 	;
 	
-single_boolean_expression
-	:	LPAREN e1=expression single_boolean_expression_operator e2=expression RPAREN
-		-> ^(single_boolean_expression_operator $e1 $e2)
-	;
-	
+
 single_boolean_expression_operator
 	:	('==' | '!=' | '<' | '<=' | '>' | '>=' )
 	;
+single_boolean_expression
+	:	(LPAREN single_boolean_expression) => LPAREN single_boolean_expression RPAREN
+		-> single_boolean_expression
+	|	e1=expression single_boolean_expression_operator e2=expression
+		-> ^(single_boolean_expression_operator $e1 $e2)
+	;
+	
 		
 null_statement
 	:	'.';
