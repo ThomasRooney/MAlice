@@ -47,7 +47,38 @@ int main(int argc,int *argv[])
     if (!parser)
         return 1;
 
-    parser->program(parser);
+    MAliceParser_program_return progReturn = parser->program(parser);
+    pANTLR3_COMMON_TREE_NODE_STREAM	nodes;
+
+    // Finally, when the parser runs, it will produce an AST that can be traversed by the 
+    // the tree parser: c.f. SimpleCWalker.g3t
+    //
+    if (parser->pParser->rec->state->errorCount > 0)
+    {
+		  fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", parser->pParser->rec->state->errorCount);
+    }
+    else
+	  {
+		printf("Tree : %s\n", progReturn.tree->toStringTree(progReturn.tree)->chars);
+		nodes	= antlr3CommonTreeNodeStreamNewTree(progReturn.tree, ANTLR3_SIZE_HINT); // sIZE HINT WILL SOON BE DEPRECATED!!
+
+		// Tree parsers are given a common tree node stream (or your override)
+		//
+		//treePsr	= SimpleCWalkerNew(nodes);
+
+		//treePsr->program(treePsr);
+		//nodes->free(nodes); nodes = NULL;
+		//treePsr ->free  (treePsr);	    treePsr	= NULL;
+	}
+
+    // We did not return anything from this parser rule, so we can finish. It only remains
+    // to close down our open objects, in the reverse order we created them
+    //
+    
+   // psr	    ->free  (psr);	    psr		= NULL;
+   // /tstream ->free  (tstream);	    tstream	= NULL;
+   // lxr	    ->free  (lxr);	    lxr		= NULL;
+   // input   ->close (input);	    input	= NULL;
 
     return 0;
 }
