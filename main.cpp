@@ -1,31 +1,46 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
+#include <string>
+
 
 #ifdef _WIN32
 typedef unsigned char     uint8_t;
 typedef unsigned short    uint16_t;
 typedef unsigned int      uint32_t;
 typedef unsigned long int uint64_t;
+#include <direct.h>
+#define getcwd _getcwd
+#else
+#include <unistd.h>
 #endif
 
 
+
 // Skeleton file based on http://stackoverflow.com/a/8542203
-int main(int argc,int *argv[])
+int main(int argc,char *argv[])
 {
     pANTLR3_UINT8      fName;
     uint8_t *bufferData;
     uint32_t bufferSize;
     pANTLR3_UINT8 bufferName;
     pANTLR3_INPUT_STREAM       input;
-
+      char *path=NULL;
+      size_t size = NULL;
+      path=getcwd(path,size);
+      if (path == 0)
+        perror("getcwd error");
+      std::string spath = std::string(path);
+      spath.append("\\");
     if (argc < 2 || argv[1] == NULL)
     {
-        fName   =(pANTLR3_UINT8)"C:\\Code\\MaliceFinal\\malice\\input"; // Note in VS2005 debug, working directory must be configured
+      spath.append("input");
+      
     }
     else
     {
-        fName   = (pANTLR3_UINT8)argv[1];
+        spath.append(argv[1]);
     }
+    fName   = (pANTLR3_UINT8)spath.c_str();
 
      // Create the input stream using the supplied file name
      // (Use antlr38BitFileStreamNew for UTF16 input).
