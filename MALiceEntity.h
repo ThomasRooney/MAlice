@@ -1,3 +1,5 @@
+#include <string>
+
 class MALiceEntity {
 public:
   std::string name;

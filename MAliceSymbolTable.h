@@ -1,5 +1,6 @@
 #include <unordered_map>
-
+#include <string>
+#include "MALiceEntity.h"
 
 class MALiceSymbolTableNode
 {
