@@ -1,16 +1,23 @@
+#ifndef _MALICESYMBOLTABLE
+#define _MALICESYMBOLTABLE
+
 #include <unordered_map>
 #include <string>
-#include "MALiceEntity.h"
+#include "MAliceEntity.h"
 
-class MALiceSymbolTableNode
+class MAliceSymbolTableNode
 {
   private:
-    std::unordered_map<std::string, MALiceEntity> scopeMap;
+    std::unordered_map<std::string, MAliceEntity> scopeMap;
+    MAliceSymbolTableNode *parentNode;
   public:
-    MALiceEntity* get(std::string);
-    MALiceEntity* insert(std::string, MALiceEntity);
+    MAliceSymbolTableNode(MAliceSymbolTableNode *parentNode);
+    MAliceEntity* get(std::string);
+    MAliceEntity* insert(std::string, MAliceEntity);
     unsigned int size();
-    MALiceSymbolTableNode* createChildScope();
-    MALiceSymbolTableNode* getChildScope();
-    MALiceSymbolTableNode* getParentNode();
-}
+    MAliceSymbolTableNode* createChildScope();
+    MAliceSymbolTableNode* getChildScope();
+    MAliceSymbolTableNode* getParentNode();
+};
+
+#endif

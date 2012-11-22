@@ -1,5 +1,6 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
+#include "MAliceASTWalker.h"
 #include <string>
 
 
@@ -24,6 +25,8 @@ int main(int argc,char *argv[])
     uint32_t bufferSize;
     pANTLR3_UINT8 bufferName;
     pANTLR3_INPUT_STREAM       input;
+    MAliceASTWalker treeWalker = MAliceASTWalker();
+
       char *path=NULL;
       size_t size = NULL;
       path=getcwd(path,size);
@@ -74,7 +77,10 @@ int main(int argc,char *argv[])
     }
     else
 	  {
+
+
 		printf("Tree : %s\n", progReturn.tree->toStringTree(progReturn.tree)->chars);
+    treeWalker.validateTree(progReturn.tree );
 		nodes	= antlr3CommonTreeNodeStreamNewTree(progReturn.tree, ANTLR3_SIZE_HINT); // sIZE HINT WILL SOON BE DEPRECATED!!
 
 		// Tree parsers are given a common tree node stream (or your override)
