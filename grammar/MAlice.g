@@ -12,9 +12,9 @@ program	:	(variable_declaration statement_inner_separator)* (function|procedure)
 // Types and constants
 
 
-type 	:	'number'
-        |   	'letter'
-        |	'sentence'
+type 	:	NUMBER_TYPE
+        |   	LETTER_TYPE
+        |	SENTENCE_TYPE
         ;
        
 constant:	NUMBER_LITERAL
@@ -223,6 +223,12 @@ QUESTION_MARK
 	:	'?';
 ATE	:	'ate';
 DRANK	:	'drank';
+NUMBER_TYPE
+	:	'number';
+LETTER_TYPE
+	: 	'letter';
+SENTENCE_TYPE
+	:	'sentence';
 	
 IDENTIFIER
 	:	LETTER (LETTER | DIGIT | UNDERSCORE)*;
