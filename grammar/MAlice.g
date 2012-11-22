@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 	output=AST;
 }
 
@@ -126,6 +126,7 @@ if_block
 	
 else_block
 	:	OR (MAYBE boolean_expression SO)? statement_list
+		-> boolean_expression? statement_list
 	;
 	
 variable_declaration
