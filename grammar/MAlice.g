@@ -60,12 +60,12 @@ statement_list
 	:	statement_component+
 	;
 statement_component
-	:	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
+	:	('eventually') => while_loop (options{greedy=true;} : FULL_STOP)?
+	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP)?
 	|	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator
 	|	input_statement (options{greedy=true;} : FULL_STOP)?
 	|	(ALICEFOUND expression) => return_statement FULL_STOP
 	|	FULL_STOP
-	|	while_loop (options{greedy=true;} : FULL_STOP)?
 	|	if_block (options{greedy=true;} : FULL_STOP)?
 	|	assignment_expr FULL_STOP
 	|	block (options{greedy=true;} : FULL_STOP)?
@@ -84,6 +84,7 @@ while_loop
 	
 if_block
 	:	'perhaps' boolean_expression 'so' statement_list else_block* 'because Alice was unsure which'
+	|	'either' boolean_expression 'so' statement_list 'or' statement_list 'because Alice was unsure which'
 	;
 
 else_block
