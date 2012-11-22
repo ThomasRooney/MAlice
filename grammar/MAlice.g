@@ -5,16 +5,30 @@ options {
 	output=AST;
 }
 
+tokens {
+	PROGRAM;
+	DECLS;
+	PARAMS;
+	BODY;
+	IFSTATEMENT;
+	PRINTSTATEMENT;
+	INCREMENTSTATEMENT;
+	DECREMENTSTATEMENT;
+	WHILESTATEMENT;
+}
+
 // Programs, procedures and functions
-program	:	(variable_declaration statement_inner_separator)* (function|procedure)+;
+program	:	(variable_declaration statement_inner_separator)* (i+=function|i+=procedure)+
+		-> ^(PROGRAM ^(DECLS variable_declaration* $i+))
+	;
 
 
 // Types and constants
 
 
-type 	:	'number'
-        |   	'letter'
-        |	'sentence'
+type 	:	NUMBER_TYPE
+        |   	LETTER_TYPE
+        |	SENTENCE_TYPE
         ;
        
 constant:	NUMBER_LITERAL
@@ -23,20 +37,29 @@ constant:	NUMBER_LITERAL
 
 
 function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type block
+		-> ^(IDENTIFIER declaration_argument_list? type block)
 	;
 procedure
-	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
+	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN block
+		-> ^(IDENTIFIER declaration_argument_list? block)
 	;
 
 declaration_argument_list
 	:	(declaration_argument COMMA)* declaration_argument
+		-> ^(PARAMS declaration_argument+)
+	;
+
+block	:	OPENED body CLOSED
+		-> ^(BODY body)
+	;
+body
+	: body_declarations? statement_list;
+
+body_declarations
+	:	(i+=variable_declaration statement_inner_separator | i+=procedure | i+=function)+
+		-> ^(DECLS $i+)
 	;
 	
-	
-
-block	:	OPENED body CLOSED;
-body
-	: (variable_declaration statement_inner_separator | procedure | function)* statement_list;
 declaration_argument
 	:	SPIDER? type IDENTIFIER
 	;
@@ -80,22 +103,28 @@ return_statement
 	
 while_loop
 	:	EVENTUALLY boolean_expression BECAUSE statement_list ENOUGHTIMES
+		-> ^(WHILESTATEMENT boolean_expression ^(BODY statement_list))
 	;
 	
 if_block
 	:	PERHAPS boolean_expression SO statement_list else_block* ALICEWASUNSURE
+		-> ^(IFSTATEMENT boolean_expression statement_list)
 	|	EITHER boolean_expression SO statement_list OR statement_list ALICEWASUNSURE
+		-> ^(IFSTATEMENT boolean_expression statement_list statement_list)
 	;
-
+	
 else_block
 	:	OR (MAYBE boolean_expression SO)? statement_list
 	;
 	
 variable_declaration
-	:	IDENTIFIER (WASA type (OF expression)? | HAD expression type) TOO?;
+	:	IDENTIFIER (WASA type (OF expression)? | HAD expression type) TOO?
+	;
 
 print_statement
-	:	stdout_lvalue (SPOKE | SAIDALICE);
+	:	stdout_lvalue (SPOKE | SAIDALICE)
+		-> ^(PRINTSTATEMENT stdout_lvalue)
+	;
 
 input_statement
 	:	WHATWAS lvalue QUESTION_MARK
@@ -108,10 +137,13 @@ stdout_lvalue
 	
 increment_statement
 	:	lvalue ATE
+		-> ^(INCREMENTSTATEMENT lvalue)
 	;
 	
 decrement_statement
-	:	lvalue DRANK;
+	:	lvalue DRANK
+		-> ^(DECREMENTSTATEMENT lvalue)
+	;
 	
 
 // Expressions
@@ -127,24 +159,38 @@ lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
 
 additive_expr
-	:	multiplicactive_expr ((PLUS|MINUS) multiplicactive_expr)*
+	:	multiplicactive_expr (additive_operator multiplicactive_expr)*
 	;
+	
+additive_operator
+	:	(PLUS | MINUS);
 
 multiplicactive_expr
-	:	bitwise_expr (('*'|'/'|'%') bitwise_expr)*
+	:	bitwise_expr (multiplicative_operator bitwise_expr)*
 	;
-
+	
+multiplicative_operator
+	:	('*' | '/' | '%');
+	
 bitwise_expr
-	:	unary_expr (('^'|'|'|'&') unary_expr)*
+	:	unary_expr (bitwise_operator unary_expr)*
 	;
+	
+bitwise_operator
+	:	('^' | '|' | '&');
 
 unary_expr
 	:	(IDENTIFIER LPAREN) => proc_func_invocation
-	| 	(PLUS | MINUS | TILDE | BANG) unary_expr
+	| 	unary_operator unary_expr
+		-> ^(unary_operator unary_expr)
 	|	constant
 	|	lvalue
 	|	LPAREN additive_expr RPAREN
+		-> additive_expr
 	;
+	
+unary_operator
+	:	(PLUS | MINUS | TILDE | BANG);
 
 boolean_expression
 	:	single_boolean_expression (('&&' | '||') single_boolean_expression)*
@@ -223,6 +269,13 @@ QUESTION_MARK
 	:	'?';
 ATE	:	'ate';
 DRANK	:	'drank';
+
+NUMBER_TYPE
+	:	'number';
+LETTER_TYPE
+	:	'letter';
+SENTENCE_TYPE
+	:	'sentence';
 	
 IDENTIFIER
 	:	LETTER (LETTER | DIGIT | UNDERSCORE)*;
