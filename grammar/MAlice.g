@@ -21,6 +21,7 @@ tokens {
 	INVOCATION;
 	FUNCDEFINITION;
 	PROCDEFINITION;
+	INPUTSTATEMENT;
 }
 
 // Programs, procedures and functions
@@ -143,6 +144,7 @@ print_statement
 
 input_statement
 	:	WHATWAS lvalue QUESTION_MARK
+		-> ^(INPUTSTATEMENT lvalue)
 	;
 
 stdout_lvalue
