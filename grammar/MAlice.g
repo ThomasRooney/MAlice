@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 	output=AST;
 }
 
@@ -21,6 +21,7 @@ tokens {
 	INVOCATION;
 	FUNCDEFINITION;
 	PROCDEFINITION;
+	INPUTSTATEMENT;
 }
 
 // Programs, procedures and functions
@@ -125,6 +126,7 @@ if_block
 	
 else_block
 	:	OR (MAYBE boolean_expression SO)? statement_list
+		-> boolean_expression? statement_list
 	;
 	
 variable_declaration
@@ -143,6 +145,7 @@ print_statement
 
 input_statement
 	:	WHATWAS lvalue QUESTION_MARK
+		-> ^(INPUTSTATEMENT lvalue)
 	;
 
 stdout_lvalue
@@ -170,13 +173,13 @@ lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
 
 additive_expr
-	:	multiplicactive_expr (additive_operator multiplicactive_expr)*
+	:	multiplicative_expr (additive_operator multiplicative_expr)*
 	;
 	
 additive_operator
 	:	(PLUS | MINUS);
 
-multiplicactive_expr
+multiplicative_expr
 	:	bitwise_expr (multiplicative_operator bitwise_expr)*
 	;
 	
