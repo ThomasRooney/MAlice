@@ -1,12 +1,17 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 #include "MAliceSymbolTable.h"
+#include <vector>
+
 
 typedef ASTNode MAliceParser_Ctx_struct;
 
 class MAliceASTWalker {
 public:
   MAliceASTWalker ();
+  void feedTree();
+  std::vector<std::string> validateTree();
+  void compileTree();
 private:
   void visitCompoundNode(ASTNode*, MALiceSymbolTableNode*);
   void visitProgramNode(ASTNode*, MALiceSymbolTableNode*);
