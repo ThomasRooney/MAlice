@@ -1,9 +1,15 @@
+#ifndef _MALICEENTITY
+#define _MALICEENTITY
+
 #include <string>
 
-class MALiceEntity {
+class MAliceEntity {
 public:
   std::string name;
   unsigned short type;
 
-  MALiceEntity(std::string name,unsigned short type);
-}
+  MAliceEntity(std::string name,unsigned short type);
+
+};
+
+#endif

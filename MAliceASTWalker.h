@@ -1,50 +1,66 @@
+#ifndef _MALICEASTWALKER
+#define _MALICEASTWALKER
+
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
-#include "MAliceSymbolTable.h"
+
 #include <vector>
 
+#include "MAliceSymbolTable.h"
 
-typedef ASTNode MAliceParser_Ctx_struct;
+
+typedef MAliceParser_Ctx_struct ASTNode;
+
+#include "MAliceParser.h"
 
 class MAliceASTWalker {
 public:
   MAliceASTWalker ();
   void feedTree();
-  std::vector<std::string> validateTree();
+  bool validateTree(pANTLR3_BASE_TREE);
   void compileTree();
+  void printTree(pANTLR3_BASE_TREE);
+  void initialiseSymbolTable();
+  MAliceASTWalker :: ~MAliceASTWalker();
+protected:
+  MAliceSymbolTableNode *rootSymbolTable;
+
 private:
-  void visitCompoundNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitProgramNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitTypeNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitConstantNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitFunctionNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitProcedureNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitDeclarationArgumentListNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitBlockNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitBodyNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitDeclarationArgumentNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitFuncInvocationNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitAssignmentNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitStatementInnerSeperatorNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitStatementListNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitStatementNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitReturnNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitWhileLoopNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitIfBlockNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitElseBlockNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitVariableDeclarationNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitPrintStatementNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitInputStatementNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitSTDOUTLvalueNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitIncrementNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitDecrementNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitExpressionNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitLvalueNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitAdditiveExpressionNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitMultiplicativeNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitBitwiseExprNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitUnaryExprNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitBooleanExprNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitSingleBooleanExprNode(ASTNode*, MALiceSymbolTableNode*);
-  void visitNullStatementNode(ASTNode*, MALiceSymbolTableNode*);
-}
+  
+  void visitCompoundNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitProgramNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitTypeNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitConstantNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitFunctionNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitProcedureNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitDeclarationArgumentListNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitBlockNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitBodyNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitDeclarationArgumentNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitFuncInvocationNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitAssignmentNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitStatementInnerSeperatorNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitStatementListNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitStatementNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitReturnNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitWhileLoopNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitIfBlockNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitElseBlockNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitVariableDeclarationNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitPrintStatementNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitInputStatementNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitSTDOUTLvalueNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitIncrementNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitDecrementNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitExpressionNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitLvalueNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitAdditiveExpressionNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitMultiplicativeNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitBitwiseExprNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitUnaryExprNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitBooleanExprNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitSingleBooleanExprNode(ASTNode*, MAliceSymbolTableNode*);
+  void visitNullStatementNode(ASTNode*, MAliceSymbolTableNode*);
+};
+
+#endif
