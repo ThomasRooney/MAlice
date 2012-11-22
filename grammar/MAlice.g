@@ -12,9 +12,9 @@ program	:	(variable_declaration statement_inner_separator)* (function|procedure)
 // Types and constants
 
 
-type 	:	'number'
-        |   	'letter'
-        |	'sentence'
+type 	:	NUMBER_TYPE
+        |   	LETTER_TYPE
+        |	SENTENCE_TYPE
         ;
        
 constant:	NUMBER_LITERAL
@@ -25,7 +25,7 @@ constant:	NUMBER_LITERAL
 function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type block
 	;
 procedure
-	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN OPENED body CLOSED
+	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN block
 	;
 
 declaration_argument_list
@@ -223,6 +223,13 @@ QUESTION_MARK
 	:	'?';
 ATE	:	'ate';
 DRANK	:	'drank';
+
+NUMBER_TYPE
+	:	'number';
+LETTER_TYPE
+	:	'letter';
+SENTENCE_TYPE
+	:	'sentence';
 	
 IDENTIFIER
 	:	LETTER (LETTER | DIGIT | UNDERSCORE)*;
