@@ -255,7 +255,7 @@ fragment QUOTE
 	:	'"';
 	
 STRING_LITERAL
-	:	QUOTE (ESCAPE | ~(QUOTE))* QUOTE {setText(getText().substring(1, getText().length()-1));}
+	:	QUOTE (ESCAPE | ~(QUOTE))* QUOTE
 	;
 NUMBER_LITERAL
 	:	'0' | '1'..'9' DIGIT*
