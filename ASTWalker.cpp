@@ -3,6 +3,7 @@
 #include "MAliceParser.h"
 #include "VisitorCallbacks.h"
 #include <unordered_map>
+#include <stdexcept>
 #include <iostream>
 #include <string>
 #include <sstream>

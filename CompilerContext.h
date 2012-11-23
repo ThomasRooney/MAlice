@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <list>
+#include <stdexcept>
 
 #include "SymbolTable.h"
 

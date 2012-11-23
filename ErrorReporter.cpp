@@ -1,5 +1,9 @@
 
 #include "ErrorReporter.h"
+#include <iostream>
+#include <stdexcept>
+#include <cstdlib>
+#include "limits.h"
 
 #define LINE_NUMBER_NA      UINT_MAX
 #define COL_INDEX_NA        UINT_MAX
@@ -42,7 +46,7 @@ namespace MAlice {
             cerr << ") ";
         }
         
-        cerr << errorMessage << endl;
+        cerr << errorMessage.c_str() << endl;
         
         if (isFatal)
             exit(EXIT_FAILURE);
