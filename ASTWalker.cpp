@@ -1,6 +1,10 @@
 #include "ASTWalker.h"
 #include "SymbolTable.h"
 #include "grammar\output\MAliceParser.h"
+#include <unordered_map>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 namespace MAlice {
 
@@ -138,7 +142,15 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
 void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable)
 {
   void (*visitFunction)(ASTNode, SymbolTable *);
+  try {
   visitFunction = (visitDictionary.at(node->getType(node)));
+  }
+  catch (std::out_of_range e) {
+    std::stringstream error;
+    error << "Node: " << (node->toString(node)->chars) << " has undefined visit function";
+    std::cerr << error;
+    return;
+  }
 	if (visitFunction != NULL)
 		visitFunction((ASTNode)node, symbolTable);
 		

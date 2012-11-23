@@ -28,11 +28,11 @@ int main(int argc, char *argv[])
     
 #ifdef _WIN32
     char *cwdpath = NULL;
-    getcwd(cwdpath, NULL);
+    cwdpath = getcwd(cwdpath, NULL);
     
     if (cwdpath == 0)
         perror("getcwd error");
-    
+    path.append(cwdpath);
     path.append("\\");
 #endif
     
