@@ -9,7 +9,8 @@ namespace MAlice {
         
         path = (pANTLR3_UINT8)filePath.c_str();
         m_input = antlr3FileStreamNew(path, ANTLR3_ENC_UTF8);
-        
+        if (m_input == NULL)
+          m_errorReporter->reportError(ErrorTypeIO, "No Input File Specified", true);
         m_lexer = MAliceLexerNew(m_input);
         if (!m_lexer)
             return;

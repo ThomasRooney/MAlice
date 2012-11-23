@@ -24,11 +24,18 @@ namespace MAlice {
     
     void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, string errorMessage, bool isFatal)
     {
-        if (errorType == ErrorTypeSyntactic)
+        switch(errorType)
+        {
+          case ErrorTypeSyntactic:
             cerr << "Syntactic error: ";
-        else if (errorType == ErrorTypeSemantic)
+            break;
+          case ErrorTypeSemantic:
             cerr << "Semantic error: ";
-        
+            break;
+          case ErrorTypeIO:
+            cerr << "IO error: ";
+            break;
+        }
         if (lineNumber != LINE_NUMBER_NA || columnIndex != COL_INDEX_NA) {
             cerr << "(";
             

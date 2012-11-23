@@ -8,7 +8,8 @@ namespace MAlice {
     
     typedef enum {
         ErrorTypeSyntactic,
-        ErrorTypeSemantic
+        ErrorTypeSemantic,
+        ErrorTypeIO
     } ErrorType;
     
     class ErrorReporter {
