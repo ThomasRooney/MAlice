@@ -12,10 +12,7 @@ all: $(CPP_FILES) antlr malice
 
 # Main MAlice target
 malice: $(CPP_FILES) $(H_FILES) malice_lexer malice_parser main.cpp
-	$(CC) $(ARGS) $(ANTLR_SEARCH_PATHS) $(LEXER_SEARCH_PATH) $(H_FILES) MAliceASTWalker.cpp -o MAliceASTWalker.o
-	$(CC) $(ARGS) $(ANTLR_SEARCH_PATHS) $(LEXER_SEARCH_PATH) $(H_FILES)  MAliceEntity.cpp -o MAliceEntity.o
-	$(CC) $(ARGS) $(ANTLR_SEARCH_PATHS) $(LEXER_SEARCH_PATH) $(H_FILES)  MAliceSymbolTable.cpp -o MAliceSymbolTable.o
-	$(CC) $(ARGS) $(ANTLR_SEARCH_PATHS) $(LEXER_SEARCH_PATH) $(H_FILES)  main.cpp MAliceLexer.o MAliceParser.o $(OBJECTS) grammar/antlr/libantlr3c/.libs/libantlr3c.a -o compile
+	$(CC) $(ARGS) $(ANTLR_SEARCH_PATHS) $(LEXER_SEARCH_PATH) $(CPP_FILES) $(H_FILES)  main.cpp MAliceLexer.o MAliceParser.o grammar/antlr/libantlr3c/.libs/libantlr3c.a -o compile
 	
 %.o: %.cpp $(H_FILES)
 	$(CC) -c -o $@ $<

@@ -28,7 +28,7 @@ int main(int argc,char *argv[])
     MAliceASTWalker treeWalker = MAliceASTWalker();
 
       char *path=NULL;
-      size_t size = NULL;
+      size_t size = (size_t)NULL;
       path=getcwd(path,size);
       if (path == 0)
         perror("getcwd error");
