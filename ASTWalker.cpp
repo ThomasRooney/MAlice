@@ -1,6 +1,6 @@
 #include "ASTWalker.h"
 #include "SymbolTable.h"
-#include "grammar\output\MAliceParser.h"
+#include "MAliceParser.h"
 #include <unordered_map>
 #include <iostream>
 #include <string>
@@ -24,7 +24,7 @@ void ASTWalker :: constructVisitDictionary() {
   static bool doOnce = false;
   if (!doOnce) {
     doOnce = true;
-    visitDictionary = std::unordered_map<unsigned int,void(*)(ASTNode, SymbolTable*)>();
+    visitDictionary = std::unordered_map<unsigned int,void(*)(ASTNode, CompilerContext*)>();
     
 /*             ALICEFOUND, 
              ALICEFOUND      4
@@ -134,14 +134,14 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
   printf("-----Constructing Symbol-----\n");
   printf("------------Table------------\n");
   printf("-----------------------------\n");
-  this->visitNode(root, this->rootSymbolTable);
+  this->visitNode(root, NULL);
   return true;
 }
 
 
-void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable)
+void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, CompilerContext* compilerContext)
 {
-  void (*visitFunction)(ASTNode, SymbolTable *);
+  void (*visitFunction)(ASTNode, CompilerContext*);
   try {
   visitFunction = (visitDictionary.at(node->getType(node)));
   }
@@ -153,7 +153,7 @@ void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable)
     return;
   }
 	if (visitFunction != NULL)
-		visitFunction((ASTNode)node, symbolTable);
+		visitFunction((ASTNode)node, compilerContext);
 		
 }
 

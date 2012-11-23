@@ -1,5 +1,6 @@
 
 #include "CompilerContext.h"
+#include "SymbolTable.h"
 
 using namespace std;
 
