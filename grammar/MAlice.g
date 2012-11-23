@@ -221,7 +221,7 @@ boolean_operator
 	;
 
 single_boolean_expression_operator
-	:	(EQUALS | NOTEQUAL | LT | LTE | GT | GTE)
+	:	(EQUALS | NOTEQUAL | LESSTHAN | LESSTHANEQUAL | GREATERTHAN | GREATERTHANEQUAL)
 	;
 single_boolean_expression
 	:	(LPAREN single_boolean_expression) => LPAREN single_boolean_expression RPAREN
@@ -320,10 +320,14 @@ DIVIDE	:	'/';
 MODULO	:	'%';
 EQUALS	:	'==';
 NOTEQUAL:	'!=';
-LT	:	'<';
-LTE	:	'<=';
-GT	:	'>';
-GTE	:	'>=';
+LESSTHAN	
+	:	'<';
+LESSTHANEQUAL	
+	:	'<=';
+GREATERTHAN
+	:	'>';
+GREATERTHANEQUAL
+	:	'>=';
 LOGICALAND
 	:	'&&'
 	;
