@@ -22,6 +22,7 @@ tokens {
 	FUNCDEFINITION;
 	PROCDEFINITION;
 	INPUTSTATEMENT;
+	EXPRESSION;
 }
 
 // Programs, procedures and functions
@@ -166,41 +167,41 @@ decrement_statement
 
 // Expressions
 expression
-	:	additive_expr->additive_expr
+	:	additive_expr
+		-> ^(EXPRESSION additive_expr)
 	;
 
 lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
 	;
 
 additive_expr
-	:	multiplicative_expr (additive_operator multiplicative_expr)*
-		-> ^($additive_expr multiplicative_expr (additive_operator multiplicative_expr)*)
+	:	multiplicative_expr (additive_operator^ multiplicative_expr)*
 	;
 	
 additive_operator
-	:	(PLUS | MINUS);
+	:	(PLUS | MINUS)
+	;
 
-
-multiplicative_operator
-	:	('*' | '/' | '%');
 multiplicative_expr
-	:	bitwise_expr (multiplicative_operator bitwise_expr)*
-		-> ^($multiplicative_expr bitwise_expr (multiplicative_operator bitwise_expr)*)
+	:	bitwise_expr (multiplicative_operator^ bitwise_expr)*
+	;
+	
+multiplicative_operator
+	:	(MULTIPLY | DIVIDE | MODULO)
 	;
 	
 	
 bitwise_expr
-	:	unary_expr (bitwise_operator unary_expr)*
-		-> ^($bitwise_expr unary_expr (bitwise_operator unary_expr)*)
+	:	unary_expr (bitwise_operator^ unary_expr)*
 	;
 	
 bitwise_operator
-	:	('^' | '|' | '&');
+	:	('^' | '|' | '&')
+	;
 
 unary_expr
 	:	(IDENTIFIER LPAREN) => proc_func_invocation
-	| 	unary_operator unary_expr
-		-> ^(unary_operator unary_expr)
+	| 	unary_operator^ unary_expr
 	|	constant
 	|	lvalue
 	|	LPAREN additive_expr RPAREN
@@ -208,19 +209,19 @@ unary_expr
 	;
 	
 unary_operator
-	:	(PLUS | MINUS | TILDE | BANG);
+	:	(PLUS | MINUS | TILDE | BANG)
+	;
 
 boolean_expression
-	:	single_boolean_expression (boolean_expression_operator single_boolean_expression)*
+	:	single_boolean_expression (boolean_operator^ single_boolean_expression)*
 	;
 	
-boolean_expression_operator
-	:	('&&' | '||')
+boolean_operator
+	:	(LOGICALAND | LOGICALOR)
 	;
-	
 
 single_boolean_expression_operator
-	:	('==' | '!=' | '<' | '<=' | '>' | '>=' )
+	:	(EQUALS | NOTEQUAL | LT | LTE | GT | GTE)
 	;
 single_boolean_expression
 	:	(LPAREN single_boolean_expression) => LPAREN single_boolean_expression RPAREN
@@ -314,6 +315,21 @@ PLUS	:	'+';
 MINUS	:	'-';
 TILDE	:	'~';
 BANG	:	'!';
+MULTIPLY:	'*';
+DIVIDE	:	'/';
+MODULO	:	'%';
+EQUALS	:	'==';
+NOTEQUAL:	'!=';
+LT	:	'<';
+LTE	:	'<=';
+GT	:	'>';
+GTE	:	'>=';
+LOGICALAND
+	:	'&&'
+	;
+LOGICALOR
+	:	'||'
+	;
 UNDERSCORE
 	:	'_';
 
