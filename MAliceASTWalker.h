@@ -21,7 +21,7 @@ public:
   void compileTree();
   pANTLR3_STRING printTree(pANTLR3_BASE_TREE, int);
   void initialiseSymbolTable();
-  MAliceASTWalker :: ~MAliceASTWalker();
+  ~MAliceASTWalker();
 protected:
   MAliceSymbolTableNode *rootSymbolTable;
 
