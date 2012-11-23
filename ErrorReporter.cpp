@@ -18,6 +18,11 @@ namespace MAlice {
         reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, isFatal);
     }
     
+    void ErrorReporter::reportError(unsigned int lineNumber, ErrorType errorType, string errorMessage, bool isFatal)
+    {
+        reportError(lineNumber, COL_INDEX_NA, errorType, errorMessage, isFatal);
+    }
+    
     void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, string errorMessage, bool isFatal)
     {
         if (errorType == ErrorTypeSyntactic)
