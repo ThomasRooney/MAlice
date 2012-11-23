@@ -148,7 +148,7 @@ void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable)
   catch (std::out_of_range e) {
     std::stringstream error;
     error << "Node: " << (node->toString(node)->chars) << " has undefined visit function";
-    std::cerr << error;
+    std::cerr << error.str();
     return;
   }
 	if (visitFunction != NULL)

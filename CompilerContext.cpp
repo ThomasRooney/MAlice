@@ -22,11 +22,11 @@ namespace MAlice {
         if (m_symbolTables.empty())
             return false;
         
-        for (list<SymbolTable>::reverse_iterator iterator = m_symbolTables.rbegin(); iterator != m_symbolTables.rend(); iterator++) {
+        for (list<SymbolTable*>::reverse_iterator iterator = m_symbolTables.rbegin(); iterator != m_symbolTables.rend(); iterator++) {
             Entity const *entity = NULL;
             
             try {
-                entity = iterator->get(identifier);
+                entity = (*iterator)->get(identifier);
             }
             catch(out_of_range e) {
                 if (entity && outEntity) {
