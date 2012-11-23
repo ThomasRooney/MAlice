@@ -26,6 +26,7 @@ tokens {
 	BYREFERENCE;
 	BYVALUE;
 	ARRAY;
+	ARRAYSUBSCRIPT;
 }
 
 // Programs, procedures and functions
@@ -179,6 +180,7 @@ expression
 	;
 
 lvalue	:	IDENTIFIER (APOSTROPHE_S expression PIECE)?
+		-> ^(ARRAYSUBSCRIPT IDENTIFIER expression)
 	;
 
 additive_expr
