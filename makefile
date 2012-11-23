@@ -5,14 +5,13 @@ CPP_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(addprefix obj/,$(notdir $(CPP_FILES:.cpp=.o)))
 H_FILES = $(wildcard *.h)
 OBJECTS = ${CPP_FILES:.cpp=.o}
-ARGS=-std=c++0x
 CCFLAGS = -std=c++0x
 
 
-all: $(CPP_FILES) antlr malice 
+all: $(CPP_FILES) $(ANTLR_OUTPUT_FILES) antlr malice 
 
 # Main MAlice target
-malice: $(OBJ_FILES)
+malice: $(OBJ_FILES) obj/MAliceLexer.o obj/MAliceParser.o
 	$(CC) $(CCFLAGS) $(ANTLR_SEARCH_PATHS) $(LEXER_SEARCH_PATH) grammar/antlr/libantlr3c/.libs/libantlr3c.a -o compile $^
 	
 obj/%.o: %.cpp
@@ -23,10 +22,10 @@ obj/%.o: %.cpp
 antlr: 
 	sh ./configureantlr.sh
 
-malice_lexer: antlr
+obj/MAliceLexer.o: antlr
 	$(CC) $(ANTLR_SEARCH_PATHS) -c grammar/output/MAliceLexer.c -o obj/MAliceLexer.o
 
-malice_parser: antlr
+obj/MAliceParser.o: antlr
 	$(CC) $(ANTLR_SEARCH_PATHS) -c grammar/output/MAliceParser.c -o obj/MAliceParser.o
 
 
