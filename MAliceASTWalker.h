@@ -19,14 +19,14 @@ public:
   void feedTree();
   bool validateTree(pANTLR3_BASE_TREE);
   void compileTree();
-  void printTree(pANTLR3_BASE_TREE);
+  pANTLR3_STRING printTree(pANTLR3_BASE_TREE, int);
   void initialiseSymbolTable();
   MAliceASTWalker :: ~MAliceASTWalker();
 protected:
   MAliceSymbolTableNode *rootSymbolTable;
 
 private:
-  
+  void visitNode(pANTLR3_BASE_TREE node, MAliceSymbolTableNode* symbolTable);
   void visitCompoundNode(ASTNode*, MAliceSymbolTableNode*);
   void visitProgramNode(ASTNode*, MAliceSymbolTableNode*);
   void visitTypeNode(ASTNode*, MAliceSymbolTableNode*);
