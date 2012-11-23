@@ -21,29 +21,31 @@ using namespace MAlice;
 
 // Skeleton file based on http://stackoverflow.com/a/8542203
 int main(int argc, char *argv[])
-{
-    pANTLR3_UINT8 fName;
-    pANTLR3_INPUT_STREAM input;
-    
+{    
     ASTWalker treeWalker = ASTWalker();
 
-    char *path = NULL;
-    size_t size = (size_t)NULL;
-    path=getcwd(path,size);
-    if (path == 0)
-    perror("getcwd error");
-    std::string spath = std::string(path);
-    spath.append("\\");
+    std::string path = std::string();
     
-    if (argc < 2 || argv[1] == NULL) {
-      spath.append("input");
-    }
-    else {
-        spath.append(argv[1]);
-    }
+#ifdef _WIN32
+    char *cwdpath = NULL;
+    getcwd(cwdpath, NULL);
     
-    fName   = (pANTLR3_UINT8)spath.c_str();
-    input  = antlr3FileStreamNew(fName, ANTLR3_ENC_UTF8);
+    if (cwdpath == 0)
+        perror("getcwd error");
+    
+    path.append("\\");
+#endif
+    
+    if (argc < 2 || argv[1] == NULL)
+        path.append("input");
+    else
+        path.append(argv[1]);
+    
+    pANTLR3_UINT8 filePath;
+    pANTLR3_INPUT_STREAM input;
+    
+    filePath = (pANTLR3_UINT8)path.c_str();
+    input = antlr3FileStreamNew(filePath, ANTLR3_ENC_UTF8);
 
     if (!input)
         return EXIT_FAILURE;
@@ -64,12 +66,8 @@ int main(int argc, char *argv[])
     pANTLR3_COMMON_TREE_NODE_STREAM	nodes;
 
     if (parser->pParser->rec->state->errorCount > 0)
-    {
 		  fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", parser->pParser->rec->state->errorCount);
-    }
     else {
-
-
 //		printf("Tree : %s\n", progReturn.tree->toStringTree(progReturn.tree)->chars);
         treeWalker.validateTree(progReturn.tree );
 		nodes	= antlr3CommonTreeNodeStreamNewTree(progReturn.tree, ANTLR3_SIZE_HINT); // sIZE HINT WILL SOON BE DEPRECATED!!

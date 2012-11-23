@@ -1,10 +1,3 @@
-//
-//  VariableEntity.h
-//  MAlice
-//
-//  Created by Alex Rozanski on 23/11/2012.
-//
-//
 
 #ifndef _MALICEVARIABLEENTITY
 #define _MALICEVARIABLEENTITY
@@ -16,6 +9,12 @@
 namespace MAlice {
 
 class VariableEntity : Entity {
+
+private:
+    unsigned short m_type;
+    
+public:
+    VariableEntity(std::string identifier, unsigned short type);
     
 }; // class VariableEntity
     
