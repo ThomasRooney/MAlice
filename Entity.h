@@ -5,14 +5,21 @@
 
 namespace MAlice {
     
-class Entity {
-public:
-  std::string name;
-  unsigned short type;
-
-  Entity(std::string name,unsigned short type);
+    typedef enum {
+        EntityTypeUndefined = 0,
+        EntityTypeVariable,
+        EntityTypeProcedure,
+        EntityTypeFunction
+    } EntityType;
     
-}; // class Entity
+    class Entity {
+    public:
+      std::string m_identifier;
+      EntityType m_type;
+
+      Entity(std::string identifier, EntityType type);
+        
+    }; // class Entity
     
 }; // namespace MAlice
 
