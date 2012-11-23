@@ -30,4 +30,5 @@ obj/MAliceParser.o: antlr
 
 clean:
 	@sh ./cleanantlr.sh
+	rm obj/*.o
 .PHONY: clean
