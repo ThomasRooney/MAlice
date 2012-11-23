@@ -196,7 +196,7 @@ bitwise_expr
 	;
 	
 bitwise_operator
-	:	('^' | '|' | '&')
+	:	(BITWISEXOR | BITWISEOR | BITWISEAND)
 	;
 
 unary_expr
@@ -330,6 +330,13 @@ LOGICALAND
 LOGICALOR
 	:	'||'
 	;
+BITWISEAND
+	:	'&';
+BITWISEOR
+	:	'|';
+BITWISEXOR
+	:	'^';
+	
 UNDERSCORE
 	:	'_';
 
