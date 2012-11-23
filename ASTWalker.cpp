@@ -1,17 +1,20 @@
-#include "MAliceASTWalker.h"
-#include "MAliceSymbolTable.h"
+#include "ASTWalker.h"
+#include "SymbolTable.h"
 
-MAliceASTWalker :: MAliceASTWalker (){
+namespace MAlice {
+
+ASTWalker :: ASTWalker () {
   rootSymbolTable = NULL;
 }
-MAliceASTWalker :: ~MAliceASTWalker() {
+    
+ASTWalker :: ~ASTWalker() {
   if (rootSymbolTable != NULL)
   {
     delete rootSymbolTable;
   }
 }
 
-bool MAliceASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
+bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
   initialiseSymbolTable();
 
   // Get the root node, it should be program, if not then error
@@ -30,7 +33,7 @@ bool MAliceASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
 }
 
 
-void MAliceASTWalker :: visitNode(pANTLR3_BASE_TREE node, MAliceSymbolTableNode* symbolTable)
+void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTableNode* symbolTable)
 {
   static int calledTimes = 0;
   calledTimes++;
@@ -48,7 +51,7 @@ void MAliceASTWalker :: visitNode(pANTLR3_BASE_TREE node, MAliceSymbolTableNode*
 }
 
 
-pANTLR3_STRING MAliceASTWalker :: printTree(pANTLR3_BASE_TREE node, int depth)
+pANTLR3_STRING ASTWalker :: printTree(pANTLR3_BASE_TREE node, int depth)
 {
   int i,i2;
   pANTLR3_STRING string	= node->strFactory->newRaw(node->strFactory);
@@ -76,15 +79,17 @@ pANTLR3_STRING MAliceASTWalker :: printTree(pANTLR3_BASE_TREE node, int depth)
   return string;
 }
 
-void MAliceASTWalker :: compileTree() {
+void ASTWalker :: compileTree() {
 
 }
 
-void MAliceASTWalker :: initialiseSymbolTable(){
+void ASTWalker :: initialiseSymbolTable(){
   if (rootSymbolTable != NULL)
   {
     delete rootSymbolTable;
   }
-    rootSymbolTable = new MAliceSymbolTableNode(NULL);
+    rootSymbolTable = new SymbolTableNode(NULL);
 
 }
+
+}; // namespace MAlice

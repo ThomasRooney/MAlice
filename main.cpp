@@ -1,7 +1,9 @@
+#include <string>
+
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
-#include "MAliceASTWalker.h"
-#include <string>
+
+#include "ASTWalker.h"
 
 
 #ifdef _WIN32
@@ -15,25 +17,24 @@ typedef unsigned long int uint64_t;
 #include <unistd.h>
 #endif
 
-
+using namespace MAlice;
 
 // Skeleton file based on http://stackoverflow.com/a/8542203
 int main(int argc,char *argv[])
 {
-    pANTLR3_UINT8      fName;
-    uint8_t *bufferData;
-    uint32_t bufferSize;
-    pANTLR3_UINT8 bufferName;
-    pANTLR3_INPUT_STREAM       input;
-    MAliceASTWalker treeWalker = MAliceASTWalker();
+    pANTLR3_UINT8 fName;
+    pANTLR3_INPUT_STREAM input;
+    
+    ASTWalker treeWalker = ASTWalker();
 
-      char *path=NULL;
-      size_t size = (size_t)NULL;
-      path=getcwd(path,size);
-      if (path == 0)
-        perror("getcwd error");
-      std::string spath = std::string(path);
-      spath.append("\\");
+    char *path = NULL;
+    size_t size = (size_t)NULL;
+    path=getcwd(path,size);
+    if (path == 0)
+    perror("getcwd error");
+    std::string spath = std::string(path);
+    spath.append("\\");
+    
     if (argc < 2 || argv[1] == NULL)
     {
       spath.append("input");
