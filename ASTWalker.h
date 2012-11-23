@@ -17,7 +17,7 @@ class ASTWalker {
 public:
   ASTWalker();
   void feedTree();
-  bool validateTree(ASTNode node);
+  bool validateTree(ASTNode node, CompilerContext *ctx);
   void compileTree();
   pANTLR3_STRING printTree(ASTNode node, int);
   void initialiseSymbolTable();

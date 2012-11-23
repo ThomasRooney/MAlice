@@ -68,17 +68,12 @@ int main(int argc, char *argv[])
     if (parser->pParser->rec->state->errorCount > 0)
 		  fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", parser->pParser->rec->state->errorCount);
     else {
-//		printf("Tree : %s\n", progReturn.tree->toStringTree(progReturn.tree)->chars);
-        treeWalker.validateTree(progReturn.tree );
+        CompilerContext *ctx = new CompilerContext();
+        
+        treeWalker.validateTree(progReturn.tree, ctx);
 		nodes	= antlr3CommonTreeNodeStreamNewTree(progReturn.tree, ANTLR3_SIZE_HINT); // sIZE HINT WILL SOON BE DEPRECATED!!
-
-		// Tree parsers are given a common tree node stream (or your override)
-		//
-		//treePsr	= SimpleCWalkerNew(nodes);
-
-		//treePsr->program(treePsr);
-		//nodes->free(nodes); nodes = NULL;
-		//treePsr ->free  (treePsr);	    treePsr	= NULL;
+        
+        delete ctx;
 	}
     
     // Cleanup

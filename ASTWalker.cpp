@@ -120,7 +120,7 @@ void ASTWalker :: constructVisitDictionary() {
   }
 }
 
-bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
+bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
   initialiseSymbolTable();
 
   // Get the root node, it should be program, if not then error
@@ -134,7 +134,7 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
   printf("-----Constructing Symbol-----\n");
   printf("------------Table------------\n");
   printf("-----------------------------\n");
-  this->visitNode(root, NULL);
+  this->visitNode(root, ctx);
   return true;
 }
 
