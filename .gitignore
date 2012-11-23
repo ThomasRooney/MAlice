@@ -32,3 +32,6 @@ grammar/antlr/libantlr3c/*
 
 #ignore java files (For antlr)
 *.jar
+
+#ignore Xcode project files
+*.xcodeproj
