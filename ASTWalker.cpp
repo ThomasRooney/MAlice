@@ -1,10 +1,12 @@
 #include "ASTWalker.h"
 #include "SymbolTable.h"
 #include "MAliceParser.h"
+#include "VisitorCallbacks.h"
 #include <unordered_map>
 #include <iostream>
 #include <string>
 #include <sstream>
+
 
 namespace MAlice {
 
@@ -20,6 +22,10 @@ void ASTWalker :: constructVisitDictionary() {
   if (!doOnce) {
     doOnce = true;
     visitDictionary = std::unordered_map<unsigned int,void(*)(ASTNode, CompilerContext*)>();
+    visitDictionary.emplace(
+      std::make_pair
+      (PROGRAM, &visitProgramNode)
+      );
     
 /*             ALICEFOUND, 
              ALICEFOUND      4
@@ -181,10 +187,6 @@ pANTLR3_STRING ASTWalker :: printTree(pANTLR3_BASE_TREE node, int depth)
 
 void ASTWalker :: compileTree() {
 
-}
-
-void ASTWalker :: visitProgramNode(ASTNode node, CompilerContext *ctx)
-{
 }
 
 }; // namespace MAlice
