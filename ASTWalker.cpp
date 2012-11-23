@@ -147,8 +147,9 @@ void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, CompilerContext* compilerCon
   }
   catch (std::out_of_range e) {
     std::stringstream error;
-    error << "Node: " << (node->toString(node)->chars) << " has undefined visit function";
+    error << "FATAL ERROR - Node: " << (node->toString(node)->chars) << " has undefined visit function" << "Exitting";
     std::cerr << error.str();
+    exit(0);
     return;
   }
 	if (visitFunction != NULL)
