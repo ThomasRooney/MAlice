@@ -1,3 +1,4 @@
+
 #ifndef _MALICEENTITY
 #define _MALICEENTITY
 
