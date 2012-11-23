@@ -6,12 +6,11 @@
 
 #include <vector>
 #include "CompilerContext.h"
+#include "Types.h"
 
 #define NUMBER_OF_VISIT_FUNCTIONS 34
 
 namespace MAlice {
-
-typedef pANTLR3_BASE_TREE ASTNode;
 
 class ASTWalker {
 public:
