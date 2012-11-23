@@ -22,7 +22,7 @@ namespace MAlice {
     
     void SymbolTable::insert(string identifier, Entity entity)
     {
-        m_symbolMap.insert({identifier, entity});
+      m_symbolMap.emplace(std::pair<string,Entity>(identifier, entity));
     }
     
     unsigned int SymbolTable::numberOfSymbols()
