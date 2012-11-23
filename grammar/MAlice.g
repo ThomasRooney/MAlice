@@ -23,6 +23,8 @@ tokens {
 	PROCDEFINITION;
 	INPUTSTATEMENT;
 	EXPRESSION;
+	BYREFERENCE;
+	BYVALUE;
 }
 
 // Programs, procedures and functions
@@ -69,7 +71,10 @@ body_declarations
 	;
 	
 declaration_argument
-	:	SPIDER? type IDENTIFIER
+	:	SPIDER type IDENTIFIER
+		-> ^(BYREFERENCE ^(IDENTIFIER type))
+	|	type IDENTIFIER
+		-> ^(BYVALUE ^(IDENTIFIER type))
 	;
 
 
