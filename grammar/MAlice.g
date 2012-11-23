@@ -94,7 +94,8 @@ assignment
 
 // Statements
 
-statement_inner_separator 	:	(COMMA | THEN | AND | BUT | FULL_STOP);
+statement_inner_separator 
+	:	(COMMA | THEN | AND | BUT | FULL_STOP);
 
 statement_list
 	:	statement_component+
@@ -177,7 +178,7 @@ expression
 		-> ^(EXPRESSION additive_expr)
 	;
 
-lvalue	:	IDENTIFIER ('\'s' expression PIECE)?
+lvalue	:	IDENTIFIER (APOSTROPHE_S expression PIECE)?
 	;
 
 additive_expr
@@ -238,14 +239,22 @@ single_boolean_expression
 	
 		
 null_statement
-	:	'.';
+	:	FULL_STOP;
 
 // Lexer rules
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
 	;
+
+fragment ESCAPE
+	:	'\\"'
+	;
+fragment QUOTE
+	:	'"';
+	
 STRING_LITERAL
-	:	'"' ~('"')* '"';
+	:	QUOTE (ESCAPE | ~(QUOTE))* QUOTE {setText(getText().substring(1, getText().length()-1));}
+	;
 NUMBER_LITERAL
 	:	'0' | '1'..'9' DIGIT*
 	;
@@ -306,6 +315,8 @@ QUESTION_MARK
 	:	'?';
 ATE	:	'ate';
 DRANK	:	'drank';
+APOSTROPHE_S
+	:	'\'s';
 
 NUMBER_TYPE
 	:	'number';
