@@ -5,7 +5,7 @@
 #include "MAliceParser.h"
 
 #include <vector>
-#include "SymbolTable.h"
+#include "CompilerContext.h"
 
 #define NUMBER_OF_VISIT_FUNCTIONS 34
 
@@ -17,51 +17,51 @@ class ASTWalker {
 public:
   ASTWalker();
   void feedTree();
-  bool validateTree(pANTLR3_BASE_TREE);
+  bool validateTree(ASTNode node);
   void compileTree();
-  pANTLR3_STRING printTree(pANTLR3_BASE_TREE, int);
+  pANTLR3_STRING printTree(ASTNode node, int);
   void initialiseSymbolTable();
   ~ASTWalker();
 protected:
   SymbolTable *rootSymbolTable;
 
 private:
-  void visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable);
-  void visitCompoundNode(ASTNode, SymbolTable*);
-  void visitProgramNode(ASTNode, SymbolTable*);
-  void visitTypeNode(ASTNode, SymbolTable*);
-  void visitConstantNode(ASTNode, SymbolTable*);
-  void visitFunctionNode(ASTNode, SymbolTable*);
-  void visitProcedureNode(ASTNode, SymbolTable*);
-  void visitDeclarationArgumentListNode(ASTNode, SymbolTable*);
-  void visitBlockNode(ASTNode, SymbolTable*);
-  void visitBodyNode(ASTNode, SymbolTable*);
-  void visitDeclarationArgumentNode(ASTNode, SymbolTable*);
-  void visitFuncInvocationNode(ASTNode, SymbolTable*);
-  void visitAssignmentNode(ASTNode, SymbolTable*);
-  void visitStatementInnerSeperatorNode(ASTNode, SymbolTable*);
-  void visitStatementListNode(ASTNode, SymbolTable*);
-  void visitStatementNode(ASTNode, SymbolTable*);
-  void visitReturnNode(ASTNode, SymbolTable*);
-  void visitWhileLoopNode(ASTNode, SymbolTable*);
-  void visitIfBlockNode(ASTNode, SymbolTable*);
-  void visitElseBlockNode(ASTNode, SymbolTable*);
-  void visitVariableDeclarationNode(ASTNode, SymbolTable*);
-  void visitPrintStatementNode(ASTNode, SymbolTable*);
-  void visitInputStatementNode(ASTNode, SymbolTable*);
-  void visitSTDOUTLvalueNode(ASTNode, SymbolTable*);
-  void visitIncrementNode(ASTNode, SymbolTable*);
-  void visitDecrementNode(ASTNode, SymbolTable*);
-  void visitExpressionNode(ASTNode, SymbolTable*);
-  void visitLvalueNode(ASTNode, SymbolTable*);
-  void visitAdditiveExpressionNode(ASTNode, SymbolTable*);
-  void visitMultiplicativeNode(ASTNode, SymbolTable*);
-  void visitBitwiseExprNode(ASTNode, SymbolTable*);
-  void visitUnaryExprNode(ASTNode, SymbolTable*);
-  void visitBooleanExprNode(ASTNode, SymbolTable*);
-  void visitSingleBooleanExprNode(ASTNode, SymbolTable*);
-  void visitNullStatementNode(ASTNode, SymbolTable*);
-  std::unordered_map<unsigned int,void (*)(ASTNode, SymbolTable*)> visitDictionary;
+  void visitNode(ASTNode node, CompilerContext *ctx);
+  void visitCompoundNode(ASTNode node, CompilerContext *ctx);
+  void visitProgramNode(ASTNode node, CompilerContext *ctx);
+  void visitTypeNode(ASTNode node, CompilerContext *ctx);
+  void visitConstantNode(ASTNode node, CompilerContext *ctx);
+  void visitFunctionNode(ASTNode node, CompilerContext *ctx);
+  void visitProcedureNode(ASTNode node, CompilerContext *ctx);
+  void visitDeclarationArgumentListNode(ASTNode node, CompilerContext *ctx);
+  void visitBlockNode(ASTNode node, CompilerContext *ctx);
+  void visitBodyNode(ASTNode node, CompilerContext *ctx);
+  void visitDeclarationArgumentNode(ASTNode node, CompilerContext *ctx);
+  void visitFuncInvocationNode(ASTNode node, CompilerContext *ctx);
+  void visitAssignmentNode(ASTNode node, CompilerContext *ctx);
+  void visitStatementInnerSeperatorNode(ASTNode node, CompilerContext *ctx);
+  void visitStatementListNode(ASTNode node, CompilerContext *ctx);
+  void visitStatementNode(ASTNode node, CompilerContext *ctx);
+  void visitReturnNode(ASTNode node, CompilerContext *ctx);
+  void visitWhileLoopNode(ASTNode node, CompilerContext *ctx);
+  void visitIfBlockNode(ASTNode node, CompilerContext *ctx);
+  void visitElseBlockNode(ASTNode node, CompilerContext *ctx);
+  void visitVariableDeclarationNode(ASTNode node, CompilerContext *ctx);
+  void visitPrintStatementNode(ASTNode node, CompilerContext *ctx);
+  void visitInputStatementNode(ASTNode node, CompilerContext *ctx);
+  void visitSTDOUTLvalueNode(ASTNode node, CompilerContext *ctx);
+  void visitIncrementNode(ASTNode node, CompilerContext *ctx);
+  void visitDecrementNode(ASTNode node, CompilerContext *ctx);
+  void visitExpressionNode(ASTNode node, CompilerContext *ctx);
+  void visitLvalueNode(ASTNode node, CompilerContext *ctx);
+  void visitAdditiveExpressionNode(ASTNode node, CompilerContext *ctx);
+  void visitMultiplicativeNode(ASTNode node, CompilerContext *ctx);
+  void visitBitwiseExprNode(ASTNode node, CompilerContext *ctx);
+  void visitUnaryExprNode(ASTNode node, CompilerContext *ctx);
+  void visitBooleanExprNode(ASTNode node, CompilerContext *ctx);
+  void visitSingleBooleanExprNode(ASTNode node, CompilerContext *ctx);
+  void visitNullStatementNode(ASTNode node, CompilerContext *ctx);
+  std::unordered_map<unsigned int,void (*)(ASTNode node, CompilerContext*)> visitDictionary;
   void constructVisitDictionary ();
 }; // class ASTWalker
 
