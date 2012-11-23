@@ -5,14 +5,13 @@
 #include "MAliceParser.h"
 
 #include <vector>
-
 #include "SymbolTable.h"
+
+#define NUMBER_OF_VISIT_FUNCTIONS 34
 
 namespace MAlice {
 
-typedef MAliceParser_Ctx_struct ASTNode;
-
-#include "MAliceParser.h"
+typedef pANTLR3_BASE_TREE ASTNode;
 
 class ASTWalker {
 public:
@@ -28,42 +27,47 @@ protected:
 
 private:
   void visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable);
-  void visitCompoundNode(ASTNode*, SymbolTable*);
-  void visitProgramNode(ASTNode*, SymbolTable*);
-  void visitTypeNode(ASTNode*, SymbolTable*);
-  void visitConstantNode(ASTNode*, SymbolTable*);
-  void visitFunctionNode(ASTNode*, SymbolTable*);
-  void visitProcedureNode(ASTNode*, SymbolTable*);
-  void visitDeclarationArgumentListNode(ASTNode*, SymbolTable*);
-  void visitBlockNode(ASTNode*, SymbolTable*);
-  void visitBodyNode(ASTNode*, SymbolTable*);
-  void visitDeclarationArgumentNode(ASTNode*, SymbolTable*);
-  void visitFuncInvocationNode(ASTNode*, SymbolTable*);
-  void visitAssignmentNode(ASTNode*, SymbolTable*);
-  void visitStatementInnerSeperatorNode(ASTNode*, SymbolTable*);
-  void visitStatementListNode(ASTNode*, SymbolTable*);
-  void visitStatementNode(ASTNode*, SymbolTable*);
-  void visitReturnNode(ASTNode*, SymbolTable*);
-  void visitWhileLoopNode(ASTNode*, SymbolTable*);
-  void visitIfBlockNode(ASTNode*, SymbolTable*);
-  void visitElseBlockNode(ASTNode*, SymbolTable*);
-  void visitVariableDeclarationNode(ASTNode*, SymbolTable*);
-  void visitPrintStatementNode(ASTNode*, SymbolTable*);
-  void visitInputStatementNode(ASTNode*, SymbolTable*);
-  void visitSTDOUTLvalueNode(ASTNode*, SymbolTable*);
-  void visitIncrementNode(ASTNode*, SymbolTable*);
-  void visitDecrementNode(ASTNode*, SymbolTable*);
-  void visitExpressionNode(ASTNode*, SymbolTable*);
-  void visitLvalueNode(ASTNode*, SymbolTable*);
-  void visitAdditiveExpressionNode(ASTNode*, SymbolTable*);
-  void visitMultiplicativeNode(ASTNode*, SymbolTable*);
-  void visitBitwiseExprNode(ASTNode*, SymbolTable*);
-  void visitUnaryExprNode(ASTNode*, SymbolTable*);
-  void visitBooleanExprNode(ASTNode*, SymbolTable*);
-  void visitSingleBooleanExprNode(ASTNode*, SymbolTable*);
-  void visitNullStatementNode(ASTNode*, SymbolTable*);
+  void visitCompoundNode(ASTNode, SymbolTable*);
+  void visitProgramNode(ASTNode, SymbolTable*);
+  void visitTypeNode(ASTNode, SymbolTable*);
+  void visitConstantNode(ASTNode, SymbolTable*);
+  void visitFunctionNode(ASTNode, SymbolTable*);
+  void visitProcedureNode(ASTNode, SymbolTable*);
+  void visitDeclarationArgumentListNode(ASTNode, SymbolTable*);
+  void visitBlockNode(ASTNode, SymbolTable*);
+  void visitBodyNode(ASTNode, SymbolTable*);
+  void visitDeclarationArgumentNode(ASTNode, SymbolTable*);
+  void visitFuncInvocationNode(ASTNode, SymbolTable*);
+  void visitAssignmentNode(ASTNode, SymbolTable*);
+  void visitStatementInnerSeperatorNode(ASTNode, SymbolTable*);
+  void visitStatementListNode(ASTNode, SymbolTable*);
+  void visitStatementNode(ASTNode, SymbolTable*);
+  void visitReturnNode(ASTNode, SymbolTable*);
+  void visitWhileLoopNode(ASTNode, SymbolTable*);
+  void visitIfBlockNode(ASTNode, SymbolTable*);
+  void visitElseBlockNode(ASTNode, SymbolTable*);
+  void visitVariableDeclarationNode(ASTNode, SymbolTable*);
+  void visitPrintStatementNode(ASTNode, SymbolTable*);
+  void visitInputStatementNode(ASTNode, SymbolTable*);
+  void visitSTDOUTLvalueNode(ASTNode, SymbolTable*);
+  void visitIncrementNode(ASTNode, SymbolTable*);
+  void visitDecrementNode(ASTNode, SymbolTable*);
+  void visitExpressionNode(ASTNode, SymbolTable*);
+  void visitLvalueNode(ASTNode, SymbolTable*);
+  void visitAdditiveExpressionNode(ASTNode, SymbolTable*);
+  void visitMultiplicativeNode(ASTNode, SymbolTable*);
+  void visitBitwiseExprNode(ASTNode, SymbolTable*);
+  void visitUnaryExprNode(ASTNode, SymbolTable*);
+  void visitBooleanExprNode(ASTNode, SymbolTable*);
+  void visitSingleBooleanExprNode(ASTNode, SymbolTable*);
+  void visitNullStatementNode(ASTNode, SymbolTable*);
+  std::unordered_map<unsigned int,void (*)(ASTNode, SymbolTable*)> visitDictionary;
+  void constructVisitDictionary ();
 }; // class ASTWalker
-    
+
+
+
+
 }; // namespace MAlice
 
 #endif
