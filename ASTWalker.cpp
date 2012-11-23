@@ -6,8 +6,7 @@ namespace MAlice {
 
 ASTWalker :: ASTWalker () {
   rootSymbolTable = NULL;
-  constructVisitDictionary()
-
+  constructVisitDictionary();
 }
     
 ASTWalker :: ~ASTWalker() {
