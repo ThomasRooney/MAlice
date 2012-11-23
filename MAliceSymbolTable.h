@@ -8,8 +8,8 @@
 class MAliceSymbolTableNode
 {
   private:
-    std::unordered_map<std::string, MAliceEntity> scopeMap;
-    MAliceSymbolTableNode *parentNode;
+    std::unordered_map<std::string, MAliceEntity> m_scopeMap;
+    MAliceSymbolTableNode *m_parentNode;
   public:
     MAliceSymbolTableNode(MAliceSymbolTableNode *parentNode);
     MAliceEntity* get(std::string);
