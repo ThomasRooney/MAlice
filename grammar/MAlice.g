@@ -25,6 +25,7 @@ tokens {
 	EXPRESSION;
 	BYREFERENCE;
 	BYVALUE;
+	ARRAY;
 }
 
 // Programs, procedures and functions
@@ -141,7 +142,7 @@ variable_declaration
 	|	IDENTIFIER WASA type OF expression TOO?
 		-> ^(IDENTIFIER type expression)
 	|	IDENTIFIER HAD expression type TOO?
-		-> ^(IDENTIFIER type expression)
+		-> ^(ARRAY ^(IDENTIFIER type expression))
 	;
 
 print_statement
