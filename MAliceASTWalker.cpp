@@ -65,10 +65,11 @@ pANTLR3_STRING MAliceASTWalker :: printTree(pANTLR3_BASE_TREE node, int depth)
     for (i2 = 0; i2 <= depth; i2++)
     {
       string->append8	(string, "|");
-      string->append8	(string, "-");
+      string->append8	(string, " ");
     }
 //    string->append8	(string, "|");
-//    string->append8	(string, "-");
+    (string->chars[string->len-1]) = '-';
+    //string->append8	(string, "-");
     pANTLR3_BASE_TREE child = (pANTLR3_BASE_TREE)node->children->get(node->children,i);
     string->appendS(string, printTree(child , depth+1));
   }
