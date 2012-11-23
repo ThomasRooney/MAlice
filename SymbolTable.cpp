@@ -9,10 +9,5 @@
 #include "SymbolTable.h"
 
 namespace MAlice {
-
-SymbolTableNode :: SymbolTableNode(SymbolTableNode *parentNode)
-{
-    m_parentNode = parentNode;
-}
     
 }; // namespace MAlice

@@ -33,7 +33,7 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root) {
 }
 
 
-void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTableNode* symbolTable)
+void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, SymbolTable* symbolTable)
 {
   static int calledTimes = 0;
   calledTimes++;
@@ -88,7 +88,7 @@ void ASTWalker :: initialiseSymbolTable(){
   {
     delete rootSymbolTable;
   }
-    rootSymbolTable = new SymbolTableNode(NULL);
+    rootSymbolTable = new SymbolTable();
 
 }
 

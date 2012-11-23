@@ -4,10 +4,9 @@ using namespace std;
 
 namespace MAlice {
     
-    Entity::Entity(string identifier, EntityType type)
+    Entity::Entity(string identifier)
     {
         m_identifier = identifier;
-        m_type = type;
     }
     
 }; // namespace MAlice

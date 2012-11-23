@@ -7,19 +7,15 @@
 
 namespace MAlice {
 
-class SymbolTableNode
+class SymbolTable
 {
   private:
-    std::unordered_map<std::string, Entity> m_scopeMap;
-    SymbolTableNode *m_parentNode;
+    std::unordered_map<std::string, Entity> m_symbolMap;
+    
   public:
-    SymbolTableNode(SymbolTableNode *parentNode);
-    Entity* get(std::string);
-    Entity* insert(std::string, Entity);
-    unsigned int size();
-    SymbolTableNode* createChildScope();
-    SymbolTableNode* getChildScope();
-    SymbolTableNode* getParentNode();
+    Entity *get(std::string);
+    Entity *insert(std::string, Entity);
+    unsigned int numberOfSymbols();
 }; // class SymbolTableNode
     
 }; // namespace MAlice
