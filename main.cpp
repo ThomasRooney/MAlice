@@ -79,7 +79,7 @@ int main(int argc,char *argv[])
 	  {
 
 
-		printf("Tree : %s\n", progReturn.tree->toStringTree(progReturn.tree)->chars);
+//		printf("Tree : %s\n", progReturn.tree->toStringTree(progReturn.tree)->chars);
     treeWalker.validateTree(progReturn.tree );
 		nodes	= antlr3CommonTreeNodeStreamNewTree(progReturn.tree, ANTLR3_SIZE_HINT); // sIZE HINT WILL SOON BE DEPRECATED!!
 
