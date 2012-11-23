@@ -22,7 +22,7 @@ void ASTWalker :: constructVisitDictionary() {
   if (!doOnce) {
     doOnce = true;
     visitDictionary = std::unordered_map<unsigned int,void(*)(ASTNode, CompilerContext*)>();
-    visitDictionary.emplace(
+    visitDictionary.insert(
       std::make_pair
       (PROGRAM, &visitProgramNode)
       );
