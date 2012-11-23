@@ -9,15 +9,10 @@
 namespace MAlice {
 
 ASTWalker :: ASTWalker () {
-  rootSymbolTable = NULL;
   constructVisitDictionary();
 }
     
 ASTWalker :: ~ASTWalker() {
-  if (rootSymbolTable != NULL)
-  {
-    delete rootSymbolTable;
-  }
 }
 
 void ASTWalker :: constructVisitDictionary() {
@@ -121,8 +116,6 @@ void ASTWalker :: constructVisitDictionary() {
 }
 
 bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
-  initialiseSymbolTable();
-
   // Get the root node, it should be program, if not then error
   pANTLR3_STRING str = printTree(root, 0);
   printf("Analysing File: \n"
@@ -147,10 +140,10 @@ void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, CompilerContext* compilerCon
   }
   catch (std::out_of_range e) {
     std::stringstream error;
-    error << "FATAL ERROR - Node: " << (node->toString(node)->chars) << " has undefined visit function" << "Exitting";
+    error << "FATAL ERROR - Node: " << (node->toString(node)->chars) << " Type: " << node->getType(node);
+    error << " At location(" << node->getToken(node)->getLine(node->getToken(node)) << "," << node->getToken(node)->getCharPositionInLine(node->getToken(node)) << ") has undefined visit function" << "\n\nExitting...";
     std::cerr << error.str();
     exit(0);
-    return;
   }
 	if (visitFunction != NULL)
 		visitFunction((ASTNode)node, compilerContext);
@@ -190,13 +183,8 @@ void ASTWalker :: compileTree() {
 
 }
 
-void ASTWalker :: initialiseSymbolTable(){
-  if (rootSymbolTable != NULL)
-  {
-    delete rootSymbolTable;
-  }
-    rootSymbolTable = new SymbolTable();
-
+void ASTWalker :: visitProgramNode(ASTNode node, CompilerContext *ctx)
+{
 }
 
 }; // namespace MAlice

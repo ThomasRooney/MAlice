@@ -20,10 +20,8 @@ public:
   bool validateTree(ASTNode node, CompilerContext *ctx);
   void compileTree();
   pANTLR3_STRING printTree(ASTNode node, int);
-  void initialiseSymbolTable();
   ~ASTWalker();
 protected:
-  SymbolTable *rootSymbolTable;
 
 private:
   void visitNode(ASTNode node, CompilerContext *ctx);
