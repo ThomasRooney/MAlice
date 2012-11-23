@@ -21,10 +21,17 @@ namespace MAlice {
     
     SyntacticAnalyser::~SyntacticAnalyser()
     {
-        m_parser->free(m_parser), m_parser = NULL;
-        m_tokenStream->free(m_tokenStream), m_tokenStream = NULL;
-        m_lexer->free(m_lexer), m_lexer = NULL;
-        m_input->close(m_input), m_input = NULL;
+        if (m_parser)
+            m_parser->free(m_parser), m_parser = NULL;
+        
+        if (m_tokenStream)
+            m_tokenStream->free(m_tokenStream), m_tokenStream = NULL;
+        
+        if (m_lexer)
+            m_lexer->free(m_lexer), m_lexer = NULL;
+        
+        if (m_input)
+            m_input->close(m_input), m_input = NULL;
     }
     
     ASTNode SyntacticAnalyser::parsedInput()
@@ -34,12 +41,17 @@ namespace MAlice {
         if (!parser)
             return NULL;
         
-        MAliceParser_program_return ast = parser->program(parser);
-        
         if (parser->pParser->rec->state->errorCount > 0)
             return NULL;
         
+        MAliceParser_program_return ast = parser->program(parser);
+        
         return ast.tree;
+    }
+    
+    void SyntacticAnalyser::setErrorReporter(ErrorReporter *errorReporter)
+    {
+        m_errorReporter = errorReporter;
     }
     
 }; // namespace MAlice

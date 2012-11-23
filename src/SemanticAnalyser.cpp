@@ -27,5 +27,10 @@ namespace MAlice {
         if (!ctx->isSymbolInScope("hatta", NULL))
             std::cerr << "hatta() is not declared";
     }
+    
+    void SemanticAnalyser::setErrorReporter(ErrorReporter *errorReporter)
+    {
+        m_errorReporter = errorReporter;
+    }
 
 }; // namespace MAlice

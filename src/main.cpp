@@ -41,12 +41,20 @@ int main(int argc, char *argv[])
         path.append("input");
     else
         path.append(argv[1]);
+    
+    ErrorReporter *errorReporter = new ErrorReporter();
 
     SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path);
+    syntacticAnalyser->setErrorReporter(errorReporter);
     ASTNode tree = syntacticAnalyser->parsedInput();
     
     SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree);
+    semanticAnalyser->setErrorReporter(errorReporter);
     semanticAnalyser->validate();
+    
+    delete semanticAnalyser;
+    delete syntacticAnalyser;
+    delete errorReporter;
 
     return EXIT_SUCCESS;
 }

@@ -12,11 +12,6 @@ using namespace std;
 
 namespace MAlice {
     
-    ErrorReporter::ErrorReporter(string input)
-    {
-        m_input = input;
-    }
-    
     void ErrorReporter::reportError(ErrorType errorType, string errorMessage, bool isFatal)
     {
         reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, isFatal);
