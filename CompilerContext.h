@@ -12,6 +12,9 @@ namespace MAlice {
     class CompilerContext{
     private:
         std::list<SymbolTable> m_symbolTables;
+        
+    public:
+        void addEntityInScope(std::string identifier, Entity entity);
     }; // class CompilerContext
     
 }; // namespace MAlice

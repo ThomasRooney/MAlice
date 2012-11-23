@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace MAlice {
-    const Entity *SymbolTable::get(string identifier)
+    Entity const *SymbolTable::get(string identifier)
     {
         unordered_map<string, Entity>::const_iterator iterator = m_symbolMap.find(identifier);
         if (iterator == m_symbolMap.end())

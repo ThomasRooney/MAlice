@@ -13,7 +13,7 @@ class SymbolTable
     std::unordered_map<std::string, Entity> m_symbolMap;
     
   public:
-    const Entity *get(std::string);
+    Entity const *get(std::string);
     void insert(std::string, Entity);
     unsigned int numberOfSymbols();
 }; // class SymbolTableNode
