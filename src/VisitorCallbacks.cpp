@@ -1,12 +1,13 @@
-#include "VisitorCallbacks.h"
+#include <string>
+#include <sstream>
+#include <list>
 
+#include "VisitorCallbacks.h"
 #include "Entity.h"
 #include "FunctionEntity.h"
 #include "ProcedureEntity.h"
 #include "VariableEntity.h"
 #include "Utilities.h"
-#include <string>
-#include <sstream>
 
 #define SSTR( x ) dynamic_cast< std::ostringstream & > \
         ((( std::ostringstream() << std::dec << x ) ).str())
@@ -112,11 +113,7 @@ namespace MAlice {
     
     void visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ctx->enterScope();
-        
         walker->visitChildren(node, ctx);
-        
-        ctx->exitScope();
     }
     
     void visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
@@ -149,11 +146,30 @@ namespace MAlice {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
-            ctx->lockTemporarySymbolTable();
-            ctx->getTemporarySymbolTable()->clear();
-            walker->visitChildren(node, ctx);
-            ctx->unlockTemporarySymbolTable();
             std::list<ParameterEntity> parameterList;
+            ctx->enterScope();
+            // Loop through the rest of the child nodes
+            for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
+                ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);            
+                        
+                switch (Utilities::getNodeType(childNode))
+                {
+                    case PARAMS:
+                        parameterList = getParameterTypesFromParamsNode(childNode);
+                        for (auto p = parameterList.begin(); p!=  parameterList.end();p++)
+                        {
+                            ctx->addEntityInScope(p->getIdentifier(), p->clone());
+                        }
+                        break;
+                    case BODY:
+                        walker->visitNode(childNode, ctx);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            ctx->exitScope();
+            
             ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, MAliceTypeUndefined));
         }
         
@@ -170,17 +186,35 @@ namespace MAlice {
     void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier;
         
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
-            
-            std::list<ParameterEntity> parameterList;
-            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         }
+        std::list<ParameterEntity> parameterList;
         
-        walker->visitChildren(node, ctx);
+        // Loop through the rest of the child nodes
+        for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);            
+            
+            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
+
+            switch (Utilities::getNodeType(childNode))
+            {
+                case PARAMS:
+                    parameterList = getParameterTypesFromParamsNode(childNode);
+                    break;
+                case BODY:
+                    walker->visitNode(childNode, ctx);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
     }
     
     void visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -190,6 +224,14 @@ namespace MAlice {
         
         if (identifierNode != NULL) {
             std::string identifier(Utilities::getNodeText(identifierNode));
+            
+            if (ctx->isKeyword(identifier)) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                     Utilities::getNodeColumnIndex(identifierNode),
+                                                     ErrorTypeSemantic,
+                                                     "Cannot declare variable '" + identifier + "' because it is a keyword.",
+                                                     true);
+            }
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             
@@ -235,5 +277,28 @@ namespace MAlice {
                                                  errorMessage.str(),
                                                  true);
         }
+    }
+    
+    std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode)
+    {
+        std::list<ParameterEntity> parameterTypes;
+        
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(paramsNode); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(paramsNode, i);
+            bool passedByReference = (childNode->getType(childNode) == BYREFERENCE);
+            
+            ASTNode passTypeNode = Utilities::getChildNodeAtIndex(childNode, 1);
+            std::string identifier = Utilities::getNodeText(passTypeNode);
+            int lineNumber = Utilities::getNodeLineNumber(passTypeNode);
+            ASTNode typeNode = Utilities::getChildNodeAtIndex(childNode, 0);
+            
+            std::string typeString = Utilities::getNodeText(typeNode);
+            MAliceType t = (Utilities::getTypeFromTypeString(typeString));
+            ParameterEntity p = ParameterEntity(identifier, lineNumber, t, passedByReference);
+
+            parameterTypes.push_back(p);
+        }
+        
+        return parameterTypes;
     }
 };

@@ -31,6 +31,16 @@ tokens {
 	VARDECLARATION;
 }
 
+@parser::includes
+{
+	#include "ErrorReporter.h"	
+}
+
+@parser::apifuncs
+{
+    RECOGNIZER->displayRecognitionError = handleParserError;
+}
+
 // Programs, procedures and functions
 program	:	(variable_declaration statement_inner_separator)* (func+=function|proc+=procedure)+
 		-> ^(PROGRAM ^(DECLS variable_declaration* $func* $proc*))
@@ -76,9 +86,9 @@ body_declarations
 	
 declaration_argument
 	:	SPIDER type IDENTIFIER
-		-> ^(BYREFERENCE ^(IDENTIFIER type))
+		-> ^(BYREFERENCE type IDENTIFIER)
 	|	type IDENTIFIER
-		-> ^(BYVALUE ^(IDENTIFIER type))
+		-> ^(BYVALUE type IDENTIFIER)
 	;
 
 

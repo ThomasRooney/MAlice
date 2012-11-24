@@ -2,9 +2,28 @@
 #ifndef _MALICEERRORREPORTER
 #define _MALICEERRORREPORTER
 
-#include <iostream>
+#include "MAliceParser.h"
 
+#ifdef __cplusplus
+#include <iostream>
+#endif
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    extern void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames);
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __cplusplus
 namespace MAlice {
+    
+    class ErrorReporter;
+    
+    ErrorReporter *getParserErrorReporter();
+    void setParserErrorReporter(ErrorReporter *errorReporter);
     
     typedef enum {
         ErrorTypeSyntactic,
@@ -20,5 +39,6 @@ namespace MAlice {
     }; // class ErrorReporter
     
 }; // namespace MAlice
+#endif
 
 #endif /* #ifndef _MALICEERRORREPORTER */

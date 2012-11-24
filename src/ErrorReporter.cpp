@@ -5,13 +5,35 @@
 #include <cstdlib>
 #include <sstream>
 #include "limits.h"
+#include "MAliceParser.h"
 
 #define LINE_NUMBER_NA      UINT_MAX
 #define COL_INDEX_NA        UINT_MAX
 
 using namespace std;
 
+static MAlice::ErrorReporter *parserErrorReporter = NULL;
+
+void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
+{
+    ANTLR3_EXCEPTION_struct *exception = recognizer->state->exception;
+    
+    parserErrorReporter->reportError(exception->line,
+                                     exception->charPositionInLine,
+                                     MAlice::ErrorTypeSyntactic, "", false);
+}
+
 namespace MAlice {
+    
+    ErrorReporter *getParserErrorReporter()
+    {
+        return parserErrorReporter;
+    }
+    
+    void setParserErrorReporter(ErrorReporter *errorReporter)
+    {
+        parserErrorReporter = errorReporter;
+    }
     
     void ErrorReporter::reportError(ErrorType errorType, string errorMessage, bool isFatal)
     {

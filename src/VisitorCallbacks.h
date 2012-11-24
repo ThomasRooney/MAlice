@@ -67,6 +67,7 @@ namespace MAlice {
     
     // Helper methods
     void checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
+    std::list<MAliceType> getParameterTypesFromParamsNode(ASTNode paramsNode);
 
 }
 #endif
