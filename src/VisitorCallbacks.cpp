@@ -5,6 +5,11 @@
 #include "ProcedureEntity.h"
 #include "VariableEntity.h"
 #include "Utilities.h"
+#include <string>
+#include <sstream>
+
+#define SSTR( x ) dynamic_cast< std::ostringstream & > \
+        ((( std::ostringstream() << std::dec << x ) ).str())
 
 namespace MAlice {
 
@@ -147,8 +152,8 @@ namespace MAlice {
                                                      "Symbol " + identifier + " has already been declared in the current scope",
                                                      true);
             }
-            
-            ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL, NULL));
+            std::list<unsigned short> parameterList;
+            ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, NULL));
         }
         
         walker->visitChildren(node, ctx);
@@ -174,8 +179,8 @@ namespace MAlice {
                                                      "Symbol " + identifier + " has already been declared in the current scope.",
                                                      true);
             }
-            
-            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
+            std::list<unsigned short> parameterList;
+            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         }
         
         walker->visitChildren(node, ctx);
@@ -199,13 +204,14 @@ namespace MAlice {
             Entity *existingEntity = NULL;
             
             if (ctx->isSymbolInScope(identifier, &existingEntity)) {
-                std::string errorMessage = "'" + identifier + "' has already been declared in the current scope."
-                                                     + "\n  - Declared as a " + existingEntity->humanReadableName() + " on line " + std::to_string(existingEntity->getLineNumber());
+                std::stringstream errorMessage;
+                errorMessage << "'" << identifier << "' has already been declared in the current scope."
+                                                     << "\n  - Declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber();
                 
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
                                                      Utilities::getNodeColumnIndex(identifierNode),
                                                      ErrorTypeSemantic,
-                                                     errorMessage,
+                                                     errorMessage.str(),
                                                      true);
             }
             

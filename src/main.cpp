@@ -79,8 +79,8 @@ bool hasFlagsInCommandLineArguments(int argc, char *argv[])
 
 bool hasPrintTreeFlagEnabled(std::string flags)
 {
-    for (char& c : flags) {
-        if (c == 't')
+    for (std::string::iterator c = flags.begin();c != flags.end();++c) {
+        if (*c == 't')
             return true;
     }
     
