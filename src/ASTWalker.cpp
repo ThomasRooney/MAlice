@@ -24,7 +24,7 @@ void ASTWalker :: constructVisitDictionary() {
   static bool doOnce = false;
   if (!doOnce) {
     doOnce = true;
-    visitDictionary = std::unordered_map<unsigned int,void(*)(ASTNode, CompilerContext*)>();
+    visitDictionary = std::unordered_map<unsigned int, MAliceVisitFunction>();
     visitDictionary.insert(
       std::make_pair
       (PROGRAM, &visitProgramNode)
@@ -146,7 +146,7 @@ void ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
     if (f == NULL)
         visitChildren(node, ctx);
     
-    f(node, ctx);
+    f(node, this, ctx);
 		
 }
     

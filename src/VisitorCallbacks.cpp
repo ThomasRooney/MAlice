@@ -2,7 +2,7 @@
 
 namespace MAlice {
 
-void visitProgramNode(ASTNode node, CompilerContext *ctx)
+void visitProgramNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
 {
   // Visit Children
 }
