@@ -93,8 +93,6 @@ void ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
 {
     MAliceVisitFunction f = getNodeVisitFunction(node);
     
-    std::cout << Utilities::getNodeType(node) << std::endl;
-    
     // If we haven't implemented visitor functions for certain node types (e.g. nodes which we don't do anything
     // with but are there to make the AST nicer to work with), simply recurse on their children and vist them.
     if (f == NULL) {
