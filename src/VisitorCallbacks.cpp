@@ -76,6 +76,7 @@ namespace MAlice {
     }
     
     void visitIdentifierNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+        // Do nothing here, extracted directly.
     }
     
     void visitLessThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
@@ -119,9 +120,11 @@ namespace MAlice {
     }
     
     void visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+      walker->visitChildren(node, ctx);
     }
     
     void visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+      walker->visitChildren(node, ctx);
     }
     
     void visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -146,18 +149,22 @@ namespace MAlice {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
-            
-            std::list<MAliceType> parameterList;
+            ctx->lockTemporarySymbolTable();
+            ctx->getTemporarySymbolTable()->clear();
+            walker->visitChildren(node, ctx);
+            ctx->unlockTemporarySymbolTable();
+            std::list<ParameterEntity> parameterList;
             ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, MAliceTypeUndefined));
         }
         
-        walker->visitChildren(node, ctx);
+        
     }
     
     void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
     }
     
     void visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+      walker->visitChildren(node, ctx);
     }
     
     void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -169,7 +176,7 @@ namespace MAlice {
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             
-            std::list<MAliceType> parameterList;
+            std::list<ParameterEntity> parameterList;
             ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         }
         

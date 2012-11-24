@@ -4,15 +4,69 @@
 
 using namespace std;
 
+int MUTEX_INIT(MUTEX *mutex)
+{
+    return -1;
+}
+
+int MUTEX_LOCK(MUTEX *mutex)
+{
+    #if defined(LINUX)
+        return pthread_mutex_lock( mutex );
+    #elif defined(WINDOWS)
+        return (WaitForSingleObject(*mutex, INFINITE)==WAIT_FAILED?1:0);
+    #endif
+    return -1;
+}
+
+int MUTEX_UNLOCK(MUTEX *mutex)
+{
+    #if defined(LINUX)
+        return pthread_mutex_unlock( mutex );
+    #elif defined(WINDOWS)
+        return (ReleaseMutex(*mutex)==0);
+    #endif
+    return -1;
+}
+
 namespace MAlice {
     
     CompilerContext::CompilerContext()
     {
         m_symbolTables.push_back(new SymbolTable());
-        
+        t_symbolTable = new SymbolTable();
         configureKeywords();
+        #ifdef _WIN32
+           temporarySymbolTableLock = CreateMutex(0, FALSE, 0);
+        #else
+           pthread_mutex_init (&temporarySymbolTableLock, NULL);;
+        #endif
     }
-    
+    // TODO: Delete SymbolTables in destructor
+
+    bool CompilerContext::lockTemporarySymbolTable()
+    {
+        #ifdef _WIN32
+            return (WaitForSingleObject(temporarySymbolTableLock, INFINITE)==WAIT_FAILED?1:0);  
+        #else
+           return pthread_mutex_lock( &temporarySymbolTableLock );  
+        #endif
+    }
+
+    bool CompilerContext::unlockTemporarySymbolTable()
+    {
+        #ifdef _WIN32
+            return (ReleaseMutex(temporarySymbolTableLock)==0);
+        #else
+            return pthread_mutex_unlock( &temporarySymbolTableLock );
+        #endif
+    }
+
+    SymbolTable* CompilerContext::getTemporarySymbolTable()
+    {
+      return t_symbolTable;
+    }
+
     void CompilerContext::addEntityInScope(std::string identifier, Entity *entity)
     {
         if (m_symbolTables.empty())

@@ -74,6 +74,8 @@ void ASTWalker :: constructVisitDictionary() {
       visitDictionary.insert(std::make_pair(TILDE, &visitLogicalNotExpressionNode));
       visitDictionary.insert(std::make_pair(VARDECLARATION, &visitVariableDeclarationNode));
       visitDictionary.insert(std::make_pair(WHILESTATEMENT, &visitWhileStatementNode));
+      visitDictionary.insert(std::make_pair(BYVALUE, &visitByValueParameterNode));
+      visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByReferenceParameterNode));
   }
 }
 

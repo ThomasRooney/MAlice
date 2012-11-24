@@ -3,7 +3,7 @@
 
 namespace MAlice {
 
-    ProcedureEntity::ProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<MAliceType> parameterListTypes) : FunctionProcedureEntity(identifier, lineNumber, parameterListTypes)
+    ProcedureEntity::ProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes) : FunctionProcedureEntity(identifier, lineNumber, parameterListTypes)
     {
     }
     

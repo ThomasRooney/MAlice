@@ -16,6 +16,7 @@ class SymbolTable
     Entity *get(std::string);
     ~SymbolTable();
     void insert(std::string, Entity*);
+    void clear();
     unsigned int numberOfSymbols();
 }; // class SymbolTableNode
     

@@ -18,6 +18,8 @@ public:
     VariableEntity(std::string identifier, unsigned int lineNumber, MAliceType type);
     
     std::string humanReadableName();
+
+
     
 }; // class VariableEntity
     

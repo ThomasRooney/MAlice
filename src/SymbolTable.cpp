@@ -34,6 +34,10 @@ namespace MAlice {
         m_symbolMap[identifier] = entity;
     }
     
+    void SymbolTable::clear(){
+      m_symbolMap.clear();
+    }
+    
     unsigned int SymbolTable::numberOfSymbols()
     {
         return (unsigned int)m_symbolMap.size();

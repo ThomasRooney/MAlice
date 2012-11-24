@@ -7,15 +7,16 @@
 
 #include "Entity.h"
 #include "Types.h"
+#include "ParameterEntity.h"
 
 namespace MAlice {
     
     class FunctionProcedureEntity : public Entity {
     private:
-        std::list<MAliceType> m_parameterListTypes;
+        std::list<ParameterEntity> m_parameterListTypes;
         
     public:
-        FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<MAliceType> parameterListTypes);
+        FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes);
         
         std::string humanReadableName() = 0;
     };
