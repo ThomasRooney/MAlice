@@ -7,10 +7,15 @@ namespace MAlice {
     {
         m_type = type;
     }
+
     
     std::string VariableEntity::humanReadableName()
     {
         return "variable";
+    }
+
+    MAliceType VariableEntity :: getType() {
+        return this->m_type;
     }
 
 };

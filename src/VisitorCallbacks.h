@@ -3,6 +3,7 @@
 
 #include "CompilerContext.h"
 #include "ASTWalker.h"
+#include "ParameterEntity.h"
 
 namespace MAlice {
     
@@ -67,7 +68,7 @@ namespace MAlice {
     
     // Helper methods
     void checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
-    std::list<MAliceType> getParameterTypesFromParamsNode(ASTNode paramsNode);
+    std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
 
 }
 #endif
