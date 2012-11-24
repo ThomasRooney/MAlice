@@ -143,8 +143,10 @@ void ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
     
     // If we haven't implemented visitor functions for certain node types (e.g. nodes which we don't do anything
     // with but are there to make the AST nicer to work with), simply recurse on their children and vist them.
-    if (f == NULL)
+    if (f == NULL) {
         visitChildren(node, ctx);
+        return;
+    }
     
     f(node, this, ctx);
 		
@@ -155,7 +157,7 @@ void ASTWalker::visitChildren(ASTNode node, CompilerContext *ctx)
     unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
     
     for (unsigned int i = 0; i < numChildren; ++i) {
-        visitNode(node, ctx);
+        visitNode(Utilities::getChildNodeAtIndex(node, i), ctx);
     }
 }
     
@@ -167,11 +169,7 @@ MAliceVisitFunction ASTWalker::getNodeVisitFunction(ASTNode node)
         f = (visitDictionary.at(Utilities::getNodeType(node)));
     }
     catch (std::out_of_range e) {
-        std::stringstream error;
-        error << "FATAL ERROR - Node: " << (node->toString(node)->chars) << " Type: " << node->getType(node);
-        error << " At location(" << node->getToken(node)->getLine(node->getToken(node)) << "," << node->getToken(node)->getCharPositionInLine(node->getToken(node)) << ") has undefined visit function" << "\n\nExitting...";
-        std::cerr << error.str();
-        exit(0);
+        return NULL;
     }
     
     return f;
