@@ -62,14 +62,8 @@ namespace MAlice {
             return false;
         
         for (list<SymbolTable*>::reverse_iterator iterator = m_symbolTables.rbegin(); iterator != m_symbolTables.rend(); iterator++) {
-            Entity *entity = NULL;
-            
-            try {
-                SymbolTable *table = *iterator;
-                entity = table->get(identifier);
-            }
-            catch(out_of_range e) {
-            }
+            SymbolTable *table = *iterator;
+            Entity *entity = table->get(identifier);
             
             if (entity) {
                 if (outEntity)
@@ -82,6 +76,17 @@ namespace MAlice {
         return false;
      }
     
+    bool CompilerContext::isSymbolInCurrentScope(std::string identifier, Entity **outEntity)
+    {
+        if (m_symbolTables.empty())
+            return false;
+        
+        SymbolTable *table = m_symbolTables.back();
+        Entity *entity = table->get(identifier);
+        
+        return entity != NULL;
+    }
+
     void CompilerContext::enterScope()
     {
         m_symbolTables.push_back(new SymbolTable());
