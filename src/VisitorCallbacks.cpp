@@ -121,11 +121,10 @@ namespace MAlice {
             
             ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type)));
         }
-
-
     }
     
-    void visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
     }
     
     void visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -261,7 +260,7 @@ namespace MAlice {
         
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(paramsNode); ++i) {
             ASTNode childNode = Utilities::getChildNodeAtIndex(paramsNode, i);
-            bool passedByReference = (childNode->getType(childNode) == BYREFERENCE);
+            bool passedByReference = (Utilities::getNodeType(childNode) == BYREFERENCE);
             
             ASTNode passTypeNode = Utilities::getChildNodeAtIndex(childNode, 1);
             std::string identifier = Utilities::getNodeText(passTypeNode);
