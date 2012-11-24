@@ -11,7 +11,6 @@ tokens {
 	PARAMS;
 	BODY;
 	STATEMENTLIST;
-	IFSTATEMENT;
 	PRINTSTATEMENT;
 	INCREMENTSTATEMENT;
 	DECREMENTSTATEMENT;
@@ -27,6 +26,8 @@ tokens {
 	BYVALUE;
 	ARRAY;
 	ARRAYSUBSCRIPT;
+	BOOLEANEXPRESSION;
+	IFSTATEMENT;
 }
 
 // Programs, procedures and functions
@@ -222,6 +223,11 @@ unary_operator
 	;
 
 boolean_expression
+	: 	boolean_expression_alt
+		-> ^(BOOLEANEXPRESSION boolean_expression_alt)
+	;
+	
+boolean_expression_alt
 	:	single_boolean_expression (boolean_operator^ single_boolean_expression)*
 	;
 	
