@@ -225,7 +225,7 @@ namespace MAlice {
     {
         Entity *existingEntity = NULL;
         
-        if (ctx->isSymbolInScope(identifier, &existingEntity)) {
+        if (ctx->isSymbolInCurrentScope(identifier, &existingEntity)) {
             std::stringstream errorMessage;
             errorMessage << "'" << identifier << "' has already been declared in the current scope."
             << "\n  - Declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber();

@@ -36,7 +36,16 @@ namespace MAlice {
     // Throws out of range exception to calling function
     Entity *SymbolTable::get(string identifier)
     {
-            return m_symbolMap.at(identifier);
+        Entity *entity = NULL;
+        
+        try {
+            entity = m_symbolMap.at(identifier);
+        }
+        catch(out_of_range e) {
+            return NULL;
+        }
+        
+        return entity;
     }
 
     bool SymbolTable::contains(string identifier)

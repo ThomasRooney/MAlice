@@ -35,6 +35,7 @@ namespace MAlice {
         bool         unlockTemporarySymbolTable();
         void addEntityInScope(std::string identifier, Entity *entity);
         bool isSymbolInScope(std::string identifier, Entity **outEntity);
+        bool isSymbolInCurrentScope(std::string identifier, Entity **outEntity);
         bool isKeyword(std::string string);
     
         void enterScope();
