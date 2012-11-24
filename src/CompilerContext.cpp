@@ -65,4 +65,14 @@ namespace MAlice {
         m_symbolTables.pop_back();
     }
     
+    ErrorReporter *CompilerContext::getErrorReporter()
+    {
+        return m_errorReporter;
+    }
+    
+    void CompilerContext::setErrorReporter(ErrorReporter *errorReporter)
+    {
+        m_errorReporter = errorReporter;
+    }
+    
 }; // namespace MAlice

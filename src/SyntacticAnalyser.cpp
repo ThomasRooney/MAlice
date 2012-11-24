@@ -1,16 +1,22 @@
 
 #include "SyntacticAnalyser.h"
 
+#include "CompilerContext.h"
+
 namespace MAlice {
     
-    SyntacticAnalyser::SyntacticAnalyser(std::string filePath)
+    SyntacticAnalyser::SyntacticAnalyser(std::string filePath, CompilerContext *compilerContext)
     {
+        m_compilerContext = compilerContext;
+        
         pANTLR3_UINT8 path;
         m_parser = NULL;
         path = (pANTLR3_UINT8)filePath.c_str();
         m_input = antlr3FileStreamNew(path, ANTLR3_ENC_UTF8);
+        
         if (m_input == NULL)
-          m_errorReporter->reportError(ErrorTypeIO, "No Input File Specified", true);
+          compilerContext->getErrorReporter()->reportError(ErrorTypeIO, "No Input File Specified", true);
+        
         m_lexer = MAliceLexerNew(m_input);
         if (!m_lexer)
             return;
@@ -48,11 +54,6 @@ namespace MAlice {
         MAliceParser_program_return ast = parser->program(parser);
         
         return ast.tree;
-    }
-    
-    void SyntacticAnalyser::setErrorReporter(ErrorReporter *errorReporter)
-    {
-        m_errorReporter = errorReporter;
     }
     
 }; // namespace MAlice

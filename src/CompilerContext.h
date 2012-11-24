@@ -6,6 +6,7 @@
 #include <list>
 #include <stdexcept>
 
+#include "ErrorReporter.h"
 #include "SymbolTable.h"
 
 namespace MAlice {
@@ -13,6 +14,7 @@ namespace MAlice {
     class CompilerContext{
     private:
         std::list<SymbolTable*> m_symbolTables;
+        ErrorReporter *m_errorReporter;
         
     public:
         CompilerContext();
@@ -22,6 +24,9 @@ namespace MAlice {
     
         void enterScope();
         void exitScope();
+        
+        ErrorReporter *getErrorReporter();
+        void setErrorReporter(ErrorReporter *errorReporter);
     }; // class CompilerContext
     
 }; // namespace MAlice

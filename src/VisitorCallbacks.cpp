@@ -137,6 +137,15 @@ namespace MAlice {
         
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            
+            if (ctx->isSymbolInScope(identifier, NULL)) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                     Utilities::getNodeColumnIndex(identifierNode),
+                                                     ErrorTypeSemantic,
+                                                     "Symbol " + identifier + " has already been declared in the current scope",
+                                                     true);
+            }
+            
             ctx->addEntityInScope(identifier, FunctionEntity(identifier, NULL, NULL));
         }
         
@@ -155,6 +164,15 @@ namespace MAlice {
         
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            
+            if (ctx->isSymbolInScope(identifier, NULL)) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                     Utilities::getNodeColumnIndex(identifierNode),
+                                                     ErrorTypeSemantic,
+                                                     "Symbol " + identifier + " has already been declared in the current scope",
+                                                     true);
+            }
+            
             ctx->addEntityInScope(identifier, ProcedureEntity(identifier, NULL));
         }
         

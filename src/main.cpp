@@ -3,6 +3,7 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
+#include "CompilerContext.h"
 #include "SyntacticAnalyser.h"
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
@@ -44,22 +45,22 @@ int main(int argc, char *argv[])
     
     std::string path = getPathFromCommandLineArguments(argc, argv);
     
+    CompilerContext *compilerContext = new CompilerContext();
     ErrorReporter *errorReporter = new ErrorReporter();
 
-    SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path);
-    syntacticAnalyser->setErrorReporter(errorReporter);
+    SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path, compilerContext);
     ASTNode tree = syntacticAnalyser->parsedInput();
     
     if (printTree)
         Utilities::printTree(tree);
     
-    SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree);
-    semanticAnalyser->setErrorReporter(errorReporter);
+    SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
     semanticAnalyser->validate();
     
     delete semanticAnalyser;
     delete syntacticAnalyser;
     delete errorReporter;
+    delete compilerContext;
 
     return EXIT_SUCCESS;
 }

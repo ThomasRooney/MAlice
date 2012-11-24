@@ -5,9 +5,10 @@
 
 namespace MAlice {
 
-    SemanticAnalyser::SemanticAnalyser(ASTNode tree)
+    SemanticAnalyser::SemanticAnalyser(ASTNode tree, CompilerContext *ctx)
     {
         m_tree = tree;
+        m_compilerContext = ctx;
     }
     
     void SemanticAnalyser::validate()
@@ -26,11 +27,6 @@ namespace MAlice {
     {
         if (!ctx->isSymbolInScope("hatta", NULL))
             std::cerr << "hatta() is not declared";
-    }
-    
-    void SemanticAnalyser::setErrorReporter(ErrorReporter *errorReporter)
-    {
-        m_errorReporter = errorReporter;
     }
 
 }; // namespace MAlice
