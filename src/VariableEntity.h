@@ -14,7 +14,7 @@ private:
     unsigned short m_type;
     
 public:
-    VariableEntity(std::string identifier, unsigned short type);
+    VariableEntity(std::string identifier, unsigned int lineNumber, unsigned short type);
     
 }; // class VariableEntity
     

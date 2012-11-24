@@ -14,7 +14,7 @@ private:
     unsigned short m_returnType;
     
 public:
-    FunctionEntity(std::string identifier, std::list<unsigned short> parameterListTypes, unsigned short returnType);
+    FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<unsigned short> parameterListTypes, unsigned short returnType);
     
 }; // class FunctionEntity
     

@@ -7,11 +7,15 @@
 namespace MAlice {
     
     class Entity {
+    private:
+        std::string m_identifier;
+        unsigned int m_lineNumber;
+        
     public:
-      std::string m_identifier;
+        Entity(std::string identifier, unsigned int lineNumber);
         
-      Entity(std::string identifier);
-        
+        std::string getIdentifier();
+        unsigned int getLineNumber();
     }; // class Entity
     
 }; // namespace MAlice

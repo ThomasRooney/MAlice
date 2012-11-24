@@ -147,7 +147,7 @@ namespace MAlice {
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, FunctionEntity(identifier, NULL, NULL));
+            ctx->addEntityInScope(identifier, FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL, NULL));
         }
         
         walker->visitChildren(node, ctx);
@@ -174,7 +174,7 @@ namespace MAlice {
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, ProcedureEntity(identifier, NULL));
+            ctx->addEntityInScope(identifier, ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
         }
         
         walker->visitChildren(node, ctx);
@@ -203,7 +203,7 @@ namespace MAlice {
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, VariableEntity(identifier, NULL));
+            ctx->addEntityInScope(identifier, VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
         }
     }
     

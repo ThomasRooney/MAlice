@@ -5,7 +5,7 @@ using namespace std;
 
 namespace MAlice {
 
-FunctionEntity::FunctionEntity(string identifier, list<unsigned short> parameterListTypes, unsigned short returnType) : FunctionProcedureEntity(identifier, parameterListTypes)
+FunctionEntity::FunctionEntity(string identifier, unsigned int lineNumber, list<unsigned short> parameterListTypes, unsigned short returnType) : FunctionProcedureEntity(identifier, lineNumber, parameterListTypes)
 {
     m_returnType = returnType;
 }
