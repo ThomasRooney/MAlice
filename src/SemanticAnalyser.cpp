@@ -25,8 +25,11 @@ namespace MAlice {
     
     void SemanticAnalyser::validateCompilerContext(CompilerContext *ctx)
     {
-        if (!ctx->isSymbolInScope("hatta", NULL))
-            std::cerr << "hatta() is not declared";
+        if (!ctx->isSymbolInScope("hatta", NULL)) {
+            m_compilerContext->getErrorReporter()->reportError(ErrorTypeSemantic,
+                                                               "Entry point procedure hatta() is not declared.",
+                                                               false);
+        }
     }
 
 }; // namespace MAlice
