@@ -163,17 +163,33 @@ namespace MAlice {
     void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier;
+        std::list<MAliceType> parameterList;
         
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
-            
-            std::list<MAliceType> parameterList;
-            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         }
         
-        walker->visitChildren(node, ctx);
+        // Loop through the rest of the child nodes
+        for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);
+            
+            switch (Utilities::getNodeType(childNode))
+            {
+                case PARAMS:
+                    parameterList = getParameterTypesFromParamsNode(childNode);
+                    break;
+                case BODY:
+                    walker->visitNode(childNode, ctx);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
     }
     
     void visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -228,5 +244,22 @@ namespace MAlice {
                                                  errorMessage.str(),
                                                  true);
         }
+    }
+    
+    std::list<MAliceType> getParameterTypesFromParamsNode(ASTNode paramsNode)
+    {
+        std::list<MAliceType> parameterTypes;
+        
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(paramsNode); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(paramsNode, i);
+            ASTNode passTypeNode = Utilities::getChildNodeAtIndex(childNode, 0);
+            ASTNode typeNode = Utilities::getChildNodeAtIndex(passTypeNode, 0);
+            
+            std::string typeString = Utilities::getNodeText(typeNode);
+            
+            parameterTypes.push_back(Utilities::getTypeFromTypeString(typeString));
+        }
+        
+        return parameterTypes;
     }
 };

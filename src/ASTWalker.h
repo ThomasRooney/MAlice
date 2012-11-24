@@ -20,11 +20,11 @@ namespace MAlice {
         void compileTree();
         ~ASTWalker();
         
+        void visitNode(ASTNode node, CompilerContext *ctx);
         void visitChildren(ASTNode node, CompilerContext *ctx);
     protected:
 
     private:
-        void visitNode(ASTNode node, CompilerContext *ctx);
         std::unordered_map<unsigned int, MAliceVisitFunction> visitDictionary;
         void constructVisitDictionary ();
         MAliceVisitFunction getNodeVisitFunction(ASTNode node);
