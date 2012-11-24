@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <sstream>
 #include "limits.h"
 
 #define LINE_NUMBER_NA      UINT_MAX
@@ -36,6 +37,7 @@ namespace MAlice {
             cerr << "IO error: ";
             break;
         }
+        
         if (lineNumber != LINE_NUMBER_NA || columnIndex != COL_INDEX_NA) {
             cerr << "(";
             
@@ -48,7 +50,14 @@ namespace MAlice {
             cerr << ") ";
         }
         
-        cerr << errorMessage.c_str() << endl;
+        cerr << "\n";
+        string messageString = errorMessage.c_str();
+        
+        std::stringstream stringStream(messageString);
+        std::string line;
+        while(std::getline(stringStream, line, '\n')) {
+            cerr << "  " << line << endl;
+        }
         
         if (isFatal)
             exit(EXIT_FAILURE);

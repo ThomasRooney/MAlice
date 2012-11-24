@@ -9,12 +9,14 @@
 
 namespace MAlice {
 
-class FunctionEntity : FunctionProcedureEntity {
+class FunctionEntity : public FunctionProcedureEntity {
 private:
     unsigned short m_returnType;
     
 public:
-    FunctionEntity(std::string identifier, std::list<unsigned short> parameterListTypes, unsigned short returnType);
+    FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<unsigned short> parameterListTypes, unsigned short returnType);
+    
+    std::string humanReadableName();
     
 }; // class FunctionEntity
     

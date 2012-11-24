@@ -12,24 +12,23 @@
 
 namespace MAlice {
 
-class ASTWalker {
-public:
-  ASTWalker();
-  void feedTree();
-  bool validateTree(ASTNode node, CompilerContext *ctx);
-  void compileTree();
-  pANTLR3_STRING printTree(ASTNode node, int);
-  ~ASTWalker();
-protected:
+    class ASTWalker {
+    public:
+        ASTWalker();
+        void feedTree();
+        bool validateTree(ASTNode node, CompilerContext *ctx);
+        void compileTree();
+        ~ASTWalker();
+        
+        void visitChildren(ASTNode node, CompilerContext *ctx);
+    protected:
 
-private:
-  void visitNode(ASTNode node, CompilerContext *ctx);
-  std::unordered_map<unsigned int,void (*)(ASTNode node, CompilerContext*)> visitDictionary;
-  void constructVisitDictionary ();
-}; // class ASTWalker
-
-
-
+    private:
+        void visitNode(ASTNode node, CompilerContext *ctx);
+        std::unordered_map<unsigned int, MAliceVisitFunction> visitDictionary;
+        void constructVisitDictionary ();
+        MAliceVisitFunction getNodeVisitFunction(ASTNode node);
+    }; // class ASTWalker
 
 }; // namespace MAlice
 

@@ -11,7 +11,6 @@ tokens {
 	PARAMS;
 	BODY;
 	STATEMENTLIST;
-	IFSTATEMENT;
 	PRINTSTATEMENT;
 	INCREMENTSTATEMENT;
 	DECREMENTSTATEMENT;
@@ -27,6 +26,9 @@ tokens {
 	BYVALUE;
 	ARRAY;
 	ARRAYSUBSCRIPT;
+	BOOLEANEXPRESSION;
+	IFSTATEMENT;
+	VARDECLARATION;
 }
 
 // Programs, procedures and functions
@@ -140,9 +142,9 @@ else_block
 	
 variable_declaration
 	:	IDENTIFIER WASA type TOO?
-		-> ^(IDENTIFIER type)
+		-> ^(VARDECLARATION ^(IDENTIFIER type))
 	|	IDENTIFIER WASA type OF expression TOO?
-		-> ^(IDENTIFIER type expression)
+		-> ^(VARDECLARATION ^(IDENTIFIER type expression))
 	|	IDENTIFIER HAD expression type TOO?
 		-> ^(ARRAY ^(IDENTIFIER type expression))
 	;
@@ -179,8 +181,9 @@ expression
 		-> ^(EXPRESSION additive_expr)
 	;
 
-lvalue	:	IDENTIFIER (APOSTROPHE_S expression PIECE)?
+lvalue	:	(IDENTIFIER APOSTROPHE_S) => IDENTIFIER (APOSTROPHE_S expression PIECE)?
 		-> ^(ARRAYSUBSCRIPT IDENTIFIER expression)
+	|	IDENTIFIER
 	;
 
 additive_expr
@@ -222,6 +225,11 @@ unary_operator
 	;
 
 boolean_expression
+	: 	boolean_expression_alt
+		-> ^(BOOLEANEXPRESSION boolean_expression_alt)
+	;
+	
+boolean_expression_alt
 	:	single_boolean_expression (boolean_operator^ single_boolean_expression)*
 	;
 	

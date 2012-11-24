@@ -11,18 +11,22 @@
 using namespace std;
 
 namespace MAlice {
-    Entity const *SymbolTable::get(string identifier)
+    SymbolTable::~SymbolTable()
     {
-        unordered_map<string, Entity>::const_iterator iterator = m_symbolMap.find(identifier);
-        if (iterator == m_symbolMap.end())
-            return NULL;
-        
-        return &iterator->second;
+        for(auto& element : m_symbolMap) {
+            delete element.second;
+            m_symbolMap.erase(element.first);
+        }
     }
     
-    void SymbolTable::insert(string identifier, Entity entity)
+    Entity *SymbolTable::get(string identifier)
     {
-      m_symbolMap.insert(std::pair<string,Entity>(identifier, entity));
+        return m_symbolMap[identifier];
+    }
+    
+    void SymbolTable::insert(string identifier, Entity *entity)
+    {
+        m_symbolMap[identifier] = entity;
     }
     
     unsigned int SymbolTable::numberOfSymbols()

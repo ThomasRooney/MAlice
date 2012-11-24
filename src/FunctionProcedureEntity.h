@@ -9,12 +9,14 @@
 
 namespace MAlice {
     
-    class FunctionProcedureEntity : Entity {
+    class FunctionProcedureEntity : public Entity {
     private:
         std::list<unsigned short> m_parameterListTypes;
         
     public:
-        FunctionProcedureEntity(std::string identifier, std::list<unsigned short> parameterListTypes);
+        FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<unsigned short> parameterListTypes);
+        
+        std::string humanReadableName() = 0;
     };
     
 };

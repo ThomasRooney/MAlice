@@ -4,20 +4,22 @@
 
 #include <iostream>
 
-#include "CompilerContext.h"
 #include "ErrorReporter.h"
 #include "Types.h"
 
 namespace MAlice {
+    
+    class CompilerContext;
 
     class SemanticAnalyser {
     private:
         ASTNode m_tree;
-        ErrorReporter *m_errorReporter;
+        CompilerContext *m_compilerContext;
         
         void validateCompilerContext(CompilerContext *ctx);
+
     public:
-        SemanticAnalyser(ASTNode tree);
+        SemanticAnalyser(ASTNode tree, CompilerContext *ctx);
         void validate();
         
         void setErrorReporter(ErrorReporter *errorReporter);

@@ -8,13 +8,15 @@
 
 namespace MAlice {
 
-class VariableEntity : Entity {
+class VariableEntity : public Entity {
 
 private:
     unsigned short m_type;
     
 public:
-    VariableEntity(std::string identifier, unsigned short type);
+    VariableEntity(std::string identifier, unsigned int lineNumber, unsigned short type);
+    
+    std::string humanReadableName();
     
 }; // class VariableEntity
     

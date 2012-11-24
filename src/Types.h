@@ -12,8 +12,12 @@
 #include "MAliceParser.h"
 
 namespace MAlice {
+    
+    class ASTWalker;
+    class CompilerContext;
 
     typedef pANTLR3_BASE_TREE ASTNode;
+    typedef void (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
 
 };
 

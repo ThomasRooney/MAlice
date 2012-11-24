@@ -3,8 +3,10 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
+#include "CompilerContext.h"
 #include "SyntacticAnalyser.h"
 #include "SemanticAnalyser.h"
+#include "Utilities.h"
 
 
 #ifdef _WIN32
@@ -20,12 +22,74 @@ typedef unsigned long int uint64_t;
 
 using namespace MAlice;
 
-void validateCompilerContext(CompilerContext *ctx);
+std::string getPathFromCommandLineArguments(int argc, char *argv[]);
+
+bool hasFlagsInCommandLineArguments(int argc, char *argv[]);
+bool hasPrintTreeFlagEnabled(std::string flags);
 
 // Skeleton file based on http://stackoverflow.com/a/8542203
 int main(int argc, char *argv[])
-{    
-    std::string path = std::string();
+{
+    // Take the calling parameter into account
+    argv++, argc--;
+    
+    bool printTree = false;
+    
+    if (hasFlagsInCommandLineArguments(argc, argv)) {
+        std::string flags(argv[0]);
+        
+        printTree = hasPrintTreeFlagEnabled(flags);
+        
+        argv++, argc--;
+    }
+    
+    std::string path = getPathFromCommandLineArguments(argc, argv);
+    
+    CompilerContext *compilerContext = new CompilerContext();
+    ErrorReporter *errorReporter = new ErrorReporter();
+
+    SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path, compilerContext);
+    ASTNode tree = syntacticAnalyser->parsedInput();
+    
+    if (printTree)
+        Utilities::printTree(tree);
+    
+    SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
+    semanticAnalyser->validate();
+    
+    delete semanticAnalyser;
+    delete syntacticAnalyser;
+    delete errorReporter;
+    delete compilerContext;
+
+    return EXIT_SUCCESS;
+}
+
+bool hasFlagsInCommandLineArguments(int argc, char *argv[])
+{
+    if (argc == 0)
+        return false;
+    
+    std::string firstArgument(argv[0]);
+    if (!firstArgument.empty() && firstArgument[0] == '-')
+        return true;
+    
+    return false;
+}
+
+bool hasPrintTreeFlagEnabled(std::string flags)
+{
+    for (char& c : flags) {
+        if (c == 't')
+            return true;
+    }
+    
+    return false;
+}
+
+std::string getPathFromCommandLineArguments(int argc, char *argv[])
+{
+    std::string path;
     
 #ifdef _WIN32
     char *cwdpath = NULL;
@@ -37,24 +101,10 @@ int main(int argc, char *argv[])
     path.append("\\");
 #endif
     
-    if (argc < 2 || argv[1] == NULL)
+    if (argc < 1 || argv[0] == NULL)
         path.append("input");
     else
-        path.append(argv[1]);
+        path.append(argv[0]);
     
-    ErrorReporter *errorReporter = new ErrorReporter();
-
-    SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path);
-    syntacticAnalyser->setErrorReporter(errorReporter);
-    ASTNode tree = syntacticAnalyser->parsedInput();
-    
-    SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree);
-    semanticAnalyser->setErrorReporter(errorReporter);
-    semanticAnalyser->validate();
-    
-    delete semanticAnalyser;
-    delete syntacticAnalyser;
-    delete errorReporter;
-
-    return EXIT_SUCCESS;
+    return path;
 }
