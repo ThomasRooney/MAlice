@@ -133,6 +133,14 @@ namespace MAlice {
     
     void visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (identifierNode != NULL) {
+            std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            ctx->addEntityInScope(identifier, FunctionEntity(identifier, NULL, NULL));
+        }
+        
+        walker->visitChildren(node, ctx);
     }
     
     void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {

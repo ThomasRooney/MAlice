@@ -9,7 +9,7 @@
 
 namespace MAlice {
 
-class FunctionEntity : FunctionProcedureEntity {
+class FunctionEntity : public FunctionProcedureEntity {
 private:
     unsigned short m_returnType;
     
