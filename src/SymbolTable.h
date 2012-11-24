@@ -10,11 +10,12 @@ namespace MAlice {
 class SymbolTable
 {
   private:
-    std::unordered_map<std::string, Entity> m_symbolMap;
+    std::unordered_map<std::string, Entity*> m_symbolMap;
     
   public:
-    Entity const *get(std::string);
-    void insert(std::string, Entity);
+    Entity *get(std::string);
+    ~SymbolTable();
+    void insert(std::string, Entity*);
     unsigned int numberOfSymbols();
 }; // class SymbolTableNode
     

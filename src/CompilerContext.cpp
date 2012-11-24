@@ -13,7 +13,7 @@ namespace MAlice {
         configureKeywords();
     }
     
-    void CompilerContext::addEntityInScope(std::string identifier, Entity entity)
+    void CompilerContext::addEntityInScope(std::string identifier, Entity *entity)
     {
         if (m_symbolTables.empty())
             return;
@@ -25,16 +25,17 @@ namespace MAlice {
         innermostSymbolTable->insert(identifier, entity);
     }
     
-    bool CompilerContext::isSymbolInScope(std::string identifier, Entity const **outEntity)
+    bool CompilerContext::isSymbolInScope(std::string identifier, Entity **outEntity)
     {
         if (m_symbolTables.empty())
             return false;
         
         for (list<SymbolTable*>::reverse_iterator iterator = m_symbolTables.rbegin(); iterator != m_symbolTables.rend(); iterator++) {
-            Entity const *entity = NULL;
+            Entity *entity = NULL;
             
             try {
-                entity = (*iterator)->get(identifier);
+                SymbolTable *table = *iterator;
+                entity = table->get(identifier);
             }
             catch(out_of_range e) {
             }

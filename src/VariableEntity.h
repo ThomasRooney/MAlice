@@ -16,6 +16,8 @@ private:
 public:
     VariableEntity(std::string identifier, unsigned int lineNumber, unsigned short type);
     
+    std::string humanReadableName();
+    
 }; // class VariableEntity
     
 }; // namespace MAlice

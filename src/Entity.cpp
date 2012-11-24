@@ -11,6 +11,10 @@ namespace MAlice {
         m_lineNumber = lineNumber;
     }
     
+    Entity::~Entity()
+    {
+    }
+    
     std::string Entity::getIdentifier()
     {
         return m_identifier;

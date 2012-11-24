@@ -1,5 +1,6 @@
 #include "VisitorCallbacks.h"
 
+#include "Entity.h"
 #include "FunctionEntity.h"
 #include "ProcedureEntity.h"
 #include "VariableEntity.h"
@@ -147,7 +148,7 @@ namespace MAlice {
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL, NULL));
+            ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL, NULL));
         }
         
         walker->visitChildren(node, ctx);
@@ -174,7 +175,7 @@ namespace MAlice {
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
+            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
         }
         
         walker->visitChildren(node, ctx);
@@ -195,15 +196,20 @@ namespace MAlice {
                                                      true);
             }
             
-            if (ctx->isSymbolInScope(identifier, NULL)) {
+            Entity *existingEntity = NULL;
+            
+            if (ctx->isSymbolInScope(identifier, &existingEntity)) {
+                std::string errorMessage = "'" + identifier + "' has already been declared in the current scope."
+                                                     + "\n  - Declared as a " + existingEntity->humanReadableName() + " on line " + std::to_string(existingEntity->getLineNumber());
+                
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
                                                      Utilities::getNodeColumnIndex(identifierNode),
                                                      ErrorTypeSemantic,
-                                                     "Symbol " + identifier + " has already been declared in the current scope.",
+                                                     errorMessage,
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
+            ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
         }
     }
     

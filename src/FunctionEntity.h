@@ -16,6 +16,8 @@ private:
 public:
     FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<unsigned short> parameterListTypes, unsigned short returnType);
     
+    std::string humanReadableName();
+    
 }; // class FunctionEntity
     
 }; // namespace MAlice

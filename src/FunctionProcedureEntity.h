@@ -15,6 +15,8 @@ namespace MAlice {
         
     public:
         FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<unsigned short> parameterListTypes);
+        
+        std::string humanReadableName() = 0;
     };
     
 };
