@@ -133,22 +133,31 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
 }
 
 
-void ASTWalker :: visitNode(pANTLR3_BASE_TREE node, CompilerContext* compilerContext)
+void ASTWalker::visitNode(pANTLR3_BASE_TREE node, CompilerContext* compilerContext)
 {
-  void (*visitFunction)(ASTNode, CompilerContext*);
-  try {
-  visitFunction = (visitDictionary.at(node->getType(node)));
-  }
-  catch (std::out_of_range e) {
-    std::stringstream error;
-    error << "FATAL ERROR - Node: " << (node->toString(node)->chars) << " Type: " << node->getType(node);
-    error << " At location(" << node->getToken(node)->getLine(node->getToken(node)) << "," << node->getToken(node)->getCharPositionInLine(node->getToken(node)) << ") has undefined visit function" << "\n\nExitting...";
-    std::cerr << error.str();
-    exit(0);
-  }
-	if (visitFunction != NULL)
-		visitFunction((ASTNode)node, compilerContext);
+    MAliceVisitFunction f = getNodeVisitFunction(node);
+    
+    if (f != NULL)
+        f((ASTNode)node, compilerContext);
 		
+}
+    
+MAliceVisitFunction ASTWalker::getNodeVisitFunction(ASTNode node)
+{
+    MAliceVisitFunction f = NULL;
+    
+    try {
+        f = (visitDictionary.at(node->getType(node)));
+    }
+    catch (std::out_of_range e) {
+        std::stringstream error;
+        error << "FATAL ERROR - Node: " << (node->toString(node)->chars) << " Type: " << node->getType(node);
+        error << " At location(" << node->getToken(node)->getLine(node->getToken(node)) << "," << node->getToken(node)->getCharPositionInLine(node->getToken(node)) << ") has undefined visit function" << "\n\nExitting...";
+        std::cerr << error.str();
+        exit(0);
+    }
+    
+    return f;
 }
 
 void ASTWalker :: compileTree() {
