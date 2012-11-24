@@ -31,7 +31,7 @@ namespace MAlice {
         
         for (unsigned int childIndex = 0; childIndex < numChildren; ++childIndex)
         {
-            for (unsigned int depthIndex = 0; depthIndex <= depth; ++depthIndex)
+            for (int depthIndex = 0; depthIndex <= depth; ++depthIndex)
             {
                 string->append8(string, "|");
                 string->append8(string, " ");
@@ -73,13 +73,13 @@ namespace MAlice {
     
     MAliceType Utilities::getTypeFromTypeString(std::string typeString)
     {
-        if (typeString == "number")
+        if (!typeString.compare("number"))
             return MAliceTypeNumber;
         
-        if (typeString == "letter")
+        if (!typeString.compare("letter"))
             return MAliceTypeLetter;
         
-        if (typeString == "sentence")
+        if (!typeString.compare("sentence"))
             return MAliceTypeSentence;
         
         return MAliceTypeUndefined;
