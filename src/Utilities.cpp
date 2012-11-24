@@ -22,27 +22,24 @@ namespace MAlice {
     
     pANTLR3_STRING Utilities::_printTree(ASTNode node, int depth)
     {
-        int i,i2;
-        pANTLR3_STRING string	= node->strFactory->newRaw(node->strFactory);
-        int numChildren = 0;
-        if (node->children != NULL)
-            numChildren = node->children->size(node->children);
-        //  for (i = 0; i < depth; i++)
-        //    string->append8	(string, " ");
-        //string->append8	(string, "-");
+        pANTLR3_STRING string = node->strFactory->newRaw(node->strFactory);
+        
+        unsigned int numChildren = getNumberOfChildNodes(node);
+        
         string->appendS	(string, node->toString(node));
         string->append8	(string, "\n");
-        for (i = 0; i < numChildren; i++)
+        
+        for (unsigned int childIndex = 0; childIndex < numChildren; ++childIndex)
         {
-            for (i2 = 0; i2 <= depth; i2++)
+            for (unsigned int depthIndex = 0; depthIndex <= depth; ++depthIndex)
             {
-                string->append8	(string, "|");
-                string->append8	(string, " ");
+                string->append8(string, "|");
+                string->append8(string, " ");
             }
-            //    string->append8	(string, "|");
-            (string->chars[string->len-1]) = '-';
-            //string->append8	(string, "-");
-            pANTLR3_BASE_TREE child = (pANTLR3_BASE_TREE)node->children->get(node->children,i);
+
+            string->chars[string->len-1] = '-';
+
+            ASTNode child = getChildNodeAtIndex(node, childIndex);
             string->appendS(string, _printTree(child , depth+1));
         }
         
@@ -52,6 +49,21 @@ namespace MAlice {
     ANTLR3_UINT32 Utilities::getNodeType(ASTNode node)
     {
         return node->getType(node);
+    }
+    
+    unsigned int Utilities::getNumberOfChildNodes(ASTNode node)
+    {
+        pANTLR3_VECTOR children = node->children;
+        if (children == NULL)
+            return 0;
+        
+        return children->size(children);
+    }
+    
+    ASTNode Utilities::getChildNodeAtIndex(ASTNode node, unsigned int index)
+    {
+        pANTLR3_VECTOR children = node->children;
+        return (ASTNode)children->get(children, index);
     }
     
 }; // namespace MAlice

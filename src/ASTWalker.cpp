@@ -135,12 +135,14 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
 }
 
 
-void ASTWalker::visitNode(pANTLR3_BASE_TREE node, CompilerContext* compilerContext)
+void ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
 {
     MAliceVisitFunction f = getNodeVisitFunction(node);
+    if (f == NULL) {
+        
+    }
     
-    if (f != NULL)
-        f((ASTNode)node, compilerContext);
+    f(node, ctx);
 		
 }
     
@@ -162,7 +164,8 @@ MAliceVisitFunction ASTWalker::getNodeVisitFunction(ASTNode node)
     return f;
 }
 
-void ASTWalker :: compileTree() {
+void ASTWalker :: compileTree()
+{
 
 }
 

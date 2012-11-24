@@ -18,6 +18,8 @@ namespace MAlice {
         static void printTree(ASTNode tree);
         
         static ANTLR3_UINT32 getNodeType(ASTNode node);
+        static unsigned int getNumberOfChildNodes(ASTNode node);
+        static ASTNode getChildNodeAtIndex(ASTNode node, unsigned int index);
     };
     
 }; // namespace MAlice
