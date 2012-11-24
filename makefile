@@ -6,7 +6,7 @@ CPP_FILES := $(wildcard src/*.cpp)
 OBJ_FILES := $(addprefix obj/,$(notdir $(CPP_FILES:.cpp=.o)))
 H_FILES = $(wildcard src/*.h)
 OBJECTS = ${CPP_FILES:.cpp=.o}
-CCFLAGS = -std=c++0x
+CCFLAGS = -std=c++0x -O3
 
 
 all:  compile
@@ -22,11 +22,11 @@ compile: $(OBJ_FILES) $(ANTLR_OUTPUT_FILES) obj/MAliceLexer.o obj/MAliceParser.o
 antlr: 
 	sh ./configureantlr.sh
 
-obj/MAliceLexer.o: antlr
-	$(CC) $(ANTLR_SEARCH_PATHS) -c grammar/output/MAliceLexer.c -o obj/MAliceLexer.o
+obj/MAliceLexer.o: antlr grammar/output/MAliceLexer.h grammar/output/MAliceLexer.c
+	$(CC) $(CCFLAGS) $(HEADER_SEARCH_PATHS) -c grammar/output/MAliceLexer.c -o obj/MAliceLexer.o
 
-obj/MAliceParser.o: antlr
-	$(CC) $(ANTLR_SEARCH_PATHS) -c grammar/output/MAliceParser.c -o obj/MAliceParser.o
+obj/MAliceParser.o: antlr grammar/output/MAliceParser.h grammar/output/MAliceParser.c
+	$(CC) $(CCFLAGS) $(HEADER_SEARCH_PATHS) -c grammar/output/MAliceParser.c -o obj/MAliceParser.o
 
 
 

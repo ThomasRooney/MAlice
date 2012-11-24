@@ -8,20 +8,29 @@
 
 #include "SymbolTable.h"
 #include <iterator>
+#include <vector>
 
 using namespace std;
 
 namespace MAlice {
     SymbolTable::~SymbolTable()
     {
-        for(auto element = (m_symbolMap.end()); element != m_symbolMap.begin(); ) {
-            element--;
-            if ((*element).second != NULL)
-               delete (*element).second;
-            (*element).second = NULL;
-        }
-        m_symbolMap.clear();
+        vector<string> keys;
         
+        for (unordered_map<string, Entity*>::iterator it = m_symbolMap.begin(); it != m_symbolMap.end(); ++it) {
+            keys.push_back(it->first);
+        }
+        
+        for (vector<string>::iterator it = keys.begin(); it != keys.end(); ++it) {
+            Entity *entity = m_symbolMap[*it];
+            
+            if (entity != NULL) {
+                delete entity;
+                entity = NULL;
+            }
+        }
+        
+        m_symbolMap.clear();
     }
     
     Entity *SymbolTable::get(string identifier)
