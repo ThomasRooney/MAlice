@@ -8,7 +8,7 @@
 
 namespace MAlice {
 
-class VariableEntity : Entity {
+class VariableEntity : public Entity {
 
 private:
     unsigned short m_type;

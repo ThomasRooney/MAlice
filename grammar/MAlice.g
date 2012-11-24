@@ -28,6 +28,7 @@ tokens {
 	ARRAYSUBSCRIPT;
 	BOOLEANEXPRESSION;
 	IFSTATEMENT;
+	VARDECLARATION;
 }
 
 // Programs, procedures and functions
@@ -141,9 +142,9 @@ else_block
 	
 variable_declaration
 	:	IDENTIFIER WASA type TOO?
-		-> ^(IDENTIFIER type)
+		-> ^(VARDECLARATION ^(IDENTIFIER type))
 	|	IDENTIFIER WASA type OF expression TOO?
-		-> ^(IDENTIFIER type expression)
+		-> ^(VARDECLARATION ^(IDENTIFIER type expression))
 	|	IDENTIFIER HAD expression type TOO?
 		-> ^(ARRAY ^(IDENTIFIER type expression))
 	;
@@ -180,8 +181,9 @@ expression
 		-> ^(EXPRESSION additive_expr)
 	;
 
-lvalue	:	IDENTIFIER (APOSTROPHE_S expression PIECE)?
+lvalue	:	(IDENTIFIER APOSTROPHE_S) => IDENTIFIER (APOSTROPHE_S expression PIECE)?
 		-> ^(ARRAYSUBSCRIPT IDENTIFIER expression)
+	|	IDENTIFIER
 	;
 
 additive_expr

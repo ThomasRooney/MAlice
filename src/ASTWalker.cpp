@@ -72,6 +72,7 @@ void ASTWalker :: constructVisitDictionary() {
       visitDictionary.insert(std::make_pair(STATEMENTLIST, &visitStatementListNode));
       visitDictionary.insert(std::make_pair(STRING_LITERAL, &visitStringLiteralNode));
       visitDictionary.insert(std::make_pair(TILDE, &visitLogicalNotExpressionNode));
+      visitDictionary.insert(std::make_pair(VARDECLARATION, &visitVariableDeclarationNode));
       visitDictionary.insert(std::make_pair(WHILESTATEMENT, &visitWhileStatementNode));
   }
 }

@@ -2,6 +2,7 @@
 
 #include "FunctionEntity.h"
 #include "ProcedureEntity.h"
+#include "VariableEntity.h"
 #include "Utilities.h"
 
 namespace MAlice {
@@ -169,7 +170,7 @@ namespace MAlice {
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
                                                      Utilities::getNodeColumnIndex(identifierNode),
                                                      ErrorTypeSemantic,
-                                                     "Symbol " + identifier + " has already been declared in the current scope",
+                                                     "Symbol " + identifier + " has already been declared in the current scope.",
                                                      true);
             }
             
@@ -177,6 +178,25 @@ namespace MAlice {
         }
         
         walker->visitChildren(node, ctx);
+    }
+    
+    void visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (identifierNode != NULL) {
+            std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            
+            if (ctx->isSymbolInScope(identifier, NULL)) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                     Utilities::getNodeColumnIndex(identifierNode),
+                                                     ErrorTypeSemantic,
+                                                     "Symbol " + identifier + " has already been declared in the current scope.",
+                                                     true);
+            }
+            
+            ctx->addEntityInScope(identifier, VariableEntity(identifier, NULL));
+        }
     }
     
     // Literals

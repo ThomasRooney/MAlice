@@ -53,6 +53,7 @@ namespace MAlice {
     void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    void visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Literals
     void visitCharacterLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
