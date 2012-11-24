@@ -49,4 +49,9 @@ namespace MAlice {
         return string;
     }
     
+    ANTLR3_UINT32 Utilities::getNodeType(ASTNode node)
+    {
+        return node->getType(node);
+    }
+    
 }; // namespace MAlice

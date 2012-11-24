@@ -1,13 +1,15 @@
-#include "ASTWalker.h"
-#include "SymbolTable.h"
-#include "MAliceParser.h"
-#include "VisitorCallbacks.h"
 #include <unordered_map>
 #include <stdexcept>
 #include <iostream>
 #include <string>
 #include <sstream>
 
+#include "ASTWalker.h"
+
+#include "MAliceParser.h"
+#include "SymbolTable.h"
+#include "Utilities.h"
+#include "VisitorCallbacks.h"
 
 namespace MAlice {
 
@@ -147,7 +149,7 @@ MAliceVisitFunction ASTWalker::getNodeVisitFunction(ASTNode node)
     MAliceVisitFunction f = NULL;
     
     try {
-        f = (visitDictionary.at(node->getType(node)));
+        f = (visitDictionary.at(Utilities::getNodeType(node)));
     }
     catch (std::out_of_range e) {
         std::stringstream error;
