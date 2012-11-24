@@ -23,6 +23,7 @@ namespace MAlice {
 
     private:
         void visitNode(ASTNode node, CompilerContext *ctx);
+        void visitChildren(ASTNode node, CompilerContext *ctx);
         std::unordered_map<unsigned int,void (*)(ASTNode node, CompilerContext*)> visitDictionary;
         void constructVisitDictionary ();
         MAliceVisitFunction getNodeVisitFunction(ASTNode node);

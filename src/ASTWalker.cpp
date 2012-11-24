@@ -124,13 +124,15 @@ void ASTWalker :: constructVisitDictionary() {
   }
 }
 
-bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
+bool ASTWalker::validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
   // Get the root node, it should be program, if not then error
   printf("-----------------------------\n");
   printf("-----Constructing Symbol-----\n");
   printf("------------Table------------\n");
   printf("-----------------------------\n");
+
   this->visitNode(root, ctx);
+
   return true;
 }
 
@@ -141,15 +143,20 @@ void ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
     
     // If we haven't implemented visitor functions for certain node types (e.g. nodes which we don't do anything
     // with but are there to make the AST nicer to work with), simply recurse on their children and vist them.
-    if (f == NULL) {
-        unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
-        for (unsigned int i = 0; i < numChildren; ++i) {
-            visitNode(node, ctx);
-        }
-    }
+    if (f == NULL)
+        visitChildren(node, ctx);
     
     f(node, ctx);
 		
+}
+    
+void ASTWalker::visitChildren(ASTNode node, CompilerContext *ctx)
+{
+    unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
+    
+    for (unsigned int i = 0; i < numChildren; ++i) {
+        visitNode(node, ctx);
+    }
 }
     
 MAliceVisitFunction ASTWalker::getNodeVisitFunction(ASTNode node)
