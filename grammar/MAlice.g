@@ -86,9 +86,9 @@ body_declarations
 	
 declaration_argument
 	:	SPIDER type IDENTIFIER
-		-> ^(BYREFERENCE ^(type IDENTIFIER))
+		-> ^(BYREFERENCE type IDENTIFIER)
 	|	type IDENTIFIER
-		-> ^(BYVALUE ^(type IDENTIFIER))
+		-> ^(BYVALUE type IDENTIFIER)
 	;
 
 
