@@ -98,7 +98,13 @@ namespace MAlice {
     void visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
     }
     
-    void visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ctx->enterScope();
+        
+        walker->visitChildren(node, ctx);
+        
+        ctx->exitScope();
     }
     
     void visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
