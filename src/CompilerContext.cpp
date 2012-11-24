@@ -69,16 +69,18 @@ namespace MAlice {
       return t_symbolTable;
     }
 
-    void CompilerContext::addEntityInScope(std::string identifier, Entity *entity)
+    bool CompilerContext::addEntityInScope(std::string identifier, Entity *entity)
     {
         if (m_symbolTables.empty())
-            return;
+            return false;
         
         SymbolTable* & innermostSymbolTable = m_symbolTables.back();
         if (innermostSymbolTable->contains(identifier))
-            cerr << "Symbol conflict";
+            return false;
         
         innermostSymbolTable->insert(identifier, entity);
+        
+        return true;
     }
     
     bool CompilerContext::isSymbolInScope(std::string identifier, Entity **outEntity)
