@@ -152,8 +152,8 @@ namespace MAlice {
                                                      "Symbol " + identifier + " has already been declared in the current scope",
                                                      true);
             }
-            std::list<unsigned short> parameterList;
-            ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, NULL));
+            std::list<MAliceType> parameterList;
+            ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, MAliceTypeUndefined));
         }
         
         walker->visitChildren(node, ctx);
@@ -179,7 +179,7 @@ namespace MAlice {
                                                      "Symbol " + identifier + " has already been declared in the current scope.",
                                                      true);
             }
-            std::list<unsigned short> parameterList;
+            std::list<MAliceType> parameterList;
             ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         }
         
@@ -189,9 +189,10 @@ namespace MAlice {
     void visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
         
         if (identifierNode != NULL) {
-            std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            std::string identifier(Utilities::getNodeText(identifierNode));
             
             if (ctx->isKeyword(identifier)) {
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
@@ -215,7 +216,8 @@ namespace MAlice {
                                                      true);
             }
             
-            ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), NULL));
+            MAliceType type = Utilities::getTypeFromTypeString(std::string(Utilities::getNodeText(typeNode)));
+            ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), type));
         }
     }
     

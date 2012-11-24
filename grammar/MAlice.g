@@ -142,9 +142,9 @@ else_block
 	
 variable_declaration
 	:	IDENTIFIER WASA type TOO?
-		-> ^(VARDECLARATION ^(IDENTIFIER type))
+		-> ^(VARDECLARATION IDENTIFIER type)
 	|	IDENTIFIER WASA type OF expression TOO?
-		-> ^(VARDECLARATION ^(IDENTIFIER type expression))
+		-> ^(VARDECLARATION IDENTIFIER type expression)
 	|	IDENTIFIER HAD expression type TOO?
 		-> ^(ARRAY ^(IDENTIFIER type expression))
 	;

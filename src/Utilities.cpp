@@ -66,4 +66,23 @@ namespace MAlice {
         return (ASTNode)children->get(children, index);
     }
     
+    char * Utilities::getNodeText(ASTNode node)
+    {
+        return (char*)node->getText(node)->chars;
+    }
+    
+    MAliceType Utilities::getTypeFromTypeString(std::string typeString)
+    {
+        if (typeString == "number")
+            return MAliceTypeNumber;
+        
+        if (typeString == "letter")
+            return MAliceTypeLetter;
+        
+        if (typeString == "sentence")
+            return MAliceTypeSentence;
+        
+        return MAliceTypeUndefined;
+    }
+    
 }; // namespace MAlice

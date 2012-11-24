@@ -6,15 +6,16 @@
 #include <list>
 
 #include "FunctionProcedureEntity.h"
+#include "Types.h"
 
 namespace MAlice {
 
 class FunctionEntity : public FunctionProcedureEntity {
 private:
-    unsigned short m_returnType;
+    MAliceType m_returnType;
     
 public:
-    FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<unsigned short> parameterListTypes, unsigned short returnType);
+    FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<MAliceType> parameterListTypes, MAliceType returnType);
     
     std::string humanReadableName();
     

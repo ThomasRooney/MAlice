@@ -5,16 +5,17 @@
 #include <iostream>
 
 #include "Entity.h"
+#include "Types.h"
 
 namespace MAlice {
 
 class VariableEntity : public Entity {
 
 private:
-    unsigned short m_type;
+    MAliceType m_type;
     
 public:
-    VariableEntity(std::string identifier, unsigned int lineNumber, unsigned short type);
+    VariableEntity(std::string identifier, unsigned int lineNumber, MAliceType type);
     
     std::string humanReadableName();
     

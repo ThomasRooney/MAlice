@@ -13,7 +13,7 @@ using namespace std;
 namespace MAlice {
     SymbolTable::~SymbolTable()
     {
-        for(auto& element = m_symbolMap.rbegin(); element != m_symbolMap.rend(); ) {
+        for(auto element = m_symbolMap.begin(); element != m_symbolMap.end(); ) {
             if ((*element).second != NULL)
                delete (*element).second;
             (*element).second = NULL;
