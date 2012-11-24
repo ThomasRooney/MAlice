@@ -9,6 +9,7 @@
 #include "SymbolTable.h"
 #include <iterator>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -32,10 +33,15 @@ namespace MAlice {
         
         m_symbolMap.clear();
     }
-    
+    // Throws out of range exception to calling function
     Entity *SymbolTable::get(string identifier)
     {
-        return m_symbolMap[identifier];
+            return m_symbolMap.at(identifier);
+    }
+
+    bool SymbolTable::contains(string identifier)
+    {
+      return (m_symbolMap.find(identifier) != m_symbolMap.end());
     }
     
     void SymbolTable::insert(string identifier, Entity *entity)

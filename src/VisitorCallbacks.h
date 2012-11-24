@@ -71,4 +71,5 @@ namespace MAlice {
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
     std::list<ParameterEntity> visitIntoFunctionProcedureScope(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
 }
+
 #endif

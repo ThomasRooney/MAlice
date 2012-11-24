@@ -2,6 +2,8 @@
 #include "CompilerContext.h"
 #include "SymbolTable.h"
 
+#include <unordered_map>
+
 using namespace std;
 
 int MUTEX_INIT(MUTEX *mutex)
@@ -73,7 +75,7 @@ namespace MAlice {
             return;
         
         SymbolTable* & innermostSymbolTable = m_symbolTables.back();
-        if (innermostSymbolTable->get(identifier))
+        if (innermostSymbolTable->contains(identifier))
             cerr << "Symbol conflict";
         
         innermostSymbolTable->insert(identifier, entity);
