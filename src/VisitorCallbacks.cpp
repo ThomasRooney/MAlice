@@ -200,6 +200,14 @@ namespace MAlice {
         if (identifierNode != NULL) {
             std::string identifier(Utilities::getNodeText(identifierNode));
             
+            if (ctx->isKeyword(identifier)) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                     Utilities::getNodeColumnIndex(identifierNode),
+                                                     ErrorTypeSemantic,
+                                                     "Cannot declare variable '" + identifier + "' because it is a keyword.",
+                                                     true);
+            }
+            
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             
             MAliceType type = Utilities::getTypeFromTypeString(std::string(Utilities::getNodeText(typeNode)));
