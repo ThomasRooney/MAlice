@@ -145,13 +145,8 @@ namespace MAlice {
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
-            if (ctx->isSymbolInScope(identifier, NULL)) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorTypeSemantic,
-                                                     "Symbol " + identifier + " has already been declared in the current scope",
-                                                     true);
-            }
+            checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
+            
             std::list<MAliceType> parameterList;
             ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, MAliceTypeUndefined));
         }
@@ -172,13 +167,8 @@ namespace MAlice {
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
-            if (ctx->isSymbolInScope(identifier, NULL)) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorTypeSemantic,
-                                                     "Symbol " + identifier + " has already been declared in the current scope.",
-                                                     true);
-            }
+            checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
+            
             std::list<MAliceType> parameterList;
             ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         }
@@ -194,27 +184,7 @@ namespace MAlice {
         if (identifierNode != NULL) {
             std::string identifier(Utilities::getNodeText(identifierNode));
             
-            if (ctx->isKeyword(identifier)) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorTypeSemantic,
-                                                     "Cannot declare variable '" + identifier + "' because it is a keyword.",
-                                                     true);
-            }
-            
-            Entity *existingEntity = NULL;
-            
-            if (ctx->isSymbolInScope(identifier, &existingEntity)) {
-                std::stringstream errorMessage;
-                errorMessage << "'" << identifier << "' has already been declared in the current scope."
-                                                     << "\n  - Declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber();
-                
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorTypeSemantic,
-                                                     errorMessage.str(),
-                                                     true);
-            }
+            checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             
             MAliceType type = Utilities::getTypeFromTypeString(std::string(Utilities::getNodeText(typeNode)));
             ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), type));
@@ -242,4 +212,21 @@ namespace MAlice {
     }
 
 
+    // Helper methods
+    void checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx)
+    {
+        Entity *existingEntity = NULL;
+        
+        if (ctx->isSymbolInScope(identifier, &existingEntity)) {
+            std::stringstream errorMessage;
+            errorMessage << "'" << identifier << "' has already been declared in the current scope."
+            << "\n  - Declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber();
+            
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                 Utilities::getNodeColumnIndex(node),
+                                                 ErrorTypeSemantic,
+                                                 errorMessage.str(),
+                                                 true);
+        }
+    }
 };

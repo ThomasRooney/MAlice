@@ -64,6 +64,9 @@ namespace MAlice {
     void visitLetterTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitNumberTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitSentenceTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    
+    // Helper methods
+    void checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
 
 }
 #endif
