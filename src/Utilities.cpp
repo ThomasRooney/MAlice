@@ -73,13 +73,13 @@ namespace MAlice {
     
     MAliceType Utilities::getTypeFromTypeString(std::string typeString)
     {
-        if (typeString == "number")
+        if (!typeString.compare("number"))
             return MAliceTypeNumber;
         
-        if (typeString == "letter")
+        if (!typeString.compare("letter"))
             return MAliceTypeLetter;
         
-        if (typeString == "sentence")
+        if (!typeString.compare("sentence"))
             return MAliceTypeSentence;
         
         return MAliceTypeUndefined;
