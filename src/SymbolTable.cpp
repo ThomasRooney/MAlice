@@ -7,18 +7,21 @@
 //
 
 #include "SymbolTable.h"
+#include <iterator>
 
 using namespace std;
 
 namespace MAlice {
     SymbolTable::~SymbolTable()
     {
-        for(auto element = m_symbolMap.begin(); element != m_symbolMap.end(); ) {
+        for(auto element = (m_symbolMap.end()); element != m_symbolMap.begin(); ) {
+            element--;
             if ((*element).second != NULL)
                delete (*element).second;
             (*element).second = NULL;
-            m_symbolMap.erase((*element).first);
         }
+        m_symbolMap.clear();
+        
     }
     
     Entity *SymbolTable::get(string identifier)
