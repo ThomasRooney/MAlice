@@ -6,6 +6,11 @@ using namespace std;
 
 namespace MAlice {
     
+    CompilerContext::CompilerContext()
+    {
+        m_symbolTables.push_back(new SymbolTable());
+    }
+    
     void CompilerContext::addEntityInScope(std::string identifier, Entity entity)
     {
         if (m_symbolTables.empty())
@@ -30,10 +35,13 @@ namespace MAlice {
                 entity = (*iterator)->get(identifier);
             }
             catch(out_of_range e) {
-                if (entity && outEntity) {
+            }
+            
+            if (entity) {
+                if (outEntity)
                     *outEntity = entity;
-                    return true;
-                }
+                
+                return true;
             }
         }
         

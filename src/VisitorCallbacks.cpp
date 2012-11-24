@@ -1,5 +1,9 @@
 #include "VisitorCallbacks.h"
 
+#include "FunctionEntity.h"
+#include "ProcedureEntity.h"
+#include "Utilities.h"
+
 namespace MAlice {
 
     // Statements
@@ -113,7 +117,9 @@ namespace MAlice {
     void visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
     }
     
-    void visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        walker->visitChildren(node, ctx);
     }
     
     void visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
@@ -125,7 +131,8 @@ namespace MAlice {
     void visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
     }
     
-    void visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
     }
     
     void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
@@ -134,7 +141,16 @@ namespace MAlice {
     void visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
     }
     
-    void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (identifierNode != NULL) {
+            std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            ctx->addEntityInScope(identifier, ProcedureEntity(identifier, NULL));
+        }
+        
+        walker->visitChildren(node, ctx);
     }
     
     // Literals

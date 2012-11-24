@@ -15,6 +15,8 @@ namespace MAlice {
         std::list<SymbolTable*> m_symbolTables;
         
     public:
+        CompilerContext();
+        
         void addEntityInScope(std::string identifier, Entity entity);
         bool isSymbolInScope(std::string identifier, Entity const **outEntity);
     
