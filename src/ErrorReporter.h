@@ -8,6 +8,7 @@
 #include <iostream>
 #endif
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,6 +19,11 @@ extern "C" {
 
 #ifdef __cplusplus
 namespace MAlice {
+    
+    class ErrorReporter;
+    
+    ErrorReporter *getParserErrorReporter();
+    void setParserErrorReporter(ErrorReporter *errorReporter);
     
     typedef enum {
         ErrorTypeSyntactic,
