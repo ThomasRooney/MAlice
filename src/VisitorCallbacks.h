@@ -19,8 +19,6 @@ namespace MAlice {
     void visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Expressions
-    void visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitLogicalAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitLogicalOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitLogicalNotExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
@@ -50,6 +48,7 @@ namespace MAlice {
     void visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    void visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     void visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
