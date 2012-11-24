@@ -8,6 +8,7 @@
 
 #include "SymbolTable.h"
 #include <iterator>
+#include <stdexcept>
 #include <vector>
 #include <unordered_map>
 
