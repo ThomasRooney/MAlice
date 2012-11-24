@@ -7,7 +7,7 @@
 //
 
 #ifndef _MALICETYPES
-#define MAlice_Types_h
+#define _MALICETYPES
 
 #include "MAliceParser.h"
 
@@ -18,8 +18,15 @@ namespace MAlice {
 
     typedef pANTLR3_BASE_TREE ASTNode;
     typedef void (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
+    
+    typedef enum {
+        MAliceTypeUndefined = 0,
+        MAliceTypeNumber,
+        MAliceTypeLetter,
+        MAliceTypeSentence
+    } MAliceType;
 
 };
 
 
-#endif
+#endif // #ifndef _MALICETYPES

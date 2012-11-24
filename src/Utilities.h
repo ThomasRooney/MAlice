@@ -20,6 +20,9 @@ namespace MAlice {
         static ANTLR3_UINT32 getNodeType(ASTNode node);
         static unsigned int getNumberOfChildNodes(ASTNode node);
         static ASTNode getChildNodeAtIndex(ASTNode node, unsigned int index);
+        static char *getNodeText(ASTNode node);
+        
+        static MAliceType getTypeFromTypeString(std::string);
     };
     
 }; // namespace MAlice
