@@ -146,29 +146,7 @@ namespace MAlice {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
-            std::list<ParameterEntity> parameterList;
-            ctx->enterScope();
-            // Loop through the rest of the child nodes
-            for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
-                ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);            
-                        
-                switch (Utilities::getNodeType(childNode))
-                {
-                    case PARAMS:
-                        parameterList = getParameterTypesFromParamsNode(childNode);
-                        for (auto p = parameterList.begin(); p!=  parameterList.end();p++)
-                        {
-                            ctx->addEntityInScope(p->getIdentifier(), p->clone());
-                        }
-                        break;
-                    case BODY:
-                        walker->visitNode(childNode, ctx);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            ctx->exitScope();
+            std::list<ParameterEntity> parameterList = visitIntoFunctionProcedureScope(node,walker,ctx);
             
             ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, MAliceTypeUndefined));
         }
@@ -193,27 +171,8 @@ namespace MAlice {
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
         }
-        std::list<ParameterEntity> parameterList;
+        std::list<ParameterEntity> parameterList = visitIntoFunctionProcedureScope(node,walker,ctx);
         
-        // Loop through the rest of the child nodes
-        for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
-            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);            
-            
-            ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
-
-            switch (Utilities::getNodeType(childNode))
-            {
-                case PARAMS:
-                    parameterList = getParameterTypesFromParamsNode(childNode);
-                    break;
-                case BODY:
-                    walker->visitNode(childNode, ctx);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
     }
     
@@ -300,5 +259,33 @@ namespace MAlice {
         }
         
         return parameterTypes;
+    }
+
+    std::list<ParameterEntity> visitIntoFunctionProcedureScope(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        std::list<ParameterEntity> parameterList;
+        ctx->enterScope();
+        // Loop through the rest of the child nodes
+        for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);            
+                        
+            switch (Utilities::getNodeType(childNode))
+            {
+                case PARAMS:
+                    parameterList = getParameterTypesFromParamsNode(childNode);
+                    for (auto p = parameterList.begin(); p!=  parameterList.end();p++)
+                    {
+                        ctx->addEntityInScope(p->getIdentifier(), p->clone());
+                    }
+                    break;
+                case BODY:
+                    walker->visitNode(childNode, ctx);
+                    break;
+                default:
+                    break;
+            }
+        }
+        ctx->exitScope();
+        return parameterList;
     }
 };

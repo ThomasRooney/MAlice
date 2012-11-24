@@ -21,7 +21,6 @@ namespace MAlice {
         static unsigned int getNumberOfChildNodes(ASTNode node);
         static ASTNode getChildNodeAtIndex(ASTNode node, unsigned int index);
         static char *getNodeText(ASTNode node);
-        
         static MAliceType getTypeFromTypeString(std::string);
     };
     

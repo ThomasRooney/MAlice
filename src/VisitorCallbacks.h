@@ -69,6 +69,6 @@ namespace MAlice {
     // Helper methods
     void checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
-
+    std::list<ParameterEntity> visitIntoFunctionProcedureScope(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
 }
 #endif
