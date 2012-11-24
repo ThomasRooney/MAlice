@@ -106,6 +106,23 @@ namespace MAlice {
     
     // Imaginary nodes – used to improve AST structure
     void visitArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (identifierNode != NULL) {
+            std::string identifier(Utilities::getNodeText(identifierNode));
+            std::string type;
+            checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
+
+            // array of what?
+            ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
+            if (typeNode != NULL)
+                type = Utilities::getNodeText(typeNode);
+            
+            
+            ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type)));
+        }
+
+
     }
     
     void visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
