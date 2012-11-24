@@ -184,7 +184,7 @@ namespace MAlice {
         std::string identifier;
         
         if (identifierNode != NULL) {
-            std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            identifier = Utilities::getNodeText(identifierNode);
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
         }
