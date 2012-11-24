@@ -138,8 +138,14 @@ bool ASTWalker  :: validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx) {
 void ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
 {
     MAliceVisitFunction f = getNodeVisitFunction(node);
+    
+    // If we haven't implemented visitor functions for certain node types (e.g. nodes which we don't do anything
+    // with but are there to make the AST nicer to work with), simply recurse on their children and vist them.
     if (f == NULL) {
-        
+        unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
+        for (unsigned int i = 0; i < numChildren; ++i) {
+            visitNode(node, ctx);
+        }
     }
     
     f(node, ctx);
