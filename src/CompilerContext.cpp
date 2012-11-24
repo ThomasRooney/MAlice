@@ -9,6 +9,8 @@ namespace MAlice {
     CompilerContext::CompilerContext()
     {
         m_symbolTables.push_back(new SymbolTable());
+        
+        configureKeywords();
     }
     
     void CompilerContext::addEntityInScope(std::string identifier, Entity entity)
@@ -73,6 +75,16 @@ namespace MAlice {
     void CompilerContext::setErrorReporter(ErrorReporter *errorReporter)
     {
         m_errorReporter = errorReporter;
+    }
+    
+    void CompilerContext::configureKeywords()
+    {
+        m_keywords.insert("hatta");
+    }
+    
+    bool CompilerContext::isKeyword(std::string string)
+    {
+        return m_keywords.find(string) != m_keywords.end();
     }
     
 }; // namespace MAlice

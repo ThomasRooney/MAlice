@@ -187,6 +187,14 @@ namespace MAlice {
         if (identifierNode != NULL) {
             std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
             
+            if (ctx->isKeyword(identifier)) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                     Utilities::getNodeColumnIndex(identifierNode),
+                                                     ErrorTypeSemantic,
+                                                     "Cannot declare variable '" + identifier + "' because it is a keyword.",
+                                                     true);
+            }
+            
             if (ctx->isSymbolInScope(identifier, NULL)) {
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
                                                      Utilities::getNodeColumnIndex(identifierNode),
