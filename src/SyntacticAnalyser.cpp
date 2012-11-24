@@ -38,14 +38,14 @@ namespace MAlice {
     ASTNode SyntacticAnalyser::parsedInput()
     {
         
-        pMAliceParser parser = MAliceParserNew(m_tokenStream);
-        if (!parser)
+        m_parser = MAliceParserNew(m_tokenStream);
+        if (!m_parser)
             return NULL;
         
-        if (parser->pParser->rec->state->errorCount > 0)
+        if (m_parser->pParser->rec->state->errorCount > 0)
             return NULL;
         
-        MAliceParser_program_return ast = parser->program(parser);
+        MAliceParser_program_return ast = m_parser->program(m_parser);
         
         return ast.tree;
     }
