@@ -5,9 +5,15 @@
 #include <cstdlib>
 #include <sstream>
 #include "limits.h"
+#include "MAliceParser.h"
 
 #define LINE_NUMBER_NA      UINT_MAX
 #define COL_INDEX_NA        UINT_MAX
+
+void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
+{
+    printf("Hello");
+}
 
 using namespace std;
 
