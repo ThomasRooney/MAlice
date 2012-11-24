@@ -20,8 +20,6 @@ typedef unsigned long int uint64_t;
 
 using namespace MAlice;
 
-void validateCompilerContext(CompilerContext *ctx);
-
 // Skeleton file based on http://stackoverflow.com/a/8542203
 int main(int argc, char *argv[])
 {    
