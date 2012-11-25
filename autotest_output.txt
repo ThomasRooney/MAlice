@@ -219,36 +219,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
 ---------------------
 Processing Valid File: ../malice_examples/valid/test12.alice
 ---------------------
@@ -296,24 +266,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
 ---------------------
 Processing Valid File: ../malice_examples/valid/vectorFunctions.alice
 ---------------------
@@ -376,9 +328,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest05.alice
 ---------------------
@@ -390,9 +339,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest06.alice
 ---------------------
@@ -1013,7 +959,4 @@ The reference to 'y' on line 6 is not to array.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
-  
-  ^
 ---------------------
