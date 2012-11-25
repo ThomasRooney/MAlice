@@ -112,6 +112,8 @@ namespace MAlice {
                     VariableEntity *lookupVEntity = NULL;
                     try {
                         lookupVEntity = dynamic_cast<VariableEntity *>(lookupEntity);
+                        if (lookupVEntity == NULL)
+                          throw std::bad_cast();
                         maType = lookupVEntity->getType();
                     }
                     catch (std::bad_cast e){
