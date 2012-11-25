@@ -4,6 +4,8 @@
 VALIDFILES=../malice_examples/valid/*.alice
 INVALIDFILES=../malice_examples/invalid/*.alice
 
+OUTPUT=autotest_output.txt
+
 RUNNABLE = true
 
 echo "Sanity Check"
@@ -55,34 +57,34 @@ echo "Please correct setup"
 exit $1 ;
 fi
 
-rm autotest_output
+rm $OUTPUT
 
 for vF in $VALIDFILES
 do
-echo "Processing Valid File: $vF"  >> autotest_output
+echo "Processing Valid File: $vF"  >> $OUTPUT
 echo "Processing Valid File: $vF"
-echo "---------------------" >> autotest_output
-echo "Reference Compiler Output:" >> autotest_output
-echo "---------------------" >> autotest_output
-MAlice $vF &>> autotest_output
-echo "---------------------" >> autotest_output
-echo "Student Compiler Output:" >> autotest_output
-echo "---------------------" >> autotest_output
-./compile $vF &>> autotest_output
-echo "---------------------" >> autotest_output
+echo "---------------------" >> $OUTPUT
+echo "Reference Compiler Output:" >> $OUTPUT
+echo "---------------------" >> $OUTPUT
+MAlice $vF &>> $OUTPUT
+echo "---------------------" >> $OUTPUT
+echo "Student Compiler Output:" >> $OUTPUT
+echo "---------------------" >> $OUTPUT
+./compile $vF &>> $OUTPUT
+echo "---------------------" >> $OUTPUT
 done
 
 for vF in $INVALIDFILES
 do
-echo "Processing Invalid File: $vF"  >> autotest_output
+echo "Processing Invalid File: $vF"  >> $OUTPUT
 echo "Processing Invalid File: $vF"
-echo "---------------------" >> autotest_output
-echo "Reference Compiler Output:" >> autotest_output
-echo "---------------------" >> autotest_output
-MAlice $vF &>> autotest_output
-echo "---------------------" >> autotest_output
-echo "Student Compiler Output:" >> autotest_output
-echo "---------------------" >> autotest_output
-./compile $vF &>> autotest_output
-echo "---------------------" >> autotest_output
+echo "---------------------" >> $OUTPUT
+echo "Reference Compiler Output:" >> $OUTPUT
+echo "---------------------" >> $OUTPUT
+MAlice $vF &>> $OUTPUT
+echo "---------------------" >> $OUTPUT
+echo "Student Compiler Output:" >> $OUTPUT
+echo "---------------------" >> $OUTPUT
+./compile $vF &>> $OUTPUT
+echo "---------------------" >> $OUTPUT
 done
