@@ -81,10 +81,14 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
     {
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
-            string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unrecognised token '" + identifier + "'.";
-            
-            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            if (token != NULL) {
+                string identifier = (char*)token->getText(token)->chars;
+                string errorMessage = "Unrecognised token '" + identifier + "'.";
+                
+                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            } else {
+                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Unrecognised token", true);
+            }
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
