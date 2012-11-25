@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 	output=AST;
 }
 
@@ -278,15 +278,15 @@ null_statement
 	:	FULL_STOP;
 
 // Lexer rules
+// Based on the ANSI-C whitespace grammar.
+WS    :    (' '|'\t'|NEWLINE)+ {$channel=HIDDEN;};
+    	
+// Based on the ANSI-C line comment grammar.
+COMMENT	:	'###' ~('\n'|'\r')* NEWLINE {$channel=HIDDEN;};
+
 CHARACTER_LITERAL
 	:	'\'' LETTER '\''
 	;
-
-fragment ESCAPE
-	:	'\\"'
-	;
-fragment QUOTE
-	:	'"';
 	
 STRING_LITERAL
 	:	QUOTE (ESCAPE | ~(QUOTE))* QUOTE
@@ -295,13 +295,8 @@ NUMBER_LITERAL
 	:	'0' | '1'..'9' DIGIT*
 	;
 	
-// Based on the ANSI-C whitespace grammar.
-WS	:	 (' ' | '\t' | '\r' | '\n') {$channel=HIDDEN;}
-    	;
-
-// Based on the ANSI-C line comment grammar.
-COMMENT	:	'###' ~('\n'|'\r')* NEWLINE {$channel=HIDDEN;};
-NEWLINE	:	'\r'? '\n' ;
+fragment NEWLINE
+	:	'\r'? '\n' ;
 LPAREN	:	'(';
 RPAREN	:	')';
 OPENED 	:	'opened';
@@ -316,7 +311,6 @@ WASA	:	'was a';
 BECAME	:	'became';
 ALICEFOUND
 	:	'Alice found';
-BECAUSE	:	'because';
 SAIDALICE
 	:	'said Alice';
 COMMA	:	',';
@@ -324,6 +318,11 @@ THEN	:	'then';
 AND	:	'and';
 FULL_STOP
 	:	'.'
+	;
+fragment BECAUSE
+	:	'because';
+ALICEWASUNSURE
+	:	BECAUSE 'Alice was unsure which'
 	;
 CONTAINEDA
 	:	'contained a'
@@ -333,9 +332,6 @@ EVENTUALLY
 	;
 ENOUGHTIMES
 	:	'enough times'
-	;
-ALICEWASUNSURE
-	:	'because Alice was unsure which'
 	;
 OR	:	'or';
 SO	:	'so';
@@ -403,3 +399,9 @@ fragment LETTER
 fragment DIGIT
 	:	'0'..'9'
 	;
+	
+fragment ESCAPE
+	:	'\\"'
+	;
+fragment QUOTE
+	:	'"';
