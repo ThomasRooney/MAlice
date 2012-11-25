@@ -337,9 +337,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Node: 'x' is not of expected type: ('Number Type' != 'Undefined Type')
-    y became x.
-             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest02.alice
 ---------------------
@@ -407,12 +404,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Node: 'x' is not of expected type: ('Number Type' != 'Undefined Type')
-    y became y/x.
-               ^
-Semantic error (Line 6): Node: 'y' is not of expected type: ('Number Type' != 'Undefined Type')
-    y became y/x.
-             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest07.alice
 ---------------------
@@ -424,12 +415,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Node: 'x' is not of expected type: ('Number Type' != 'Undefined Type')
-    y became y % x.
-                 ^
-Semantic error (Line 6): Node: 'y' is not of expected type: ('Number Type' != 'Undefined Type')
-    y became y % x.
-             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest08.alice
 ---------------------
@@ -789,9 +774,6 @@ Reference to 'arr' in line 6 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Node: 'y' is not of expected type: ('Number Type' != 'Undefined Type')
-    arr became y.
-               ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test23.alice
 ---------------------
@@ -1009,6 +991,15 @@ Type of return value on line 4 does not match return type of 'func1' on line 2.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 20): Identifier: 'func1' is not a variable!
+    x became func1 ().
+             ^
+Semantic error (Line 21): Identifier: 'func2' is not a variable!
+    y became func2 ().
+             ^
+Semantic error (Line 22): Identifier: 'func3' is not a variable!
+    z became func3 ().
+             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test36.alice
 ---------------------
