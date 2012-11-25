@@ -87,6 +87,8 @@ namespace MAlice {
         
         SymbolTable *table = m_symbolTables.back();
         Entity *entity = table->get(identifier);
+        if (entity != NULL && outEntity != NULL)
+            *outEntity = entity;
         
         return entity != NULL;
     }
