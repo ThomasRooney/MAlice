@@ -7,6 +7,8 @@
 
 namespace MAlice {
     
+    class FunctionProcedureEntity;
+    
     // Statements
     bool visitNullStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
@@ -68,8 +70,8 @@ namespace MAlice {
     
     // Helper methods
     bool checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
+    bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx);
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
-    std::list<ParameterEntity> visitIntoFunctionProcedureScope(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
 }
 
 #endif

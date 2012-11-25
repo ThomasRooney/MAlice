@@ -19,6 +19,8 @@ namespace MAlice {
         FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes);
         
         std::string humanReadableName() = 0;
+        
+        void setParameterListTypes(std::list<ParameterEntity> types);
     };
     
 };

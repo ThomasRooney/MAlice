@@ -257,9 +257,11 @@ namespace MAlice {
             if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
                 return false;
             
-            std::list<ParameterEntity> parameterList = visitIntoFunctionProcedureScope(node,walker,ctx);
+            FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), MAliceTypeUndefined);
             
-            ctx->addEntityInScope(identifier, new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList, MAliceTypeUndefined));
+            ctx->addEntityInScope(identifier, functionEntity);
+            if (!visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx))
+                return false;
         }
         
         return true;
@@ -296,17 +298,19 @@ namespace MAlice {
     bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
-        std::string identifier;
         
         if (identifierNode != NULL) {
-            identifier = Utilities::getNodeText(identifierNode);
+            std::string identifier = Utilities::getNodeText(identifierNode);
             
             if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
                 return false;
+            
+            ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
+            
+            ctx->addEntityInScope(identifier, procedureEntity);
+            if (!visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx))
+                return false;
         }
-        std::list<ParameterEntity> parameterList = visitIntoFunctionProcedureScope(node,walker,ctx);
-        
-        ctx->addEntityInScope(identifier, new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), parameterList));
         
         return true;
     }
@@ -416,10 +420,11 @@ namespace MAlice {
         return parameterTypes;
     }
 
-    std::list<ParameterEntity> visitIntoFunctionProcedureScope(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx)
     {
         std::list<ParameterEntity> parameterList;
         ctx->enterScope();
+        
         // Loop through the rest of the child nodes
         for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
             ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);            
@@ -428,8 +433,9 @@ namespace MAlice {
             {
                 case PARAMS:
                     parameterList = getParameterTypesFromParamsNode(childNode);
-                    for (auto p = parameterList.begin(); p!=  parameterList.end();p++)
-                    {
+                    entity->setParameterListTypes(parameterList);
+                    
+                    for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
                         ctx->addEntityInScope(p->getIdentifier(), p->clone());
                     }
                     break;
@@ -440,7 +446,9 @@ namespace MAlice {
                     break;
             }
         }
+        
         ctx->exitScope();
-        return parameterList;
+        
+        return true;
     }
 };
