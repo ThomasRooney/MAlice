@@ -13,6 +13,7 @@ namespace MAlice {
         m_input = input;
         m_symbolTables.push_back(new SymbolTable());
         t_symbolTable = new SymbolTable();
+        m_errorReporter = NULL;
         configureKeywords();
         #ifdef _WIN32
            temporarySymbolTableLock = CreateMutex(0, FALSE, 0);
