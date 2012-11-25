@@ -25,8 +25,8 @@ namespace MAlice {
     
     ErrorReporter *getParserErrorReporter();
     void setParserErrorReporter(ErrorReporter *errorReporter);
-    
-    enum class ErrorType {
+    #pragma warning(disable:4482)
+    enum ErrorType {
         Internal,
         Syntactic,
         Semantic,
