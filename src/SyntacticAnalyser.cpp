@@ -15,7 +15,7 @@ namespace MAlice {
         m_input = antlr3FileStreamNew(path, ANTLR3_ENC_UTF8);
         
         if (m_input == NULL)
-          compilerContext->getErrorReporter()->reportError(ErrorTypeIO, "No Input File Specified", true);
+            compilerContext->getErrorReporter()->reportError(ErrorType::IO, "No Input File Specified", true);
         
         m_lexer = MAliceLexerNew(m_input);
         if (!m_lexer)

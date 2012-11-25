@@ -25,11 +25,12 @@ namespace MAlice {
     ErrorReporter *getParserErrorReporter();
     void setParserErrorReporter(ErrorReporter *errorReporter);
     
-    typedef enum {
-        ErrorTypeSyntactic,
-        ErrorTypeSemantic,
-        ErrorTypeIO
-    } ErrorType;
+    enum class ErrorType {
+        Internal,
+        Syntactic,
+        Semantic,
+        IO
+    };
     
     class ErrorReporter {
     public:

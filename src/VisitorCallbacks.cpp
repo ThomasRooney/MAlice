@@ -185,7 +185,7 @@ namespace MAlice {
         if (!ctx->isSymbolInScope(identifier, &entityForIdentifier)) {
             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
                                                  Utilities::getNodeColumnIndex(identifierNode),
-                                                 ErrorTypeSemantic,
+                                                 ErrorType::Semantic,
                                                  "Cannot find procedure or function declaration for '" + identifier + "'.",
                                                  true);
             
@@ -223,7 +223,7 @@ namespace MAlice {
             if (ctx->isKeyword(identifier)) {
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
                                                      Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorTypeSemantic,
+                                                     ErrorType::Semantic,
                                                      "Cannot declare variable '" + identifier + "' because it is a keyword.",
                                                      true);
             }
@@ -268,7 +268,7 @@ namespace MAlice {
             
             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                                  Utilities::getNodeColumnIndex(node),
-                                                 ErrorTypeSemantic,
+                                                 ErrorType::Semantic,
                                                  errorMessage.str(),
                                                  true);
         }
