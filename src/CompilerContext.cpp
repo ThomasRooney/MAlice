@@ -118,7 +118,44 @@ namespace MAlice {
     
     void CompilerContext::configureKeywords()
     {
-        m_keywords.insert("hatta");
+        m_keywords.insert("opened");
+        m_keywords.insert("closed");
+        m_keywords.insert("spider");
+        m_keywords.insert("but");
+        m_keywords.insert("The");
+        m_keywords.insert("looking-glass");
+        m_keywords.insert("room");
+        m_keywords.insert("spoke");
+        m_keywords.insert("was");
+        m_keywords.insert("a");
+        m_keywords.insert("became");
+        m_keywords.insert("Alice");
+        m_keywords.insert("found");
+        m_keywords.insert("because");
+        m_keywords.insert("said");
+        m_keywords.insert("then");
+        m_keywords.insert("and");
+        m_keywords.insert("contained");
+        m_keywords.insert("eventually");
+        m_keywords.insert("enough");
+        m_keywords.insert("times");
+        m_keywords.insert("unsure");
+        m_keywords.insert("which");
+        m_keywords.insert("or");
+        m_keywords.insert("so");
+        m_keywords.insert("piece");
+        m_keywords.insert("what");
+        m_keywords.insert("of");
+        m_keywords.insert("too");
+        m_keywords.insert("maybe");
+        m_keywords.insert("perhaps");
+        m_keywords.insert("either");
+        m_keywords.insert("had");
+        m_keywords.insert("ate");
+        m_keywords.insert("drank");
+        m_keywords.insert("number");
+        m_keywords.insert("letter");
+        m_keywords.insert("sentence");
     }
     
     bool CompilerContext::isKeyword(std::string string)
