@@ -24,7 +24,7 @@ namespace MAlice {
         static MAliceType getTypeFromTypeString(std::string);
         static bool confirmTypeOfExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm);
         static MAliceType getTypeFromNodeType(int nodeType);
-        static char* getNameOfTypeFromMAliceType(MAliceType);
+        static const char* getNameOfTypeFromMAliceType(MAliceType);
     };
     
 }; // namespace MAlice

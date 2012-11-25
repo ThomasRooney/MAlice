@@ -173,11 +173,11 @@ namespace MAlice {
         }        
     }
 
-    char* Utilities::getNameOfTypeFromMAliceType(MAliceType type)
+    const char* Utilities::getNameOfTypeFromMAliceType(MAliceType type)
     {
         int t = type;
         //TODO: Move me somewhere better (types.h no good as linker error)
-        char* MAliceTypeNames [] = {
+        const char* MAliceTypeNames [] = {
             "Undefined Type",
             "Number Type",
             "Letter Type",
