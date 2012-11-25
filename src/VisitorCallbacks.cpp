@@ -39,7 +39,9 @@ namespace MAlice {
     void visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
     }
     
-    void visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        walker->visitChildren(node, ctx);
     }
     
     void visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
@@ -159,7 +161,7 @@ namespace MAlice {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         
         if (identifierNode != NULL) {
-            std::string identifier((char*)identifierNode->toString(identifierNode)->chars);
+            std::string identifier(Utilities::getNodeText(identifierNode));
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             std::list<ParameterEntity> parameterList = visitIntoFunctionProcedureScope(node,walker,ctx);
@@ -170,7 +172,25 @@ namespace MAlice {
         
     }
     
-    void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (identifierNode == NULL)
+            return;
+        
+        std::string identifier(Utilities::getNodeText(identifierNode));
+        
+        Entity *entityForIdentifier = NULL;
+        if (!ctx->isSymbolInScope(identifier, &entityForIdentifier)) {
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                 Utilities::getNodeColumnIndex(identifierNode),
+                                                 ErrorTypeSemantic,
+                                                 "Cannot find procedure or function declaration for '" + identifier + "'.",
+                                                 true);
+            
+            return;
+        }
     }
     
     void visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
