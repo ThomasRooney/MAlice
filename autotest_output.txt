@@ -8,6 +8,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/binarySearch.alice
 ---------------------
@@ -19,6 +20,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/bubbleSort.alice
 ---------------------
@@ -42,6 +44,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciRecursive.alice
 ---------------------
@@ -53,6 +56,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/gcdIterative.alice
 ---------------------
@@ -64,6 +68,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Valid File: ../malice_examples/valid/gcdRecursive.alice
 ---------------------
@@ -75,6 +80,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/sieveOfEratosthenes.alice
 ---------------------
@@ -86,6 +92,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test01.alice
 ---------------------
@@ -119,6 +126,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test04.alice
 ---------------------
@@ -141,6 +149,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test06.alice
 ---------------------
@@ -152,6 +161,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test07.alice
 ---------------------
@@ -174,6 +184,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test09.alice
 ---------------------
@@ -185,6 +196,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test10.alice
 ---------------------
@@ -218,6 +230,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test13.alice
 ---------------------
@@ -229,6 +242,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test14.alice
 ---------------------
@@ -240,6 +254,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Valid File: ../malice_examples/valid/test15.alice
 ---------------------
@@ -262,6 +277,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest01.alice
 ---------------------
@@ -401,9 +417,7 @@ Parse error: 'LexToken(BECAME,'became',2,18)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 2): Unrecognised input.
-  x became 10.
-
+Syntactic error: Unrecognised token
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test04.alice
 ---------------------
@@ -833,7 +847,7 @@ Logical operator '&&' on line 9 not applied to Boolean values.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Mismatched set exception
+Syntactic error: Unrecognised token
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test31.alice
 ---------------------
@@ -882,7 +896,7 @@ If statement conditional on line 10 does not evaluate to a Boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Mismatched set exception
+Syntactic error: Unrecognised token
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test34.alice
 ---------------------

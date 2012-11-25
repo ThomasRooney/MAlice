@@ -85,6 +85,6 @@ MAlice $vF >> $OUTPUT 2>&1
 echo "---------------------" >> $OUTPUT
 echo "Student Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
-./compile $vF &>> $OUTPUT 2>&1
+./compile $vF >> $OUTPUT 2>&1
 echo "---------------------" >> $OUTPUT
 done
