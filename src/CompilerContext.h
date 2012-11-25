@@ -22,14 +22,17 @@ namespace MAlice {
 
     class CompilerContext{
     private:
+        std::string m_input;
         std::list<SymbolTable*> m_symbolTables;
         std::set<std::string> m_keywords;
         ErrorReporter *m_errorReporter;
         MUTEX temporarySymbolTableLock;
         void configureKeywords();
         SymbolTable* t_symbolTable;
+        
+        std::string getLineOfInput(unsigned int lineNumber);
     public:
-        CompilerContext();
+        CompilerContext(std::string input);
         bool         lockTemporarySymbolTable();
         SymbolTable *getTemporarySymbolTable();
         bool         unlockTemporarySymbolTable();

@@ -8,8 +8,9 @@ using namespace std;
 
 namespace MAlice {
     
-    CompilerContext::CompilerContext()
+    CompilerContext::CompilerContext(std::string input)
     {
+        m_input = input;
         m_symbolTables.push_back(new SymbolTable());
         t_symbolTable = new SymbolTable();
         configureKeywords();
@@ -113,7 +114,11 @@ namespace MAlice {
     
     void CompilerContext::setErrorReporter(ErrorReporter *errorReporter)
     {
+        if (m_errorReporter != NULL)
+            m_errorReporter->setInput("");
+        
         m_errorReporter = errorReporter;
+        m_errorReporter->setInput(m_input);
     }
     
     void CompilerContext::configureKeywords()

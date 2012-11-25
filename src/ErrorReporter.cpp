@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <iomanip>
 #include <sstream>
 #include "limits.h"
 #include "MAliceParser.h"
@@ -16,6 +17,9 @@ static MAlice::ErrorReporter *parserErrorReporter = NULL;
 
 void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
 {
+    if (!parserErrorReporter)
+        return;
+    
     ANTLR3_EXCEPTION_struct *exception = recognizer->state->exception;
     pANTLR3_COMMON_TOKEN token = (pANTLR3_COMMON_TOKEN)exception->token;
     
@@ -55,6 +59,9 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
 
 void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
 {
+    if (!parserErrorReporter)
+        return;
+    
     ANTLR3_EXCEPTION_struct *exception = recognizer->state->exception;
     pANTLR3_COMMON_TOKEN token = (pANTLR3_COMMON_TOKEN)exception->token;
     
@@ -102,7 +109,7 @@ namespace MAlice {
     {
         parserErrorReporter = errorReporter;
     }
-    
+
     void ErrorReporter::reportError(ErrorType errorType, string errorMessage, bool isFatal)
     {
         reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, isFatal);
@@ -118,42 +125,71 @@ namespace MAlice {
         switch(errorType)
         {
             case ErrorType::Internal:
-                cerr << "Internal error: ";
+                cerr << "Internal error";
                 break;
             case ErrorType::Syntactic:
-                cerr << "Syntactic error: ";
+                cerr << "Syntactic error";
                 break;
             case ErrorType::Semantic:
-                cerr << "Semantic error: ";
+                cerr << "Semantic error";
                 break;
             case ErrorType::IO:
-                cerr << "IO error: ";
+                cerr << "IO error";
                 break;
         }
         
         if (lineNumber != LINE_NUMBER_NA || columnIndex != COL_INDEX_NA) {
-            cerr << "(";
+            cerr << " (";
             
             if (lineNumber != LINE_NUMBER_NA)
                 cerr << "Line " << lineNumber;
             
-            if (columnIndex != COL_INDEX_NA)
-                cerr << ", Col " << columnIndex;
-            
-            cerr << ") ";
+            cerr << ")";
         }
         
-        cerr << "\n";
+        cerr << ": ";
+        
         string messageString = errorMessage.c_str();
+        cerr << messageString;
         
-        std::stringstream stringStream(messageString);
-        std::string line;
-        while(std::getline(stringStream, line, '\n')) {
-            cerr << "  " << line << endl;
+        if (columnIndex != COL_INDEX_NA) {
+            std::string line = getLineOfInput(lineNumber - 1);
+            
+            cerr << "\n  " << line << "\n  ";
+            cerr << setw(columnIndex+1) << "^";
+        } else if (lineNumber != LINE_NUMBER_NA) {
+            std::string line = getLineOfInput(lineNumber - 1);
+            cerr << "\n  " << line << "\n";
         }
+        
+        cerr << endl;
         
         if (isFatal)
             exit(EXIT_FAILURE);
+    }
+    
+    void ErrorReporter::setInput(std::string input)
+    {
+        m_input = input;
+    }
+    
+    std::string ErrorReporter::getLineOfInput(unsigned int lineNumber)
+    {
+        if (m_input.empty())
+            return "";
+        
+        std::stringstream stringStream(m_input);
+        std::string line;
+        
+        unsigned int i = 0;
+        while(std::getline(stringStream, line, '\n')) {
+            if (i == lineNumber)
+                return line;
+            
+            ++i;
+        }
+        
+        return "";
     }
     
 }; // namespace ErrorReporter

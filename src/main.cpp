@@ -1,4 +1,6 @@
 #include <string>
+#include <fstream>
+#include <sstream>
 
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
@@ -19,6 +21,8 @@ typedef unsigned long int uint64_t;
 #else
 #include <unistd.h>
 #endif
+
+#include "ErrorReporter.h"
 
 using namespace MAlice;
 
@@ -45,8 +49,16 @@ int main(int argc, char *argv[])
     
     std::string path = getPathFromCommandLineArguments(argc, argv);
     
-    CompilerContext *compilerContext = new CompilerContext();
+    std::ifstream inputStream;
+    inputStream.open(path);
+    
+    std::stringstream input;
+    input << inputStream.rdbuf();
+    
+    CompilerContext *compilerContext = new CompilerContext(input.str());
     ErrorReporter *errorReporter = new ErrorReporter();
+    setParserErrorReporter(errorReporter);
+    compilerContext->setErrorReporter(errorReporter);
 
     SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path, compilerContext);
     ASTNode tree = syntacticAnalyser->parsedInput();

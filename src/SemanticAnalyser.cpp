@@ -13,14 +13,10 @@ namespace MAlice {
     
     void SemanticAnalyser::validate()
     {
-        CompilerContext *ctx = new CompilerContext();
-        
         ASTWalker treeWalker = ASTWalker();
         
-        treeWalker.validateTree(m_tree, ctx);
-        validateCompilerContext(ctx);
-        
-        delete ctx;
+        treeWalker.validateTree(m_tree, m_compilerContext);
+        validateCompilerContext(m_compilerContext);
     }
     
     void SemanticAnalyser::validateCompilerContext(CompilerContext *ctx)
