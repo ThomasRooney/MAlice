@@ -1,6 +1,8 @@
 #include <string>
 #include <sstream>
 #include <list>
+#include <typeinfo>
+
 
 #include "VisitorCallbacks.h"
 #include "Entity.h"
@@ -22,6 +24,47 @@ namespace MAlice {
     
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        ASTNode lvalueNode = Utilities::getChildNodeAtIndex(node,0);
+        ASTNode rvalueNode = Utilities::getChildNodeAtIndex(node,1);
+        // TODO: Check these are not null. otherwise fatal error
+        std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
+
+        Entity *lvalueEntity = NULL;
+        
+        // Check lvalue exists on the symboltable
+        if (ctx->isSymbolInScope(lvalueIdentifier, &lvalueEntity))
+        {
+            VariableEntity *lvalueVEntity = NULL;
+            try {
+                lvalueVEntity = dynamic_cast<VariableEntity *>(lvalueEntity);
+            }
+            catch (std::bad_cast e){
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                     Utilities::getNodeColumnIndex(lvalueNode),
+                                                     ErrorType::Semantic,
+                                                     "Identifier: '" + lvalueIdentifier + "' is not a variable!",
+                                                     false);
+                return false;
+            }
+            // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
+            Utilities::confirmTypeOfExpression(rvalueNode , walker, ctx, lvalueVEntity->getType());
+        }
+        else {
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                 Utilities::getNodeColumnIndex(lvalueNode),
+                                                 ErrorType::Semantic,
+                                                 "Cannot find variable declaration for '" + lvalueIdentifier + "'.",
+                                                 false);
+            return false;
+        }
+
+
+
+        
+
+        
+
+        // Produce an error where rvalue and lvalue have differing types
         return walker->visitChildren(node, ctx);
     }
     

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <list>
+#include <string>
 #include <stdexcept>
 #include <set>
 #ifdef _WIN32
