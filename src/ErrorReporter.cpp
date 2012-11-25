@@ -34,6 +34,9 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", true);
+        }
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
@@ -44,8 +47,17 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", true);
+        }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
+        {
+            string identifier = (char*)token->getText(token)->chars;
+            string errorMessage = "Unexpected token '" + identifier + "'.";
+            
+            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+        }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
         {
@@ -76,6 +88,9 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", true);
+        }
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
@@ -85,8 +100,14 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", true);
+        }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Early exit exception", true);
+        }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
         {
