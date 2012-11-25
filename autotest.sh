@@ -66,11 +66,11 @@ echo "Processing Valid File: $vF"
 echo "---------------------" >> $OUTPUT
 echo "Reference Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
-MAlice $vF &>> $OUTPUT
+MAlice $vF >> $OUTPUT
 echo "---------------------" >> $OUTPUT
 echo "Student Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
-./compile $vF &>> $OUTPUT
+./compile $vF >> $OUTPUT
 echo "---------------------" >> $OUTPUT
 done
 
@@ -81,7 +81,7 @@ echo "Processing Invalid File: $vF"
 echo "---------------------" >> $OUTPUT
 echo "Reference Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
-MAlice $vF &>> $OUTPUT
+MAlice $vF >> $OUTPUT
 echo "---------------------" >> $OUTPUT
 echo "Student Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT

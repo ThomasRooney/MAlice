@@ -41,19 +41,20 @@ namespace MAlice {
             m_input->close(m_input), m_input = NULL;
     }
     
-    ASTNode SyntacticAnalyser::parsedInput()
+    bool SyntacticAnalyser::parseInput(ASTNode *outTree)
     {
-        
         m_parser = MAliceParserNew(m_tokenStream);
         if (!m_parser)
-            return NULL;
+            return false;
         
         if (m_parser->pParser->rec->state->errorCount > 0)
-            return NULL;
+            return false;
         
         MAliceParser_program_return ast = m_parser->program(m_parser);
+        if (outTree != NULL)
+            *outTree = ast.tree;
         
-        return ast.tree;
+        return true;
     }
     
 }; // namespace MAlice

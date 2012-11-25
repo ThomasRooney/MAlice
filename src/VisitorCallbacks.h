@@ -8,66 +8,66 @@
 namespace MAlice {
     
     // Statements
-    void visitNullStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitPrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitNullStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitPrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Expressions
-    void visitLogicalAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitLogicalOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitLogicalNotExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitBitwiseAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitBitwiseOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitBitwiseXorExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitDivideExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitEqualsExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitGreaterThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitGreaterThanOrEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitIdentifierNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitLessThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitLessThanOrEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitMinusExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitModuloExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitMultiplyExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitNotEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitPlusExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitTildeExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitLogicalAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitLogicalOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitLogicalNotExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitBitwiseAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitBitwiseOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitBitwiseXorExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitDivideExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitEqualsExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitGreaterThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitGreaterThanOrEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitIdentifierNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitLessThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitLessThanOrEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitMinusExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitModuloExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitMultiplyExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitNotEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitPlusExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitTildeExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Imaginary nodes – used to improve AST structure
-    void visitArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Literals
-    void visitCharacterLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitNumberLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitStringLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitCharacterLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitNumberLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitStringLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Types
-    void visitLetterTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitNumberTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    void visitSentenceTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitLetterTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitNumberTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitSentenceTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Helper methods
-    void checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
+    bool checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
     std::list<ParameterEntity> visitIntoFunctionProcedureScope(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
 }

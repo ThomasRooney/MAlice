@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=Java;
+	language=C;
 	output=AST;
 }
 
@@ -67,6 +67,7 @@ type 	:	NUMBER_TYPE
        
 constant:	NUMBER_LITERAL
 	|	CHARACTER_LITERAL
+	|	STRING_LITERAL
 	;
 
 
@@ -180,8 +181,7 @@ input_statement
 	;
 
 stdout_lvalue
-	:	STRING_LITERAL
-	|	expression
+	:	expression
 	;
 	
 increment_statement

@@ -17,7 +17,7 @@ namespace MAlice {
     class CompilerContext;
 
     typedef pANTLR3_BASE_TREE ASTNode;
-    typedef void (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
+    typedef bool (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
     
     typedef enum MAliceType {
         MAliceTypeUndefined = 0,

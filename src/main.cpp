@@ -64,15 +64,18 @@ int main(int argc, char *argv[])
     compilerContext->setErrorReporter(errorReporter);
 
     SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path, compilerContext);
-    ASTNode tree = syntacticAnalyser->parsedInput();
+    ASTNode tree = NULL;
     
-    if (printTree)
-        Utilities::printTree(tree);
+    if (syntacticAnalyser->parseInput(&tree)) {
+        if (printTree)
+            Utilities::printTree(tree);
+        
+        SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
+        semanticAnalyser->validate();
+        
+        delete semanticAnalyser;
+    }
     
-    SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-    semanticAnalyser->validate();
-    
-    delete semanticAnalyser;
     delete syntacticAnalyser;
     delete errorReporter;
     delete compilerContext;

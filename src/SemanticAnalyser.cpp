@@ -11,21 +11,30 @@ namespace MAlice {
         m_compilerContext = ctx;
     }
     
-    void SemanticAnalyser::validate()
+    bool SemanticAnalyser::validate()
     {
         ASTWalker treeWalker = ASTWalker();
         
-        treeWalker.validateTree(m_tree, m_compilerContext);
-        validateCompilerContext(m_compilerContext);
+        if (!treeWalker.validateTree(m_tree, m_compilerContext))
+            return false;
+        
+        if (!validateCompilerContext(m_compilerContext))
+            return false;
+        
+        return true;
     }
     
-    void SemanticAnalyser::validateCompilerContext(CompilerContext *ctx)
+    bool SemanticAnalyser::validateCompilerContext(CompilerContext *ctx)
     {
         if (!ctx->isSymbolInScope("hatta", NULL)) {
             m_compilerContext->getErrorReporter()->reportError(ErrorType::Semantic,
                                                                "Entry point procedure hatta() is not declared.",
                                                                false);
+            
+            return false;
         }
+        
+        return true;
     }
 
 }; // namespace MAlice

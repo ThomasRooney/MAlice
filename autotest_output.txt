@@ -2,9 +2,18 @@ Processing Valid File: ../malice_examples/valid/ackermann.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/ackermann.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -13,9 +22,18 @@ Processing Valid File: ../malice_examples/valid/binarySearch.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/binarySearch.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -24,9 +42,18 @@ Processing Valid File: ../malice_examples/valid/bubbleSort.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/bubbleSort.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -35,9 +62,18 @@ Processing Valid File: ../malice_examples/valid/fibonacciIterative.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/fibonacciIterative.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -46,9 +82,18 @@ Processing Valid File: ../malice_examples/valid/fibonacciRecursive.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/fibonacciRecursive.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -57,9 +102,18 @@ Processing Valid File: ../malice_examples/valid/gcdIterative.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/gcdIterative.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -68,9 +122,18 @@ Processing Valid File: ../malice_examples/valid/gcdRecursive.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/gcdRecursive.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -79,9 +142,18 @@ Processing Valid File: ../malice_examples/valid/sieveOfEratosthenes.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/sieveOfEratosthenes.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -90,9 +162,18 @@ Processing Valid File: ../malice_examples/valid/test01.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test01.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -101,9 +182,18 @@ Processing Valid File: ../malice_examples/valid/test02.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test02.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -112,9 +202,18 @@ Processing Valid File: ../malice_examples/valid/test03.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test03.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -123,9 +222,18 @@ Processing Valid File: ../malice_examples/valid/test04.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test04.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -134,9 +242,18 @@ Processing Valid File: ../malice_examples/valid/test05.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test05.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -145,9 +262,18 @@ Processing Valid File: ../malice_examples/valid/test06.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test06.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -156,9 +282,18 @@ Processing Valid File: ../malice_examples/valid/test07.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test07.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -167,9 +302,18 @@ Processing Valid File: ../malice_examples/valid/test08.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test08.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -178,9 +322,18 @@ Processing Valid File: ../malice_examples/valid/test09.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test09.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -189,9 +342,18 @@ Processing Valid File: ../malice_examples/valid/test10.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test10.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -200,35 +362,58 @@ Processing Valid File: ../malice_examples/valid/test11.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test11.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 1): Unrecognised input.
-  output was a sentence of "***Array handling***\n".
-
 ---------------------
 Processing Valid File: ../malice_examples/valid/test12.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test12.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
 ---------------------
 Processing Valid File: ../malice_examples/valid/test13.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test13.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -237,9 +422,18 @@ Processing Valid File: ../malice_examples/valid/test14.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test14.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -248,9 +442,18 @@ Processing Valid File: ../malice_examples/valid/test15.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test15.alice' =====
+Usage: Main.py [options]
 
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------
@@ -259,648 +462,18 @@ Processing Valid File: ../malice_examples/valid/vectorFunctions.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/vectorFunctions.alice' =====
+Usage: Main.py [options]
 
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 48): Unrecognised input.
-     initialise("Values of vector 1: ", vec1).
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest01.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest01.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest02.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest02.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest03.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest03.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest04.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest04.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest05.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest05.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest06.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest06.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest07.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest07.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/runTest08.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest08.alice' =====
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error (Line 5): Cannot find procedure or function declaration for 'proc'.
-    proc().
-    ^
----------------------
-Processing Invalid File: ../malice_examples/invalid/test01.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test01.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(ID,'numbere',1,8)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 1): Unrecognised input.
-  x was a numbere.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test02.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test02.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(ID,'y',2,15)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 1): Unrecognised input.
-  x was a number
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test03.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test03.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(BECAME,'became',2,18)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 2): Unrecognised input.
-  x became 10.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test04.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test04.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(ROOM,'room',1,0)'.
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error: Entry point procedure hatta() is not declared.
----------------------
-Processing Invalid File: ../malice_examples/invalid/test05.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test05.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(ID,'Number',1,8)'.
-Parse error: 'LexToken(ID,'Number',1,27)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 1): Unrecognised input.
-  x was a Number and y was a Number.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test06.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test06.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(CLOSED,'closed',4,38)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 4): Unrecognised token 'closed'.
-  closed
-  ^
----------------------
-Processing Invalid File: ../malice_examples/invalid/test07.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test07.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'None'.
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error: Entry point procedure hatta() is not declared.
----------------------
-Processing Invalid File: ../malice_examples/invalid/test08.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test08.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Unable to find a procedure 'hatta' which is the entry point to the program.
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error: Entry point procedure hatta() is not declared.
----------------------
-Processing Invalid File: ../malice_examples/invalid/test09.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test09.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Symbol 'x' with type 'VarDeclStmtNode' already defined in this scope on line 1.
-Unable to find a procedure 'hatta' which is the entry point to the program.
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error: Entry point procedure hatta() is not declared.
----------------------
-Processing Invalid File: ../malice_examples/invalid/test10.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test10.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(OPENED,'opened',2,17)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 2): Unrecognised token 'opened'.
-  opened
-  ^
----------------------
-Processing Invalid File: ../malice_examples/invalid/test11.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test11.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(CONTAINED,'contained',2,27)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 2): Unrecognised token 'contained a'.
-  The looking-glass main () contained a number
-                            ^
----------------------
-Processing Invalid File: ../malice_examples/invalid/test12.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test12.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(THE,'The',6,82)'.
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error: Entry point procedure hatta() is not declared.
----------------------
-Processing Invalid File: ../malice_examples/invalid/test13.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test13.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Type clash in assignment on line 4. One type is 'number' and the other is 'letter'.
-Type clash in assignment on line 5. One type is 'number' and the other is 'letter'.
-Type clash in assignment on line 6. One type is 'letter' and the other is 'number'.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test14.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test14.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(.,'.',5,78)'.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test15.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test15.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Logical operator '&&' on line 6 not applied to Boolean values.
-Type clash in assignment on line 6. One type is 'number' and the other is 'boolean'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 6): Unrecognised input.
-    x became 10 && 20.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test16.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test16.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Type clash in assignment on line 6. One type is 'number' and the other is 'boolean'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 6): Unrecognised input.
-    x became 10 > 20.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test17.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test17.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Increment statement on line 5 is not applied to an integer.
-Decrement statement on line 6 is not applied to an integer.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test18.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test18.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(ID,'x',4,38)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 4): Unrecognised input.
-    1x was a number.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test19.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test19.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(CLOSED,'closed',5,54)'.
-Illegal character '$'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 4): Unrecognised input.
-    x$ was a number.
-     ^
----------------------
-Processing Invalid File: ../malice_examples/invalid/test20.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test20.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Unable to find symbol for reference to 'y' in line 8.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test21.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test21.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(WAS,'was',5,74)'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 5): Unrecognised token 'was a'.
-    y was a number.
-      ^
----------------------
-Processing Invalid File: ../malice_examples/invalid/test22.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test22.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Reference to 'arr' in line 5 is not an r-value.
-Reference to 'arr' in line 6 is not an r-value.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test23.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test23.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Actual parameter #1 in call to 'proc' on line 11 is passed by reference but the corresponding formal parameter is expecting a value.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test24.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test24.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Actual parameter #1 in call to 'proc' on line 9 is passed by value but the corresponding formal parameter is expecting a reference to an array.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test25.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test25.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-The main subprogram 'hatta' is defined as a function. It should be a procedure.
-Unable to find a procedure 'hatta' which is the entry point to the program.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test26.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test26.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Symbol 'hatta' with type 'ProcDefnNode' already defined in this scope on line 1.
-Multiple definitions of 'hatta' found.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test27.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test27.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Left-hand side of assignment on line 5 is not an l-value.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 5): Unrecognised input.
-     (100 + x) became 101.
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test28.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test28.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Unary operator '+' on line 5 not applied to an integer.
-Unary operator '-' on line 6 not applied to an integer.
-Unary operator '~' on line 7 not applied to an integer.
-Unary operator '!' on line 8 is not applied to a boolean.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test29.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test29.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-The call to 'func' on line 15 ignores the function's return value.
-The call expression to 'proc' on line 16 references a procedure, which does not return a value.
-Type clash in assignment on line 16. One type is 'number' and the other is 'void'.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test30.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test30.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Type clash for binary operator '+' on line 6. One type is 'letter' and the other is 'number'.
-Type clash for binary operator '==' on line 6. One type is 'letter' and the other is 'number'.
-Relational operator '==' on line 6 not applied to integer or character values.
-Type clash for binary operator '&&' on line 9. One type is 'number' and the other is 'boolean'.
-Logical operator '&&' on line 9 not applied to Boolean values.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 9): Unrecognised input.
-    perhaps (x && (y > x)) so
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test31.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test31.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-The number of actual parameters in the call to 'proc' on line 7 is 1, which does not match the number of expected formal parameters of 2.
-The number of actual parameters in the call to 'proc' on line 8 is 3, which does not match the number of expected formal parameters of 2.
-Type of actual argument #2 in call to 'proc' on line 9 does not match the type of the corresponding formal parameter. The actual argument has type 'letter' and the formal parameter has type 'number'.
-Type of actual argument #1 in call to 'proc' on line 10 does not match the type of the corresponding formal parameter. The actual argument has type 'sentence' and the formal parameter has type 'number'.
-
----------------------
-Student Compiler Output:
----------------------
-Syntactic error (Line 10): Unrecognised input.
-    proc ("MAlice labs", 6).
-
----------------------
-Processing Invalid File: ../malice_examples/invalid/test32.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test32.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Reference to 'arr' in line 10 is not an r-value.
-Reference to 'func' in line 11 is not an r-value.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test33.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test33.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-Loop header conditional on line 5 does not evaluate to a Boolean.
-If statement conditional on line 8 does not evaluate to a Boolean.
-If statement conditional on line 10 does not evaluate to a Boolean.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test34.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test34.alice' =====
---------------- Errors encountered in AliceParser ---------------
-Parse error: 'LexToken(CLOSED,'closed',5,54)'.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test35.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test35.alice' =====
---------------- Errors encountered in FunctionReturnChecker ---------------
-Type of return value on line 14 does not match return type of 'func3' on line 12.
-Type of return value on line 9 does not match return type of 'func2' on line 7.
-Type of return value on line 4 does not match return type of 'func1' on line 2.
-
----------------------
-Student Compiler Output:
----------------------
----------------------
-Processing Invalid File: ../malice_examples/invalid/test36.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test36.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-The reference to 'y' on line 6 is not to array.
-
+Options:
+  --exe                Simulate generated 3-address code if compilation
+                       successful.
+  -c DIR, --clean=DIR  Clean generated files in <DIR>.
+  -d INT, --debug=INT  Debug mode.
+  -D DIR, --dir=DIR    Run compiler through MAlice tests located in <DIR>.
+  -h, --help           Display this help message.
+  -P, --parse          Only do parsing.
+  -u, --udraw          Generate uDrawGraph files.
+  -v, --verbose        Be verbose.
 ---------------------
 Student Compiler Output:
 ---------------------

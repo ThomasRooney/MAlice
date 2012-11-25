@@ -19,8 +19,8 @@ namespace MAlice {
         bool validateTree(ASTNode node, CompilerContext *ctx);
         void compileTree();
         ~ASTWalker();
-        void visitNode(ASTNode node, CompilerContext *ctx);
-        void visitChildren(ASTNode node, CompilerContext *ctx);
+        bool visitNode(ASTNode node, CompilerContext *ctx);
+        bool visitChildren(ASTNode node, CompilerContext *ctx);
     protected:
 
     private:

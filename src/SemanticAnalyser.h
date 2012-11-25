@@ -16,11 +16,11 @@ namespace MAlice {
         ASTNode m_tree;
         CompilerContext *m_compilerContext;
         
-        void validateCompilerContext(CompilerContext *ctx);
+        bool validateCompilerContext(CompilerContext *ctx);
 
     public:
         SemanticAnalyser(ASTNode tree, CompilerContext *ctx);
-        void validate();
+        bool validate();
         
         void setErrorReporter(ErrorReporter *errorReporter);
     }; // class SemanticAnalyser
