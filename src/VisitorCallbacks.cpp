@@ -37,7 +37,26 @@ namespace MAlice {
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        bool result = true;
+        
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);
+            ANTLR3_UINT32 nodeType = Utilities::getNodeType(childNode);
+            
+            if (nodeType == BOOLEANEXPRESSION) {
+                if (!walker->visitNode(childNode, ctx))
+                    result = false;
+            }
+            else if (nodeType == STATEMENTLIST) {
+                ctx->enterScope();
+                
+                walker->visitNode(childNode, ctx);
+                
+                ctx->exitScope();
+            }
+        }
+        
+        return result;
     }
     
     bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -169,7 +188,8 @@ namespace MAlice {
         if (identifierNode != NULL) {
             std::string identifier(Utilities::getNodeText(identifierNode));
             std::string type;
-            checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
+            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
+                return false;
 
             // array of what?
             ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
@@ -179,37 +199,52 @@ namespace MAlice {
             
             ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type)));
         }
+        
+        return true;
     }
     
     bool visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        walker->visitChildren(node, ctx);
+        ctx->enterScope();
+        bool result = walker->visitChildren(node, ctx);
+        ctx->exitScope();
+        
+        return result;
     }
     
-    bool visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
-      walker->visitChildren(node, ctx);
+    bool visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, ctx);
     }
     
-    bool visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
-      walker->visitChildren(node, ctx);
+    bool visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, ctx);
     }
     
-    bool visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    bool visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, ctx);
     }
     
-    bool visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    bool visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, ctx);
     }
     
-    bool visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx) {
+    bool visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
