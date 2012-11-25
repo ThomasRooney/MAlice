@@ -5,6 +5,7 @@
 
 
 #include "VisitorCallbacks.h"
+#include "ArrayEntity.h"
 #include "Entity.h"
 #include "FunctionEntity.h"
 #include "ProcedureEntity.h"
@@ -24,8 +25,17 @@ namespace MAlice {
     
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        bool isArray = false;
         ASTNode lvalueNode = Utilities::getChildNodeAtIndex(node,0);
         ASTNode rvalueNode = Utilities::getChildNodeAtIndex(node,1);
+
+        // if lvalue is an array, iterate down to its child identifier. 
+        if (Utilities::getNodeType(lvalueNode)==ARRAYSUBSCRIPT)
+        {
+            lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode,0);
+            isArray = true;
+        }
+
         // TODO: Check these are not null. otherwise fatal error
         std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
 
@@ -35,8 +45,21 @@ namespace MAlice {
         if (ctx->isSymbolInScope(lvalueIdentifier, &lvalueEntity))
         {
             VariableEntity *lvalueVEntity = NULL;
+            
             try {
-                lvalueVEntity = dynamic_cast<VariableEntity *>(lvalueEntity);
+                /* TODO: Array Bounds checking..
+                if (isArray) {
+                    ArrayEntity *lvalueTEntity = NULL;
+                    lvalueTEntity = dynamic_cast<ArrayEntity*>(lvalueEntity);
+                    if (lvalueTEntity == NULL)
+                        throw std::bad_cast();
+                }
+                else {*/
+                    
+                    lvalueVEntity = dynamic_cast<VariableEntity *>(lvalueEntity);
+                    if (lvalueVEntity == NULL)
+                        throw std::bad_cast();
+                //}
             }
             catch (std::bad_cast e){
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
