@@ -21,6 +21,10 @@ compile
 *.lo
 grammar/antlr/libantlr3c/*
 
+#ignore ANTLR files used when debugging
+grammar/output/*.java
+grammar/output/classes
+
 #ignore junk files from compiling Haskell code
 *.hi
 
