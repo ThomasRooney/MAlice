@@ -17,7 +17,6 @@ static MAlice::ErrorReporter *parserErrorReporter = NULL;
 void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
 {
     ANTLR3_EXCEPTION_struct *exception = recognizer->state->exception;
-    
     pANTLR3_COMMON_TOKEN token = (pANTLR3_COMMON_TOKEN)exception->token;
     
     switch (exception->type)
@@ -34,6 +33,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
+            string tokenText = (char*)token->toString(token);
             string errorMessage = "Unrecognised input.";
             
             parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, true);
@@ -55,6 +55,40 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
 
 void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
 {
+    ANTLR3_EXCEPTION_struct *exception = recognizer->state->exception;
+    pANTLR3_COMMON_TOKEN token = (pANTLR3_COMMON_TOKEN)exception->token;
+    
+    switch (exception->type)
+    {
+        case ANTLR3_RECOGNITION_EXCEPTION:
+        {
+            string identifier = (char*)token->getText(token)->chars;
+            string errorMessage = "Unrecognised token '" + identifier + "'.";
+            
+            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+        }
+            break;
+        case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
+            break;
+        case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
+        {
+            string errorMessage = "Unrecognised input.";
+            
+            parserErrorReporter->reportError(exception->line, exception->charPositionInLine, MAlice::ErrorType::Syntactic, errorMessage, true);
+        }
+            break;
+        case ANTLR3_MISMATCHED_SET_EXCEPTION:
+            break;
+        case ANTLR3_EARLY_EXIT_EXCEPTION:
+            break;
+        case ANTLR3_FAILED_PREDICATE_EXCEPTION:
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Internal, "", true);
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 namespace MAlice {
