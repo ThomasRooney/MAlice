@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 	output=AST;
 }
 

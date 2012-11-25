@@ -18,12 +18,6 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
 {
     ANTLR3_EXCEPTION_struct *exception = recognizer->state->exception;
     
-    string errorMessage;
-    MAlice::ErrorType errorType;
-    bool isErrorFatal = false;
-    
-    unsigned int lineNumber = UINT_MAX;
-    unsigned int characterIndex = UINT_MAX;
     pANTLR3_COMMON_TOKEN token = (pANTLR3_COMMON_TOKEN)exception->token;
     
     switch (exception->type)
@@ -31,20 +25,18 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
             string identifier = (char*)token->getText(token)->chars;
+            string errorMessage = "Unrecognised token '" + identifier + "'.";
             
-            errorMessage = "Unrecognised token '" + identifier + "'.";
-            errorType = MAlice::ErrorType::Syntactic;
-            lineNumber = token->line;
-            characterIndex = token->charPosition;
+            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
-            errorType = MAlice::ErrorType::Syntactic;
-            errorMessage = "Unrecognised input.";
-            lineNumber = token->line;
+            string errorMessage = "Unrecognised input.";
+            
+            parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, true);
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
@@ -52,30 +44,12 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_EARLY_EXIT_EXCEPTION:
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
-            errorType = MAlice::ErrorType::Internal;
-            isErrorFatal = true;
+        {
+            parserErrorReporter->reportError(MAlice::ErrorType::Internal, "", true);
+        }
             break;
         default:
             break;
-    }
-    
-    if (lineNumber != UINT_MAX && characterIndex != UINT_MAX) {
-        parserErrorReporter->reportError(lineNumber,
-                                         characterIndex,
-                                         errorType,
-                                         errorMessage,
-                                         isErrorFatal);
-    } else if (lineNumber != UINT_MAX) {
-        parserErrorReporter->reportError(lineNumber,
-                                         errorType,
-                                         errorMessage,
-                                         isErrorFatal);
-    } else {
-        parserErrorReporter->reportError(lineNumber,
-                                         characterIndex,
-                                         errorType,
-                                         errorMessage,
-                                         isErrorFatal);
     }
 }
 
@@ -129,7 +103,7 @@ namespace MAlice {
             if (lineNumber != LINE_NUMBER_NA)
                 cerr << "Line " << lineNumber;
             
-            if (lineNumber != COL_INDEX_NA)
+            if (columnIndex != COL_INDEX_NA)
                 cerr << ", Col " << columnIndex;
             
             cerr << ") ";
