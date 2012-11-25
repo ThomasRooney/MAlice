@@ -102,6 +102,7 @@ namespace MAlice {
             // If so, check type
             std::string info = Utilities::getNodeText(node);
             int type = Utilities::getNodeType(node);
+            MAliceType maType;
             
             if (type == IDENTIFIER)
             {
@@ -111,7 +112,7 @@ namespace MAlice {
                     VariableEntity *lookupVEntity = NULL;
                     try {
                         lookupVEntity = dynamic_cast<VariableEntity *>(lookupEntity);
-                        type = lookupVEntity->getType();
+                        maType = lookupVEntity->getType();
                     }
                     catch (std::bad_cast e){
                         ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
@@ -132,7 +133,10 @@ namespace MAlice {
                     return false;
                 }
             }
-            MAliceType maType = Utilities::getTypeFromNodeType(type);
+            else {
+              maType = Utilities::getTypeFromNodeType(type);
+            }
+            
             typeCheck = maType == typeConfirm;
             if (!typeCheck)
             {
