@@ -2,6 +2,7 @@
 #include "Utilities.h"
 #include "CompilerContext.h"
 #include <stdexcept>
+#include <typeinfo>
 #include "VisitorCallbacks.h"
 
 namespace MAlice {
