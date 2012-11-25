@@ -13,6 +13,7 @@
 extern "C" {
 #endif
     extern void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames);
+    extern void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames);
 #ifdef __cplusplus
 }
 #endif

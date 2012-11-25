@@ -79,6 +79,10 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
     }
 }
 
+void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3_UINT8 * tokenNames)
+{
+}
+
 namespace MAlice {
     
     ErrorReporter *getParserErrorReporter()

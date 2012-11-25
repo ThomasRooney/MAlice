@@ -41,6 +41,16 @@ tokens {
     RECOGNIZER->displayRecognitionError = handleParserError;
 }
 
+@lexer::includes
+{
+	#include "ErrorReporter.h"	
+}
+
+@lexer::apifuncs
+{
+    RECOGNIZER->displayRecognitionError = handleLexerError;
+}
+
 // Programs, procedures and functions
 program	:	(variable_declaration statement_inner_separator)* (func+=function|proc+=procedure)+
 		-> ^(PROGRAM ^(DECLS variable_declaration* $func* $proc*))
