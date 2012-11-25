@@ -17,6 +17,8 @@ typedef unsigned long int uint64_t;
 #include <direct.h>
 #include <io.h>
 #define getcwd _getcwd
+#define access _access
+
 #else
 #include <unistd.h>
 #endif
@@ -92,7 +94,7 @@ std::string getPathFromCommandLineArguments(int argc, char *argv[])
 {
     std::string path;
     // lets see if we can access file directly first
-    if (_access(argv[0], 0) == -1)
+    if (access(argv[0], 0) == -1)
     {
         // File does not exist
         #ifdef _WIN32
