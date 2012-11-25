@@ -219,6 +219,36 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
 ---------------------
 Processing Valid File: ../malice_examples/valid/test12.alice
 ---------------------
@@ -266,6 +296,24 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
 ---------------------
 Processing Valid File: ../malice_examples/valid/vectorFunctions.alice
 ---------------------
@@ -289,6 +337,9 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 6): Node: 'x' is not of expected type: ('Number Type' != 'Undefined Type')
+    y became x.
+             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest02.alice
 ---------------------
@@ -328,6 +379,9 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest05.alice
 ---------------------
@@ -339,6 +393,9 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest06.alice
 ---------------------
@@ -350,6 +407,12 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 6): Node: 'x' is not of expected type: ('Number Type' != 'Undefined Type')
+    y became y/x.
+               ^
+Semantic error (Line 6): Node: 'y' is not of expected type: ('Number Type' != 'Undefined Type')
+    y became y/x.
+             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest07.alice
 ---------------------
@@ -361,6 +424,12 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 6): Node: 'x' is not of expected type: ('Number Type' != 'Undefined Type')
+    y became y % x.
+                 ^
+Semantic error (Line 6): Node: 'y' is not of expected type: ('Number Type' != 'Undefined Type')
+    y became y % x.
+             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest08.alice
 ---------------------
@@ -579,6 +648,12 @@ Type clash in assignment on line 6. One type is 'letter' and the other is 'numbe
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 5): Node: ''a'' is not of expected type: ('Number Type' != 'Letter Type')
+    x became 'a'.
+             ^
+Semantic error (Line 6): Node: '10' is not of expected type: ('Letter Type' != 'Number Type')
+    y became 10.
+             ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test14.alice
 ---------------------
@@ -681,6 +756,9 @@ Unable to find symbol for reference to 'y' in line 8.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 8): Cannot find variable declaration for 'y'.
+    y became 100.
+    ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test21.alice
 ---------------------
@@ -711,6 +789,9 @@ Reference to 'arr' in line 6 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 6): Node: 'y' is not of expected type: ('Number Type' != 'Undefined Type')
+    arr became y.
+               ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test23.alice
 ---------------------
@@ -941,4 +1022,7 @@ The reference to 'y' on line 6 is not to array.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 0): Cannot find variable declaration for 'ARRAYSUBSCRIPT'.
+  
+  ^
 ---------------------
