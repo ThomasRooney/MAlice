@@ -30,6 +30,7 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciIterative.alice
 ---------------------
@@ -206,9 +207,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 1): Unrecognised input.
-  output was a sentence of "***Array handling***\n".
-
 ---------------------
 Processing Valid File: ../malice_examples/valid/test12.alice
 ---------------------
@@ -220,7 +218,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
 ---------------------
 Processing Valid File: ../malice_examples/valid/test13.alice
 ---------------------
@@ -265,9 +262,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 48): Unrecognised input.
-     initialise("Values of vector 1: ", vec1).
-
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest01.alice
 ---------------------
@@ -290,6 +284,9 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 7): Unexpected token 'closed'.
+    closed
+    ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest03.alice
 ---------------------
@@ -301,6 +298,9 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 7): Unexpected token 'closed'.
+    closed
+    ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest04.alice
 ---------------------
@@ -356,9 +356,6 @@ Running the MAlice Reference compiler
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 5): Cannot find procedure or function declaration for 'proc'.
-    proc().
-    ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test01.alice
 ---------------------
@@ -420,7 +417,9 @@ Parse error: 'LexToken(ROOM,'room',1,0)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
+Syntactic error (Line 2): Unexpected token '<EOF>'.
+  
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test05.alice
 ---------------------
@@ -467,7 +466,9 @@ Parse error: 'None'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
+Syntactic error (Line 5): Unexpected token '<EOF>'.
+  
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test08.alice
 ---------------------
@@ -481,7 +482,9 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
+Syntactic error (Line 4): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test09.alice
 ---------------------
@@ -496,7 +499,9 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
+Syntactic error (Line 3): Unexpected token '<EOF>'.
+  
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test10.alice
 ---------------------
@@ -542,7 +547,9 @@ Parse error: 'LexToken(THE,'The',6,82)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error: Entry point procedure hatta() is not declared.
+Syntactic error (Line 8): Unexpected token 'closed'.
+     closed
+     ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test13.alice
 ---------------------
@@ -585,9 +592,7 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 6): Unrecognised input.
-    x became 10 && 20.
-
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test16.alice
 ---------------------
@@ -601,9 +606,7 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 6): Unrecognised input.
-    x became 10 > 20.
-
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test17.alice
 ---------------------
@@ -707,6 +710,9 @@ Actual parameter #1 in call to 'proc' on line 11 is passed by reference but the 
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 5): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test24.alice
 ---------------------
@@ -720,6 +726,9 @@ Actual parameter #1 in call to 'proc' on line 9 is passed by value but the corre
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 4): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test25.alice
 ---------------------
@@ -734,6 +743,9 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 5): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test26.alice
 ---------------------
@@ -748,6 +760,9 @@ Multiple definitions of 'hatta' found.
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 4): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test27.alice
 ---------------------
@@ -780,6 +795,9 @@ Unary operator '!' on line 8 is not applied to a boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 8): Unrecognised input.
+    c became !c.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test29.alice
 ---------------------
@@ -795,6 +813,9 @@ Type clash in assignment on line 16. One type is 'number' and the other is 'void
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 5): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test30.alice
 ---------------------
@@ -812,9 +833,7 @@ Logical operator '&&' on line 9 not applied to Boolean values.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 9): Unrecognised input.
-    perhaps (x && (y > x)) so
-
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test31.alice
 ---------------------
@@ -831,9 +850,9 @@ Type of actual argument #1 in call to 'proc' on line 10 does not match the type 
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 10): Unrecognised input.
-    proc ("MAlice labs", 6).
-
+Syntactic error (Line 3): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test32.alice
 ---------------------
@@ -863,6 +882,7 @@ If statement conditional on line 10 does not evaluate to a Boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test34.alice
 ---------------------
@@ -876,6 +896,9 @@ Parse error: 'LexToken(CLOSED,'closed',5,54)'.
 ---------------------
 Student Compiler Output:
 ---------------------
+Syntactic error (Line 5): Unexpected token 'closed'.
+  closed
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test35.alice
 ---------------------
