@@ -62,6 +62,9 @@ namespace MAlice {
     
     ASTNode Utilities::getChildNodeAtIndex(ASTNode node, unsigned int index)
     {
+        if (index >= Utilities::getNumberOfChildNodes(node))
+            return NULL;
+        
         pANTLR3_VECTOR children = node->children;
         return (ASTNode)children->get(children, index);
     }
