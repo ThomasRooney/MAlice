@@ -17,7 +17,10 @@ typedef unsigned short    uint16_t;
 typedef unsigned int      uint32_t;
 typedef unsigned long int uint64_t;
 #include <direct.h>
+#include <io.h>
 #define getcwd _getcwd
+#define access _access
+
 #else
 #include <unistd.h>
 #endif
@@ -102,21 +105,28 @@ bool hasPrintTreeFlagEnabled(std::string flags)
 std::string getPathFromCommandLineArguments(int argc, char *argv[])
 {
     std::string path;
+    // lets see if we can access file directly first
+    if (access(argv[0], 0) == -1)
+    {
+        // File does not exist
+        #ifdef _WIN32
+        char *cwdpath = NULL;
+        cwdpath = getcwd(cwdpath, NULL);
     
-#ifdef _WIN32
-    char *cwdpath = NULL;
-    cwdpath = getcwd(cwdpath, NULL);
-    
-    if (cwdpath == 0)
-        perror("getcwd error");
-    path.append(cwdpath);
-    path.append("\\");
-#endif
-    
-    if (argc < 1 || argv[0] == NULL)
-        path.append("input");
-    else
-        path.append(argv[0]);
+        if (cwdpath == 0)
+            perror("getcwd error");
+        path.append(cwdpath);
+        path.append("\\");
+        #endif
+        if (argc < 1 || argv[0] == NULL)
+            path.append("input");
+        else
+            path.append(argv[0]);
+
+    }
+    else{
+      path = argv[0];
+    }
     
     return path;
 }
