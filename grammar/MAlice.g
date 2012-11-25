@@ -150,14 +150,14 @@ while_loop
 	;
 	
 if_block
-	:	PERHAPS boolean_expression SO statement_list else_block* ALICEWASUNSURE
+	:	PERHAPS LPAREN boolean_expression RPAREN SO statement_list else_block* ALICEWASUNSURE
 		-> ^(IFSTATEMENT boolean_expression statement_list else_block*)
-	|	EITHER boolean_expression SO statement_list OR statement_list ALICEWASUNSURE
+	|	EITHER LPAREN boolean_expression RPAREN SO statement_list OR statement_list ALICEWASUNSURE
 		-> ^(IFSTATEMENT boolean_expression statement_list statement_list)
 	;
 	
 else_block
-	:	OR (MAYBE boolean_expression SO)? statement_list
+	:	OR (MAYBE LPAREN boolean_expression RPAREN SO)? statement_list
 		-> boolean_expression? statement_list
 	;
 	
@@ -241,7 +241,7 @@ unary_expr
 	;
 	
 unary_operator
-	:	(PLUS | MINUS | TILDE | BANG)
+	:	(PLUS | MINUS | TILDE)
 	;
 
 boolean_expression
@@ -263,8 +263,14 @@ single_boolean_expression_operator
 single_boolean_expression
 	:	(LPAREN single_boolean_expression) => LPAREN single_boolean_expression RPAREN
 		-> single_boolean_expression
-	|	e1=expression single_boolean_expression_operator e2=expression
+	|	(BANG LPAREN) => boolean_unit
+	|	e1=boolean_unit single_boolean_expression_operator e2=boolean_unit
 		-> ^(single_boolean_expression_operator $e1 $e2)
+	;
+	
+boolean_unit
+	:	BANG LPAREN boolean_expression_alt RPAREN
+	|	expression
 	;
 	
 		
