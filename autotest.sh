@@ -19,7 +19,7 @@ RUNNABLE = false
 fi
 
 echo "Checking the reference compiler is accessible..."
-command -v MAlice >/dev/null 2>&1 || { echo "The Reference Compiler needs to be available on the command line." >&2; }
+command -v MAlice >/dev/null 2>&1 || { echo "The Reference Compiler needs to be available on the command line." >&2;RUNNABLE=false; }
 
 echo -ne "Checking the malice_examples is located at ../malice_examples ..."
 if [ -d "../malice_examples" ];
