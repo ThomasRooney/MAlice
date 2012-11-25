@@ -1,6 +1,7 @@
 
 #include "Utilities.h"
 #include "CompilerContext.h"
+#include <stdexcept>
 #include "VisitorCallbacks.h"
 
 namespace MAlice {
