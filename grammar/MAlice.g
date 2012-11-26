@@ -70,12 +70,12 @@ constant:	NUMBER_LITERAL
 	;
 
 
-function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type block
-		-> ^(FUNCDEFINITION IDENTIFIER declaration_argument_list? type block)
+function:	THEROOM IDENTIFIER LPAREN declaration_argument_list? RPAREN CONTAINEDA type func_proc_block
+		-> ^(FUNCDEFINITION IDENTIFIER declaration_argument_list? type func_proc_block)
 	;
 procedure
-	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN block
-		-> ^(PROCDEFINITION IDENTIFIER declaration_argument_list? block)
+	:	THELOOKINGGLASS IDENTIFIER LPAREN declaration_argument_list? RPAREN func_proc_block
+		-> ^(PROCDEFINITION IDENTIFIER declaration_argument_list? func_proc_block)
 	;
 
 declaration_argument_list
@@ -83,9 +83,15 @@ declaration_argument_list
 		-> ^(PARAMS declaration_argument+)
 	;
 
-block	:	OPENED body CLOSED
+block	:	OPENED body? CLOSED
+		-> ^(BODY body?)
+	;
+	
+func_proc_block
+	:	OPENED body CLOSED
 		-> ^(BODY body)
 	;
+	
 body
 	: body_declarations? statement_list;
 
