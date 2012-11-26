@@ -42,7 +42,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
             string tokenText = (char*)token->toString(token);
-            string errorMessage = "Unrecognised input or missing token.";
+            string errorMessage = "Unrecognised or missing token.";
             
             parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
@@ -54,10 +54,18 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
         {
-            string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unexpected token '" + identifier + "'.";
+            string errorMessage;
             
-            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            if (token && token->type == EOF) {
+                errorMessage = "Unexpected end of input.";
+                
+                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, errorMessage, true);
+            } else {
+                string identifier = (char*)token->getText(token)->chars;
+                errorMessage = "Unexpected token '" + identifier + "'.";
+                
+                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            }
         }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
