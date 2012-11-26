@@ -1,11 +1,15 @@
 
+#include <stdexcept>
+
 #include "Utilities.h"
+
 #include "CompilerContext.h"
+#include "Entity.h"
+#include "VariableEntity.h"
 #include "ProcedureEntity.h"
 #include "FunctionEntity.h"
-#include <stdexcept>
-#include <typeinfo>
 #include "VisitorCallbacks.h"
+#include "ArrayEntity.h"
 
 namespace MAlice {
     
@@ -122,6 +126,31 @@ namespace MAlice {
         if (t < 0 || t >= 4)
           t = 0;
         return (MAliceTypeNames [t]);
+    }
+    
+    MAliceEntityType Utilities::getTypeOfEntity(Entity *entity)
+    {
+        VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+        if (variableEntity)
+            return MAliceEntityTypeVariable;
+        
+        FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(entity);
+        if (functionEntity)
+            return MAliceEntityTypeFunction;
+        
+        ProcedureEntity *procedureEntity = dynamic_cast<ProcedureEntity*>(entity);
+        if (procedureEntity)
+            return MAliceEntityTypeProcedure;
+        
+        ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
+        if (parameterEntity)
+            return MAliceEntityTypeParameter;
+        
+        ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
+        if (arrayEntity)
+            return MAliceEntityTypeArray;
+        
+        return MAliceEntityTypeUndefined;
     }
     
 }; // namespace MAlice

@@ -71,7 +71,7 @@ namespace MAlice {
     bool checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
     bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx);
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
-    bool confirmTypeOfExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm);
+    bool checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType type);
     bool checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm);
 }
 

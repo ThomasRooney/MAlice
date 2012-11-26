@@ -11,12 +11,22 @@ namespace MAlice {
     typedef pANTLR3_BASE_TREE ASTNode;
     typedef bool (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
     
-    typedef enum MAliceType {
+    typedef enum {
         MAliceTypeUndefined = 0,
         MAliceTypeNumber,
         MAliceTypeLetter,
-        MAliceTypeSentence
+        MAliceTypeSentence,
+        MAliceTypeBoolean
     } MAliceType;
+    
+    typedef enum {
+        MAliceEntityTypeUndefined = 0,
+        MAliceEntityTypeVariable,
+        MAliceEntityTypeFunction,
+        MAliceEntityTypeProcedure,
+        MAliceEntityTypeParameter,
+        MAliceEntityTypeArray,
+    } MAliceEntityType;
 
 };
 
