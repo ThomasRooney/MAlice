@@ -38,7 +38,7 @@ tokens {
 
 @parser::apifuncs
 {
-    RECOGNIZER->displayRecognitionError = handleParserError;
+	RECOGNIZER->displayRecognitionError = handleParserError;
 }
 
 @lexer::includes
@@ -48,7 +48,7 @@ tokens {
 
 @lexer::apifuncs
 {
-    RECOGNIZER->displayRecognitionError = handleLexerError;
+	RECOGNIZER->displayRecognitionError = handleLexerError;
 }
 
 // Programs, procedures and functions
@@ -150,9 +150,9 @@ while_loop
 	;
 	
 if_block
-	:	PERHAPS LPAREN boolean_expression RPAREN SO statement_list else_block* ALICEWASUNSURE
+	:	PERHAPS LPAREN boolean_expression RPAREN SO statement_list else_block* BECAUSE ALICEWASUNSURE
 		-> ^(IFSTATEMENT boolean_expression statement_list else_block*)
-	|	EITHER LPAREN boolean_expression RPAREN SO statement_list OR statement_list ALICEWASUNSURE
+	|	EITHER LPAREN boolean_expression RPAREN SO statement_list OR statement_list BECAUSE ALICEWASUNSURE
 		-> ^(IFSTATEMENT boolean_expression statement_list statement_list)
 	;
 	
@@ -319,10 +319,10 @@ AND	:	'and';
 FULL_STOP
 	:	'.'
 	;
-fragment BECAUSE
+BECAUSE
 	:	'because';
 ALICEWASUNSURE
-	:	BECAUSE 'Alice was unsure which'
+	:	'Alice was unsure which'
 	;
 CONTAINEDA
 	:	'contained a'

@@ -24,6 +24,7 @@ grammar/antlr/libantlr3c/*
 #ignore ANTLR files used when debugging
 grammar/output/*.java
 grammar/output/classes
+grammar/output/*.txt
 
 #ignore junk files from compiling Haskell code
 *.hi
