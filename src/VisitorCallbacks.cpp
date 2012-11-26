@@ -644,7 +644,7 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have two children.",
                                                                     false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeBoolean;
                         }
                         // Check the type of the first child
                         firstChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx);
@@ -659,7 +659,6 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have two children.",
                                                                     false);
-                            return MAliceTypeUndefined;
                         }
                         return MAliceTypeBoolean;
                         break;
@@ -677,7 +676,7 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have children of the same type.",
                                                                     false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeBoolean;
                         }
                         // Check the type of the first child is a bool
                         valid = checkExpression(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx, MAliceTypeBoolean);
@@ -692,7 +691,6 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have boolean children.",
                                                                     false);
-                            return MAliceTypeUndefined;
                         }
                         return MAliceTypeBoolean;
                         break;
