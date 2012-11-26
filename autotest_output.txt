@@ -7,7 +7,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/binarySearch.alice
 ---------------------
@@ -18,7 +17,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/bubbleSort.alice
 ---------------------
@@ -29,7 +27,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciIterative.alice
 ---------------------
@@ -40,7 +37,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Mismatched set exception
 ---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciRecursive.alice
 ---------------------
@@ -51,7 +47,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/gcdIterative.alice
 ---------------------
@@ -62,7 +57,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Mismatched set exception
 ---------------------
 Processing Valid File: ../malice_examples/valid/gcdRecursive.alice
 ---------------------
@@ -73,7 +67,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/sieveOfEratosthenes.alice
 ---------------------
@@ -84,7 +77,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test01.alice
 ---------------------
@@ -115,7 +107,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test04.alice
 ---------------------
@@ -136,7 +127,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test06.alice
 ---------------------
@@ -147,7 +137,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test07.alice
 ---------------------
@@ -168,7 +157,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test09.alice
 ---------------------
@@ -179,7 +167,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test10.alice
 ---------------------
@@ -210,7 +197,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test13.alice
 ---------------------
@@ -221,7 +207,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Valid File: ../malice_examples/valid/test14.alice
 ---------------------
@@ -232,7 +217,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Mismatched set exception
 ---------------------
 Processing Valid File: ../malice_examples/valid/test15.alice
 ---------------------
@@ -253,7 +237,6 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest01.alice
 ---------------------
@@ -352,7 +335,7 @@ Parse error: 'LexToken(ID,'numbere',1,8)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 1): Unrecognised input.
+Syntactic error (Line 1): Unrecognised or missing token.
   x was a numbere.
 
 ---------------------
@@ -367,7 +350,7 @@ Parse error: 'LexToken(ID,'y',2,15)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 1): Unrecognised input.
+Syntactic error (Line 1): Unrecognised or missing token.
   x was a number
 
 ---------------------
@@ -382,7 +365,9 @@ Parse error: 'LexToken(BECAME,'became',2,18)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
+Syntactic error (Line 2): Unrecognised or missing token.
+  x became 10.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test04.alice
 ---------------------
@@ -395,9 +380,9 @@ Parse error: 'LexToken(ROOM,'room',1,0)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 2): Unexpected token '<EOF>'.
-  
-  ^
+Semantic error (Line 1): Cannot declare variable 'room' because it is a keyword.
+  room was a number.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test05.alice
 ---------------------
@@ -411,7 +396,10 @@ Parse error: 'LexToken(ID,'Number',1,27)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 1): Unrecognised input.
+Syntactic error (Line 1): Unrecognised or missing token.
+  x was a Number and y was a Number.
+
+Syntactic error (Line 1): Unrecognised or missing token.
   x was a Number and y was a Number.
 
 ---------------------
@@ -426,7 +414,7 @@ Parse error: 'LexToken(CLOSED,'closed',4,38)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unrecognised token 'closed'.
+Syntactic error (Line 4): Unrecognised or unexpected token 'closed'.
   closed
   ^
 ---------------------
@@ -441,9 +429,7 @@ Parse error: 'None'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unexpected token '<EOF>'.
-  
-  ^
+Syntactic error: Unexpected end of input.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test08.alice
 ---------------------
@@ -472,9 +458,12 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 3): Unexpected token '<EOF>'.
-  
+Semantic error (Line 2): 'x' has already been declared in the current scope.
+  x was a number.
   ^
+
+  Symbol 'x' is previously declared as a variable on line 1.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test10.alice
 ---------------------
@@ -487,7 +476,7 @@ Parse error: 'LexToken(OPENED,'opened',2,17)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 2): Unrecognised token 'opened'.
+Syntactic error (Line 2): Unrecognised or unexpected token 'opened'.
   opened
   ^
 ---------------------
@@ -502,7 +491,7 @@ Parse error: 'LexToken(CONTAINED,'contained',2,27)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 2): Unrecognised token 'contained a'.
+Syntactic error (Line 2): Unrecognised or unexpected token 'contained a'.
   The looking-glass main () contained a number
                             ^
 ---------------------
@@ -566,6 +555,12 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 Student Compiler Output:
 ---------------------
 Syntactic error: Mismatched set exception
+Syntactic error (Line 6): Unrecognised or missing token.
+    x became 10 && 20.
+
+Syntactic error (Line 6): Unrecognised or missing token.
+    x became 10 && 20.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test16.alice
 ---------------------
@@ -579,6 +574,12 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 Student Compiler Output:
 ---------------------
 Syntactic error: Mismatched set exception
+Syntactic error (Line 6): Unrecognised or missing token.
+    x became 10 > 20.
+
+Syntactic error (Line 6): Unrecognised or missing token.
+    x became 10 > 20.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test17.alice
 ---------------------
@@ -604,7 +605,13 @@ Parse error: 'LexToken(ID,'x',4,38)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unrecognised input.
+Syntactic error (Line 4): Unrecognised or missing token.
+    1x was a number.
+
+Syntactic error (Line 4): Unrecognised or missing token.
+    1x was a number.
+
+Syntactic error (Line 4): Unrecognised or missing token.
     1x was a number.
 
 ---------------------
@@ -620,7 +627,7 @@ Illegal character '$'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unrecognised input.
+Syntactic error (Line 4): Unrecognised or missing token.
     x$ was a number.
      ^
 ---------------------
@@ -650,7 +657,7 @@ Parse error: 'LexToken(WAS,'was',5,74)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unrecognised token 'was a'.
+Syntactic error (Line 5): Unrecognised or unexpected token 'was a'.
     y was a number.
       ^
 ---------------------
@@ -740,7 +747,16 @@ Left-hand side of assignment on line 5 is not an l-value.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unrecognised input.
+Syntactic error (Line 5): Unrecognised or missing token.
+     (100 + x) became 101.
+
+Syntactic error (Line 5): Unrecognised or missing token.
+     (100 + x) became 101.
+
+Syntactic error (Line 5): Unrecognised or missing token.
+     (100 + x) became 101.
+
+Syntactic error (Line 5): Unrecognised or missing token.
      (100 + x) became 101.
 
 ---------------------
@@ -758,9 +774,10 @@ Unary operator '!' on line 8 is not applied to a boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 8): Unrecognised input.
+Syntactic error (Line 8): Unrecognised or missing token.
     c became !c.
 
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test29.alice
 ---------------------
@@ -794,7 +811,11 @@ Logical operator '&&' on line 9 not applied to Boolean values.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
+Syntactic error: Mismatched set exception
+Syntactic error (Line 9): Unrecognised or missing token.
+    perhaps (x && (y > x)) so
+
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test31.alice
 ---------------------
@@ -840,7 +861,8 @@ If statement conditional on line 10 does not evaluate to a Boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unrecognised token
+Syntactic error: Mismatched set exception
+Syntactic error: Mismatched set exception
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test34.alice
 ---------------------

@@ -109,7 +109,7 @@ namespace MAlice {
             ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);
             ANTLR3_UINT32 nodeType = Utilities::getNodeType(childNode);
             
-            if (nodeType == BOOLEANEXPRESSION) {
+            if (nodeType == EXPRESSION) {
                 if (!walker->visitNode(childNode, ctx))
                     result = false;
             }
@@ -299,11 +299,6 @@ namespace MAlice {
     }
     
     bool visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
-    {
-        return walker->visitChildren(node, ctx);
-    }
-    
-    bool visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }

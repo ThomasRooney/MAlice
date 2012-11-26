@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=C;
+	language=Java;
 	output=AST;
 }
 
@@ -26,7 +26,6 @@ tokens {
 	BYVALUE;
 	ARRAY;
 	ARRAYSUBSCRIPT;
-	BOOLEANEXPRESSION;
 	IFSTATEMENT;
 	VARDECLARATION;
 }
@@ -145,20 +144,20 @@ return_statement
 	;
 	
 while_loop
-	:	EVENTUALLY boolean_expression BECAUSE statement_list ENOUGHTIMES
-		-> ^(WHILESTATEMENT boolean_expression ^(BODY statement_list))
+	:	EVENTUALLY expression BECAUSE statement_list ENOUGHTIMES
+		-> ^(WHILESTATEMENT expression ^(BODY statement_list))
 	;
 	
 if_block
-	:	PERHAPS LPAREN boolean_expression RPAREN SO statement_list else_block* BECAUSE ALICEWASUNSURE
-		-> ^(IFSTATEMENT boolean_expression statement_list else_block*)
-	|	EITHER LPAREN boolean_expression RPAREN SO statement_list OR statement_list BECAUSE ALICEWASUNSURE
-		-> ^(IFSTATEMENT boolean_expression statement_list statement_list)
+	:	PERHAPS LPAREN expression RPAREN SO statement_list else_block* BECAUSE ALICEWASUNSURE
+		-> ^(IFSTATEMENT expression statement_list else_block*)
+	|	EITHER LPAREN expression RPAREN SO statement_list OR statement_list BECAUSE ALICEWASUNSURE
+		-> ^(IFSTATEMENT expression statement_list statement_list)
 	;
 	
 else_block
-	:	OR (MAYBE LPAREN boolean_expression RPAREN SO)? statement_list
-		-> boolean_expression? statement_list
+	:	OR (MAYBE LPAREN expression RPAREN SO)? statement_list
+		-> expression? statement_list
 	;
 	
 variable_declaration
@@ -211,7 +210,7 @@ additive_expr
 	;
 	
 additive_operator
-	:	(PLUS | MINUS)
+	:	(PLUS | MINUS | LOGICALAND | LOGICALOR)
 	;
 
 multiplicative_expr
@@ -219,7 +218,7 @@ multiplicative_expr
 	;
 	
 multiplicative_operator
-	:	(MULTIPLY | DIVIDE | MODULO)
+	:	(MULTIPLY | DIVIDE | MODULO | EQUALS | NOTEQUAL | LESSTHAN | LESSTHANEQUAL | GREATERTHAN | GREATERTHANEQUAL)
 	;
 	
 	
@@ -238,39 +237,11 @@ unary_expr
 	|	lvalue
 	|	LPAREN additive_expr RPAREN
 		-> additive_expr
+	|	BANG LPAREN additive_expr RPAREN
 	;
 	
 unary_operator
 	:	(PLUS | MINUS | TILDE)
-	;
-
-boolean_expression
-	: 	boolean_expression_alt
-		-> ^(BOOLEANEXPRESSION boolean_expression_alt)
-	;
-	
-boolean_expression_alt
-	:	single_boolean_expression (boolean_operator^ single_boolean_expression)*
-	;
-	
-boolean_operator
-	:	(LOGICALAND | LOGICALOR)
-	;
-
-single_boolean_expression_operator
-	:	(EQUALS | NOTEQUAL | LESSTHAN | LESSTHANEQUAL | GREATERTHAN | GREATERTHANEQUAL)
-	;
-single_boolean_expression
-	:	(LPAREN single_boolean_expression) => LPAREN single_boolean_expression RPAREN
-		-> single_boolean_expression
-	|	(BANG LPAREN) => boolean_unit
-	|	e1=boolean_unit single_boolean_expression_operator e2=boolean_unit
-		-> ^(single_boolean_expression_operator $e1 $e2)
-	;
-	
-boolean_unit
-	:	BANG LPAREN boolean_expression_alt RPAREN
-	|	expression
 	;
 	
 		

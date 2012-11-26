@@ -34,7 +34,6 @@ void ASTWalker :: constructVisitDictionary() {
       visitDictionary.insert(std::make_pair(BITWISEXOR, &visitBitwiseXorExpressionNode));
       visitDictionary.insert(std::make_pair(BODY, &visitBodyNode));
       visitDictionary.insert(std::make_pair(ARRAY, &visitArrayDeclarationNode));
-      visitDictionary.insert(std::make_pair(BOOLEANEXPRESSION, &visitBooleanExpressionNode));
       visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByReferenceParameterNode));
       visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByValueParameterNode));
       visitDictionary.insert(std::make_pair(CHARACTER_LITERAL, &visitCharacterLiteralNode));

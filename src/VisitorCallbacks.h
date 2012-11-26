@@ -50,7 +50,6 @@ namespace MAlice {
     bool visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    bool visitBooleanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
