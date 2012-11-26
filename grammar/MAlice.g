@@ -128,7 +128,7 @@ statement_list
 statement_component
 	:	(EVENTUALLY) => while_loop (options{greedy=true;} : FULL_STOP!)?
 	| 	(stdout_lvalue (SAIDALICE | SPOKE)) => print_statement statement_inner_separator!
-	|	(IDENTIFIER LPAREN) => proc_func_invocation (options{greedy=true;} : FULL_STOP!)?
+	|	(IDENTIFIER LPAREN) => proc_func_invocation statement_inner_separator!
 	|	(lvalue ATE) => increment_statement
 	|	(lvalue DRANK) => decrement_statement
 	|	input_statement (options{greedy=true;} : FULL_STOP!)?

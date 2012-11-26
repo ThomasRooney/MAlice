@@ -138,6 +138,10 @@ namespace MAlice {
     
     MAliceEntityType Utilities::getTypeOfEntity(Entity *entity)
     {
+        ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
+        if (arrayEntity)
+            return MAliceEntityTypeArray;
+
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         if (variableEntity)
             return MAliceEntityTypeVariable;
@@ -154,9 +158,7 @@ namespace MAlice {
         if (parameterEntity)
             return MAliceEntityTypeParameter;
         
-        ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
-        if (arrayEntity)
-            return MAliceEntityTypeArray;
+
         
         return MAliceEntityTypeUndefined;
     }
