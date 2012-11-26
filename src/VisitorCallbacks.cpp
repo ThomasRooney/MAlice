@@ -43,13 +43,24 @@ namespace MAlice {
         {
             MAliceEntityType entityType = Utilities::getTypeOfEntity(lvalueEntity);
             
-            if (entityType != MAliceEntityTypeVariable) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                     Utilities::getNodeColumnIndex(lvalueNode),
-                                                     ErrorType::Semantic,
-                                                     "Identifier: '" + lvalueIdentifier + "' is not a variable!",
-                                                     false);
-                return false;
+            switch(entityType) {
+                case  MAliceEntityTypeVariable:
+                    break;
+                case MAliceEntityTypeArray:
+                {
+                    bool valid = true;
+                    // TODO: Check this has a valid expression as a subscript
+                    // via checking it has a valid EXPRESSION tree (prob okay anyway)
+                    if (valid)
+                        break;
+                }
+                default:
+                    ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                         Utilities::getNodeColumnIndex(lvalueNode),
+                                                         ErrorType::Semantic,
+                                                         "Identifier: '" + lvalueIdentifier + "' is not a variable!",
+                                                         false);
+                    return false;
             }
             
             /* TODO: Array Bounds checking..
@@ -632,13 +643,18 @@ namespace MAlice {
                             return lookupVEntity->getType();
                             break;
                         case MAliceEntityTypeArray:
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                            {
+                            // TODO: if this doesn't have any children, give an error
+                            ArrayEntity *lookupAEntity = dynamic_cast<ArrayEntity*>(lookupEntity);
+                            /*ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                                                  Utilities::getNodeColumnIndex(node),
                                                                  ErrorType::Semantic,
                                                                  "Array: '" + info + "' is not valid in this context",
-                                                                 false);
+                                                                 false);*/
 
-                            return MAliceTypeUndefined;
+                            return lookupAEntity->getType();
+                            
+                            }
                             break;
                         default:
                             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
