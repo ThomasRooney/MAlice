@@ -19,6 +19,7 @@ public:
     
     std::string humanReadableName();
     
+    MAliceType getReturnType() {return m_returnType;}
 }; // class FunctionEntity
     
 }; // namespace MAlice

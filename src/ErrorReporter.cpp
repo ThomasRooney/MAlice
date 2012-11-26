@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <sstream>
 #include "limits.h"
+#include "Utilities.h"
 #include "MAliceParser.h"
 
 #define LINE_NUMBER_NA      UINT_MAX

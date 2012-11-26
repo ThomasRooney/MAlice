@@ -1,6 +1,8 @@
 
 #include "Utilities.h"
 #include "CompilerContext.h"
+#include "ProcedureEntity.h"
+#include "FunctionEntity.h"
 #include <stdexcept>
 #include <typeinfo>
 #include "VisitorCallbacks.h"
@@ -120,7 +122,7 @@ namespace MAlice {
                         ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                                              Utilities::getNodeColumnIndex(node),
                                                              ErrorType::Semantic,
-                                                             "Identifier: '" + info + "' is not a variable!",
+                                                             "Identifier: '" + info + "' is not a variable.",
                                                              false);
                         return false;
                     }
@@ -145,10 +147,11 @@ namespace MAlice {
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                           Utilities::getNodeColumnIndex(node),
                                           ErrorType::Semantic,
-                                          "Node: '" + info + "' is not of expected type: (\'" \
+                                          "Expression: '" + info + "' is not of expected type: (\'" \
                                             + Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\' != \'" +
                                             Utilities::getNameOfTypeFromMAliceType(maType) + "\')",
                                           false);
+
             }
             return typeCheck;
         }
@@ -158,7 +161,14 @@ namespace MAlice {
             {
                 // get the node
                 ASTNode childNode = Utilities::getChildNodeAtIndex(node,numChildren-1);
-                typeCheck = Utilities::confirmTypeOfExpression(childNode,walker,ctx,typeConfirm) && typeCheck;
+                // if childNode is an invocationnode, check symbol exists and arguments are correcgt and typecheck
+                if (Utilities::getNodeType(childNode) == INVOCATION)
+                {
+                    typeCheck = Utilities:: checkIsValidInvocationAndReturnType(childNode, walker, ctx, typeConfirm);
+                }
+                else {
+                    typeCheck = Utilities::confirmTypeOfExpression(childNode,walker,ctx,typeConfirm) && typeCheck;
+                }
             }
         }
         return typeCheck;
@@ -192,6 +202,64 @@ namespace MAlice {
         if (t < 0 || t >= 4)
           t = 0;
         return (MAliceTypeNames [t]);
+    }
+
+    bool Utilities:: checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)
+    {
+        ASTNode identNode = Utilities::getChildNodeAtIndex(invocationNode,0);
+        // does childNode return the right type, and is it in scope
+        std::string ident = Utilities::getNodeText(identNode);
+        Entity *entityBuffer = NULL;
+        FunctionEntity *functionEntity;
+        ProcedureEntity *procedureEntity;
+        // Get the entity referred to by the ident, error if its not in scope
+        if (ctx->isSymbolInScope(ident, &entityBuffer))
+        {
+            // Make sure its not a procedure first
+            try {
+                procedureEntity = dynamic_cast<ProcedureEntity *>(entityBuffer);
+                if (procedureEntity != NULL)
+                    ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(invocationNode),
+                                            Utilities::getNodeColumnIndex(invocationNode),
+                                            ErrorType::Semantic,
+                                            "No return type for procedure: \'" + ident + "\' called - Use a function",
+                                            false);
+
+            }
+            catch (std::bad_cast e)
+            {
+                // Good, its not a procedure
+            }
+            try {
+                functionEntity = dynamic_cast<FunctionEntity *>(entityBuffer);
+                if (functionEntity == NULL)
+                    throw std::bad_cast();
+                // Check the return type
+                MAliceType returnType = functionEntity->getReturnType();
+                if (returnType != typeConfirm)
+                    ctx->getErrorReporter()->reportError(
+                        Utilities::getNodeLineNumber(invocationNode),
+                        Utilities::getNodeColumnIndex(invocationNode),
+                        ErrorType::Semantic,
+                        "Function: '" + ident + "' does not return the expected type: (\'" \
+                        + Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\' != \'" +
+                        Utilities::getNameOfTypeFromMAliceType(returnType) + "\')",
+                        false);
+                    
+            }
+            catch (std::bad_cast e)
+            {
+                // this should never happen
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(invocationNode),
+                                        Utilities::getNodeColumnIndex(invocationNode),
+                                        ErrorType::Semantic,
+                                        "Malformed Symbol Table - Invocation Node refers to a non-functional node!",
+                                        true);
+            }
+            
+        }
+
+        return true;
     }
     
 }; // namespace MAlice
