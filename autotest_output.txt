@@ -579,10 +579,10 @@ Type clash in assignment on line 6. One type is 'letter' and the other is 'numbe
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 5): Node: ''a'' is not of expected type: ('Number Type' != 'Letter Type')
+Semantic error (Line 5): Expression: ''a'' is not of expected type: ('Number Type' != 'Letter Type')
     x became 'a'.
              ^
-Semantic error (Line 6): Node: '10' is not of expected type: ('Letter Type' != 'Number Type')
+Semantic error (Line 6): Expression: '10' is not of expected type: ('Letter Type' != 'Number Type')
     y became 10.
              ^
 ---------------------
@@ -937,15 +937,15 @@ Type of return value on line 4 does not match return type of 'func1' on line 2.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 20): Identifier: 'func1' is not a variable!
-    x became func1 ().
-             ^
-Semantic error (Line 21): Identifier: 'func2' is not a variable!
-    y became func2 ().
-             ^
-Semantic error (Line 22): Identifier: 'func3' is not a variable!
-    z became func3 ().
-             ^
+Semantic error (Line 0): Function: 'func1' does not return the expected type: ('Number Type' != 'Undefined Type')
+  
+  ^
+Semantic error (Line 0): Function: 'func2' does not return the expected type: ('Sentence Type' != 'Undefined Type')
+  
+  ^
+Semantic error (Line 0): Function: 'func3' does not return the expected type: ('Letter Type' != 'Undefined Type')
+  
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test36.alice
 ---------------------
