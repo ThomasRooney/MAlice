@@ -3,6 +3,8 @@
 
 #include "MAliceParser.h"
 
+#define SSTR( x ) ((( std::ostringstream() << std::dec << x ) ).str())
+
 namespace MAlice {
     
     class ASTWalker;

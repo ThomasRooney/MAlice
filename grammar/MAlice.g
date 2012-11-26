@@ -1,7 +1,7 @@
 grammar MAlice;
 
 options {
-	language=Java;
+	language=C;
 	output=AST;
 }
 
@@ -83,9 +83,10 @@ declaration_argument_list
 		-> ^(PARAMS declaration_argument+)
 	;
 
-block	:	OPENED body CLOSED
-		-> ^(BODY body)
+block	:	OPENED body? CLOSED
+		-> ^(BODY body?)
 	;
+	
 body
 	: body_declarations? statement_list;
 

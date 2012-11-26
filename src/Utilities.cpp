@@ -56,6 +56,8 @@ namespace MAlice {
         return string;
     }
     
+    static std::unordered_map<ANTLR3_UINT32, std::string> *tokenIdentifierToTextMap;
+    
     ANTLR3_UINT32 Utilities::getNodeType(ASTNode node)
     {
         return node->getType(node);
@@ -153,6 +155,86 @@ namespace MAlice {
             return MAliceEntityTypeArray;
         
         return MAliceEntityTypeUndefined;
+    }
+    
+    std::string Utilities::getTokenTextFromTokenIdentifier(ANTLR3_UINT32 tokenIdentifier)
+    {
+        if (!tokenIdentifierToTextMap)
+            createTokenIdentifierToTextMap();
+        
+        std::unordered_map<ANTLR3_UINT32, std::string>::iterator el = tokenIdentifierToTextMap->find(tokenIdentifier);
+        if (el != tokenIdentifierToTextMap->end())
+            return el->second;
+        
+        return "";
+    }
+    
+    // There doesn't appear to be a way to get the token text from a token identifier :(
+    void Utilities::createTokenIdentifierToTextMap()
+    {
+        // We don't have to worry about cleanup, as we essentially think of the Utilities class as a singleton which
+        // stays around for the entire program.
+        tokenIdentifierToTextMap = new std::unordered_map<ANTLR3_UINT32, std::string>();
+        
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(ALICEFOUND, "Alice found"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(ALICEWASUNSURE, "Alice was unsure which"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(ALICEFOUND, "Alice found"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(AND, "and"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(APOSTROPHE_S, "'s"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(ATE, "ate"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BANG, "!"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BECAME, "became"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BECAUSE, "because"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BITWISEAND, "&"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BITWISEOR, "|"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BITWISEXOR, "^"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(BUT, "but"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(CLOSED, "closed"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(COMMA, ","));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(CONTAINEDA, "contained a"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(DIVIDE, "/"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(DRANK, "drank"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(EITHER, "either"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(ENOUGHTIMES, "enough times"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(EQUALS, "=="));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(EVENTUALLY, "eventually"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(FULL_STOP, "."));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(GREATERTHAN, ">"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(GREATERTHANEQUAL, ">="));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(HAD, "had"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(LESSTHAN, "<"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(LESSTHANEQUAL, "<="));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(LETTER_TYPE, "letter"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(LOGICALAND, "&&"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(LOGICALOR, "||"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(LPAREN, "("));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(MAYBE, "maybe"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(MINUS, "-"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(MODULO, "%"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(MULTIPLY, "*"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(NOTEQUAL, "!="));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(NUMBER_TYPE, "number"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(OF, "of"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(OPENED, "opened"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(OR, "or"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(PERHAPS, "perhaps"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(PIECE, "piece"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(PLUS, "+"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(QUESTION_MARK, "?"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(QUOTE, "\""));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(RPAREN, ")"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(SAIDALICE, "said Alice"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(SO, "so"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(SPIDER, "spider"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(SPOKE, "spoke"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(THELOOKINGGLASS, "The looking-glass"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(THEN, "then"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(THEROOM, "The room"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(TILDE, "~"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(TOO, "too"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(UNDERSCORE, "_"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(WASA, "was a"));
+        tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(WHATWAS, "what was"));
     }
     
 }; // namespace MAlice

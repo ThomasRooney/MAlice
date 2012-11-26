@@ -8,6 +8,7 @@
 #include "limits.h"
 #include "Utilities.h"
 #include "MAliceParser.h"
+#include "Types.h"
 
 #define LINE_NUMBER_NA      UINT_MAX
 #define COL_INDEX_NA        UINT_MAX
@@ -29,7 +30,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
             string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unrecognised or unexpected token '" + identifier + "'.";
+            string errorMessage = "Unexpected token '" + identifier + "'.";
             
             parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
@@ -71,6 +72,26 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
         {
             parserErrorReporter->reportError(MAlice::ErrorType::Internal, "", true);
+        }
+            break;
+        case ANTLR3_MISSING_TOKEN_EXCEPTION:
+        {            
+            ANTLR3_UINT32 expectedToken = exception->expecting;
+            
+            std::string expectedTokenText = MAlice::Utilities::getTokenTextFromTokenIdentifier(expectedToken);
+            std::string errorMessage;
+            
+            if (!expectedTokenText.empty())
+                errorMessage = "Expected token '" + expectedTokenText + "'.";
+            else
+                errorMessage = "Expected token missing from input.";
+            
+            if (token) {
+                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            }
+            else {
+                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, errorMessage, true);
+            }
         }
             break;
         default:
