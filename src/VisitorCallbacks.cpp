@@ -694,6 +694,11 @@ namespace MAlice {
                         }
                         return MAliceTypeBoolean;
                         break;
+                    case INCREMENTSTATEMENT:
+                    case DECREMENTSTATEMENT:
+                        checkExpression(childNode, walker, ctx, MAliceTypeNumber);
+                        return MAliceTypeNumber;
+                    
                     default:
                     {
                         std::string ident = Utilities::getNodeText(childNode);
