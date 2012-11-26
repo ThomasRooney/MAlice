@@ -411,7 +411,7 @@ Parse error: 'LexToken(CLOSED,'closed',4,38)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unrecognised or unexpected token 'closed'.
+Syntactic error (Line 4): Expected token 'opened'.
   closed
   ^
 ---------------------
@@ -426,7 +426,9 @@ Parse error: 'None'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error: Unexpected end of input.
+Syntactic error (Line 3): Expected token 'closed'.
+  opened
+  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test08.alice
 ---------------------
@@ -439,9 +441,7 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unexpected token 'closed'.
-  closed
-  ^
+Semantic error: Entry point procedure hatta() is not declared.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test09.alice
 ---------------------
@@ -473,7 +473,7 @@ Parse error: 'LexToken(OPENED,'opened',2,17)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 2): Unrecognised or unexpected token 'opened'.
+Syntactic error (Line 2): Unexpected token 'opened'.
   opened
   ^
 ---------------------
@@ -488,7 +488,7 @@ Parse error: 'LexToken(CONTAINED,'contained',2,27)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 2): Unrecognised or unexpected token 'contained a'.
+Syntactic error (Line 2): Unexpected token 'contained a'.
   The looking-glass main () contained a number
                             ^
 ---------------------
@@ -646,7 +646,7 @@ Parse error: 'LexToken(WAS,'was',5,74)'.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unrecognised or unexpected token 'was a'.
+Syntactic error (Line 5): Unexpected token 'was a'.
     y was a number.
       ^
 ---------------------
@@ -674,9 +674,6 @@ Actual parameter #1 in call to 'proc' on line 11 is passed by reference but the 
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unexpected token 'closed'.
-  closed
-  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test24.alice
 ---------------------
@@ -689,9 +686,6 @@ Actual parameter #1 in call to 'proc' on line 9 is passed by value but the corre
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unexpected token 'closed'.
-  closed
-  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test25.alice
 ---------------------
@@ -705,9 +699,7 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unexpected token 'closed'.
-  closed
-  ^
+Semantic error: Entry point hatta() is declared as a function. It should be declared as a procedure.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test26.alice
 ---------------------
@@ -721,9 +713,12 @@ Multiple definitions of 'hatta' found.
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 4): Unexpected token 'closed'.
-  closed
-  ^
+Semantic error (Line 6): 'hatta' has already been declared in the current scope.
+  The looking-glass hatta ()
+                    ^
+
+  Symbol 'hatta' is previously declared as a procedure on line 1.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test27.alice
 ---------------------
@@ -780,8 +775,8 @@ Type clash in assignment on line 16. One type is 'number' and the other is 'void
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 5): Unexpected token 'closed'.
-  closed
+Semantic error (Line 0): Procedure 'proc' has no return type. Use a function
+  
   ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test30.alice
@@ -814,9 +809,6 @@ Type of actual argument #1 in call to 'proc' on line 10 does not match the type 
 ---------------------
 Student Compiler Output:
 ---------------------
-Syntactic error (Line 3): Unexpected token 'closed'.
-  closed
-  ^
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test32.alice
 ---------------------
