@@ -5,7 +5,7 @@
 namespace MAlice {
   ParameterEntity :: ParameterEntity (std::string identifier, int lineNumber, MAliceType type, bool passedByReference) : VariableEntity(identifier, lineNumber, type)
   {
-      
+      this->passedByReference = passedByReference;
   }
 
   ParameterEntity* ParameterEntity :: clone () {

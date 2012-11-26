@@ -586,7 +586,13 @@ namespace MAlice {
                     entity->setParameterListTypes(parameterList);
                     
                     for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
-                        ctx->addEntityInScope(p->getIdentifier(), p->clone());
+                        if (p->isPassedByReference())
+                        {
+                            ctx->addEntityInScope(p->getIdentifier(), new ArrayEntity(p->getIdentifier(), p->getLineNumber(),p->getType(), 1));
+                        }
+                        else {
+                            ctx->addEntityInScope(p->getIdentifier(), p->clone());
+                        }
                     }
                     break;
                 case BODY:
