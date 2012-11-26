@@ -30,6 +30,7 @@ namespace MAlice {
     #pragma warning(disable:4482)
     enum ErrorType {
         Internal,
+        Lexical,
         Syntactic,
         Semantic,
         IO

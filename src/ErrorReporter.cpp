@@ -115,9 +115,9 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
                 string identifier = (char*)token->getText(token)->chars;
                 string errorMessage = "Unexpected token '" + identifier + "'.";
                 
-                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Lexical, errorMessage, true);
             } else {
-                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Unrecognised token", true);
+                parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "Unrecognised token", true);
             }
         }
             break;
@@ -135,17 +135,17 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "Mismatched set exception", true);
         }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Early exit exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "Early exit exception", true);
         }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Internal, "", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "", true);
         }
             break;
         default:
@@ -253,6 +253,9 @@ namespace MAlice {
     {
         switch(errorType)
         {
+            case ErrorType::Lexical:
+                cerr << "Lexical error";
+                break;
             case ErrorType::Internal:
                 cerr << "Internal error";
                 break;
