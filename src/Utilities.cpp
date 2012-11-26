@@ -124,11 +124,11 @@ namespace MAlice {
         int t = type;
         //TODO: Move me somewhere better (types.h no good as linker error)
         const char* MAliceTypeNames [] = {
-            "Undefined Type",
-            "Number Type",
-            "Letter Type",
-            "Sentence Type",
-            "Boolean Type",
+            "undefined",
+            "number",
+            "letter",
+            "sentence",
+            "boolean",
             };
         if (t < 0 || t >= 5)
           t = 0;

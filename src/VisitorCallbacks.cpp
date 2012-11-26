@@ -607,19 +607,24 @@ namespace MAlice {
         MAliceType type = getTypeFromExpressionNode(node, walker, ctx);
         if (typeConfirm != type)
         {
-            ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
             Range exprRange;
             std::string exprText = Utilities::getNodeTextIncludingChildren(node, ctx, &exprRange);
             
-            // TODO: Walker to left, right of expression, take substr of input to give better error output
+            std::string errorMessage;
+            if (type == MAliceTypeUndefined)
+                errorMessage = "Can't match expected type '" + std::string(Utilities::getNameOfTypeFromMAliceType(typeConfirm)) + "' with procedure invocation.";
+            else {
+                errorMessage = "Can't match expected type '" + std::string(Utilities::getNameOfTypeFromMAliceType(typeConfirm)) + \
+                "' with type '" + std::string(Utilities::getNameOfTypeFromMAliceType(type)) + "' of expression '" + \
+                exprText + "'.";
+            }
+            
+            ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
             ctx->getErrorReporter()->reportError(
                                         Utilities::getNodeLineNumber(firstNonImaginaryNode),
                                         exprRange,
                                         ErrorType::Semantic,
-                                        "Expression: '" + exprText + "' does not have the expected type: " + \
-                                        Utilities::getNameOfTypeFromMAliceType(typeConfirm) + \
-                                        "(\'" + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" + \
-                                        Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\')",
+                                        errorMessage,
                                         "",
                                         false);
             return false;
@@ -638,7 +643,6 @@ namespace MAlice {
             // If so, check type
             std::string info = Utilities::getNodeText(node);
             int type = Utilities::getNodeType(node);
-            MAliceType maType;
             
             if (type == IDENTIFIER)
             {
