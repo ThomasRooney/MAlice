@@ -549,7 +549,7 @@ namespace MAlice {
                                         Utilities::getNodeLineNumber(node),
                                         Utilities::getNodeColumnIndex(node),
                                         ErrorType::Semantic,
-                                        "Expression: '" + expr + "' does not have the expected type: " + \
+                                        "Expression: '" + Utilities::getNodeTextIncludingChildren(node) + "' '" + expr + "' does not have the expected type: " + \
                                         Utilities::getNameOfTypeFromMAliceType(typeConfirm) + \
                                         "(\'" + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" + \
                                         Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\')",

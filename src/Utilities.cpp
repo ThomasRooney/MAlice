@@ -1,5 +1,6 @@
 
 #include <stdexcept>
+#include <ostream>
 
 #include "Utilities.h"
 
@@ -10,6 +11,7 @@
 #include "FunctionEntity.h"
 #include "VisitorCallbacks.h"
 #include "ArrayEntity.h"
+#include "Types.h"
 
 namespace MAlice {
     
@@ -235,6 +237,35 @@ namespace MAlice {
         tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(UNDERSCORE, "_"));
         tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(WASA, "was a"));
         tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(WHATWAS, "what was"));
+    }
+    
+    std::string Utilities::getNodeTextIncludingChildren(ASTNode node)
+    {
+        ASTNode leftmostChildNode = getLeftDeepestChildNode(node);
+        ASTNode rightmostChildNode = getLeftDeepestChildNode(node);
+        
+        //TODO: complete implementation
+        return (char*)node->toString(node)->chars;
+    }
+    
+    ASTNode Utilities::getLeftDeepestChildNode(ASTNode node)
+    {
+        unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
+        
+        if (numChildren == 0)
+            return node;
+        
+        return getLeftDeepestChildNode(Utilities::getChildNodeAtIndex(node, 0));
+    }
+    
+    ASTNode Utilities::getRightDeepestChildNode(ASTNode node)
+    {
+        unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
+        
+        if (numChildren == 0)
+            return node;
+        
+        return getLeftDeepestChildNode(Utilities::getChildNodeAtIndex(node, numChildren - 1));
     }
     
 }; // namespace MAlice

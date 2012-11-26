@@ -31,6 +31,10 @@ namespace MAlice {
         static const char* getNameOfTypeFromMAliceType(MAliceType);
         static MAliceEntityType getTypeOfEntity(Entity *entity);
         static std::string getTokenTextFromTokenIdentifier(ANTLR3_UINT32 tokenIdentifier);
+        
+        static std::string getNodeTextIncludingChildren(ASTNode node);
+        static ASTNode getLeftDeepestChildNode(ASTNode node);
+        static ASTNode getRightDeepestChildNode(ASTNode node);
     };
     
 }; // namespace MAlice
