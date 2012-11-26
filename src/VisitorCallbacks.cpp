@@ -44,7 +44,6 @@ namespace MAlice {
         // Check lvalue exists on the symboltable
         if (ctx->isSymbolInScope(lvalueIdentifier, &lvalueEntity))
         {
-            VariableEntity *lvalueVEntity = NULL;
             MAliceEntityType entityType = Utilities::getTypeOfEntity(lvalueEntity);
             
             if (entityType != MAliceEntityTypeVariable) {
@@ -66,8 +65,10 @@ namespace MAlice {
             else {*/
             //}
             
+            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(lvalueEntity);
+            
             // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
-            checkExpression(rvalueNode , walker, ctx, lvalueVEntity->getType());
+            checkExpression(rvalueNode , walker, ctx, variableEntity->getType());
         }
         else {
             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
