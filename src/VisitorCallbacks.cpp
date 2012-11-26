@@ -605,7 +605,7 @@ namespace MAlice {
         }
         else
         {
-            for (unsigned int i = 0; i < numChildren; ++i) {
+            for (int i = 0; i < numChildren; ++i) {
                 ASTNode childNode = Utilities::getChildNodeAtIndex(node,numChildren-1);
                 
                 // if childNode is an invocationnode, check symbol exists and arguments are correcgt and typecheck
