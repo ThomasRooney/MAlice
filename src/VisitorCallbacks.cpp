@@ -543,8 +543,29 @@ namespace MAlice {
     
     bool checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)
     {
+        MAliceType type = getTypeFromExpressionNode(node, walker, ctx);
+        if (typeConfirm != type)
+        {
+            // TODO: Walker to left, right of expression, take substr of input to give better error output
+            std::string expr = std::string((char*)(node->toStringTree(node)->chars));
+            ctx->getErrorReporter()->reportError(
+                                        Utilities::getNodeLineNumber(node),
+                                        Utilities::getNodeColumnIndex(node),
+                                        ErrorType::Semantic,
+                                        "Expression: '" + expr + "' does not have the expected type: " + \
+                                        Utilities::getNameOfTypeFromMAliceType(typeConfirm) + \
+                                        "(\'" + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" + \
+                                        Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\')",
+                                        false);
+            return false;
+        }
+        return true;
+    }
+
+    MAliceType getTypeFromExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        // if we're a root node, return the type
         int numChildren = Utilities::getNumberOfChildNodes(node);
-        bool typeCheck = true;
         
         // Are we at a bottom node yet?
         if (numChildren == 0)
@@ -563,65 +584,135 @@ namespace MAlice {
                     MAliceEntityType entityType = Utilities::getTypeOfEntity(lookupEntity);
                     
                     //TODO: make error more expressive.
-                    if (entityType != MAliceEntityTypeVariable) {
-                        ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                             Utilities::getNodeColumnIndex(node),
-                                                             ErrorType::Semantic,
-                                                             "Identifier: '" + info + "' is not a variable.",
-                                                             false);
-                        return false;
+                    switch (entityType) {
+                        case  MAliceEntityTypeVariable:
+                            lookupVEntity = dynamic_cast<VariableEntity*>(lookupEntity);
+                            return lookupVEntity->getType();
+                            break;
+                        default:
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                 Utilities::getNodeColumnIndex(node),
+                                                                 ErrorType::Semantic,
+                                                                 "Identifier: '" + info + "' does not have a type.",
+                                                                 false);
+                            return MAliceTypeUndefined;
                     }
-                    
-                    lookupVEntity = dynamic_cast<VariableEntity*>(lookupEntity);
-                    maType = lookupVEntity->getType();
-                    
                 }
-                else {
+                else 
+                {
                     ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                                          Utilities::getNodeColumnIndex(node),
                                                          ErrorType::Semantic,
                                                          "Identifier: '" + info + "' is not in scope.",
                                                          false);
-                    return false;
+                    return MAliceTypeUndefined;
                 }
             }
-            else {
-                maType = Utilities::getTypeFromNodeType(type);
-            }
-            
-            typeCheck = maType == typeConfirm;
-            if (!typeCheck)
+            else 
             {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                     Utilities::getNodeColumnIndex(node),
-                                                     ErrorType::Semantic,
-                                                     "Expression: '" + info + "' is not of expected type: (\'" \
-                                                     + Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\' != \'" +
-                                                     Utilities::getNameOfTypeFromMAliceType(maType) + "\')",
-                                                     false);
-                
+                return Utilities::getTypeFromNodeType(type);
             }
-            return typeCheck;
         }
         else
         {
-            for (int i = 0; i < numChildren; ++i) {
-                ASTNode childNode = Utilities::getChildNodeAtIndex(node,numChildren-1);
-                
-                // if childNode is an invocationnode, check symbol exists and arguments are correcgt and typecheck
-                if (Utilities::getNodeType(childNode) == INVOCATION)
+            for (int i = 0; i < numChildren; ++i)
+            {
+                ASTNode childNode = Utilities::getChildNodeAtIndex(node,i);               
+                std::string binOperator;
+                int numChildrenOfChild;
+                MAliceType firstChildType;
+                MAliceType secondChildType;
+                bool valid;
+                // if childNode is an invocationnode, check symbol exists and arguments are correct
+                switch (Utilities::getNodeType(childNode))
                 {
-                    typeCheck = checkIsValidInvocationAndReturnType(childNode, walker, ctx, typeConfirm);
-                }
-                else {
-                    typeCheck = checkExpression(childNode, walker, ctx, typeConfirm) && typeCheck;
+                    case INVOCATION:
+                        return getReturnTypeAndCheckIsValidInvocation(childNode, walker, ctx);
+                        break;
+                    case EQUALS:
+                    case NOTEQUAL:
+                    case LESSTHAN:
+                    case LESSTHANEQUAL:
+                    case GREATERTHAN:
+                    case GREATERTHANEQUAL:
+                        // Check there are two children
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(childNode);
+                        binOperator = Utilities::getNodeText(childNode);
+                        if (numChildrenOfChild != 2)
+                        {
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
+                                                                    Utilities::getNodeColumnIndex(childNode),
+                                                                    ErrorType::Semantic,
+                                                                    "Boolean Operator: '" +\
+                                                                    binOperator +\
+                                                                    "' must have two children.",
+                                                                    false);
+                            return MAliceTypeUndefined;
+                        }
+                        // Check the type of the first child
+                        firstChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx);
+                        // Check the type of the second child is the same as the first child
+                        secondChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(childNode, 0),walker,ctx);
+                        if (firstChildType != secondChildType)
+                        {
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
+                                                                    Utilities::getNodeColumnIndex(childNode),
+                                                                    ErrorType::Semantic,
+                                                                    "Boolean Operator: '" +\
+                                                                    binOperator +\
+                                                                    "' must have two children.",
+                                                                    false);
+                            return MAliceTypeUndefined;
+                        }
+                        return MAliceTypeBoolean;
+                        break;
+                    case LOGICALAND:
+                    case LOGICALOR:
+                        // Check there are two children
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(childNode);
+                        binOperator = Utilities::getNodeText(childNode);
+                        if (numChildrenOfChild != 2)
+                        {
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
+                                                                    Utilities::getNodeColumnIndex(childNode),
+                                                                    ErrorType::Semantic,
+                                                                    "Boolean Operator: '" +\
+                                                                    binOperator +\
+                                                                    "' must have children of the same type.",
+                                                                    false);
+                            return MAliceTypeUndefined;
+                        }
+                        // Check the type of the first child is a bool
+                        valid = checkExpression(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx, MAliceTypeBoolean);
+                        // Check the type of the second child is the same as the first child
+                        valid = checkExpression(Utilities::getChildNodeAtIndex(childNode, 1),walker,ctx, MAliceTypeBoolean) && valid ;
+                        if (!valid)
+                        {
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
+                                                                    Utilities::getNodeColumnIndex(childNode),
+                                                                    ErrorType::Semantic,
+                                                                    "Boolean Operator: '" +\
+                                                                    binOperator +\
+                                                                    "' must have boolean children.",
+                                                                    false);
+                            return MAliceTypeUndefined;
+                        }
+                        return MAliceTypeBoolean;
+                        break;
+                    default:
+                    {
+                        std::string ident = Utilities::getNodeText(childNode);
+                        int type = Utilities::getNodeType(childNode);
+                        return getTypeFromExpressionNode(childNode, walker, ctx);
+                        break;
+                    }
                 }
             }
         }
-        return typeCheck;
+        return MAliceTypeUndefined;
     }
-    
-    bool checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType type)
+
+    MAliceType getReturnTypeAndCheckIsValidInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identNode = Utilities::getChildNodeAtIndex(invocationNode,0);
         
@@ -636,38 +727,57 @@ namespace MAlice {
             
             // Ensure it isn't a procedure
             if (entityType == MAliceEntityTypeProcedure) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(invocationNode),
-                                                     Utilities::getNodeColumnIndex(invocationNode),
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identNode),
+                                                     Utilities::getNodeColumnIndex(identNode),
                                                      ErrorType::Semantic,
                                                      "Procedure '" + ident + "' has no return type. Use a function",
                                                      false);
                 
-                return false;
+                return MAliceTypeUndefined;
             }
             
             if (entityType != MAliceEntityTypeFunction) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(invocationNode),
-                                                     Utilities::getNodeColumnIndex(invocationNode),
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identNode),
+                                                     Utilities::getNodeColumnIndex(identNode),
                                                      ErrorType::Internal,
                                                      "Malformed Symbol Table: invocation node refers to a non-function/procedure node!",
                                                      true);
                 
-                return false;
+                return MAliceTypeUndefined;
             }
             
             FunctionEntity *functionEntity = dynamic_cast<FunctionEntity *>(entityBuffer);
 
-            MAliceType returnType = functionEntity->getReturnType();
-            if (returnType != type)
-                ctx->getErrorReporter()->reportError(
-                                                     Utilities::getNodeLineNumber(invocationNode),
-                                                     Utilities::getNodeColumnIndex(invocationNode),
-                                                     ErrorType::Semantic,
-                                                     "Function: '" + ident + "' does not return the expected type: (\'" \
-                                                     + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" +
-                                                     Utilities::getNameOfTypeFromMAliceType(returnType) + "\')",
-                                                     false);
+            return functionEntity->getReturnType();            
+        }
+        else
+        {
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identNode),
+                                                 Utilities::getNodeColumnIndex(identNode),
+                                                 ErrorType::Semantic,
+                                                 "Function: '" + ident + "' is not in scope.",
+                                                 false);
             
+        }
+        return MAliceTypeUndefined;
+    }
+    
+    bool checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType type)
+    {
+        MAliceType returnType = getReturnTypeAndCheckIsValidInvocation(invocationNode, walker, ctx);
+        ASTNode identNode = Utilities::getChildNodeAtIndex(invocationNode,0);
+        // does childNode return the right type, and is it in scope
+        std::string ident = Utilities::getNodeText(identNode);
+        if (returnType != type)
+        {
+            ctx->getErrorReporter()->reportError(
+                                                    Utilities::getNodeLineNumber(invocationNode),
+                                                    Utilities::getNodeColumnIndex(invocationNode),
+                                                    ErrorType::Semantic,
+                                                    "Function: '" + ident + "' does not return the expected type: (\'" \
+                                                    + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" +
+                                                    Utilities::getNameOfTypeFromMAliceType(returnType) + "\')",
+                                                    false);
             return false;
         }
         

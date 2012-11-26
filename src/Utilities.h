@@ -26,7 +26,6 @@ namespace MAlice {
         static MAliceType getTypeFromTypeString(std::string);
         static MAliceType getTypeFromNodeType(int nodeType);
         static const char* getNameOfTypeFromMAliceType(MAliceType);
-        
         static MAliceEntityType getTypeOfEntity(Entity *entity);
     };
     

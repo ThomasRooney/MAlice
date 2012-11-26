@@ -122,11 +122,13 @@ namespace MAlice {
             "Number Type",
             "Letter Type",
             "Sentence Type",
+            "Boolean Type",
             };
-        if (t < 0 || t >= 4)
+        if (t < 0 || t >= 5)
           t = 0;
         return (MAliceTypeNames [t]);
     }
+
     
     MAliceEntityType Utilities::getTypeOfEntity(Entity *entity)
     {
