@@ -633,8 +633,8 @@ namespace MAlice {
             
             // Ensure it isn't a procedure
             if (entityType == MAliceEntityTypeProcedure) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(invocationNode),
-                                                     Utilities::getNodeColumnIndex(invocationNode),
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identNode),
+                                                     Utilities::getNodeColumnIndex(identNode),
                                                      ErrorType::Semantic,
                                                      "Procedure '" + ident + "' has no return type. Use a function",
                                                      false);
@@ -643,8 +643,8 @@ namespace MAlice {
             }
             
             if (entityType != MAliceEntityTypeFunction) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(invocationNode),
-                                                     Utilities::getNodeColumnIndex(invocationNode),
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identNode),
+                                                     Utilities::getNodeColumnIndex(identNode),
                                                      ErrorType::Internal,
                                                      "Malformed Symbol Table: invocation node refers to a non-function/procedure node!",
                                                      true);
