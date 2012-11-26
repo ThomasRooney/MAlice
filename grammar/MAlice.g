@@ -52,7 +52,7 @@ tokens {
 }
 
 // Programs, procedures and functions
-program	:	(variable_declaration statement_inner_separator)* (func+=function|proc+=procedure)+
+program	:	(variable_declaration statement_inner_separator)* (func+=function|proc+=procedure)*
 		-> ^(PROGRAM ^(DECLS variable_declaration* $func* $proc*))
 	;
 
