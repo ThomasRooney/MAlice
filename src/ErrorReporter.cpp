@@ -31,25 +31,25 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             string identifier = (char*)token->getText(token)->chars;
             string errorMessage = "Unrecognised token '" + identifier + "'.";
             
-            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", false);
         }
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
             string tokenText = (char*)token->toString(token);
-            string errorMessage = "Unrecognised input.";
+            string errorMessage = "Unrecognised input or missing token.";
             
-            parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, true);
+            parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", false);
         }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
@@ -99,7 +99,7 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
-            string errorMessage = "Unrecognised input.";
+            string errorMessage = "Unrecognised input or missing token.";
             
             parserErrorReporter->reportError(exception->line, exception->charPositionInLine, MAlice::ErrorType::Syntactic, errorMessage, true);
         }
@@ -190,6 +190,8 @@ namespace MAlice {
         
         cerr << endl;
         
+        m_hasReportedErrors = true;
+        
         if (isFatal)
             exit(EXIT_FAILURE);
     }
@@ -216,6 +218,11 @@ namespace MAlice {
         }
         
         return "";
+    }
+    
+    bool ErrorReporter::hasReportedErrors()
+    {
+        return m_hasReportedErrors;
     }
     
 }; // namespace ErrorReporter

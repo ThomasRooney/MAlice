@@ -54,6 +54,9 @@ namespace MAlice {
         if (outTree != NULL)
             *outTree = ast.tree;
         
+        if (m_compilerContext->getErrorReporter()->hasReportedErrors())
+            return false;
+        
         return true;
     }
     
