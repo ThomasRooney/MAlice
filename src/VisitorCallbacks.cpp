@@ -88,12 +88,22 @@ namespace MAlice {
     
     bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        if (Utilities::getNumberOfChildNodes(node) == 1)
+        {
+            // Check that the child of this node is a number, and it has a child
+            return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        }
+        return false;
     }
     
     bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        if (Utilities::getNumberOfChildNodes(node) == 1)
+        {
+            // Check that the child of this node is a number, and it has a child
+            return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        }
+        return false;
     }
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -698,6 +708,7 @@ namespace MAlice {
                     case DECREMENTSTATEMENT:
                         checkExpression(childNode, walker, ctx, MAliceTypeNumber);
                         return MAliceTypeNumber;
+                        break;
                     
                     default:
                     {
