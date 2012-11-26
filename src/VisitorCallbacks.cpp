@@ -30,11 +30,13 @@ namespace MAlice {
         // if lvalue is an array, iterate down to its child identifier. 
         if (Utilities::getNodeType(lvalueNode)==ARRAYSUBSCRIPT)
         {
-            lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode,0);
             // Check this has children and isn't just referenced directly.
             int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
+            lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode,0);
+            lvalueIdentifier = Utilities::getNodeText(lvalueNode);
             if (numChildren == 0)
             {
+                
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
                                                          Utilities::getNodeColumnIndex(lvalueNode),
                                                          ErrorType::Semantic,
@@ -58,16 +60,10 @@ namespace MAlice {
                 case  MAliceEntityTypeVariable:
                     break;
                 case MAliceEntityTypeArray:
-                {
-                    bool valid = true;
-                    int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
-                    if (numChildren == 0)
+                    if (isArray)
                     {
-                        valid = false;
-                    }
-                    if (valid)
                         break;
-                }
+                    }
                 default:
                     ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
                                                          Utilities::getNodeColumnIndex(lvalueNode),
@@ -699,8 +695,11 @@ namespace MAlice {
             for (int i = 0; i < numChildren; ++i)
             {
                 ASTNode childNode = Utilities::getChildNodeAtIndex(node,i);               
+                ASTNode nodeBuffer;
                 std::string binOperator;
+                std::string stringBuffer;
                 int numChildrenOfChild;
+                Entity * entityBuffer;
                 MAliceType firstChildType;
                 MAliceType secondChildType;
                 bool valid;
@@ -783,7 +782,48 @@ namespace MAlice {
                         checkExpression(childNode, walker, ctx, MAliceTypeNumber);
                         return MAliceTypeNumber;
                         break;
+                    case ARRAYSUBSCRIPT:
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(childNode);
+                        // make sure this has two children.
+                        if (numChildrenOfChild != 2)
+                        {
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
+                                                                    Utilities::getNodeColumnIndex(childNode),
+                                                                    ErrorType::Internal,
+                                                                    "Malformed Array '" +\
+                                                                    binOperator +\
+                                                                    "' ",
+                                                                    false);
+                            return MAliceTypeUndefined;
+                        }
+                        nodeBuffer = Utilities::getChildNodeAtIndex(childNode, 0);
+                        stringBuffer = Utilities::getNodeText(nodeBuffer);
+                        // check its in scope
+                        if (ctx->isSymbolInScope(stringBuffer, &entityBuffer))
+                        {
+                            
+                            MAliceEntityType entityType = Utilities::getTypeOfEntity(entityBuffer);
                     
+                            //TODO: make error more expressive.
+                            switch (entityType) {
+                                case MAliceEntityTypeArray:
+                                    {
+                                    // Array has no children, hence this is an error!
+                                    ArrayEntity *lookupAEntity = NULL;
+                                    lookupAEntity = dynamic_cast<ArrayEntity*>(entityBuffer);
+
+                                    return lookupAEntity->getType();
+                                    }
+                                default:
+                                    ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                         Utilities::getNodeColumnIndex(node),
+                                                                         ErrorType::Internal,
+                                                                         "Malformed Array Entity",
+                                                                         false);
+                            }
+                        }
+                        break;
+                        // 
                     default:
                     {
                         std::string ident = Utilities::getNodeText(childNode);
