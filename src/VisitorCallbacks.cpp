@@ -553,16 +553,20 @@ namespace MAlice {
         MAliceType type = getTypeFromExpressionNode(node, walker, ctx);
         if (typeConfirm != type)
         {
+            ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
+            Range exprRange;
+            std::string exprText = Utilities::getNodeTextIncludingChildren(node, ctx, &exprRange);
+            
             // TODO: Walker to left, right of expression, take substr of input to give better error output
-            std::string expr = std::string((char*)(node->toStringTree(node)->chars));
             ctx->getErrorReporter()->reportError(
-                                        Utilities::getNodeLineNumber(node),
-                                        Utilities::getNodeColumnIndex(node),
+                                        Utilities::getNodeLineNumber(firstNonImaginaryNode),
+                                        exprRange,
                                         ErrorType::Semantic,
-                                        "Expression: '" + Utilities::getNodeTextIncludingChildren(node) + "' '" + expr + "' does not have the expected type: " + \
+                                        "Expression: '" + exprText + "' does not have the expected type: " + \
                                         Utilities::getNameOfTypeFromMAliceType(typeConfirm) + \
                                         "(\'" + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" + \
                                         Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\')",
+                                        "",
                                         false);
             return false;
         }

@@ -32,9 +32,12 @@ namespace MAlice {
         static MAliceEntityType getTypeOfEntity(Entity *entity);
         static std::string getTokenTextFromTokenIdentifier(ANTLR3_UINT32 tokenIdentifier);
         
-        static std::string getNodeTextIncludingChildren(ASTNode node);
+        static std::string getNodeTextIncludingChildren(ASTNode node, CompilerContext *ctx, Range *outRange);
         static ASTNode getLeftDeepestChildNode(ASTNode node);
         static ASTNode getRightDeepestChildNode(ASTNode node);
+        static ASTNode getFirstNonImaginaryChildNode(ASTNode node);
+        
+        static std::string stringWithLineIndentation(std::string string, unsigned int lineIndentation);
     };
     
 }; // namespace MAlice

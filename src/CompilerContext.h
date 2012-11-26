@@ -19,11 +19,20 @@
 #include "ErrorReporter.h"
 #include "SymbolTable.h"
 
+#include "MAliceLexer.h"
+#include "MAliceParser.h"
+
 namespace MAlice {
 
     class CompilerContext{
     private:
         std::string m_input;
+        
+        pMAliceLexer m_lexer;
+        pMAliceParser m_parser;
+        pANTLR3_INPUT_STREAM m_inputStream;
+        pANTLR3_COMMON_TOKEN_STREAM m_tokenStream;
+        
         std::list<SymbolTable*> m_symbolTables;
         std::set<std::string> m_keywords;
         ErrorReporter *m_errorReporter;
@@ -34,6 +43,7 @@ namespace MAlice {
         std::string getLineOfInput(unsigned int lineNumber);
     public:
         CompilerContext(std::string input);
+        ~CompilerContext();
         bool         lockTemporarySymbolTable();
         SymbolTable *getTemporarySymbolTable();
         bool         unlockTemporarySymbolTable();
@@ -47,6 +57,15 @@ namespace MAlice {
         
         ErrorReporter *getErrorReporter();
         void setErrorReporter(ErrorReporter *errorReporter);
+        
+        pMAliceLexer getLexer();
+        void setLexer(pMAliceLexer lexer);
+        pMAliceParser getParser();
+        void setParser(pMAliceParser parser);
+        pANTLR3_INPUT_STREAM getInputStream();
+        void setInputStream(pANTLR3_INPUT_STREAM inputStream);
+        pANTLR3_COMMON_TOKEN_STREAM getTokenStream();
+        void setTokenStream(pANTLR3_COMMON_TOKEN_STREAM tokenStream);
     }; // class CompilerContext
     
 }; // namespace MAlice

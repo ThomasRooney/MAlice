@@ -19,6 +19,8 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
+#include "Range.h"
+
 namespace MAlice {
     
     class ErrorReporter;
@@ -39,12 +41,17 @@ namespace MAlice {
         bool m_hasReportedErrors;
         
         std::string getLineOfInput(unsigned int lineNumber);
+        
+        void printLineWithArrow(std::string line, unsigned int arrowPosition);
+        void printLineWithUnderline(std::string line, Range range);
+        void printErrorHeader(MAlice::ErrorType errorType, unsigned int lineNumber, unsigned int columnIndex, std::string errorMessage);
     public:
         ErrorReporter();
         void reportError(ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal);
+        void reportError(unsigned int lineNumber, Range range, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal);
         void setInput(std::string input);
         
         bool hasReportedErrors();

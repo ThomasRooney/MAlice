@@ -11,6 +11,13 @@ namespace MAlice {
     CompilerContext::CompilerContext(std::string input)
     {
         m_input = input;
+        
+        // Set the ANTLR structure defaults
+        m_lexer = NULL;
+        m_parser = NULL;
+        m_inputStream = NULL;
+        m_tokenStream = NULL;
+        
         m_symbolTables.push_back(new SymbolTable());
         t_symbolTable = new SymbolTable();
         m_errorReporter = NULL;
@@ -21,7 +28,23 @@ namespace MAlice {
            pthread_mutex_init (&temporarySymbolTableLock, NULL);;
         #endif
     }
-    // TODO: Delete SymbolTables in destructor
+    
+    CompilerContext::~CompilerContext()
+    {
+        // TODO: Delete SymbolTables in destructor
+        
+        if (m_lexer)
+            delete m_lexer, m_lexer = NULL;
+        
+        if (m_parser)
+            delete m_parser, m_parser = NULL;
+        
+        if (m_inputStream)
+            delete m_inputStream, m_inputStream = NULL;
+        
+        if (m_tokenStream)
+            delete m_tokenStream, m_tokenStream = NULL;
+    }
 
     bool CompilerContext::lockTemporarySymbolTable()
     {
@@ -169,6 +192,46 @@ namespace MAlice {
     bool CompilerContext::isKeyword(std::string string)
     {
         return m_keywords.find(string) != m_keywords.end();
+    }
+    
+    pMAliceLexer CompilerContext::getLexer()
+    {
+        return m_lexer;
+    }
+    
+    void CompilerContext::setLexer(pMAliceLexer lexer)
+    {
+        m_lexer = lexer;
+    }
+    
+    pMAliceParser CompilerContext::getParser()
+    {
+        return m_parser;
+    }
+    
+    void CompilerContext::setParser(pMAliceParser parser)
+    {
+        m_parser = parser;
+    }
+    
+    pANTLR3_INPUT_STREAM CompilerContext::getInputStream()
+    {
+        return m_inputStream;
+    }
+    
+    void CompilerContext::setInputStream(pANTLR3_INPUT_STREAM inputStream)
+    {
+        m_inputStream = inputStream;
+    }
+    
+    pANTLR3_COMMON_TOKEN_STREAM CompilerContext::getTokenStream()
+    {
+        return m_tokenStream;
+    }
+    
+    void CompilerContext::setTokenStream(pANTLR3_COMMON_TOKEN_STREAM tokenStream)
+    {
+        m_tokenStream = tokenStream;
     }
     
 }; // namespace MAlice
