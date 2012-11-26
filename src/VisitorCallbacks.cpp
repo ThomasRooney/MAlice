@@ -12,9 +12,6 @@
 #include "VariableEntity.h"
 #include "Utilities.h"
 
-#define SSTR( x ) dynamic_cast< std::ostringstream & > \
-        ((( std::ostringstream() << std::dec << x ) ).str())
-
 namespace MAlice {
 
     // Statements
