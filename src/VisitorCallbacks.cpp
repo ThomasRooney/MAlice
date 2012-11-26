@@ -137,6 +137,38 @@ namespace MAlice {
     
     bool visitPrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        // make sure there is one child
+        int numChildren = Utilities::getNumberOfChildNodes(node);
+        if (numChildren != 1)
+        {
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                 Utilities::getNodeColumnIndex(node),
+                                                 ErrorType::Internal,
+                                                 "PrintNode malformed: '" + Utilities::getNodeTextIncludingChildren(node) + "'.",
+                                                 false);
+            return false;
+        }
+        ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
+        // Get the type of the child, if its an expression
+        int nodeType = Utilities::getNodeType(childNode);
+        if (nodeType == EXPRESSION)
+        {
+            // Make sure its not undefined
+            MAliceType t = getTypeFromExpressionNode(childNode, walker, ctx);
+            if (t == MAliceTypeUndefined)
+            {
+                // Deepest child Node
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                     Utilities::getNodeColumnIndex(node),
+                                                     ErrorType::Semantic,
+                                                     "Expression: '" + Utilities::getNodeTextIncludingChildren(childNode) + "' is not a valid print statement.",
+                                                     false);
+                return false;
+            }
+            return true;
+        }
+        
+        
         return walker->visitChildren(node, ctx);
     }
     
@@ -266,9 +298,10 @@ namespace MAlice {
             ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
             if (typeNode != NULL)
                 type = Utilities::getNodeText(typeNode);
+            // length (doesn't matter for validation)
+
             
-            
-            ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type)));
+            ctx->addEntityInScope(identifier, new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type), 1));
         }
         
         return true;
@@ -597,6 +630,15 @@ namespace MAlice {
                         case  MAliceEntityTypeVariable:
                             lookupVEntity = dynamic_cast<VariableEntity*>(lookupEntity);
                             return lookupVEntity->getType();
+                            break;
+                        case MAliceEntityTypeArray:
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                 Utilities::getNodeColumnIndex(node),
+                                                                 ErrorType::Semantic,
+                                                                 "Array: '" + info + "' is not valid in this context",
+                                                                 false);
+
+                            return MAliceTypeUndefined;
                             break;
                         default:
                             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
