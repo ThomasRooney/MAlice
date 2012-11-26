@@ -408,7 +408,15 @@ namespace MAlice {
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             
             MAliceType type = Utilities::getTypeFromTypeString(std::string(Utilities::getNodeText(typeNode)));
+            
             ctx->addEntityInScope(identifier, new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), type));
+
+            // See if a third node exists - if so this is a variable assignment node that we want to visit 
+
+            ASTNode thirdNode = Utilities::getChildNodeAtIndex(node, 2);
+            if (thirdNode != NULL)
+                Utilities::confirmTypeOfExpression(thirdNode, walker, ctx, type);
+
         }
         
         return true;
