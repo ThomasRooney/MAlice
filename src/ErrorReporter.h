@@ -40,6 +40,7 @@ namespace MAlice {
         
         std::string getLineOfInput(unsigned int lineNumber);
     public:
+        ErrorReporter();
         void reportError(ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, bool isFatal);

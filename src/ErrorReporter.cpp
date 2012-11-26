@@ -134,6 +134,11 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
 
 namespace MAlice {
     
+    ErrorReporter::ErrorReporter()
+    {
+        m_hasReportedErrors = false;
+    }
+
     ErrorReporter *getParserErrorReporter()
     {
         return parserErrorReporter;
