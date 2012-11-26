@@ -30,7 +30,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
             string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unrecognised or unexpected token '" + identifier + "'.";
+            string errorMessage = "Unexpected token '" + identifier + "'.";
             
             parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
