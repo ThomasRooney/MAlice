@@ -325,7 +325,7 @@ namespace MAlice {
             
             // Get the return type
             MAliceType returnType = MAliceType::MAliceTypeUndefined;
-            ASTNode returnNode = Utilities::getChildNodeAtIndex(node, 2);
+            ASTNode returnNode = Utilities::getChildNodeAtIndex(node, 1);
             if (returnNode != NULL)
                 returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
 
