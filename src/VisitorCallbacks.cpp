@@ -88,12 +88,22 @@ namespace MAlice {
     
     bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        if (Utilities::getNumberOfChildNodes(node) == 1)
+        {
+            // Check that the child of this node is a number, and it has a child
+            return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        }
+        return false;
     }
     
     bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        if (Utilities::getNumberOfChildNodes(node) == 1)
+        {
+            // Check that the child of this node is a number, and it has a child
+            return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        }
+        return false;
     }
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -644,7 +654,7 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have two children.",
                                                                     false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeBoolean;
                         }
                         // Check the type of the first child
                         firstChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx);
@@ -659,7 +669,6 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have two children.",
                                                                     false);
-                            return MAliceTypeUndefined;
                         }
                         return MAliceTypeBoolean;
                         break;
@@ -677,7 +686,7 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have children of the same type.",
                                                                     false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeBoolean;
                         }
                         // Check the type of the first child is a bool
                         valid = checkExpression(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx, MAliceTypeBoolean);
@@ -692,10 +701,15 @@ namespace MAlice {
                                                                     binOperator +\
                                                                     "' must have boolean children.",
                                                                     false);
-                            return MAliceTypeUndefined;
                         }
                         return MAliceTypeBoolean;
                         break;
+                    case INCREMENTSTATEMENT:
+                    case DECREMENTSTATEMENT:
+                        checkExpression(childNode, walker, ctx, MAliceTypeNumber);
+                        return MAliceTypeNumber;
+                        break;
+                    
                     default:
                     {
                         std::string ident = Utilities::getNodeText(childNode);
