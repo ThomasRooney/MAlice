@@ -22,8 +22,6 @@ namespace MAlice {
         static ASTNode getChildNodeAtIndex(ASTNode node, unsigned int index);
         static char *getNodeText(ASTNode node);
         static MAliceType getTypeFromTypeString(std::string);
-        static bool confirmTypeOfExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm);
-        static bool checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm);
         static MAliceType getTypeFromNodeType(int nodeType);
         static const char* getNameOfTypeFromMAliceType(MAliceType);
     };
