@@ -29,35 +29,43 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
             string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unrecognised token '" + identifier + "'.";
+            string errorMessage = "Unrecognised or unexpected token '" + identifier + "'.";
             
-            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", false);
         }
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
             string tokenText = (char*)token->toString(token);
-            string errorMessage = "Unrecognised input.";
+            string errorMessage = "Unrecognised or missing token.";
             
-            parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, true);
+            parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", false);
         }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
         {
-            string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unexpected token '" + identifier + "'.";
+            string errorMessage;
             
-            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            if (token && token->type == EOF) {
+                errorMessage = "Unexpected end of input.";
+                
+                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, errorMessage, true);
+            } else {
+                string identifier = (char*)token->getText(token)->chars;
+                errorMessage = "Unexpected token '" + identifier + "'.";
+                
+                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+            }
         }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
@@ -99,7 +107,7 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
-            string errorMessage = "Unrecognised input.";
+            string errorMessage = "Unrecognised or missing token.";
             
             parserErrorReporter->reportError(exception->line, exception->charPositionInLine, MAlice::ErrorType::Syntactic, errorMessage, true);
         }
@@ -138,15 +146,20 @@ namespace MAlice {
 
     void ErrorReporter::reportError(ErrorType errorType, string errorMessage, bool isFatal)
     {
-        reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, isFatal);
+        reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, "", isFatal);
     }
     
     void ErrorReporter::reportError(unsigned int lineNumber, ErrorType errorType, string errorMessage, bool isFatal)
     {
-        reportError(lineNumber, COL_INDEX_NA, errorType, errorMessage, isFatal);
+        reportError(lineNumber, COL_INDEX_NA, errorType, errorMessage, "", isFatal);
     }
     
     void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, string errorMessage, bool isFatal)
+    {
+        reportError(lineNumber, columnIndex, errorType, errorMessage, "", isFatal);
+    }
+    
+    void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal)
     {
         switch(errorType)
         {
@@ -188,7 +201,20 @@ namespace MAlice {
             cerr << "\n  " << line << "\n";
         }
         
+        if (!additionalInformation.empty()) {
+            cerr << "\n\n";
+            
+            std::istringstream stringStream(additionalInformation);
+            std::string line;
+            
+            while (std::getline(stringStream, line)) {
+                cerr << "  " << line << "\n";
+            }
+        }
+        
         cerr << endl;
+        
+        m_hasReportedErrors = true;
         
         if (isFatal)
             exit(EXIT_FAILURE);
@@ -216,6 +242,11 @@ namespace MAlice {
         }
         
         return "";
+    }
+    
+    bool ErrorReporter::hasReportedErrors()
+    {
+        return m_hasReportedErrors;
     }
     
 }; // namespace ErrorReporter
