@@ -29,7 +29,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
             string identifier = (char*)token->getText(token)->chars;
-            string errorMessage = "Unrecognised token '" + identifier + "'.";
+            string errorMessage = "Unrecognised or unexpected token '" + identifier + "'.";
             
             parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, false);
         }
@@ -107,7 +107,7 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
-            string errorMessage = "Unrecognised input or missing token.";
+            string errorMessage = "Unrecognised or missing token.";
             
             parserErrorReporter->reportError(exception->line, exception->charPositionInLine, MAlice::ErrorType::Syntactic, errorMessage, true);
         }
