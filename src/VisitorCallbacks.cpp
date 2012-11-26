@@ -25,16 +25,27 @@ namespace MAlice {
         bool isArray = false;
         ASTNode lvalueNode = Utilities::getChildNodeAtIndex(node,0);
         ASTNode rvalueNode = Utilities::getChildNodeAtIndex(node,1);
+        std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
 
         // if lvalue is an array, iterate down to its child identifier. 
         if (Utilities::getNodeType(lvalueNode)==ARRAYSUBSCRIPT)
         {
             lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode,0);
+            // Check this has children and isn't just referenced directly.
+            int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
+            if (numChildren == 0)
+            {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                         Utilities::getNodeColumnIndex(lvalueNode),
+                                                         ErrorType::Semantic,
+                                                         "Array: '" + lvalueIdentifier + "' can't be referenced directly for assignment",
+                                                         false);
+            }
             isArray = true;
         }
 
         // TODO: Check these are not null. otherwise fatal error
-        std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
+
 
         Entity *lvalueEntity = NULL;
         
@@ -49,8 +60,11 @@ namespace MAlice {
                 case MAliceEntityTypeArray:
                 {
                     bool valid = true;
-                    // TODO: Check this has a valid expression as a subscript
-                    // via checking it has a valid EXPRESSION tree (prob okay anyway)
+                    int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
+                    if (numChildren == 0)
+                    {
+                        valid = false;
+                    }
                     if (valid)
                         break;
                 }
@@ -58,7 +72,7 @@ namespace MAlice {
                     ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
                                                          Utilities::getNodeColumnIndex(lvalueNode),
                                                          ErrorType::Semantic,
-                                                         "Identifier: '" + lvalueIdentifier + "' is not a variable!",
+                                                         "Identifier: '" + lvalueIdentifier + "' is not a variable.",
                                                          false);
                     return false;
             }
@@ -644,13 +658,13 @@ namespace MAlice {
                             break;
                         case MAliceEntityTypeArray:
                             {
-                            // TODO: if this doesn't have any children, give an error
+                            // Array has no children, hence this is an error!
                             ArrayEntity *lookupAEntity = dynamic_cast<ArrayEntity*>(lookupEntity);
-                            /*ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                                                  Utilities::getNodeColumnIndex(node),
                                                                  ErrorType::Semantic,
                                                                  "Array: '" + info + "' is not valid in this context",
-                                                                 false);*/
+                                                                 false);
 
                             return lookupAEntity->getType();
                             
