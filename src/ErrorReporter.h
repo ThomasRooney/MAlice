@@ -43,6 +43,7 @@ namespace MAlice {
         void reportError(ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, ErrorType errorType, std::string errorMessage, bool isFatal);
         void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, bool isFatal);
+        void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal);
         void setInput(std::string input);
         
         bool hasReportedErrors();

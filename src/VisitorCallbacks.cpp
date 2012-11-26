@@ -447,14 +447,16 @@ namespace MAlice {
         Entity *existingEntity = NULL;
         
         if (ctx->isSymbolInCurrentScope(identifier, &existingEntity)) {
-            std::stringstream errorMessage;
-            errorMessage << "'" << identifier << "' has already been declared in the current scope."
-            << "\n  - Declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber();
+            std::string errorMessage;
+            errorMessage = "'" + identifier + "' has already been declared in the current scope.";
+            std::stringstream additionalInformation;
+            additionalInformation << "Symbol '" << identifier  << "' is previously declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber() << ".";
             
             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
                                                  Utilities::getNodeColumnIndex(node),
                                                  ErrorType::Semantic,
-                                                 errorMessage.str(),
+                                                 errorMessage,
+                                                 additionalInformation.str(),
                                                  true);
             
             return false;

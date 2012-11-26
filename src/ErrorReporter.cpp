@@ -146,15 +146,20 @@ namespace MAlice {
 
     void ErrorReporter::reportError(ErrorType errorType, string errorMessage, bool isFatal)
     {
-        reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, isFatal);
+        reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, "", isFatal);
     }
     
     void ErrorReporter::reportError(unsigned int lineNumber, ErrorType errorType, string errorMessage, bool isFatal)
     {
-        reportError(lineNumber, COL_INDEX_NA, errorType, errorMessage, isFatal);
+        reportError(lineNumber, COL_INDEX_NA, errorType, errorMessage, "", isFatal);
     }
     
     void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, string errorMessage, bool isFatal)
+    {
+        reportError(lineNumber, columnIndex, errorType, errorMessage, "", isFatal);
+    }
+    
+    void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal)
     {
         switch(errorType)
         {
@@ -194,6 +199,17 @@ namespace MAlice {
         } else if (lineNumber != LINE_NUMBER_NA) {
             std::string line = getLineOfInput(lineNumber - 1);
             cerr << "\n  " << line << "\n";
+        }
+        
+        if (!additionalInformation.empty()) {
+            cerr << "\n\n";
+            
+            std::istringstream stringStream(additionalInformation);
+            std::string line;
+            
+            while (std::getline(stringStream, line)) {
+                cerr << "  " << line << "\n";
+            }
         }
         
         cerr << endl;
