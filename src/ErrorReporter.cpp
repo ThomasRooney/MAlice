@@ -92,7 +92,7 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
         {
             if (token != NULL) {
                 string identifier = (char*)token->getText(token)->chars;
-                string errorMessage = "Unrecognised token '" + identifier + "'.";
+                string errorMessage = "Unexpected token '" + identifier + "'.";
                 
                 parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
             } else {
