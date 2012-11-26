@@ -253,11 +253,11 @@ namespace MAlice {
     {
         switch(errorType)
         {
-            case ErrorType::Lexical:
-                cerr << "Lexical error";
-                break;
             case ErrorType::Internal:
                 cerr << "Internal error";
+                break;
+            case ErrorType::Lexical:
+                cerr << "Lexical error";
                 break;
             case ErrorType::Syntactic:
                 cerr << "Syntactic error";

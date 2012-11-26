@@ -66,16 +66,6 @@ namespace MAlice {
     bool visitLetterTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitNumberTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitSentenceTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-    
-    // Helper methods
-    bool                       checkSymbolNotInCurrentScopeOrOutputError(std::string identifier, ASTNode node, CompilerContext *ctx);
-    bool                       visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx);
-    std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
-    bool                       checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType type);
-    bool                       checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm);
-    MAliceType                 getReturnTypeAndCheckIsValidInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
-    MAliceType                 getTypeFromExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-
 
 }
 
