@@ -187,6 +187,70 @@ namespace MAlice {
     
     void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal)
     {
+        printErrorHeader(errorType, lineNumber, columnIndex, errorMessage);
+        
+        if (columnIndex != COL_INDEX_NA) {
+            std::string line = getLineOfInput(lineNumber - 1);
+
+            printLineWithArrow(line, columnIndex);
+        } else if (lineNumber != LINE_NUMBER_NA) {
+            std::string line = getLineOfInput(lineNumber - 1);
+            cerr << "\n  " << line << "\n";
+        }
+        
+        if (!additionalInformation.empty()) {
+            cerr << "\n\n" << Utilities::stringWithLineIndentation(additionalInformation, 2);
+        }
+        
+        cerr << endl;
+        
+        m_hasReportedErrors = true;
+        
+        if (isFatal)
+            exit(EXIT_FAILURE);
+    }
+    
+    void ErrorReporter::reportError(unsigned int lineNumber, Range range, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal)
+    {
+        printErrorHeader(errorType, lineNumber, range.getLocation(), errorMessage);
+        
+        std::string line = getLineOfInput(lineNumber - 1);
+        printLineWithUnderline(line, range);
+        
+        if (!additionalInformation.empty()) {
+            cerr << "\n\n" << Utilities::stringWithLineIndentation(additionalInformation, 2);
+        }
+        
+        cerr << endl;
+        
+        m_hasReportedErrors = true;
+        
+        if (isFatal)
+            exit(EXIT_FAILURE);
+    }
+    
+    void ErrorReporter::printLineWithArrow(std::string line, unsigned int arrowPosition)
+    {
+        cerr << "\n  " << line << "\n  ";
+        cerr << setw(arrowPosition+1) << "^";
+    }
+    
+    void ErrorReporter::printLineWithUnderline(std::string line, Range range)
+    {
+        cerr << "\n  " << line << "\n  ";
+        
+        for (unsigned int i = 0; i < line.size(); ++i) {
+            if (i < range.getLocation() || i > range.getLocation() + range.getLength()) {
+                cerr << " ";
+            }
+            else if (i <= range.getLocation() + range.getLength()) {
+                cerr << "~";
+            }
+        }
+    }
+    
+    void ErrorReporter::printErrorHeader(MAlice::ErrorType errorType, unsigned int lineNumber, unsigned int columnIndex, std::string errorMessage)
+    {
         switch(errorType)
         {
             case ErrorType::Internal:
@@ -216,34 +280,6 @@ namespace MAlice {
         
         string messageString = errorMessage.c_str();
         cerr << messageString;
-        
-        if (columnIndex != COL_INDEX_NA) {
-            std::string line = getLineOfInput(lineNumber - 1);
-            
-            cerr << "\n  " << line << "\n  ";
-            cerr << setw(columnIndex+1) << "^";
-        } else if (lineNumber != LINE_NUMBER_NA) {
-            std::string line = getLineOfInput(lineNumber - 1);
-            cerr << "\n  " << line << "\n";
-        }
-        
-        if (!additionalInformation.empty()) {
-            cerr << "\n\n";
-            
-            std::istringstream stringStream(additionalInformation);
-            std::string line;
-            
-            while (std::getline(stringStream, line)) {
-                cerr << "  " << line << "\n";
-            }
-        }
-        
-        cerr << endl;
-        
-        m_hasReportedErrors = true;
-        
-        if (isFatal)
-            exit(EXIT_FAILURE);
     }
     
     void ErrorReporter::setInput(std::string input)

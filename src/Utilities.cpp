@@ -1,6 +1,8 @@
 
 #include <stdexcept>
 #include <ostream>
+#include <sstream>
+#include <iomanip>
 
 #include "Utilities.h"
 
@@ -241,13 +243,21 @@ namespace MAlice {
         tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(WHATWAS, "what was"));
     }
     
-    std::string Utilities::getNodeTextIncludingChildren(ASTNode node)
+    std::string Utilities::getNodeTextIncludingChildren(ASTNode node, CompilerContext *ctx, Range *outRange)
     {
-        ASTNode leftmostChildNode = getLeftDeepestChildNode(node);
-        ASTNode rightmostChildNode = getLeftDeepestChildNode(node);
+        pANTLR3_COMMON_TREE superNode = (pANTLR3_COMMON_TREE)node->super;
         
-        //TODO: complete implementation
-        return (char*)node->toString(node)->chars;
+        pANTLR3_COMMON_TOKEN_STREAM tokenStream = ctx->getTokenStream();
+        pANTLR3_VECTOR tokens = tokenStream->getTokens(tokenStream);
+        pANTLR3_COMMON_TOKEN startToken = (pANTLR3_COMMON_TOKEN)tokens->get(tokens, (ANTLR3_UINT32)superNode->startIndex);
+        pANTLR3_COMMON_TOKEN endToken = (pANTLR3_COMMON_TOKEN)tokens->get(tokens, (ANTLR3_UINT32)superNode->stopIndex);
+        
+        if (outRange) {
+            (*outRange).setLocation(startToken->charPosition);
+            (*outRange).setLength((unsigned int)(endToken->stop - startToken->start));
+        }
+        
+        return (char*)startToken->input->substr(startToken->input, startToken->start, endToken->stop)->chars;
     }
     
     ASTNode Utilities::getLeftDeepestChildNode(ASTNode node)
@@ -268,6 +278,29 @@ namespace MAlice {
             return node;
         
         return getLeftDeepestChildNode(Utilities::getChildNodeAtIndex(node, numChildren - 1));
+    }
+    
+    std::string Utilities::stringWithLineIndentation(std::string string, unsigned int lineIndentation)
+    {
+        std::istringstream stringStream(string);
+        std::string line;
+        std::stringstream output;
+        
+        while (std::getline(stringStream, line)) {
+            output << std::setw(2) << line << "\n";
+        }
+        
+        return output.str();
+    }
+    
+    ASTNode Utilities::getFirstNonImaginaryChildNode(ASTNode node)
+    {
+        pANTLR3_COMMON_TOKEN token = node->getToken(node);
+        
+        if (getNumberOfChildNodes(node) == 0 || (token->start != 0 && token->stop != 0))
+            return node;
+        
+        return getFirstNonImaginaryChildNode(getChildNodeAtIndex(node, 0));
     }
     
 }; // namespace MAlice
