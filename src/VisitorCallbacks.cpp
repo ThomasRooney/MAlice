@@ -555,11 +555,13 @@ namespace MAlice {
         {
             // TODO: Walker to left, right of expression, take substr of input to give better error output
             std::string expr = std::string((char*)(node->toStringTree(node)->chars));
+            // leftmostnode
+            ASTNode leftNode = Utilities::getLeftDeepestChildNode(node);
             ctx->getErrorReporter()->reportError(
-                                        Utilities::getNodeLineNumber(node),
-                                        Utilities::getNodeColumnIndex(node),
+                                        Utilities::getNodeLineNumber(leftNode),
+                                        Utilities::getNodeColumnIndex(leftNode),
                                         ErrorType::Semantic,
-                                        "Expression: '" + Utilities::getNodeTextIncludingChildren(node) + "' '" + expr + "' does not have the expected type: " + \
+                                        "Expression: '" + Utilities::getNodeTextIncludingChildren(node) + "'  does not have the expected type: " + \
                                         Utilities::getNameOfTypeFromMAliceType(typeConfirm) + \
                                         "(\'" + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" + \
                                         Utilities::getNameOfTypeFromMAliceType(typeConfirm) + "\')",
