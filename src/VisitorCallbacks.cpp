@@ -323,7 +323,13 @@ namespace MAlice {
             if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
                 return false;
             
-            FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), MAliceTypeUndefined);
+            // Get the return type
+            MAliceType returnType = MAliceType::MAliceTypeUndefined;
+            ASTNode returnNode = Utilities::getChildNodeAtIndex(node, 2);
+            if (returnNode != NULL)
+                returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
+
+            FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), returnType);
             
             ctx->addEntityInScope(identifier, functionEntity);
             if (!visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx))
