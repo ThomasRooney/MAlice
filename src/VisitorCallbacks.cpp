@@ -51,13 +51,28 @@ namespace MAlice {
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        //  the expression on node 1 must return a a boolean
-        if (Utilities::getNumberOfChildNodes(node) < 1) {
+        bool checkTotal = true;
+        // If -> (Expression -> Statements)*
+        int numChildren = Utilities::getNumberOfChildNodes(node);
+        if (numChildren < 1) {
             outputInvalidASTError(ctx, "If Statement");
             return false;
         }
-        ASTNode conditional = Utilities::getChildNodeAtIndex(node, 0);
-        return checkExpression(conditional, walker, ctx, MAliceTypeBoolean);
+        //  the expression on node 1 must return a a boolean
+        for (int i = 0 ; i < numChildren; i++)
+        {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(node,i);
+            switch(Utilities::getNodeType(childNode))
+            {
+                case EXPRESSION:
+                    checkTotal = checkExpression(childNode, walker, ctx, MAliceTypeBoolean) && checkTotal;
+                    break;
+                default:
+                    continue;
+            }
+        }
+        
+        return checkTotal;
     }
     
     bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -106,7 +121,22 @@ namespace MAlice {
     
     bool visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        // First child must be an expression
+        int numChildren = Utilities::getNumberOfChildNodes(node);
+        if (numChildren < 1) {
+            outputInvalidASTError(ctx, "While Statement with no conditional");
+            return false;
+        }
+        //  the expression on node 1 must return a a boolean
+        ASTNode exprNode = Utilities::getChildNodeAtIndex(node,0);
+        switch(Utilities::getNodeType(exprNode))
+        {
+            case EXPRESSION:
+                return checkExpression(exprNode, walker, ctx, MAliceTypeBoolean);
+            default:
+                return false;
+        }        
+        return false;
     }
     
     // Expressions
