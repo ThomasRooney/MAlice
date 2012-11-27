@@ -334,6 +334,18 @@ namespace MAlice {
                         //
                     case MINUS:
                     case PLUS:
+                        // Case where these are used as unary operators just because
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
+                        if (numChildrenOfChild == 1)
+                        {
+                            checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeNumber);
+                            return MAliceTypeNumber;
+                            break;
+                        }
+                    case BITWISEXOR:
+                    case BITWISEOR:
+                    case BITWISEAND:
+
                     case MODULO:
                     case MULTIPLY:
                         numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
