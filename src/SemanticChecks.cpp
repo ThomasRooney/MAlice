@@ -214,7 +214,12 @@ namespace MAlice {
                         return getTypeFromExpressionNode(childNode, walker, ctx);
                         break;
                     case INVOCATION:
-                        return getReturnTypeAndCheckIsValidInvocation(node, walker, ctx);
+                    {
+                        if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
+                            return MAliceTypeNone;
+                        
+                        return getReturnTypeForInvocation(node, walker, ctx);
+                    }
                         break;
 
                     case EQUALS:
@@ -507,25 +512,21 @@ namespace MAlice {
         return true;
     }
     
-    bool checkReturnTypeForInvocationIsValid(ASTNode invocationNode, MAliceType expectedReturnType, ASTWalker *walker, CompilerContext *ctx)
+    MAliceType getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
         if (!funcProcEntity)
-            return false;
+            return MAliceTypeNone;
         
         MAliceEntityType entityType = Utilities::getTypeOfEntity(funcProcEntity);
         
         // Check for a valid procedure invocation
-        if (entityType == MAliceEntityTypeProcedure) {
-            if (expectedReturnType == MAliceTypeNone)
-                return true;
-            
-            return false;
-        }
+        if (entityType == MAliceEntityTypeProcedure)
+            return MAliceTypeNone;
         
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
         
-        return functionEntity->getReturnType() == expectedReturnType;
+        return functionEntity->getReturnType();
     }
     
     bool checkNumberOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
