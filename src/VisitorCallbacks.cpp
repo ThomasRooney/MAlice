@@ -81,7 +81,7 @@ namespace MAlice {
             ctx->getErrorReporter()->reportError(  Utilities::getNodeLineNumber(input),
                                         r,
                                         ErrorType::Semantic,
-                                        "Input can only stream to a Letter or a Number variable.  '" + text + "' because it is a keyword.",
+                                        "Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.",
                                         "",
                                         false);
             }
