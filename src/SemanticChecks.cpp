@@ -604,4 +604,35 @@ namespace MAlice {
         
         return result;
     }
+    
+    bool checkValidPrintStatementNode(ASTNode printStatementNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        // make sure there is one child
+        int numChildren = Utilities::getNumberOfChildNodes(printStatementNode);
+        if (numChildren != 1) {
+            outputInvalidASTError(ctx, "print statement");
+            return false;
+        }
+        
+        ASTNode childNode = Utilities::getChildNodeAtIndex(printStatementNode, 0);
+        // Get the type of the child, if its an expression
+        int nodeType = Utilities::getNodeType(childNode);
+        if (nodeType == EXPRESSION)
+        {
+            // Make sure its not undefined
+            MAliceType t = getTypeFromExpressionNode(childNode, walker, ctx);
+            if (t == MAliceTypeUndefined)
+            {
+                // Deepest child Node
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(printStatementNode),
+                                                     Utilities::getNodeColumnIndex(printStatementNode),
+                                                     ErrorType::Semantic,
+                                                     "Expression: '" + Utilities::getNodeTextIncludingChildren(childNode, ctx, NULL) + "' is not a valid print statement.",
+                                                     false);
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }

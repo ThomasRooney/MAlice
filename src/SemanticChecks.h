@@ -25,7 +25,7 @@ namespace MAlice {
     
     bool checkValidAssignmentStatementNode(ASTNode assignmentStatementNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkValidIfStatementNode(ASTNode ifStatementNode, ASTWalker *walker, CompilerContext *ctx);
-    
+    bool checkValidPrintStatementNode(ASTNode printStatementNode, ASTWalker *walker, CompilerContext *ctx);
 };
 
 #endif /* #ifndef _MALICESEMANTICCHECKS */

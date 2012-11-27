@@ -61,39 +61,7 @@ namespace MAlice {
     
     bool visitPrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        // make sure there is one child
-        int numChildren = Utilities::getNumberOfChildNodes(node);
-        if (numChildren != 1)
-        {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                 Utilities::getNodeColumnIndex(node),
-                                                 ErrorType::Internal,
-                                                 "PrintNode malformed: '" + Utilities::getNodeTextIncludingChildren(node, ctx, NULL) + "'.",
-                                                 false);
-            return false;
-        }
-        ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
-        // Get the type of the child, if its an expression
-        int nodeType = Utilities::getNodeType(childNode);
-        if (nodeType == EXPRESSION)
-        {
-            // Make sure its not undefined
-            MAliceType t = getTypeFromExpressionNode(childNode, walker, ctx);
-            if (t == MAliceTypeUndefined)
-            {
-                // Deepest child Node
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                     Utilities::getNodeColumnIndex(node),
-                                                     ErrorType::Semantic,
-                                                     "Expression: '" + Utilities::getNodeTextIncludingChildren(childNode, ctx, NULL) + "' is not a valid print statement.",
-                                                     false);
-                return false;
-            }
-            return true;
-        }
-        
-        
-        return walker->visitChildren(node, ctx);
+        return checkValidPrintStatementNode(node, walker, ctx);
     }
     
     bool visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
