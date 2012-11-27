@@ -487,7 +487,6 @@ namespace MAlice {
         
         ASTNode lvalueNode = Utilities::getChildNodeAtIndex(assignmentStatementNode, 0);
         ASTNode rvalueNode = Utilities::getChildNodeAtIndex(assignmentStatementNode, 1);
-        std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
         
         bool isLValueArray = false;
         
@@ -500,6 +499,8 @@ namespace MAlice {
         
         lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode, 0);
         ANTLR3_UINT32 topLevelExpressionNodeType = Utilities::getNodeType(lvalueNode);
+        
+        std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
         
         Range invalidExpressionRange;
         std::string invalidExpression = Utilities::getNodeTextIncludingChildren(lvalueNode, ctx, &invalidExpressionRange);
