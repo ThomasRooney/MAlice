@@ -344,6 +344,7 @@ namespace MAlice {
                         break;
                     case MINUS:
                     case PLUS:
+                    case TILDE:
                         // Case where these are used as unary operators just because
                         numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
                         if (numChildrenOfChild == 1)
