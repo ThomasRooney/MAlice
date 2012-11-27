@@ -332,6 +332,16 @@ namespace MAlice {
                         }
                         break;
                         //
+                    case BANG:
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
+                        if (numChildrenOfChild != 1)
+                        {
+                             outputInvalidASTError(ctx, "Bang (!)");
+                        }
+                        checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeBoolean);
+                        return MAliceTypeBoolean;
+
+                        break;
                     case MINUS:
                     case PLUS:
                         // Case where these are used as unary operators just because
@@ -342,6 +352,8 @@ namespace MAlice {
                             return MAliceTypeNumber;
                             break;
                         }
+                    
+
                     case BITWISEXOR:
                     case BITWISEOR:
                     case BITWISEAND:
@@ -531,7 +543,7 @@ namespace MAlice {
         ASTNode parentNode = lvalueNode;
         
         if (Utilities::getNodeType(lvalueNode) != EXPRESSION) {
-            outputInvalidASTError(ctx, "assignment statement");
+                outputInvalidASTError(ctx, "assignment statement");
             return false;
         }
         
