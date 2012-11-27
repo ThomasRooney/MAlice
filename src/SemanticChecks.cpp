@@ -103,7 +103,7 @@ namespace MAlice {
         {
             if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
             {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Warning - not all execution paths of '" + entity->getIdentifier() + "' function have a return value"));
+                ctx->getErrorReporter()->reportError(ErrorFactory::createWarningError("Not all execution paths of function '" + entity->getIdentifier() + "' have a return value."));
             }
                 
         }
