@@ -208,11 +208,15 @@ namespace MAlice {
                 MAliceType secondChildType;
                 bool valid;
                 // if childNode is an invocationnode, check symbol exists and arguments are correct
-                switch (Utilities::getNodeType(childNode))
+                switch (Utilities::getNodeType(node))
                 {
+                    case EXPRESSION:
+                        return getTypeFromExpressionNode(childNode, walker, ctx);
+                        break;
                     case INVOCATION:
                         return getReturnTypeAndCheckIsValidInvocation(childNode, walker, ctx);
                         break;
+
                     case EQUALS:
                     case NOTEQUAL:
                     case LESSTHAN:
@@ -220,12 +224,12 @@ namespace MAlice {
                     case GREATERTHAN:
                     case GREATERTHANEQUAL:
                         // Check there are two children
-                        numChildrenOfChild = Utilities::getNumberOfChildNodes(childNode);
-                        binOperator = Utilities::getNodeText(childNode);
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
+                        binOperator = Utilities::getNodeText(node);
                         if (numChildrenOfChild != 2)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
-                                                                 Utilities::getNodeColumnIndex(childNode),
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                 Utilities::getNodeColumnIndex(node),
                                                                  ErrorType::Semantic,
                                                                  "Boolean Operator: '" +\
                                                                  binOperator +\
@@ -234,13 +238,13 @@ namespace MAlice {
                             return MAliceTypeBoolean;
                         }
                         // Check the type of the first child
-                        firstChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx);
+                        firstChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0), walker, ctx);
                         // Check the type of the second child is the same as the first child
-                        secondChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(childNode, 0),walker,ctx);
+                        secondChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),walker,ctx);
                         if (firstChildType != secondChildType)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
-                                                                 Utilities::getNodeColumnIndex(childNode),
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                 Utilities::getNodeColumnIndex(node),
                                                                  ErrorType::Semantic,
                                                                  "Boolean Operator: '" +\
                                                                  binOperator +\
@@ -287,7 +291,7 @@ namespace MAlice {
                         return MAliceTypeNumber;
                         break;
                     case ARRAYSUBSCRIPT:
-                        numChildrenOfChild = Utilities::getNumberOfChildNodes(childNode);
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
                         // make sure this has two children.
                         if (numChildrenOfChild != 2)
                         {
@@ -300,7 +304,7 @@ namespace MAlice {
                                                                  false);
                             return MAliceTypeUndefined;
                         }
-                        nodeBuffer = Utilities::getChildNodeAtIndex(childNode, 0);
+                        nodeBuffer = Utilities::getChildNodeAtIndex(node, 0);
                         stringBuffer = Utilities::getNodeText(nodeBuffer);
                         // check its in scope
                         if (ctx->isSymbolInScope(stringBuffer, &entityBuffer))
@@ -328,6 +332,28 @@ namespace MAlice {
                         }
                         break;
                         //
+                    case MINUS:
+                    case PLUS:
+                    case MODULO:
+                    case MULTIPLY:
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
+                        // make sure this has two children.
+                        if (numChildrenOfChild != 2)
+                        {
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
+                                                                 Utilities::getNodeColumnIndex(childNode),
+                                                                 ErrorType::Internal,
+                                                                 "Malformed Expression '" +\
+                                                                 binOperator +\
+                                                                 "' ",
+                                                                 false);
+                            return MAliceTypeUndefined;
+                        }
+                        checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeNumber);
+                        checkExpression(Utilities::getChildNodeAtIndex(node, 1), walker, ctx, MAliceTypeNumber);
+                        // Check they return numbers 
+                        return MAliceTypeNumber;
+                        break;
                     default:
                     {
                         std::string ident = Utilities::getNodeText(childNode);
