@@ -212,6 +212,9 @@ namespace MAlice {
         m_hasReportedErrors = true;
         
         delete error;
+        
+        if (error->getType() == ErrorType::Internal)
+            exit(EXIT_FAILURE);
     }
     
     void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
