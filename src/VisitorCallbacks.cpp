@@ -51,7 +51,13 @@ namespace MAlice {
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return checkValidIfStatementNode(node, walker, ctx);
+        //  the expression on node 1 must return a a boolean
+        if (Utilities::getNumberOfChildNodes(node) != 2) {
+            outputInvalidASTError(ctx, "If Statement");
+            return false;
+        }
+        ASTNode conditional = Utilities::getChildNodeAtIndex(node, 0);
+        return checkExpression(conditional, walker, ctx, MAliceTypeBoolean);
     }
     
     bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
