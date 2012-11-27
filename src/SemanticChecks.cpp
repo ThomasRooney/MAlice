@@ -214,7 +214,7 @@ namespace MAlice {
                         return getTypeFromExpressionNode(childNode, walker, ctx);
                         break;
                     case INVOCATION:
-                        return getReturnTypeAndCheckIsValidInvocation(childNode, walker, ctx);
+                        return getReturnTypeAndCheckIsValidInvocation(node, walker, ctx);
                         break;
 
                     case EQUALS:
@@ -256,12 +256,12 @@ namespace MAlice {
                     case LOGICALAND:
                     case LOGICALOR:
                         // Check there are two children
-                        numChildrenOfChild = Utilities::getNumberOfChildNodes(childNode);
-                        binOperator = Utilities::getNodeText(childNode);
+                        numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
+                        binOperator = Utilities::getNodeText(node);
                         if (numChildrenOfChild != 2)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
-                                                                 Utilities::getNodeColumnIndex(childNode),
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                 Utilities::getNodeColumnIndex(node),
                                                                  ErrorType::Semantic,
                                                                  "Boolean Operator: '" +\
                                                                  binOperator +\
@@ -270,13 +270,13 @@ namespace MAlice {
                             return MAliceTypeBoolean;
                         }
                         // Check the type of the first child is a bool
-                        valid = checkExpression(Utilities::getChildNodeAtIndex(childNode, 0), walker, ctx, MAliceTypeBoolean);
+                        valid = checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeBoolean);
                         // Check the type of the second child is the same as the first child
-                        valid = checkExpression(Utilities::getChildNodeAtIndex(childNode, 1),walker,ctx, MAliceTypeBoolean) && valid ;
+                        valid = checkExpression(Utilities::getChildNodeAtIndex(node, 1),walker,ctx, MAliceTypeBoolean) && valid ;
                         if (!valid)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
-                                                                 Utilities::getNodeColumnIndex(childNode),
+                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
+                                                                 Utilities::getNodeColumnIndex(node),
                                                                  ErrorType::Semantic,
                                                                  "Boolean Operator: '" +\
                                                                  binOperator +\
