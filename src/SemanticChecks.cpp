@@ -883,7 +883,7 @@ namespace MAlice {
                                                              Utilities::numberToString(functionEntity->getLineNumber()) +
                                                              ".");
             error->setLineNumber(Utilities::getNodeLineNumber(expressionNode));
-            error->setUnderlineRanges({range});
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(range));
             
             ctx->getErrorReporter()->reportError(error);
             
