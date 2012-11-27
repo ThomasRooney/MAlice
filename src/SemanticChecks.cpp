@@ -103,7 +103,7 @@ namespace MAlice {
         {
             if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
             {
-                ctx->getErrorReporter()->reportError(MAlice::ErrorType::Semantic, "Warning - not all execution paths have a return value", false);
+                ctx->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Warning - not all execution paths have a return value"));
             }
                 
         }
