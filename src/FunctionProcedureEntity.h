@@ -21,6 +21,7 @@ namespace MAlice {
         std::string humanReadableName() = 0;
         
         void setParameterListTypes(std::list<ParameterEntity> types);
+        std::list<ParameterEntity> getParameterListTypes();
     };
     
 };

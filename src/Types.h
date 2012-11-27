@@ -14,7 +14,7 @@ namespace MAlice {
     typedef bool (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
     
     typedef enum {
-        MAliceTypeUndefined = 0,
+        MAliceTypeNone = 0,
         MAliceTypeNumber,
         MAliceTypeLetter,
         MAliceTypeSentence,
