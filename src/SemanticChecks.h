@@ -22,7 +22,7 @@ namespace MAlice {
     bool checkReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkNumberOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkTypesOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
-    
+    bool checkHasReturnValueInAllExecutionPaths(ASTNode bodyNode);
     bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx);
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
     bool checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType type);

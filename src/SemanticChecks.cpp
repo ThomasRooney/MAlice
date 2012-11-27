@@ -64,10 +64,13 @@ namespace MAlice {
     bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx)
     {
         std::list<ParameterEntity> parameterList;
+        unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
+        ASTNode bodyNode;
+        bool hasBodyFlag = false;
         ctx->enterScope();
         
         // Loop through the rest of the child nodes
-        for (unsigned int i = 1; i < Utilities::getNumberOfChildNodes(node); ++i) {
+        for (unsigned int i = 1; i < numChildNodes; ++i) {
             ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);
             
             switch (Utilities::getNodeType(childNode))
@@ -87,13 +90,23 @@ namespace MAlice {
                     }
                     break;
                 case BODY:
-                    walker->visitNode(childNode, ctx);
+                    bodyNode = childNode;
+                    walker->visitNode(bodyNode, ctx);
+                    hasBodyFlag = true;
                     break;
                 default:
                     break;
             }
         }
-        
+        // Warning if not all execution paths return the type of the entity, should this be a function
+        if (hasBodyFlag && Utilities::getTypeOfEntity(entity) == MAliceEntityTypeFunction)
+        {
+            if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
+            {
+                ctx->getErrorReporter()->reportError(MAlice::ErrorType::Semantic, "Warning - not all execution paths have a return value", false);
+            }
+                
+        }
         ctx->exitScope();
         
         return true;
@@ -726,5 +739,20 @@ namespace MAlice {
         }
         
         return true;
+    }
+
+    bool checkHasReturnValueInAllExecutionPaths(ASTNode bodyNode)
+    {
+        bool validForAllChildren = true;
+        ASTNode childNode;
+        int numChildren = Utilities::getNumberOfChildNodes(bodyNode);
+        for (int i = 0; i < numChildren; i++)
+        {
+            childNode = Utilities::getChildNodeAtIndex(bodyNode, i);
+            if (Utilities::getNodeType(childNode) == IFSTATEMENT)
+                validForAllChildren = validForAllChildren & checkHasReturnValueInAllExecutionPaths(childNode);
+
+        }
+        return validForAllChildren;
     }
 }
