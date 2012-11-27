@@ -5,13 +5,18 @@ namespace MAlice {
     
     Error::Error(ErrorType type)
     {
-        m_errorType = type;
+        Error(type, "");
     }
     
     Error::Error(ErrorType type, std::string errorMessage)
     {
         m_errorType = type;
-        m_errorMessage = errorMessage;
+        
+        if (!errorMessage.empty())
+            m_errorMessage = errorMessage;
+        
+        m_errorPosition = NULL;
+        m_range = NULL;
     }
     
     Error::~Error()

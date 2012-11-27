@@ -158,8 +158,9 @@ namespace MAlice {
                         {
                             // Array has no children, hence this is an error!
                             ArrayEntity *lookupAEntity = dynamic_cast<ArrayEntity*>(lookupEntity);
-                            Error *error = ErrorFactory::createSemanticError("Array: '" + info + "' is not valid in this context");
+                            Error *error = ErrorFactory::createSemanticError("Cannot refer to array '" + info + "' directly.");
                             error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            error->setAdditionalInformation("To fix, specify an array element.");
                             ctx->getErrorReporter()->reportError(error);
                             
                             return lookupAEntity->getType();
@@ -544,7 +545,10 @@ namespace MAlice {
                 std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
                 std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
                 
-                Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" + SSTR(i+1) + " in invocation of '" + funcProcIdentifier + "' Expected argument of type '" + expectedTypeString + "' but found '" + expressionTypeString + "'.");
+                std::ostringstream stream;
+                stream << i+1;
+                
+                Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" + stream.str() + " in invocation of '" + funcProcIdentifier + "' Expected argument of type '" + expectedTypeString + "' but found '" + expressionTypeString + "'.");
                 error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(expressionNode)));
                 error->setRange(expressionRange);
                 

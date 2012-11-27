@@ -1,6 +1,8 @@
 
 #include "ErrorPosition.h"
 
+#include "limits.h"
+
 namespace MAlice {
     
     ErrorPosition::ErrorPosition(unsigned int lineNumber)
