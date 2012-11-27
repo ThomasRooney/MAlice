@@ -112,8 +112,8 @@ proc_func_invocation
 //Expression
 
 assignment
-	:	expression BECAME expression
-		-> ^(ASSIGNMENTSTATEMENT expression expression)
+	:	lvalue BECAME expression
+		-> ^(ASSIGNMENTSTATEMENT lvalue expression)
 	;
 
 // Statements
@@ -197,13 +197,29 @@ decrement_statement
 
 // Expressions
 expression
-	:	additive_expr
-		-> ^(EXPRESSION additive_expr)
+	:	boolean_combinator_expr
+		-> ^(EXPRESSION boolean_combinator_expr)
 	;
 
 lvalue	:	(IDENTIFIER APOSTROPHE_S) => IDENTIFIER (APOSTROPHE_S expression PIECE)?
 		-> ^(ARRAYSUBSCRIPT IDENTIFIER expression)
 	|	IDENTIFIER
+	;
+	
+boolean_combinator_expr
+	:	boolean_expr (boolean_combinator_operator^ boolean_expr)*
+	;
+	
+boolean_combinator_operator
+	:	(LOGICALAND | LOGICALOR)
+	;
+
+boolean_expr 
+	:	additive_expr (boolean_operator^ additive_expr)*
+	;
+	
+boolean_operator
+	:	(EQUALS | NOTEQUAL | LESSTHAN | LESSTHANEQUAL | GREATERTHAN | GREATERTHANEQUAL)
 	;
 
 additive_expr
@@ -211,15 +227,17 @@ additive_expr
 	;
 	
 additive_operator
-	:	(PLUS | MINUS | LOGICALAND | LOGICALOR)
+	:	(PLUS | MINUS)
 	;
+	
+
 
 multiplicative_expr
 	:	bitwise_expr (multiplicative_operator^ bitwise_expr)*
 	;
 	
 multiplicative_operator
-	:	(MULTIPLY | DIVIDE | MODULO | EQUALS | NOTEQUAL | LESSTHAN | LESSTHANEQUAL | GREATERTHAN | GREATERTHANEQUAL)
+	:	(MULTIPLY | DIVIDE | MODULO)
 	;
 	
 	
@@ -236,9 +254,9 @@ unary_expr
 	| 	unary_operator^ unary_expr
 	|	constant
 	|	lvalue
-	|	LPAREN additive_expr RPAREN
-		-> additive_expr
-	|	BANG LPAREN additive_expr RPAREN
+	|	LPAREN boolean_combinator_expr RPAREN
+		-> boolean_combinator_expr
+	|	BANG LPAREN boolean_combinator_expr RPAREN
 	;
 	
 unary_operator
