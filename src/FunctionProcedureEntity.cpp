@@ -12,5 +12,10 @@ namespace MAlice {
     {
         m_parameterListTypes = types;
     }
+    
+    std::list<ParameterEntity> FunctionProcedureEntity::getParameterListTypes()
+    {
+        return m_parameterListTypes;
+    }
 
 }; // namespace MAlice

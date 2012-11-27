@@ -109,7 +109,7 @@ namespace MAlice {
             std::string exprText = Utilities::getNodeTextIncludingChildren(node, ctx, &exprRange);
             
             std::string errorMessage;
-            if (type == MAliceTypeUndefined)
+            if (type == MAliceTypeNone)
                 errorMessage = "Can't match expected type '" + std::string(Utilities::getNameOfTypeFromMAliceType(typeConfirm)) + "' with procedure invocation.";
             else {
                 errorMessage = "Can't match expected type '" + std::string(Utilities::getNameOfTypeFromMAliceType(typeConfirm)) + \
@@ -176,7 +176,7 @@ namespace MAlice {
                                                                  ErrorType::Semantic,
                                                                  "Identifier: '" + info + "' does not have a type.",
                                                                  false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeNone;
                     }
                 }
                 else
@@ -186,7 +186,7 @@ namespace MAlice {
                                                          ErrorType::Semantic,
                                                          "Identifier: '" + info + "' is not in scope.",
                                                          false);
-                    return MAliceTypeUndefined;
+                    return MAliceTypeNone;
                 }
             }
             else
@@ -214,7 +214,12 @@ namespace MAlice {
                         return getTypeFromExpressionNode(childNode, walker, ctx);
                         break;
                     case INVOCATION:
-                        return getReturnTypeAndCheckIsValidInvocation(node, walker, ctx);
+                    {
+                        if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
+                            return MAliceTypeNone;
+                        
+                        return getReturnTypeForInvocation(node, walker, ctx);
+                    }
                         break;
 
                     case EQUALS:
@@ -302,7 +307,7 @@ namespace MAlice {
                                                                  binOperator +\
                                                                  "' ",
                                                                  false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeNone;
                         }
                         nodeBuffer = Utilities::getChildNodeAtIndex(node, 0);
                         stringBuffer = Utilities::getNodeText(nodeBuffer);
@@ -372,7 +377,7 @@ namespace MAlice {
                                                                  binOperator +\
                                                                  "' ",
                                                                  false);
-                            return MAliceTypeUndefined;
+                            return MAliceTypeNone;
                         }
                         checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeNumber);
                         checkExpression(Utilities::getChildNodeAtIndex(node, 1), walker, ctx, MAliceTypeNumber);
@@ -389,7 +394,7 @@ namespace MAlice {
                 }
             }
         }
-        return MAliceTypeUndefined;
+        return MAliceTypeNone;
     }
     
     bool checkValidInvocationNode(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
@@ -455,76 +460,126 @@ namespace MAlice {
         return functionEntity->getReturnType() == expectedType;
     }
     
-    MAliceType getReturnTypeAndCheckIsValidInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    FunctionProcedureEntity *getFunctionProcedureEntityForInvocationNode(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
-        
-        // does childNode return the right type, and is it in scope
-        std::string identifier = Utilities::getNodeText(identifierNode);
+        std::string identifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
         Entity *entity = NULL;
         
-        // Get the entity referred to by the ident, error if its not in scope
-        if (ctx->isSymbolInScope(identifier, &entity))
-        {
-            MAliceEntityType entityType = Utilities::getTypeOfEntity(entity);
-            
-            // Ensure it isn't a procedure
-            if (entityType == MAliceEntityTypeProcedure) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorType::Semantic,
-                                                     "Procedure '" + identifier + "' has no return type.",
-                                                     false);
-                
-                return MAliceTypeUndefined;
-            }
-            
-            if (entityType != MAliceEntityTypeFunction) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorType::Internal,
-                                                     "Malformed Symbol Table: invocation node refers to a non-function/procedure node!",
-                                                     true);
-                
-                return MAliceTypeUndefined;
-            }
-            
-            FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(entity);
-            
-            return functionEntity->getReturnType();
-        }
-        else
-        {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                 Utilities::getNodeColumnIndex(identifierNode),
-                                                 ErrorType::Semantic,
-                                                 "Function: '" + identifier + "' is not in scope.",
-                                                 false);
-            
-        }
-        return MAliceTypeUndefined;
+        if (!ctx->isSymbolInScope(identifier, &entity))
+            return NULL;
+        
+        MAliceEntityType entityType = Utilities::getTypeOfEntity(entity);
+        
+        if (entityType != MAliceEntityTypeProcedure && entityType != MAliceEntityTypeFunction)
+            return NULL;
+        
+        return dynamic_cast<FunctionProcedureEntity*>(entity);
     }
     
-    bool checkIsValidInvocationAndReturnType(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx, MAliceType type)
+    std::string getFunctionProcedureInvocationIdentifier(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
-        MAliceType returnType = getReturnTypeAndCheckIsValidInvocation(invocationNode, walker, ctx);
-        ASTNode identNode = Utilities::getChildNodeAtIndex(invocationNode,0);
-        // does childNode return the right type, and is it in scope
-        std::string ident = Utilities::getNodeText(identNode);
-        if (returnType != type)
-        {
-            ctx->getErrorReporter()->reportError(
-                                                 Utilities::getNodeLineNumber(invocationNode),
-                                                 Utilities::getNodeColumnIndex(invocationNode),
-                                                 ErrorType::Semantic,
-                                                 "Function: '" + ident + "' does not return the expected type: (\'" \
-                                                 + Utilities::getNameOfTypeFromMAliceType(type) + "\' != \'" +
-                                                 Utilities::getNameOfTypeFromMAliceType(returnType) + "\')",
-                                                 false);
+        if (Utilities::getNumberOfChildNodes(invocationNode) == 0) {
+            outputInvalidASTError(ctx, "function or procedure invocation");
+            return NULL;
+        }
+        
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
+        return Utilities::getNodeText(identifierNode);
+    }
+    
+    bool checkSymbolForInvocationIsValidOrOutputError(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        if (Utilities::getNumberOfChildNodes(invocationNode) == 0) {
+            outputInvalidASTError(ctx, "function or procedure invocation");
             return false;
         }
         
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
         
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        Entity *entity = NULL;
+        
+        if (!ctx->isSymbolInScope(identifier, &entity)) {
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
+                                                 Utilities::getNodeColumnIndex(identifierNode),
+                                                 ErrorType::Semantic,
+                                                 "Cannot find declaration for invocation of function or procedure '" + identifier + "'.",
+                                                 false);
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    MAliceType getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
+        if (!funcProcEntity)
+            return MAliceTypeNone;
+        
+        MAliceEntityType entityType = Utilities::getTypeOfEntity(funcProcEntity);
+        
+        // Check for a valid procedure invocation
+        if (entityType == MAliceEntityTypeProcedure)
+            return MAliceTypeNone;
+        
+        FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
+        
+        return functionEntity->getReturnType();
+    }
+    
+    bool checkNumberOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
+        if (!funcProcEntity)
+            return false;
+        
+        // Subtract one to take account for the identifier node
+        unsigned int numberOfInvokedParameters = Utilities::getNumberOfChildNodes(invocationNode) - 1;
+        
+        if (funcProcEntity->getParameterListTypes().size() != numberOfInvokedParameters)
+            return false;
+        
+        return true;
+    }
+    
+    bool checkTypesOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
+        if (!funcProcEntity)
+            return false;
+        
+        std::list<ParameterEntity> parameterTypes = funcProcEntity->getParameterListTypes();
+        
+        unsigned int i = 0;
+        for (std::list<ParameterEntity>::iterator it = parameterTypes.begin(); it != parameterTypes.end(); ++it) {
+            ParameterEntity paramEntity = *it;
+            ASTNode expressionNode = Utilities::getChildNodeAtIndex(invocationNode, i+1);
+            if (!expressionNode)
+                return false;
+            
+            MAliceType expressionType = getTypeFromExpressionNode(expressionNode, walker, ctx);
+            if (expressionType != paramEntity.getType()) {
+                Range expressionRange;
+                Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
+                
+                std::string funcProcIdentifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
+                std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
+                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
+                
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(expressionNode),
+                                                     expressionRange,
+                                                     ErrorType::Semantic,
+                                                     "Cannot match types of argument #" + SSTR(i+1) + " in invocation of '" + funcProcIdentifier + "' Expected argument of type '" + expectedTypeString + "' but found '" + expressionTypeString + "'.",
+                                                     "",
+                                                     false);
+                
+                return false;
+            }
+            
+            ++i;
+        }
         
         return true;
     }
@@ -673,7 +728,7 @@ namespace MAlice {
         {
             // Make sure its not undefined
             MAliceType t = getTypeFromExpressionNode(childNode, walker, ctx);
-            if (t == MAliceTypeUndefined)
+            if (t == MAliceTypeNone)
             {
                 // Deepest child Node
                 ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(printStatementNode),

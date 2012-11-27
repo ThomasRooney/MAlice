@@ -309,7 +309,7 @@ namespace MAlice {
                 return false;
             
             // Get the return type
-            MAliceType returnType = MAliceType::MAliceTypeUndefined;
+            MAliceType returnType = MAliceType::MAliceTypeNone;
             // 
             bool hasParams = false;
             // get node index 1, if its a parameter node, get params...

@@ -101,7 +101,7 @@ namespace MAlice {
         if (!typeString.compare("sentence"))
             return MAliceTypeSentence;
         
-        return MAliceTypeUndefined;
+        return MAliceTypeNone;
     }
 
     MAliceType Utilities::getTypeFromNodeType(int nodeType) 
@@ -115,7 +115,7 @@ namespace MAlice {
             case NUMBER_LITERAL:
                 return MAliceTypeNumber;
             default:
-                return MAliceTypeUndefined;
+                return MAliceTypeNone;
         }        
     }
 
