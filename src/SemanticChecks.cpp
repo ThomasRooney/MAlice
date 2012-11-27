@@ -533,8 +533,13 @@ namespace MAlice {
         if (!funcProcEntity)
             return false;
         
-        // Subtract one to take account for the identifier node
-        unsigned int numberOfInvokedParameters = Utilities::getNumberOfChildNodes(invocationNode) - 1;
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
+        if (!identifierNode) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("number of invocation arguments"));
+            return false;
+        }
+        
+        unsigned int numberOfInvokedParameters = Utilities::getNumberOfChildNodes(identifierNode);
         unsigned int numberOfFormalParameters = (unsigned int)funcProcEntity->getParameterListTypes().size();
         
         if (numberOfFormalParameters != numberOfInvokedParameters) {
