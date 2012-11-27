@@ -21,7 +21,7 @@ namespace MAlice {
     public:
         static unsigned int getNodeLineNumber(ASTNode node);
         static unsigned int getNodeColumnIndex(ASTNode node);
-        
+        static std::list<Range*> rangeToSingletonList(Range *r);
         static void printTree(ASTNode tree);
         
         static ANTLR3_UINT32 getNodeType(ASTNode node);
