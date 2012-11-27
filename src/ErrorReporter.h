@@ -37,9 +37,6 @@ namespace MAlice {
         IO
     };
     
-    // Error reporting helper methods
-    void outputInvalidASTError(CompilerContext *ctx, std::string currentOperation);
-    
     class ErrorReporter {
     private:
         std::string m_input;

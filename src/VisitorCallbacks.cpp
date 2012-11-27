@@ -7,6 +7,7 @@
 #include "VisitorCallbacks.h"
 #include "ArrayEntity.h"
 #include "Entity.h"
+#include "ErrorHelpers.h"
 #include "FunctionEntity.h"
 #include "ProcedureEntity.h"
 #include "SemanticChecks.h"
@@ -23,128 +24,29 @@ namespace MAlice {
     
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (Utilities::getNumberOfChildNodes(node) < 2) {
-            outputInvalidASTError(ctx, "checking validity of assignment statement node");
-            return false;
-        }
-        
-        ASTNode lvalueNode = Utilities::getChildNodeAtIndex(node, 0);
-        ASTNode rvalueNode = Utilities::getChildNodeAtIndex(node, 1);
-        std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
-        
-        bool isLValueArray = false;
-        
-        ASTNode parentNode = lvalueNode;
-        
-        if (Utilities::getNodeType(lvalueNode) != EXPRESSION) {
-            outputInvalidASTError(ctx, "checking validity of assignment statement node");
-            return false;
-        }
-        
-        lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode, 0);
-        ANTLR3_UINT32 topLevelExpressionNodeType = Utilities::getNodeType(lvalueNode);
-        
-        Range invalidExpressionRange;
-        std::string invalidExpression = Utilities::getNodeTextIncludingChildren(lvalueNode, ctx, &invalidExpressionRange);
-        
-        if (topLevelExpressionNodeType != ARRAYSUBSCRIPT && topLevelExpressionNodeType != IDENTIFIER) {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                 invalidExpressionRange,
-                                                 ErrorType::Semantic,
-                                                 "'" + invalidExpression + "' is not a valid l-value in assignment.",
-                                                 "",
-                                                 true);
-            
-            return false;
-        }
-        
-
-        // if lvalue is an array, iterate down to its child identifier.
-        if (Utilities::getNodeType(lvalueNode) == ARRAYSUBSCRIPT)
-        {
-            // Check this has children and isn't just referenced directly.
-            int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
-            
-            if (numChildren == 0) {
-                outputInvalidASTError(ctx, "checking validity of assignment statement node");
-                return false;
-            }
-            
-            lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode,0);
-            lvalueIdentifier = Utilities::getNodeText(lvalueNode);
-            isLValueArray = true;
-        }
-
-        // TODO: Check these are not null. otherwise fatal error
-
-
-        Entity *symbolTableEntity = NULL;
-        
-        // Check lvalue exists on the symbol table
-        if (!ctx->isSymbolInScope(lvalueIdentifier, &symbolTableEntity)) {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                 Utilities::getNodeColumnIndex(lvalueNode),
-                                                 ErrorType::Semantic,
-                                                 "Cannot find variable declaration for '" + lvalueIdentifier + "'.",
-                                                 false);
-            
-            return false;
-        } else {
-            MAliceEntityType symbolTableEntityType = Utilities::getTypeOfEntity(symbolTableEntity);
-            
-            if (symbolTableEntityType == MAliceEntityTypeArray && !isLValueArray) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                     Utilities::getNodeColumnIndex(lvalueNode),
-                                                     ErrorType::Semantic,
-                                                     "Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.",
-                                                     "To fix, assign to one of its elements.",
-                                                     false);
-                
-                return false;
-            }
-            
-            if (symbolTableEntityType == MAliceEntityTypeVariable && isLValueArray) {
-                Range errorRange;
-                
-                std::string lvalueText = Utilities::getNodeTextIncludingChildren(parentNode, ctx, &errorRange);
-                
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                     errorRange,
-                                                     ErrorType::Semantic,
-                                                     "Cannot assign value to '" + lvalueText + "' as '" + lvalueIdentifier + "' is not an array.",
-                                                     "",
-                                                     false);
-                
-                return false;
-            }
-            
-            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(symbolTableEntity);
-            
-            // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
-            checkExpression(rvalueNode, walker, ctx, variableEntity->getType());
-        }
-
-        return true;
+        return checkValidAssignmentStatementNode(node, walker, ctx);
     }
     
     bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (Utilities::getNumberOfChildNodes(node) == 1)
-        {
-            // Check that the child of this node is a number, and it has a child
-            return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        if (Utilities::getNumberOfChildNodes(node) != 1) {
+            outputInvalidASTError(ctx, "increment statement");
+            return false;
         }
-        return false;
+        
+        // Check that the child of this node is a number, and it has a child
+        return checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeNumber);
     }
     
     bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (Utilities::getNumberOfChildNodes(node) == 1)
-        {
-            // Check that the child of this node is a number, and it has a child
-            return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        if (Utilities::getNumberOfChildNodes(node) != 1) {
+            outputInvalidASTError(ctx, "decrement statement");
+            return false;
         }
-        return false;
+        
+        // Check that the child of this node is a number, and it has a child
+        return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
     }
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

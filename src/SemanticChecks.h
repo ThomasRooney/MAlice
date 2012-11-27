@@ -23,6 +23,8 @@ namespace MAlice {
     MAliceType getReturnTypeAndCheckIsValidInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
     MAliceType getTypeFromExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
+    bool checkValidAssignmentStatementNode(ASTNode assignmentStatementNode, ASTWalker *walker, CompilerContext *ctx);
+    
 };
 
 #endif /* #ifndef _MALICESEMANTICCHECKS */
