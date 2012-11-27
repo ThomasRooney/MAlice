@@ -14,5 +14,10 @@ namespace MAlice {
     {
         return "function";
     }
+    
+    FunctionEntity *FunctionEntity::clone()
+    {
+        return new FunctionEntity(getIdentifier(), getLineNumber(), getParameterListTypes(), getReturnType());
+    }
 
 };

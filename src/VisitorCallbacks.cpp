@@ -109,7 +109,7 @@ namespace MAlice {
     
     bool visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return checkValidReturnStatementNode(node, walker, ctx);
     }
     
     bool visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -329,8 +329,13 @@ namespace MAlice {
                 }
             }
             ctx->addEntityInScope(identifier, functionEntity);
-            if (!visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx))
-                return false;
+            ctx->pushFunctionProcedureEntity(functionEntity);
+            
+            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx);
+            
+            ctx->popFunctionProcedureEntity();
+            
+            return result;
         }
         
         return true;
@@ -387,8 +392,13 @@ namespace MAlice {
             ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
             
             ctx->addEntityInScope(identifier, procedureEntity);
-            if (!visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx))
-                return false;
+            ctx->pushFunctionProcedureEntity(procedureEntity);
+            
+            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx);
+            
+            ctx->popFunctionProcedureEntity();
+            
+            return result;
         }
         
         return true;

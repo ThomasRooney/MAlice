@@ -24,6 +24,8 @@
 
 namespace MAlice {
 
+    class FunctionProcedureEntity;
+    
     class CompilerContext{
     private:
         std::string m_input;
@@ -39,6 +41,8 @@ namespace MAlice {
         MUTEX temporarySymbolTableLock;
         void configureKeywords();
         SymbolTable* t_symbolTable;
+        
+        std::list<FunctionProcedureEntity*> m_functionProcedureScope;
         
         std::string getLineOfInput(unsigned int lineNumber);
     public:
@@ -66,6 +70,11 @@ namespace MAlice {
         void setInputStream(pANTLR3_INPUT_STREAM inputStream);
         pANTLR3_COMMON_TOKEN_STREAM getTokenStream();
         void setTokenStream(pANTLR3_COMMON_TOKEN_STREAM tokenStream);
+        
+        FunctionProcedureEntity *getCurrentFunctionProcedureEntity();
+        void pushFunctionProcedureEntity(FunctionProcedureEntity *entity);
+        void popFunctionProcedureEntity();
+    
     }; // class CompilerContext
     
 }; // namespace MAlice

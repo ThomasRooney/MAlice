@@ -16,6 +16,7 @@ private:
     
 public:
     FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes, MAliceType returnType);
+    FunctionEntity *clone();
     
     std::string humanReadableName();
     

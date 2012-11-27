@@ -17,8 +17,9 @@ namespace MAlice {
         
     public:
         FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes);
+        virtual FunctionProcedureEntity *clone() = 0;
         
-        std::string humanReadableName() = 0;
+        virtual std::string humanReadableName() = 0;
         
         void setParameterListTypes(std::list<ParameterEntity> types);
         std::list<ParameterEntity> getParameterListTypes();

@@ -7,6 +7,7 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
+Warning: Not all execution paths of function 'ackermann' have a return value.
 ---------------------
 Processing Valid File: ../malice_examples/valid/binarySearch.alice
 ---------------------
@@ -27,6 +28,30 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 70): Cannot refer to array 'arr' directly.
+      initialise(arr).
+                 ^
+
+To fix, specify an array element.
+
+Semantic error (Line 72): Cannot refer to array 'arr' directly.
+      output(arr).
+             ^
+
+To fix, specify an array element.
+
+Semantic error (Line 73): Cannot refer to array 'arr' directly.
+      bubbleSort(arr, arrSize).
+                 ^
+
+To fix, specify an array element.
+
+Semantic error (Line 75): Cannot refer to array 'arr' directly.
+      output(arr).
+             ^
+
+To fix, specify an array element.
+
 ---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciIterative.alice
 ---------------------
@@ -217,6 +242,24 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 20): Cannot refer to array 'arr' directly.
+    output(arr).
+           ^
+
+To fix, specify an array element.
+
+Semantic error (Line 31): Cannot refer to array 'arr' directly.
+    initialise2(arr, i).
+                ^
+
+To fix, specify an array element.
+
+Semantic error (Line 37): Cannot refer to array 'arr' directly.
+    initialise(arr).
+               ^
+
+To fix, specify an array element.
+
 ---------------------
 Processing Valid File: ../malice_examples/valid/test15.alice
 ---------------------
@@ -237,6 +280,36 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 48): Cannot refer to array 'vec1' directly.
+     initialise("Values of vector 1: ", vec1).
+                                        ^
+
+To fix, specify an array element.
+
+Semantic error (Line 49): Cannot refer to array 'vec2' directly.
+     initialise("Values of vector 2: ", vec2).
+                                        ^
+
+To fix, specify an array element.
+
+Semantic error (Line 50): Cannot refer to array 'vec1' directly.
+     crossProduct(vec1, vec2, vec3).
+                  ^
+
+To fix, specify an array element.
+
+Semantic error (Line 50): Cannot refer to array 'vec2' directly.
+     crossProduct(vec1, vec2, vec3).
+                        ^
+
+To fix, specify an array element.
+
+Semantic error (Line 50): Cannot refer to array 'vec3' directly.
+     crossProduct(vec1, vec2, vec3).
+                              ^
+
+To fix, specify an array element.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest01.alice
 ---------------------
@@ -277,6 +350,12 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 12): Cannot refer to array 'arr' directly.
+    proc(arr).
+         ^
+
+To fix, specify an array element.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest05.alice
 ---------------------
@@ -287,6 +366,12 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 12): Cannot refer to array 'arr' directly.
+    proc(arr).
+         ^
+
+To fix, specify an array element.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest06.alice
 ---------------------
@@ -438,6 +523,7 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
+Warning: Not all execution paths of function 'main' have a return value.
 Semantic error: Entry point procedure hatta() is not declared.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test09.alice
@@ -708,6 +794,12 @@ Actual parameter #1 in call to 'proc' on line 11 is passed by reference but the 
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 11): Cannot refer to array 'arr' directly.
+    proc(arr).
+         ^
+
+To fix, specify an array element.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test24.alice
 ---------------------
@@ -733,6 +825,7 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
+Warning: Not all execution paths of function 'hatta' have a return value.
 Semantic error: Entry point hatta() is declared as a function. It should be declared as a procedure.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test26.alice
@@ -876,6 +969,12 @@ Semantic error (Line 7): Procedure 'proc' expects 2 parameters, but found 1 para
 Semantic error (Line 8): Procedure 'proc' expects 2 parameters, but found 3 parameters in invocation.
     proc (5, 6, 7).
     ~~~~~~~~~~~~~~~
+Semantic error (Line 9): Cannot match types of argument #2 in invocation of 'proc'. Expected argument of type 'number' but found 'letter'.
+    proc (5, 'a').
+             ~~~  
+Semantic error (Line 10): Cannot match types of argument #1 in invocation of 'proc'. Expected argument of type 'number' but found 'sentence'.
+    proc ("MAlice labs", 6).
+          ~~~~~~~~~~~~~     
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test32.alice
 ---------------------

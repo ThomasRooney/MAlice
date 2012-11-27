@@ -125,7 +125,7 @@ namespace MAlice {
             else {
                 errorMessage = "Can't match expected type '" + std::string(Utilities::getNameOfTypeFromMAliceType(typeConfirm)) + \
                 "' with type '" + std::string(Utilities::getNameOfTypeFromMAliceType(type)) + "' for expression '" + \
-                exprText + "'.";
+                Utilities::stripLeadingAndTrailingCharacters(exprText, '\'') + "'.";
             }
             
             ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
@@ -849,5 +849,47 @@ namespace MAlice {
         }
         // Only fails if there is no return in this scope, and there is at least one lower scope which has no return
         return numberOfIfStatements == numberOfReturningIfStatements && ExpressionRequiredAlways;
+    }
+    
+    bool checkValidReturnStatementNode(ASTNode returnStatementNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *currentFunctionProcedureEntity = ctx->getCurrentFunctionProcedureEntity();
+        MAliceEntityType type = Utilities::getTypeOfEntity(currentFunctionProcedureEntity);
+        
+        if (!currentFunctionProcedureEntity || type != MAliceEntityTypeFunction) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("return statement"));
+            return false;
+        }
+        
+        FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(currentFunctionProcedureEntity);
+        
+        ASTNode expressionNode = Utilities::getChildNodeAtIndex(returnStatementNode, 0);
+        if (!expressionNode) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("return statement"));
+            return false;
+        }
+
+        MAliceType expressionType = getTypeFromExpressionNode(expressionNode, walker, ctx);
+        
+        if (expressionType != functionEntity->getReturnType()) {
+            Range *range = NULL;
+            std::string expressionString = Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &range);
+            
+            Error *error = ErrorFactory::createSemanticError("The return value '" +
+                                                             Utilities::stripLeadingAndTrailingCharacters(expressionString, '\'') +
+                                                             "' does not match the return value of '" +
+                                                             functionEntity->getIdentifier() +
+                                                             "' declared on line " +
+                                                             Utilities::numberToString(functionEntity->getLineNumber()) +
+                                                             ".");
+            error->setLineNumber(Utilities::getNodeLineNumber(expressionNode));
+            error->setUnderlineRanges({range});
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        return true;
     }
 }

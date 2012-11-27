@@ -332,4 +332,18 @@ namespace MAlice {
         return new Range(ErrorPosition(startLine, startColumn), ErrorPosition(endLine, endColumn));
     }
     
+    std::string Utilities::stripLeadingAndTrailingCharacters(std::string input, char character)
+    {
+        unsigned int startIndex = 0;
+        unsigned int endIndex = (unsigned int)input.size() - 1;
+        
+        if (input[0] == character)
+            startIndex++;
+        
+        if (input[input.size() - 1] == character)
+            endIndex--;
+        
+        return input.substr(startIndex, endIndex - startIndex + 1);
+    }
+    
 }; // namespace MAlice

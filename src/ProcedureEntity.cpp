@@ -11,5 +11,10 @@ namespace MAlice {
     {
         return "procedure";
     }
+    
+    ProcedureEntity *ProcedureEntity::clone()
+    {
+        return new ProcedureEntity(getIdentifier(), getLineNumber(), getParameterListTypes());
+    }
 
 }; // namespace MAlice

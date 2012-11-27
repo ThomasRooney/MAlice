@@ -1,8 +1,10 @@
 
-#include "CompilerContext.h"
-#include "SymbolTable.h"
-
 #include <unordered_map>
+
+#include "CompilerContext.h"
+
+#include "SymbolTable.h"
+#include "FunctionProcedureEntity.h"
 
 using namespace std;
 
@@ -32,6 +34,7 @@ namespace MAlice {
     CompilerContext::~CompilerContext()
     {
         // TODO: Delete SymbolTables in destructor
+        // TODO: delete function/procedure entities
         
         if (m_lexer)
             delete m_lexer, m_lexer = NULL;
@@ -232,6 +235,30 @@ namespace MAlice {
     void CompilerContext::setTokenStream(pANTLR3_COMMON_TOKEN_STREAM tokenStream)
     {
         m_tokenStream = tokenStream;
+    }
+    
+    FunctionProcedureEntity *CompilerContext::getCurrentFunctionProcedureEntity()
+    {
+        if (m_functionProcedureScope.empty())
+            return NULL;
+        
+        return m_functionProcedureScope.back();
+    }
+    
+    void CompilerContext::pushFunctionProcedureEntity(FunctionProcedureEntity *entity)
+    {
+        m_functionProcedureScope.push_back(entity->clone());
+    }
+    
+    void CompilerContext::popFunctionProcedureEntity()
+    {
+        if (m_functionProcedureScope.empty())
+            return;
+        
+        FunctionProcedureEntity *entity = m_functionProcedureScope.back();
+        m_functionProcedureScope.pop_back();
+        
+        delete entity;
     }
     
 }; // namespace MAlice
