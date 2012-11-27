@@ -821,6 +821,9 @@ Type clash in assignment on line 16. One type is 'number' and the other is 'void
 ---------------------
 Student Compiler Output:
 ---------------------
+Warning (Line 15): Unused return value from function 'func'.
+    func(10).
+    ~~~~~~~~~
 Semantic error (Line 16): Can't match expected type 'number' with procedure invocation.
     x became proc(10).
              ~~~~~~~~ 
@@ -867,6 +870,12 @@ Type of actual argument #1 in call to 'proc' on line 10 does not match the type 
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 7): Procedure 'proc' expects 2 parameters, but found 1 parameter in invocation.
+    proc (5).
+    ~~~~~~~~~
+Semantic error (Line 8): Procedure 'proc' expects 2 parameters, but found 3 parameters in invocation.
+    proc (5, 6, 7).
+    ~~~~~~~~~~~~~~~
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test32.alice
 ---------------------
