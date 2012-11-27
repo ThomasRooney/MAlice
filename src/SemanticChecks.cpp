@@ -105,7 +105,6 @@ namespace MAlice {
             {
                 ctx->getErrorReporter()->reportError(ErrorFactory::createWarningError("Not all execution paths of function '" + entity->getIdentifier() + "' have a return value."));
             }
-                
         }
         ctx->exitScope();
         
@@ -774,6 +773,8 @@ namespace MAlice {
     {
         bool validForAllChildren = true;
         ASTNode childNode;
+        int numberOfIfStatements = 0;
+        int numberOfReturningIfStatements = 0;
         int numChildren = Utilities::getNumberOfChildNodes(bodyNode);
         for (int i = 0; i < numChildren; i++)
         {
@@ -784,7 +785,8 @@ namespace MAlice {
                     // If we find a return on an upper scope, there's no problem, it'll return true
                     // If every lower scope has a return statement, no problem
                     // Else, warning
-                    validForAllChildren = validForAllChildren && checkHasReturnValueInAllExecutionPaths(childNode);
+                    numberOfIfStatements++;
+                    numberOfReturningIfStatements = checkHasReturnValueInAllExecutionPaths(childNode)?numberOfReturningIfStatements + 1 : numberOfReturningIfStatements;
                     break;
                 case RETURNSTATEMENT:
                     return true;
@@ -798,6 +800,7 @@ namespace MAlice {
 
             }
         }
-        return validForAllChildren;
+        // Only fails if there is no return in this scope, and there is at least one lower scope which has no return
+        return numberOfIfStatements == numberOfReturningIfStatements;
     }
 }
