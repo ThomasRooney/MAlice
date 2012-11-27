@@ -62,6 +62,30 @@ namespace MAlice {
     
     bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        // input must be either a number or a letter.
+        if (Utilities::getNumberOfChildNodes(node) < 1) {
+            outputInvalidASTError(ctx, "Input Statement");
+            return false;
+        }
+        ASTNode input = Utilities::getChildNodeAtIndex(node, 0);
+        MAliceType t = getTypeFromExpressionNode(input, walker, ctx);
+        switch(t)
+        {
+        case MAliceTypeLetter:
+        case MAliceTypeNumber:
+            return true;
+        default:
+            {
+            Range r;
+            std::string text = Utilities::getNodeTextIncludingChildren(input, ctx, &r);
+            ctx->getErrorReporter()->reportError(  Utilities::getNodeLineNumber(input),
+                                        r,
+                                        ErrorType::Semantic,
+                                        "Input can only stream to a Letter or a Number variable.  '" + text + "' because it is a keyword.",
+                                        "",
+                                        false);
+            }
+        }
         return walker->visitChildren(node, ctx);
     }
     
