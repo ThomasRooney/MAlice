@@ -337,8 +337,27 @@ namespace MAlice {
     
     bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!checkValidInvocationNode(node, walker, ctx))
+        if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
             return false;
+        
+        // This is being called in the context of a statement, not within an expression.
+        if (getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone) {
+            FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
+            std::string identifier = funcProcEntity->getIdentifier();
+            
+            Range *range = NULL;
+            Utilities::getNodeTextIncludingChildren(node, ctx, &range);
+
+            Error *error = ErrorFactory::createWarningError("Unused return value from function '" + identifier + "'.");
+            
+            ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+            if (identifierNode) {
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(identifierNode)));
+                error->setRange(range);
+            }
+            
+            ctx->getErrorReporter()->reportError(error);
+        }
         
         return true;
     }

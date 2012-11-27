@@ -14,6 +14,7 @@ namespace MAlice {
     
     class ErrorFactory {
     public:
+        static Error *createWarningError(std::string errorMessage);
         static Error *createInternalError(std::string errorMessage);
         static Error *createLexicalError();
         static Error *createLexicalError(std::string errorMessage);

@@ -379,38 +379,6 @@ namespace MAlice {
         return MAliceTypeNone;
     }
     
-    bool checkValidInvocationNode(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
-    {
-        if (Utilities::getNumberOfChildNodes(invocationNode) == 0)
-            return false;
-        
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
-        std::string identifier = Utilities::getNodeText(identifierNode);
-        Entity *entity = NULL;
-        
-        if (!ctx->isSymbolInScope(identifier, &entity)) {
-            Error *error = ErrorFactory::createSemanticError("Invocation of function or procedure '" + identifier + "' which is not declared in current scope.");
-            error->setErrorPosition(Utilities::getErrorPositionFromNode(identifierNode));
-            
-            ctx->getErrorReporter()->reportError(error);
-            
-            return false;
-        }
-        
-        MAliceEntityType entityType = Utilities::getTypeOfEntity(entity);
-        
-        if (entityType != MAliceEntityTypeFunction && entityType != MAliceEntityTypeProcedure) {
-            Error *error = ErrorFactory::createSemanticError("Invocation of symbol '" + identifier + "' is not a function or procedure.");
-            error->setErrorPosition(Utilities::getErrorPositionFromNode(identifierNode));
-            
-            ctx->getErrorReporter()->reportError(error);
-            
-            return false;
-        }
-        
-        return true;
-    }
-    
     bool checkCompatibleFunctionInvocationReturnType(ASTNode invocationNode, MAliceType expectedType, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(invocationNode) == 0)

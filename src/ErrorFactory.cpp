@@ -8,6 +8,11 @@
 
 namespace MAlice {
     
+    Error *ErrorFactory::createWarningError(std::string errorMessage)
+    {
+        return new Error(ErrorType::Warning, errorMessage);
+    }
+    
     Error *ErrorFactory::createInternalError(std::string errorMessage)
     {
         return new Error(ErrorType::Internal, errorMessage);
