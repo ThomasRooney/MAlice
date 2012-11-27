@@ -594,10 +594,8 @@ namespace MAlice {
             
             MAliceType expressionType = getTypeFromExpressionNode(expressionNode, walker, ctx);
             if (expressionType != paramEntity.getType()) {
-                // TODO: fix having to get child node of expression.
-                ASTNode childNode = Utilities::getChildNodeAtIndex(expressionNode, 0);
                 Range *expressionRange = NULL;
-                Utilities::getNodeTextIncludingChildren(childNode, ctx, &expressionRange);
+                Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
                 std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
@@ -612,7 +610,7 @@ namespace MAlice {
                                                                  "' but found '" +
                                                                  expressionTypeString +
                                                                  "'.");
-                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(childNode)));
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(expressionNode)));
                 error->setRange(expressionRange);
                 
                 ctx->getErrorReporter()->reportError(error);

@@ -20,12 +20,16 @@ namespace MAlice {
     
     unsigned int Utilities::getNodeLineNumber(ASTNode node)
     {
+        node = getFirstNonImaginaryChildNode(node);
+        
         pANTLR3_COMMON_TOKEN token = node->getToken(node);
         return token->getLine(token);
     }
     
     unsigned int Utilities::getNodeColumnIndex(ASTNode node)
     {
+        node = getFirstNonImaginaryChildNode(node);
+        
         pANTLR3_COMMON_TOKEN token = node->getToken(node);
         return token->getCharPositionInLine(token);
     }
@@ -297,11 +301,18 @@ namespace MAlice {
         return output.str();
     }
     
-    ASTNode Utilities::getFirstNonImaginaryChildNode(ASTNode node)
+    bool Utilities::isImaginaryNode(ASTNode node)
     {
         pANTLR3_COMMON_TOKEN token = node->getToken(node);
+        if (!token)
+            return true;
         
-        if (getNumberOfChildNodes(node) == 0 || (token->start != 0 && token->stop != 0))
+        return token->start == 0 && token->stop == 0;
+    }
+    
+    ASTNode Utilities::getFirstNonImaginaryChildNode(ASTNode node)
+    {
+        if (getNumberOfChildNodes(node) == 0 || !isImaginaryNode(node))
             return node;
         
         return getFirstNonImaginaryChildNode(getChildNodeAtIndex(node, 0));

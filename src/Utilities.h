@@ -37,6 +37,8 @@ namespace MAlice {
         static std::string getNodeTextIncludingChildren(ASTNode node, CompilerContext *ctx, Range **outRange);
         static ASTNode getLeftDeepestChildNode(ASTNode node);
         static ASTNode getRightDeepestChildNode(ASTNode node);
+        
+        static bool isImaginaryNode(ASTNode node);
         static ASTNode getFirstNonImaginaryChildNode(ASTNode node);
         
         static std::string stringWithLineIndentation(std::string string, unsigned int lineIndentation);
