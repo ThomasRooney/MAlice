@@ -684,9 +684,12 @@ Reference to 'arr' in line 6 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 5): Array: 'arr' is not valid in this context
+Semantic error (Line 5): Cannot refer to array 'arr' directly.
     arr said Alice.
     ^
+
+To fix, specify an array element.
+
 Semantic error (Line 6): Trying to assign to array 'arr' directly is invalid.
     arr became y.
     ^
@@ -877,9 +880,12 @@ Reference to 'func' in line 11 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 10): Array: 'arr' is not valid in this context
+Semantic error (Line 10): Cannot refer to array 'arr' directly.
     what was arr?
              ^
+
+To fix, specify an array element.
+
 Semantic error (Line 11): Identifier 'func' does not have a type.
     what was func?
              ^

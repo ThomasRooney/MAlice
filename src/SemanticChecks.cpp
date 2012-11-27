@@ -460,18 +460,59 @@ namespace MAlice {
     MAliceType getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
-        if (!funcProcEntity)
+        if (!funcProcEntity) {
             return MAliceTypeNone;
+        }
         
         MAliceEntityType entityType = Utilities::getTypeOfEntity(funcProcEntity);
         
-        // Check for a valid procedure invocation
         if (entityType == MAliceEntityTypeProcedure)
             return MAliceTypeNone;
         
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
         
         return functionEntity->getReturnType();
+    }
+    
+    bool checkReturnTypeForInvocation(ASTNode invocationNode, MAliceType type, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
+        
+        MAliceEntityType entityType = Utilities::getTypeOfEntity(funcProcEntity);
+        
+        // Check for a valid procedure invocation
+        if (entityType == MAliceEntityTypeProcedure) {
+            std::string expectedType = std::string(Utilities::getNameOfTypeFromMAliceType(type));
+            Range *range = NULL;
+            Utilities::getNodeTextIncludingChildren(invocationNode, ctx, &range);
+            
+            Error *error = ErrorFactory::createSemanticError("Expected type '" + expectedType + "'. Procedure '" + funcProcEntity->getIdentifier() + "' does have a return type.");
+            error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(invocationNode)));
+            error->setRange(range);
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
+        
+        if (type != functionEntity->getReturnType()) {
+            std::string expectedType = std::string(Utilities::getNameOfTypeFromMAliceType(type));
+            std::string actualType = std::string(Utilities::getNameOfTypeFromMAliceType(functionEntity->getReturnType()));
+            Range *range = NULL;
+            Utilities::getNodeTextIncludingChildren(invocationNode, ctx, &range);
+            
+            Error *error = ErrorFactory::createSemanticError("Can't match expected type '" + expectedType + "' with actual type '" + actualType + "'.");
+            error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(invocationNode)));
+            error->setRange(range);
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        return true;
     }
     
     bool checkNumberOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)

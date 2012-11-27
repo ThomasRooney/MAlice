@@ -230,7 +230,7 @@ namespace MAlice {
         cerr << "\n  " << line << "\n  ";
         
         for (unsigned int i = 0; i < line.size(); ++i) {
-            if (i < range->getLocation() || i >= range->getLocation() + range->getLength()) {
+            if (i < range->getLocation() || i > range->getLocation() + range->getLength()) {
                 cerr << " ";
             }
             else if (i <= range->getLocation() + range->getLength()) {
