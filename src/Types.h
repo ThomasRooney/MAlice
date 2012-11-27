@@ -2,8 +2,9 @@
 #define _MALICETYPES
 
 #include "MAliceParser.h"
+#include <ostream>
 
-#define SSTR( x ) ((( std::ostringstream() << std::dec << x ) ).str())
+#define SSTR( x )    ((std::ostringstream&)(std::ostringstream() << x)).str()
 
 namespace MAlice {
     

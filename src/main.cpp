@@ -34,7 +34,6 @@ std::string getPathFromCommandLineArguments(int argc, char *argv[]);
 bool hasFlagsInCommandLineArguments(int argc, char *argv[]);
 bool hasPrintTreeFlagEnabled(std::string flags);
 
-// Skeleton file based on http://stackoverflow.com/a/8542203
 int main(int argc, char *argv[])
 {
     // Take the calling parameter into account
