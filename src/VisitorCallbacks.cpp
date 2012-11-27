@@ -359,6 +359,12 @@ namespace MAlice {
             ctx->getErrorReporter()->reportError(error);
         }
         
+        if (!checkNumberOfArgumentsForInvocationIsValid(node, walker, ctx))
+            return false;
+        
+        if (!checkTypesOfArgumentsForInvocationIsValid(node, walker, ctx))
+            return false;
+        
         return true;
     }
     
