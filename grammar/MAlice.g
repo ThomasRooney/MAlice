@@ -256,11 +256,10 @@ unary_expr
 	|	lvalue
 	|	LPAREN boolean_combinator_expr RPAREN
 		-> boolean_combinator_expr
-	|	BANG LPAREN boolean_combinator_expr RPAREN
 	;
 	
 unary_operator
-	:	(PLUS | MINUS | TILDE)
+	:	(PLUS | MINUS | TILDE | BANG)
 	;
 	
 		
