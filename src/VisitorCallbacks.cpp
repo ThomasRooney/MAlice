@@ -51,26 +51,7 @@ namespace MAlice {
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        bool result = true;
-        
-        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
-            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);
-            ANTLR3_UINT32 nodeType = Utilities::getNodeType(childNode);
-            
-            if (nodeType == EXPRESSION) {
-                if (!walker->visitNode(childNode, ctx))
-                    result = false;
-            }
-            else if (nodeType == STATEMENTLIST) {
-                ctx->enterScope();
-                
-                walker->visitNode(childNode, ctx);
-                
-                ctx->exitScope();
-            }
-        }
-        
-        return result;
+        return checkValidIfStatementNode(node, walker, ctx);
     }
     
     bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

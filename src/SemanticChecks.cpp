@@ -576,4 +576,32 @@ namespace MAlice {
         }
     }
     
+    bool checkValidIfStatementNode(ASTNode ifStatementNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        bool result = true;
+        
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(ifStatementNode); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(ifStatementNode, i);
+            ANTLR3_UINT32 nodeType = Utilities::getNodeType(childNode);
+            
+            switch(nodeType)
+            {
+                case EXPRESSION:
+                    if (!walker->visitNode(childNode, ctx))
+                        result = false;
+                    break;
+                case STATEMENTLIST:
+                    ctx->enterScope();
+                    
+                    walker->visitNode(childNode, ctx);
+                    
+                    ctx->exitScope();
+                    break;
+                default:
+                    outputInvalidASTError(ctx, "if statement");
+            }
+        }
+        
+        return result;
+    }
 }
