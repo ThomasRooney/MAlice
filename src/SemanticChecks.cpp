@@ -100,7 +100,7 @@ namespace MAlice {
         }
         // Warning if not all execution paths return the type of the entity, should this be a function
         if (hasBodyFlag && Utilities::getTypeOfEntity(entity) == MAliceEntityTypeFunction)
-        {
+        {   
             if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
             {
                 ctx->getErrorReporter()->reportError(ErrorFactory::createWarningError("Not all execution paths of function '" + entity->getIdentifier() + "' have a return value."));
@@ -788,6 +788,7 @@ namespace MAlice {
         ASTNode childNode;
         int numberOfIfStatements = 0;
         int numberOfReturningIfStatements = 0;
+        bool ExpressionRequiredAlways = false;
         int numChildren = Utilities::getNumberOfChildNodes(bodyNode);
         for (int i = 0; i < numChildren; i++)
         {
@@ -795,11 +796,32 @@ namespace MAlice {
             switch(Utilities::getNodeType(childNode))
             {
                 case IFSTATEMENT:
+                    {
                     // If we find a return on an upper scope, there's no problem, it'll return true
                     // If every lower scope has a return statement, no problem
+                    // If every lower scope requires an expression (all might potentially fail), it should be false
                     // Else, warning
-                    numberOfIfStatements++;
-                    numberOfReturningIfStatements = checkHasReturnValueInAllExecutionPaths(childNode)?numberOfReturningIfStatements + 1 : numberOfReturningIfStatements;
+                    for (int i = 0 ; i < Utilities::getNumberOfChildNodes(childNode); i++)
+                    {
+                        ASTNode ifChildNode = Utilities::getChildNodeAtIndex(childNode,i);
+                        switch(Utilities::getNodeType(ifChildNode ))
+                        {
+                            case EXPRESSION:
+                                numberOfIfStatements++;                                
+                                numberOfReturningIfStatements = 
+                                    checkHasReturnValueInAllExecutionPaths(childNode)
+                                    ?    numberOfReturningIfStatements + 1 
+                                    :    numberOfReturningIfStatements;
+                                break;
+                            default:
+                                 ExpressionRequiredAlways = ExpressionRequiredAlways || i % 2 == 0;
+
+                        }
+                    }
+
+
+                    
+                    }
                     break;
                 case RETURNSTATEMENT:
                     return true;
@@ -814,6 +836,6 @@ namespace MAlice {
             }
         }
         // Only fails if there is no return in this scope, and there is at least one lower scope which has no return
-        return numberOfIfStatements == numberOfReturningIfStatements;
+        return numberOfIfStatements == numberOfReturningIfStatements && ExpressionRequiredAlways;
     }
 }
