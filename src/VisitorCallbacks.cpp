@@ -96,7 +96,7 @@ namespace MAlice {
                 Error *error = ErrorFactory::createSemanticError("Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.");
                 error->setLineNumber(Utilities::getNodeLineNumber(input));
                 error->setLineNumber(Utilities::getNodeLineNumber(input));
-                error->setUnderlineRanges({r});
+                error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
             }
         }
         return walker->visitChildren(node, ctx);
@@ -354,7 +354,7 @@ namespace MAlice {
             ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
             if (identifierNode) {
                 error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
-                error->setUnderlineRanges({range});
+                error->setUnderlineRanges(Utilities::rangeToSingletonList(range));
             }
             
             ctx->getErrorReporter()->reportError(error);
@@ -405,7 +405,9 @@ namespace MAlice {
             if (ctx->isKeyword(identifier)) {
                 Error *error = ErrorFactory::createSemanticError("Cannot declare variable '" + identifier + "' because it is a keyword.");
                 error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
-                error->setArrowRanges({Utilities::createRange(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))});
+                error->setArrowRanges(Utilities::rangeToSingletonList(
+                    Utilities::createRange(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))
+                    ));
                 
                 ctx->getErrorReporter()->reportError(error);
                 

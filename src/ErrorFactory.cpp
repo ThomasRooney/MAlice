@@ -55,7 +55,7 @@ namespace MAlice {
         
         Error *error = createSemanticError("'" + invalidExpression + "' is not a valid l-value.");
         error->setLineNumber(Utilities::getNodeLineNumber(node));
-        error->setUnderlineRanges({errorRange});
+        error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
         
         return error;
     }

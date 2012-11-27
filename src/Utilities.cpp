@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <ostream>
 #include <sstream>
+#include <list>
 #include <iomanip>
 
 #include "Utilities.h"
@@ -315,6 +316,13 @@ namespace MAlice {
             return node;
         
         return getFirstNonImaginaryChildNode(getChildNodeAtIndex(node, 0));
+    }
+
+    std::list<Range*> Utilities::rangeToSingletonList(Range *r)
+    {
+        std::list<Range*> singleton = std::list<Range*>();
+        singleton.push_back(r);
+        return singleton;
     }
     
     Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn)
