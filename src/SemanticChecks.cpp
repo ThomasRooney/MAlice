@@ -579,27 +579,40 @@ namespace MAlice {
         
         std::list<ParameterEntity> parameterTypes = funcProcEntity->getParameterListTypes();
         
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
+        if (!identifierNode) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function/procedure invocation"));
+            return false;
+        }
+        
         unsigned int i = 0;
         for (std::list<ParameterEntity>::iterator it = parameterTypes.begin(); it != parameterTypes.end(); ++it) {
             ParameterEntity paramEntity = *it;
-            ASTNode expressionNode = Utilities::getChildNodeAtIndex(invocationNode, i+1);
+            ASTNode expressionNode = Utilities::getChildNodeAtIndex(identifierNode, i);
             if (!expressionNode)
                 return false;
             
             MAliceType expressionType = getTypeFromExpressionNode(expressionNode, walker, ctx);
             if (expressionType != paramEntity.getType()) {
+                // TODO: fix having to get child node of expression.
+                ASTNode childNode = Utilities::getChildNodeAtIndex(expressionNode, 0);
                 Range *expressionRange = NULL;
-                Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
+                Utilities::getNodeTextIncludingChildren(childNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
                 std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
                 std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
                 
-                std::ostringstream stream;
-                stream << i+1;
-                
-                Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" + stream.str() + " in invocation of '" + funcProcIdentifier + "' Expected argument of type '" + expectedTypeString + "' but found '" + expressionTypeString + "'.");
-                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(expressionNode)));
+                Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" +
+                                                                 Utilities::numberToString(i+1) +
+                                                                 " in invocation of '" +
+                                                                 funcProcIdentifier +
+                                                                 "'. Expected argument of type '" +
+                                                                 expectedTypeString +
+                                                                 "' but found '" +
+                                                                 expressionTypeString +
+                                                                 "'.");
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(childNode)));
                 error->setRange(expressionRange);
                 
                 ctx->getErrorReporter()->reportError(error);
