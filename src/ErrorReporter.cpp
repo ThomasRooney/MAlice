@@ -9,9 +9,11 @@
 #include "CompilerContext.h"
 #include "Error.h"
 #include "ErrorFactory.h"
+#include "ErrorPosition.h"
 #include "limits.h"
 #include "Utilities.h"
 #include "MAliceParser.h"
+#include "Range.h"
 #include "Types.h"
 
 #define LINE_NUMBER_NA      UINT_MAX
@@ -37,7 +39,8 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             string errorMessage = "Unexpected token '" + identifier + "'.";
 
             MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
-            error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
+            error->setLineNumber(token->line);
+            error->setArrowRanges({MAlice::Utilities::createRange(token->line, token->charPosition)});
             
             parserErrorReporter->reportError(error);
         }
@@ -53,7 +56,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             string errorMessage = "Unrecognised or missing token.";
             
             MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
-            error->setErrorPosition(new MAlice::ErrorPosition(token->line));
+            error->setLineNumber(token->line);
             
             parserErrorReporter->reportError(error);
         }
@@ -72,7 +75,8 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             else {
                 string identifier = (char*)token->getText(token)->chars;
                 MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage = "Unexpected token '" + identifier + "'.");
-                error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
+                error->setLineNumber(token->line);
+                error->setUnderlineRanges({MAlice::Utilities::createRange(token->line, token->charPosition)});
                 
                 parserErrorReporter->reportError(error);
             }
@@ -97,8 +101,10 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             
             MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
             
-            if (token)
-                error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
+            if (token) {
+                error->setLineNumber(token->line);
+                error->setArrowRanges({MAlice::Utilities::createRange(token->line, token->charPosition)});
+            }
             
             parserErrorReporter->reportError(error);
         }
@@ -126,7 +132,8 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
                 string identifier = (char*)token->getText(token)->chars;
                 
                 error->setErrorMessage("Unexpected token '" + identifier + "'.");
-                error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
+                error->setLineNumber(token->line);
+                error->setArrowRanges({MAlice::Utilities::createRange(token->line, token->charPosition)});
             } else
                 error->setErrorMessage("Unrecognised token");
             
@@ -141,7 +148,8 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
             MAlice::Error *error = MAlice::ErrorFactory::createLexicalError("Unrecognised or missing token.");
-            error->setErrorPosition(new MAlice::ErrorPosition(exception->line, exception->charPositionInLine));
+            error->setLineNumber(exception->line);
+            error->setArrowRanges({MAlice::Utilities::createRange(exception->line, exception->charPositionInLine)});
             
             parserErrorReporter->reportError(error);
         }
@@ -185,24 +193,9 @@ namespace MAlice {
 
     void ErrorReporter::reportError(Error *error)
     {
-        Range *range = error->getRange();
-        ErrorPosition *errorPosition = error->getErrorPosition();
-        
         printErrorHeader(error);
-        
-        if (range && errorPosition) {
-            std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
-            printLineWithUnderline(line, error->getRange());
-        }
-        else if (errorPosition) {
-            if (errorPosition->hasColumnIndex())
-                printLineWithArrow(errorPosition);
-            else {
-                std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
-                cerr << "\n  " << line << "\n";
-            }
-        }
-        
+        printDecoratedLines(error);
+
         if (!error->getAdditionalInformation().empty()) {
             cerr << "\n\n" << Utilities::stringWithLineIndentation(error->getAdditionalInformation(), 2);
         }
@@ -217,27 +210,104 @@ namespace MAlice {
             exit(EXIT_FAILURE);
     }
     
-    void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
+    void ErrorReporter::printDecoratedLines(Error *error)
     {
-        std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
+        unsigned int startLine = UINT_MAX;
+        unsigned int endLine = 0;
+
+        getStartAndEndLinesForRanges(error->getArrowRanges(), startLine, endLine, &startLine, &endLine);
+        getStartAndEndLinesForRanges(error->getUnderlineRanges(), startLine, endLine, &startLine, &endLine);
         
-        cerr << "\n  " << line << "\n  ";
-        cerr << setw(errorPosition->getColumnIndex()+1) << "^";
+        if (startLine == UINT_MAX || endLine == 0)
+            return;
+        
+        for (unsigned int i = startLine; i <= endLine; ++i)
+        {
+            std::string line = getLineOfInput(i - 1);
+            cerr << "\n" << line;
+            
+            printDecoratedLine(error, line, i - 1);
+        }
     }
     
-    void ErrorReporter::printLineWithUnderline(std::string line, Range *range)
+    void ErrorReporter::printDecoratedLine(Error *error, std::string line, unsigned int lineIndex)
     {
-        cerr << "\n  " << line << "\n  ";
+        std::string decoratedLine(line.size(), ' ');
         
-        for (unsigned int i = 0; i < line.size(); ++i) {
-            if (i < range->getLocation() || i > range->getLocation() + range->getLength()) {
-                cerr << " ";
-            }
-            else if (i <= range->getLocation() + range->getLength()) {
-                cerr << "~";
+        decorateLineWithRanges(&decoratedLine, lineIndex, error->getArrowRanges(), '^');
+        decorateLineWithRanges(&decoratedLine, lineIndex, error->getUnderlineRanges(), '~');
+        
+        cerr << "\n" << decoratedLine;
+    }
+    
+    void ErrorReporter::decorateLineWithRanges(std::string *decorateLine, unsigned int lineIndex, std::list<Range*> ranges, char decorateCharacter)
+    {
+        if (!decorateLine)
+            return;
+        
+        for (std::list<Range*>::iterator it = ranges.begin(); it != ranges.end(); ++it) {
+            Range *r = *it;
+            
+            unsigned int startLineNumber = r->getStartPosition().getLineNumber() - 1;
+            unsigned int endLineNumber = r->getEndPosition().getLineNumber() - 1;
+            
+            if (startLineNumber <= lineIndex && endLineNumber >= lineIndex) {
+                unsigned int startPosition = (startLineNumber == lineIndex) ? r->getStartPosition().getColumnIndex() : 0;
+                unsigned int endPosition = (endLineNumber == lineIndex) ? r->getEndPosition().getColumnIndex() : (unsigned int)(*decorateLine).size() - 1;
+                
+                for (unsigned int i = startPosition; i <= endPosition; ++i) {
+                    (*decorateLine)[i] = decorateCharacter;
+                }
             }
         }
     }
+    
+    void ErrorReporter::getStartAndEndLinesForRanges(std::list<Range*> ranges, unsigned int startLine, unsigned int endLine, unsigned int *outStartLine, unsigned int *outEndLine)
+    {
+        for (std::list<Range*>::iterator it = ranges.begin(); it != ranges.end(); ++it) {
+            Range *r = *it;
+            
+            unsigned int l1 = r->getStartPosition().getLineNumber();
+            unsigned int l2 = r->getEndPosition().getLineNumber();
+            
+            if (l1 < startLine)
+                startLine = l1;
+            
+            if(l2 > endLine)
+                endLine = l2;
+        }
+        
+        if (startLine == UINT_MAX || endLine == 0)
+            return;
+        
+        if (outStartLine)
+            *outStartLine = startLine;
+        
+        if (outEndLine)
+            *outEndLine = endLine;
+    }
+    
+//    void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
+//    {
+//        std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
+//        
+//        cerr << "\n  " << line << "\n  ";
+//        cerr << setw(errorPosition->getColumnIndex()+1) << "^";
+//    }
+//    
+//    void ErrorReporter::printLineWithUnderline(std::string line, Range *range)
+//    {
+//        cerr << "\n  " << line << "\n  ";
+//        
+//        for (unsigned int i = 0; i < line.size(); ++i) {
+//            if (i < range->getLocation() || i > range->getLocation() + range->getLength()) {
+//                cerr << " ";
+//            }
+//            else if (i <= range->getLocation() + range->getLength()) {
+//                cerr << "~";
+//            }
+//        }
+//    }
     
     void ErrorReporter::printErrorHeader(Error *error)
     {
@@ -263,9 +333,9 @@ namespace MAlice {
                 break;
         }
         
-        if (error->getErrorPosition()) {
+        if (error->getLineNumber() > 0) {
             cerr << " (";
-            cerr << "Line " << error->getErrorPosition()->getLineNumber();
+            cerr << "Line " << error->getLineNumber();
             cerr << ")";
         }
         

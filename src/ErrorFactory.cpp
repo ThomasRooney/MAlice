@@ -54,8 +54,8 @@ namespace MAlice {
         std::string invalidExpression = Utilities::getNodeTextIncludingChildren(node, ctx, &errorRange);
         
         Error *error = createSemanticError("'" + invalidExpression + "' is not a valid l-value.");
-        error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(node)));
-        error->setRange(errorRange);
+        error->setLineNumber(Utilities::getNodeLineNumber(node));
+        error->setUnderlineRanges({errorRange});
         
         return error;
     }

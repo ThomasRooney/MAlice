@@ -6,6 +6,7 @@
 
 #ifdef __cplusplus
 #include <iostream>
+#include <list>
 #endif
 
 
@@ -47,9 +48,11 @@ namespace MAlice {
         
         std::string getLineOfInput(unsigned int lineNumber);
         
-        void printLineWithArrow(ErrorPosition *errorPosition);
-        void printLineWithUnderline(std::string line, Range *range);
         void printErrorHeader(Error *error);
+        void printDecoratedLines(Error *error);
+        void printDecoratedLine(Error *error, std::string line, unsigned int lineIndex);
+        void decorateLineWithRanges(std::string *decorateLine, unsigned int lineIndex, std::list<Range*> ranges, char decorateCharacter);
+        void getStartAndEndLinesForRanges(std::list<Range*> ranges, unsigned int startLine, unsigned int endLine, unsigned int *outStartLine, unsigned int *outEndLine);
     public:
         ErrorReporter();
         void reportError(Error *error);

@@ -3,35 +3,40 @@
 #define _MALICEERROR
 
 #include <iostream>
+#include <list>
 
-#include "Range.h"
 #include "Types.h"
-#include "ErrorPosition.h"
 
 namespace MAlice {
+    
+    class Range;
+    class ErrorPosition;
     
     class Error {
     private:
         ErrorType m_errorType;
-        ErrorPosition *m_errorPosition;
-        Range *m_range;
+        unsigned int m_lineNumber;
+        std::list<Range*> m_underlineRanges;
+        std::list<Range*> m_arrowRanges;
+        
         std::string m_errorMessage;
         std::string m_additionalInformation;
         
     public:
         Error(ErrorType type);
         Error(ErrorType type, std::string errorMessage);
-        ~Error();
         
         ErrorType getType();
-        ErrorPosition *getErrorPosition();
-        void setErrorPosition(ErrorPosition *errorPosition);
-        Range *getRange();
-        void setRange(Range *range);
+        unsigned int getLineNumber();
         std::string getErrorMessage();
-        void setErrorMessage(std::string errorMessage);
-        
+        std::list<Range*> getUnderlineRanges();
+        std::list<Range*> getArrowRanges();
         std::string getAdditionalInformation();
+        
+        void setLineNumber(unsigned int lineNumber);
+        void setUnderlineRanges(std::list<Range*> ranges);
+        void setArrowRanges(std::list<Range*> ranges);
+        void setErrorMessage(std::string errorMessage);
         void setAdditionalInformation(std::string additionalInformation);
     };
     

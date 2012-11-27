@@ -258,11 +258,10 @@ namespace MAlice {
         pANTLR3_COMMON_TOKEN endToken = (pANTLR3_COMMON_TOKEN)tokens->get(tokens, (ANTLR3_UINT32)superNode->stopIndex);
         
         if (outRange) {
-            Range *r = new Range();
-            r->setLocation(startToken->charPosition);
-            r->setLength((unsigned int)(endToken->stop - startToken->start));
+            std::string endTokenString = (char*)endToken->input->substr(endToken->input, endToken->start, endToken->stop)->chars;
             
-            *outRange = r;
+            *outRange = Utilities::createRange(startToken->line, startToken->charPosition,
+                                               endToken->line, endToken->charPosition + (unsigned int)endTokenString.size());
         }
         
         return (char*)startToken->input->substr(startToken->input, startToken->start, endToken->stop)->chars;
@@ -318,9 +317,19 @@ namespace MAlice {
         return getFirstNonImaginaryChildNode(getChildNodeAtIndex(node, 0));
     }
     
-    ErrorPosition * Utilities::getErrorPositionFromNode(ASTNode node)
+    Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn)
     {
-        return new ErrorPosition(getNodeLineNumber(node), getNodeColumnIndex(node));
+        return createRange(startLine, startColumn, startLine, startColumn);
+    }
+    
+    Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn, unsigned int endColumn)
+    {
+        return createRange(startLine, startColumn, startLine, endColumn);
+    }
+    
+    Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn, unsigned int endLine, unsigned int endColumn)
+    {
+        return new Range(ErrorPosition(startLine, startColumn), ErrorPosition(endLine, endColumn));
     }
     
 }; // namespace MAlice

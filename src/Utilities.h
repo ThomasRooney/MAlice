@@ -44,6 +44,9 @@ namespace MAlice {
         static std::string stringWithLineIndentation(std::string string, unsigned int lineIndentation);
         
         static ErrorPosition *getErrorPositionFromNode(ASTNode node);
+        static Range *createRange(unsigned int startLine, unsigned int startColumn);
+        static Range *createRange(unsigned int startLine, unsigned int startColumn, unsigned int endColumn);
+        static Range *createRange(unsigned int startLine, unsigned int startColumn, unsigned int endLine, unsigned int endColumn);
         
         template <typename T>
         static std::string numberToString(T number) {

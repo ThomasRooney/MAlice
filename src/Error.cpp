@@ -14,22 +14,6 @@ namespace MAlice {
         
         if (!errorMessage.empty())
             m_errorMessage = errorMessage;
-        
-        m_errorPosition = NULL;
-        m_range = NULL;
-    }
-    
-    Error::~Error()
-    {
-        if (m_range) {
-            delete m_range;
-            m_range = NULL;
-        }
-        
-        if (m_errorPosition) {
-            delete m_errorPosition;
-            m_errorPosition = NULL;
-        }
     }
     
     ErrorType Error::getType()
@@ -37,24 +21,14 @@ namespace MAlice {
         return m_errorType;
     }
     
-    ErrorPosition *Error::getErrorPosition()
+    unsigned int Error::getLineNumber()
     {
-        return m_errorPosition;
+        return m_lineNumber;
     }
     
-    void Error::setErrorPosition(ErrorPosition *errorPosition)
+    void Error::setLineNumber(unsigned int lineNumber)
     {
-        m_errorPosition = errorPosition;
-    }
-    
-    Range *Error::getRange()
-    {
-        return m_range;
-    }
-    
-    void Error::setRange(Range *range)
-    {
-        m_range = range;
+        m_lineNumber = lineNumber;
     }
     
     std::string Error::getErrorMessage()
@@ -65,6 +39,26 @@ namespace MAlice {
     void Error::setErrorMessage(std::string errorMessage)
     {
         m_errorMessage = errorMessage;
+    }
+    
+    std::list<Range*> Error::getUnderlineRanges()
+    {
+        return m_underlineRanges;
+    }
+    
+    void Error::setUnderlineRanges(std::list<Range*> underlineRanges)
+    {
+        m_underlineRanges = underlineRanges;
+    }
+    
+    std::list<Range*> Error::getArrowRanges()
+    {
+        return m_arrowRanges;
+    }
+    
+    void Error::setArrowRanges(std::list<Range*> arrowRanges)
+    {
+        m_arrowRanges = arrowRanges;
     }
     
     std::string Error::getAdditionalInformation()

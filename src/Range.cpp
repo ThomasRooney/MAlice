@@ -1,45 +1,22 @@
-//
-//  Range.cpp
-//  MAlice
-//
-//  Created by Alex Rozanski on 26/11/2012.
-//
-//
 
 #include "Range.h"
 
+#include "ErrorPosition.h"
+
 namespace MAlice {
     
-    Range::Range()
+    Range::Range(ErrorPosition startPosition, ErrorPosition endPosition) : m_startPosition(startPosition), m_endPosition(endPosition)
     {
-        m_location = 0;
-        m_length = 0;
     }
     
-    Range::Range(unsigned int location, unsigned int length)
+    ErrorPosition Range::getStartPosition()
     {
-        m_location = location;
-        m_length = length;
+        return m_startPosition;
     }
     
-    unsigned int Range::getLocation()
+    ErrorPosition Range::getEndPosition()
     {
-        return m_location;
-    }
-    
-    unsigned int Range::getLength()
-    {
-        return m_length;
-    }
-    
-    void Range::setLocation(unsigned int location)
-    {
-        m_location = location;
-    }
-    
-    void Range::setLength(unsigned int length)
-    {
-        m_length = length;
+        return m_endPosition;
     }
     
 } // namespace MAlice
