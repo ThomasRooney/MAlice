@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <sstream>
+#include "CompilerContext.h"
 #include "limits.h"
 #include "Utilities.h"
 #include "MAliceParser.h"
@@ -312,6 +313,15 @@ namespace MAlice {
     bool ErrorReporter::hasReportedErrors()
     {
         return m_hasReportedErrors;
+    }
+    
+    
+    //Error reporting helper methods
+    void outputInvalidASTError(CompilerContext *ctx, std::string currentOperation)
+    {
+        ctx->getErrorReporter()->reportError(ErrorType::Internal,
+                                             "Incorrect internal AST representation encountered when" + currentOperation + ".",
+                                             true);
     }
     
 }; // namespace ErrorReporter

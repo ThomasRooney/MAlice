@@ -112,8 +112,8 @@ proc_func_invocation
 //Expression
 
 assignment
-	:	lvalue BECAME expression
-		-> ^(ASSIGNMENTSTATEMENT lvalue expression)
+	:	expression BECAME expression
+		-> ^(ASSIGNMENTSTATEMENT expression expression)
 	;
 
 // Statements

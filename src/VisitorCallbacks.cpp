@@ -24,10 +24,7 @@ namespace MAlice {
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) < 2) {
-            ctx->getErrorReporter()->reportError(ErrorType::Internal,
-                                                 "Incorrect internal AST representation encountered when checking validity of assignment statement node.",
-                                                 true);
-            
+            outputInvalidASTError(ctx, "checking validity of assignment statement node");
             return false;
         }
         
@@ -38,18 +35,38 @@ namespace MAlice {
         bool isLValueArray = false;
         
         ASTNode parentNode = lvalueNode;
+        
+        if (Utilities::getNodeType(lvalueNode) != EXPRESSION) {
+            outputInvalidASTError(ctx, "checking validity of assignment statement node");
+            return false;
+        }
+        
+        lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode, 0);
+        ANTLR3_UINT32 topLevelExpressionNodeType = Utilities::getNodeType(lvalueNode);
+        
+        Range invalidExpressionRange;
+        std::string invalidExpression = Utilities::getNodeTextIncludingChildren(lvalueNode, ctx, &invalidExpressionRange);
+        
+        if (topLevelExpressionNodeType != ARRAYSUBSCRIPT && topLevelExpressionNodeType != IDENTIFIER) {
+            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                 invalidExpressionRange,
+                                                 ErrorType::Semantic,
+                                                 "'" + invalidExpression + "' is not a valid l-value in assignment.",
+                                                 "",
+                                                 true);
+            
+            return false;
+        }
+        
 
-        // if lvalue is an array, iterate down to its child identifier. 
+        // if lvalue is an array, iterate down to its child identifier.
         if (Utilities::getNodeType(lvalueNode) == ARRAYSUBSCRIPT)
         {
             // Check this has children and isn't just referenced directly.
             int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
             
             if (numChildren == 0) {
-                ctx->getErrorReporter()->reportError(ErrorType::Internal,
-                                                     "Incorrect internal AST representation encountered when checking validity of assignment statement node.",
-                                                     true);
-                
+                outputInvalidASTError(ctx, "checking validity of assignment statement node");
                 return false;
             }
             

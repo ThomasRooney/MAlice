@@ -24,6 +24,7 @@ extern "C" {
 namespace MAlice {
     
     class ErrorReporter;
+    class CompilerContext;
     
     ErrorReporter *getParserErrorReporter();
     void setParserErrorReporter(ErrorReporter *errorReporter);
@@ -35,6 +36,9 @@ namespace MAlice {
         Semantic,
         IO
     };
+    
+    // Error reporting helper methods
+    void outputInvalidASTError(CompilerContext *ctx, std::string currentOperation);
     
     class ErrorReporter {
     private:
