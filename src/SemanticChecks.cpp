@@ -539,12 +539,6 @@ namespace MAlice {
         unsigned int numberOfFormalParameters = (unsigned int)funcProcEntity->getParameterListTypes().size();
         
         if (numberOfFormalParameters != numberOfInvokedParameters) {
-            std::string parametersString;
-            if (numberOfFormalParameters == 1)
-                parametersString = "parameter";
-            else
-                parametersString = "parameters";
-            
             Range *range = NULL;
             Utilities::getNodeTextIncludingChildren(invocationNode, ctx, &range);
             
@@ -557,9 +551,11 @@ namespace MAlice {
                                                              funcProcEntity->getIdentifier() +
                                                              "' expects " +
                                                              Utilities::numberToString(numberOfFormalParameters) +
-                                                             " " + parametersString + ", but found " +
-                                                             Utilities::numberToString(numberOfInvokedParameters)
-                                                             + " in invocation.");
+                                                             " " + ((numberOfFormalParameters == 1) ? "parameter" : "parameters") +
+                                                             ", but found " +
+                                                             Utilities::numberToString(numberOfInvokedParameters) +
+                                                             " " + ((numberOfInvokedParameters == 1) ? "parameter" : "parameters") +
+                                                             " in invocation.");
             error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(identifierNode)));
             error->setRange(range);
             
