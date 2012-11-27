@@ -2,6 +2,7 @@
 #include "SyntacticAnalyser.h"
 
 #include "CompilerContext.h"
+#include "ErrorFactory.h"
 
 namespace MAlice {
     
@@ -14,7 +15,7 @@ namespace MAlice {
         pANTLR3_INPUT_STREAM inputStream = antlr3FileStreamNew(path, ANTLR3_ENC_UTF8);
         
         if (inputStream == NULL)
-            compilerContext->getErrorReporter()->reportError(ErrorType::IO, "No Input File Specified", true);
+            compilerContext->getErrorReporter()->reportError(ErrorFactory::createIOError("No Input File Specified"));
         
         pMAliceLexer lexer = MAliceLexerNew(inputStream);
         if (!lexer)

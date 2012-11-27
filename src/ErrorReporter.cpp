@@ -5,7 +5,10 @@
 #include <cstdlib>
 #include <iomanip>
 #include <sstream>
+
 #include "CompilerContext.h"
+#include "Error.h"
+#include "ErrorFactory.h"
 #include "limits.h"
 #include "Utilities.h"
 #include "MAliceParser.h"
@@ -32,13 +35,16 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
         {
             string identifier = (char*)token->getText(token)->chars;
             string errorMessage = "Unexpected token '" + identifier + "'.";
+
+            MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
+            error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
             
-            parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, false);
+            parserErrorReporter->reportError(error);
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", false);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createSyntacticError("Mismatched token exception"));
         }
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
@@ -46,33 +52,35 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             string tokenText = (char*)token->toString(token);
             string errorMessage = "Unrecognised or missing token.";
             
-            parserErrorReporter->reportError(token->line, MAlice::ErrorType::Syntactic, errorMessage, false);
+            MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
+            error->setErrorPosition(new MAlice::ErrorPosition(token->line));
+            
+            parserErrorReporter->reportError(error);
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched set exception", false);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createSyntacticError("Mismatched set exception"));
         }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
         {
             string errorMessage;
             
-            if (token && token->type == EOF) {
-                errorMessage = "Unexpected end of input.";
-                
-                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, errorMessage, true);
-            } else {
+            if (token && token->type == EOF)
+                parserErrorReporter->reportError(MAlice::ErrorFactory::createSyntacticError("Unexpected end of input."));
+            else {
                 string identifier = (char*)token->getText(token)->chars;
-                errorMessage = "Unexpected token '" + identifier + "'.";
+                MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage = "Unexpected token '" + identifier + "'.");
+                error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
                 
-                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
+                parserErrorReporter->reportError(error);
             }
         }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Internal, "", true);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createInternalError("Failed predicate error in parser."));
         }
             break;
         case ANTLR3_MISSING_TOKEN_EXCEPTION:
@@ -87,12 +95,12 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             else
                 errorMessage = "Expected token missing from input.";
             
-            if (token) {
-                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Syntactic, errorMessage, true);
-            }
-            else {
-                parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, errorMessage, true);
-            }
+            MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
+            
+            if (token)
+                error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
+            
+            parserErrorReporter->reportError(error);
         }
             break;
         default:
@@ -112,41 +120,45 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
     {
         case ANTLR3_RECOGNITION_EXCEPTION:
         {
+            MAlice::Error *error = MAlice::ErrorFactory::createLexicalError();
+            
             if (token != NULL) {
                 string identifier = (char*)token->getText(token)->chars;
-                string errorMessage = "Unexpected token '" + identifier + "'.";
                 
-                parserErrorReporter->reportError(token->line, token->charPosition, MAlice::ErrorType::Lexical, errorMessage, true);
-            } else {
-                parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "Unrecognised token", true);
-            }
+                error->setErrorMessage("Unexpected token '" + identifier + "'.");
+                error->setErrorPosition(new MAlice::ErrorPosition(token->line, token->charPosition));
+            } else
+                error->setErrorMessage("Unrecognised token");
+            
+            parserErrorReporter->reportError(error);
         }
             break;
         case ANTLR3_MISMATCHED_TOKEN_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Syntactic, "Mismatched token exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createLexicalError("Mismatched token exception"));
         }
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
-            string errorMessage = "Unrecognised or missing token.";
+            MAlice::Error *error = MAlice::ErrorFactory::createLexicalError("Unrecognised or missing token.");
+            error->setErrorPosition(new MAlice::ErrorPosition(exception->line, exception->charPositionInLine));
             
-            parserErrorReporter->reportError(exception->line, exception->charPositionInLine, MAlice::ErrorType::Syntactic, errorMessage, true);
+            parserErrorReporter->reportError(error);
         }
             break;
         case ANTLR3_MISMATCHED_SET_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "Mismatched set exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createLexicalError("Mismatched set exception"));
         }
             break;
         case ANTLR3_EARLY_EXIT_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "Early exit exception", true);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createLexicalError("Early exit exception"));
         }
             break;
         case ANTLR3_FAILED_PREDICATE_EXCEPTION:
         {
-            parserErrorReporter->reportError(MAlice::ErrorType::Lexical, "", true);
+            parserErrorReporter->reportError(MAlice::ErrorFactory::createLexicalError("Failed predicate exception"));
         }
             break;
         default:
@@ -171,89 +183,69 @@ namespace MAlice {
         parserErrorReporter = errorReporter;
     }
 
-    void ErrorReporter::reportError(ErrorType errorType, string errorMessage, bool isFatal)
+    void ErrorReporter::reportError(Error *error)
     {
-        reportError(LINE_NUMBER_NA, COL_INDEX_NA, errorType, errorMessage, "", isFatal);
-    }
-    
-    void ErrorReporter::reportError(unsigned int lineNumber, ErrorType errorType, string errorMessage, bool isFatal)
-    {
-        reportError(lineNumber, COL_INDEX_NA, errorType, errorMessage, "", isFatal);
-    }
-    
-    void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, string errorMessage, bool isFatal)
-    {
-        reportError(lineNumber, columnIndex, errorType, errorMessage, "", isFatal);
-    }
-    
-    void ErrorReporter::reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal)
-    {
-        printErrorHeader(errorType, lineNumber, columnIndex, errorMessage);
+        Range *range = error->getRange();
+        ErrorPosition *errorPosition = error->getErrorPosition();
         
-        if (columnIndex != COL_INDEX_NA) {
-            std::string line = getLineOfInput(lineNumber - 1);
-
-            printLineWithArrow(line, columnIndex);
-        } else if (lineNumber != LINE_NUMBER_NA) {
-            std::string line = getLineOfInput(lineNumber - 1);
-            cerr << "\n  " << line << "\n";
+        printErrorHeader(error);
+        
+        if (range && errorPosition) {
+            std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
+            printLineWithUnderline(line, error->getRange());
+        }
+        else if (errorPosition) {
+            if (errorPosition->hasColumnIndex())
+                printLineWithArrow(errorPosition);
+            else {
+                std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
+                cerr << "\n  " << line << "\n";
+            }
         }
         
-        if (!additionalInformation.empty()) {
-            cerr << "\n\n" << Utilities::stringWithLineIndentation(additionalInformation, 2);
+        if (!error->getAdditionalInformation().empty()) {
+            cerr << "\n\n" << Utilities::stringWithLineIndentation(error->getAdditionalInformation(), 2);
         }
         
         cerr << endl;
         
         m_hasReportedErrors = true;
         
-        if (isFatal)
+        delete error;
+        
+        if (error->getType() == ErrorType::Internal)
             exit(EXIT_FAILURE);
     }
     
-    void ErrorReporter::reportError(unsigned int lineNumber, Range range, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal)
+    void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
     {
-        printErrorHeader(errorType, lineNumber, range.getLocation(), errorMessage);
+        std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
         
-        std::string line = getLineOfInput(lineNumber - 1);
-        printLineWithUnderline(line, range);
-        
-        if (!additionalInformation.empty()) {
-            cerr << "\n\n" << Utilities::stringWithLineIndentation(additionalInformation, 2);
-        }
-        
-        cerr << endl;
-        
-        m_hasReportedErrors = true;
-        
-        if (isFatal)
-            exit(EXIT_FAILURE);
-    }
-    
-    void ErrorReporter::printLineWithArrow(std::string line, unsigned int arrowPosition)
-    {
         cerr << "\n  " << line << "\n  ";
-        cerr << setw(arrowPosition+1) << "^";
+        cerr << setw(errorPosition->getColumnIndex()+1) << "^";
     }
     
-    void ErrorReporter::printLineWithUnderline(std::string line, Range range)
+    void ErrorReporter::printLineWithUnderline(std::string line, Range *range)
     {
         cerr << "\n  " << line << "\n  ";
         
         for (unsigned int i = 0; i < line.size(); ++i) {
-            if (i < range.getLocation() || i > range.getLocation() + range.getLength()) {
+            if (i < range->getLocation() || i >= range->getLocation() + range->getLength()) {
                 cerr << " ";
             }
-            else if (i <= range.getLocation() + range.getLength()) {
+            else if (i <= range->getLocation() + range->getLength()) {
                 cerr << "~";
             }
         }
     }
     
-    void ErrorReporter::printErrorHeader(MAlice::ErrorType errorType, unsigned int lineNumber, unsigned int columnIndex, std::string errorMessage)
+    void ErrorReporter::printErrorHeader(Error *error)
     {
-        switch(errorType)
+        switch(error->getType())
         {
+            case ErrorType::Warning:
+                cerr << "Warning";
+                break;
             case ErrorType::Internal:
                 cerr << "Internal error";
                 break;
@@ -271,18 +263,15 @@ namespace MAlice {
                 break;
         }
         
-        if (lineNumber != LINE_NUMBER_NA || columnIndex != COL_INDEX_NA) {
+        if (error->getErrorPosition()) {
             cerr << " (";
-            
-            if (lineNumber != LINE_NUMBER_NA)
-                cerr << "Line " << lineNumber;
-            
+            cerr << "Line " << error->getErrorPosition()->getLineNumber();
             cerr << ")";
         }
         
         cerr << ": ";
         
-        string messageString = errorMessage.c_str();
+        string messageString = error->getErrorMessage().c_str();
         cerr << messageString;
     }
     

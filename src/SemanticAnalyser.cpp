@@ -3,6 +3,7 @@
 
 #include "ASTWalker.h"
 #include "Entity.h"
+#include "ErrorFactory.h"
 #include "Utilities.h"
 
 namespace MAlice {
@@ -31,24 +32,17 @@ namespace MAlice {
         Entity *hattaEntity = NULL;
         
         if (!ctx->isSymbolInScope("hatta", &hattaEntity)) {
-            m_compilerContext->getErrorReporter()->reportError(ErrorType::Semantic,
-                                                               "Entry point procedure hatta() is not declared.",
-                                                               false);
-            
+            m_compilerContext->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Entry point procedure hatta() is not declared."));            
             return false;
         } else {
             MAliceEntityType type = Utilities::getTypeOfEntity(hattaEntity);
             
             if (type != MAliceEntityTypeProcedure) {
-                if (type == MAliceEntityTypeFunction) {
-                    m_compilerContext->getErrorReporter()->reportError(ErrorType::Semantic,
-                                                                       "Entry point hatta() is declared as a function. It should be declared as a procedure.",
-                                                                       false);
-                } else {
+                if (type == MAliceEntityTypeFunction)
+                    m_compilerContext->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Entry point hatta() is declared as a function. It should be declared as a procedure."));
+                else {
                     // By virtue of the fact that hatta is a keyword, we shouldn't hit this case, as it can't be declared as a variable.
-                    m_compilerContext->getErrorReporter()->reportError(ErrorType::Semantic,
-                                                                       "Symbol 'hatta' is declared as a " + hattaEntity->humanReadableName() + ". It should be declared as a procedure.",
-                                                                       false);
+                    m_compilerContext->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Symbol 'hatta' is declared as a " + hattaEntity->humanReadableName() + ". It should be declared as a procedure."));
                 }
                 
                 return false;
