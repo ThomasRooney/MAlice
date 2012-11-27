@@ -746,17 +746,19 @@ namespace MAlice {
         bool validForAllChildren = true;
         ASTNode childNode;
         int numChildren = Utilities::getNumberOfChildNodes(bodyNode);
-        bool foundReturnStatement = false;
         for (int i = 0; i < numChildren; i++)
         {
             childNode = Utilities::getChildNodeAtIndex(bodyNode, i);
             switch(Utilities::getNodeType(childNode))
             {
                 case IFSTATEMENT:
+                    // If we find a return on an upper scope, there's no problem, it'll return true
+                    // If every lower scope has a return statement, no problem
+                    // Else, warning
                     validForAllChildren = validForAllChildren && checkHasReturnValueInAllExecutionPaths(childNode);
                     break;
                 case RETURNSTATEMENT:
-                    foundReturnStatement = true;
+                    return true;
                 case BODY:
                 case STATEMENTLIST:
                     return checkHasReturnValueInAllExecutionPaths(childNode);
@@ -767,6 +769,6 @@ namespace MAlice {
 
             }
         }
-        return validForAllChildren && foundReturnStatement;
+        return validForAllChildren;
     }
 }
