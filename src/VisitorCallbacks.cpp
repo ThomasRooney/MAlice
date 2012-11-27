@@ -23,89 +23,91 @@ namespace MAlice {
     
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        bool isArray = false;
-        ASTNode lvalueNode = Utilities::getChildNodeAtIndex(node,0);
-        ASTNode rvalueNode = Utilities::getChildNodeAtIndex(node,1);
+        if (Utilities::getNumberOfChildNodes(node) < 2) {
+            ctx->getErrorReporter()->reportError(ErrorType::Internal,
+                                                 "Incorrect internal AST representation encountered when checking validity of assignment statement node.",
+                                                 true);
+            
+            return false;
+        }
+        
+        ASTNode lvalueNode = Utilities::getChildNodeAtIndex(node, 0);
+        ASTNode rvalueNode = Utilities::getChildNodeAtIndex(node, 1);
         std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
+        
+        bool isLValueArray = false;
+        
+        ASTNode parentNode = lvalueNode;
 
         // if lvalue is an array, iterate down to its child identifier. 
-        if (Utilities::getNodeType(lvalueNode)==ARRAYSUBSCRIPT)
+        if (Utilities::getNodeType(lvalueNode) == ARRAYSUBSCRIPT)
         {
             // Check this has children and isn't just referenced directly.
             int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
+            
+            if (numChildren == 0) {
+                ctx->getErrorReporter()->reportError(ErrorType::Internal,
+                                                     "Incorrect internal AST representation encountered when checking validity of assignment statement node.",
+                                                     true);
+                
+                return false;
+            }
+            
             lvalueNode = Utilities::getChildNodeAtIndex(lvalueNode,0);
             lvalueIdentifier = Utilities::getNodeText(lvalueNode);
-            if (numChildren == 0)
-            {
-                
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                         Utilities::getNodeColumnIndex(lvalueNode),
-                                                         ErrorType::Semantic,
-                                                         "Array: '" + lvalueIdentifier + "' can't be referenced directly for assignment",
-                                                         false);
-            }
-            isArray = true;
+            isLValueArray = true;
         }
 
         // TODO: Check these are not null. otherwise fatal error
 
 
-        Entity *lvalueEntity = NULL;
+        Entity *symbolTableEntity = NULL;
         
-        // Check lvalue exists on the symboltable
-        if (ctx->isSymbolInScope(lvalueIdentifier, &lvalueEntity))
-        {
-            MAliceEntityType entityType = Utilities::getTypeOfEntity(lvalueEntity);
-            
-            switch(entityType) {
-                case  MAliceEntityTypeVariable:
-                    break;
-                case MAliceEntityTypeArray:
-                    if (isArray)
-                    {
-                        break;
-                    }
-                default:
-                    ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                         Utilities::getNodeColumnIndex(lvalueNode),
-                                                         ErrorType::Semantic,
-                                                         "Identifier: '" + lvalueIdentifier + "' is not a variable.",
-                                                         false);
-                    return false;
-            }
-            
-            /* TODO: Array Bounds checking..
-            if (isArray) {
-                ArrayEntity *lvalueTEntity = NULL;
-                lvalueTEntity = dynamic_cast<ArrayEntity*>(lvalueEntity);
-                if (lvalueTEntity == NULL)
-                    throw std::bad_cast();
-            }
-            else {*/
-            //}
-            
-            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(lvalueEntity);
-            
-            // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
-            checkExpression(rvalueNode , walker, ctx, variableEntity->getType());
-        }
-        else {
+        // Check lvalue exists on the symbol table
+        if (!ctx->isSymbolInScope(lvalueIdentifier, &symbolTableEntity)) {
             ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
                                                  Utilities::getNodeColumnIndex(lvalueNode),
                                                  ErrorType::Semantic,
                                                  "Cannot find variable declaration for '" + lvalueIdentifier + "'.",
                                                  false);
+            
             return false;
+        } else {
+            MAliceEntityType symbolTableEntityType = Utilities::getTypeOfEntity(symbolTableEntity);
+            
+            if (symbolTableEntityType == MAliceEntityTypeArray && !isLValueArray) {
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                     Utilities::getNodeColumnIndex(lvalueNode),
+                                                     ErrorType::Semantic,
+                                                     "Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.",
+                                                     "To fix, assign to one of its elements.",
+                                                     false);
+                
+                return false;
+            }
+            
+            if (symbolTableEntityType == MAliceEntityTypeVariable && isLValueArray) {
+                Range errorRange;
+                
+                std::string lvalueText = Utilities::getNodeTextIncludingChildren(parentNode, ctx, &errorRange);
+                
+                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
+                                                     errorRange,
+                                                     ErrorType::Semantic,
+                                                     "Cannot assign value to '" + lvalueText + "' as '" + lvalueIdentifier + "' is not an array.",
+                                                     "",
+                                                     false);
+                
+                return false;
+            }
+            
+            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(symbolTableEntity);
+            
+            // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
+            checkExpression(rvalueNode, walker, ctx, variableEntity->getType());
         }
 
-
-
-        
-
-        
-
-        // Produce an error where rvalue and lvalue have differing types
-        return walker->visitChildren(node, ctx);
+        return true;
     }
     
     bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
