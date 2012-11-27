@@ -8,6 +8,7 @@
 
 #include "CompilerContext.h"
 #include "Entity.h"
+#include "ErrorPosition.h"
 #include "VariableEntity.h"
 #include "ProcedureEntity.h"
 #include "FunctionEntity.h"
@@ -243,7 +244,7 @@ namespace MAlice {
         tokenIdentifierToTextMap->insert(std::pair<ANTLR3_UINT32, std::string>(WHATWAS, "what was"));
     }
     
-    std::string Utilities::getNodeTextIncludingChildren(ASTNode node, CompilerContext *ctx, Range *outRange)
+    std::string Utilities::getNodeTextIncludingChildren(ASTNode node, CompilerContext *ctx, Range **outRange)
     {
         pANTLR3_COMMON_TREE superNode = (pANTLR3_COMMON_TREE)node->super;
         
@@ -253,8 +254,11 @@ namespace MAlice {
         pANTLR3_COMMON_TOKEN endToken = (pANTLR3_COMMON_TOKEN)tokens->get(tokens, (ANTLR3_UINT32)superNode->stopIndex);
         
         if (outRange) {
-            (*outRange).setLocation(startToken->charPosition);
-            (*outRange).setLength((unsigned int)(endToken->stop - startToken->start));
+            Range *r = new Range();
+            r->setLocation(startToken->charPosition);
+            r->setLength((unsigned int)(endToken->stop - startToken->start));
+            
+            *outRange = r;
         }
         
         return (char*)startToken->input->substr(startToken->input, startToken->start, endToken->stop)->chars;
@@ -301,6 +305,11 @@ namespace MAlice {
             return node;
         
         return getFirstNonImaginaryChildNode(getChildNodeAtIndex(node, 0));
+    }
+    
+    ErrorPosition * Utilities::getErrorPositionFromNode(ASTNode node)
+    {
+        return new ErrorPosition(getNodeLineNumber(node), getNodeColumnIndex(node));
     }
     
 }; // namespace MAlice

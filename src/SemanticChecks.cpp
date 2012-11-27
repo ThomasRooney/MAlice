@@ -6,7 +6,7 @@
 #include "CompilerContext.h"
 #include "ArrayEntity.h"
 #include "ASTWalker.h"
-#include "ErrorHelpers.h"
+#include "ErrorFactory.h"
 #include "Entity.h"
 #include "FunctionEntity.h"
 #include "FunctionProcedureEntity.h"
@@ -26,12 +26,11 @@ namespace MAlice {
             std::stringstream additionalInformation;
             additionalInformation << "Symbol '" << identifier  << "' is previously declared as a " << existingEntity->humanReadableName() << " on line " << existingEntity->getLineNumber() << ".";
             
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                 Utilities::getNodeColumnIndex(node),
-                                                 ErrorType::Semantic,
-                                                 errorMessage,
-                                                 additionalInformation.str(),
-                                                 true);
+            Error *error = ErrorFactory::createSemanticError(errorMessage);
+            error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node)));
+            error->setAdditionalInformation(additionalInformation.str());
+            
+            ctx->getErrorReporter()->reportError(error);
             
             return false;
         }
@@ -105,7 +104,7 @@ namespace MAlice {
         MAliceType type = getTypeFromExpressionNode(node, walker, ctx);
         if (typeConfirm != type)
         {
-            Range exprRange;
+            Range *exprRange = NULL;
             std::string exprText = Utilities::getNodeTextIncludingChildren(node, ctx, &exprRange);
             
             std::string errorMessage;
@@ -118,13 +117,12 @@ namespace MAlice {
             }
             
             ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
-            ctx->getErrorReporter()->reportError(
-                                                 Utilities::getNodeLineNumber(firstNonImaginaryNode),
-                                                 exprRange,
-                                                 ErrorType::Semantic,
-                                                 errorMessage,
-                                                 "",
-                                                 false);
+            Error *error = ErrorFactory::createSemanticError(errorMessage);
+            error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(firstNonImaginaryNode)));
+            error->setRange(exprRange);
+            
+            ctx->getErrorReporter()->reportError(error);
+            
             return false;
         }
         return true;
@@ -160,32 +158,29 @@ namespace MAlice {
                         {
                             // Array has no children, hence this is an error!
                             ArrayEntity *lookupAEntity = dynamic_cast<ArrayEntity*>(lookupEntity);
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                 Utilities::getNodeColumnIndex(node),
-                                                                 ErrorType::Semantic,
-                                                                 "Array: '" + info + "' is not valid in this context",
-                                                                 false);
+                            Error *error = ErrorFactory::createSemanticError("Array: '" + info + "' is not valid in this context");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            ctx->getErrorReporter()->reportError(error);
                             
                             return lookupAEntity->getType();
                             
                         }
                             break;
                         default:
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                 Utilities::getNodeColumnIndex(node),
-                                                                 ErrorType::Semantic,
-                                                                 "Identifier: '" + info + "' does not have a type.",
-                                                                 false);
+                            Error *error = ErrorFactory::createSemanticError("Identifier '" + info + "' does not have a type.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            ctx->getErrorReporter()->reportError(error);
+
                             return MAliceTypeNone;
                     }
                 }
                 else
                 {
-                    ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                         Utilities::getNodeColumnIndex(node),
-                                                         ErrorType::Semantic,
-                                                         "Identifier: '" + info + "' is not in scope.",
-                                                         false);
+                    Error *error = ErrorFactory::createSemanticError("Identifier: '" + info + "' is not in scope.");
+                    error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                    
+                    ctx->getErrorReporter()->reportError(error);
+                    
                     return MAliceTypeNone;
                 }
             }
@@ -233,13 +228,11 @@ namespace MAlice {
                         binOperator = Utilities::getNodeText(node);
                         if (numChildrenOfChild != 2)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                 Utilities::getNodeColumnIndex(node),
-                                                                 ErrorType::Semantic,
-                                                                 "Boolean Operator: '" +\
-                                                                 binOperator +\
-                                                                 "' must have two children.",
-                                                                 false);
+                            Error *error = ErrorFactory::createSemanticError("Boolean Operator: '" + binOperator + "' must have two children.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            
+                            ctx->getErrorReporter()->reportError(error);
+                            
                             return MAliceTypeBoolean;
                         }
                         // Check the type of the first child
@@ -248,13 +241,10 @@ namespace MAlice {
                         secondChildType = getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),walker,ctx);
                         if (firstChildType != secondChildType)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                 Utilities::getNodeColumnIndex(node),
-                                                                 ErrorType::Semantic,
-                                                                 "Boolean Operator: '" +\
-                                                                 binOperator +\
-                                                                 "' must have two children.",
-                                                                 false);
+                            Error *error = ErrorFactory::createSemanticError("Boolean Operator: '" + binOperator + "' must have two children.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            
+                            ctx->getErrorReporter()->reportError(error);
                         }
                         return MAliceTypeBoolean;
                         break;
@@ -265,13 +255,11 @@ namespace MAlice {
                         binOperator = Utilities::getNodeText(node);
                         if (numChildrenOfChild != 2)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                 Utilities::getNodeColumnIndex(node),
-                                                                 ErrorType::Semantic,
-                                                                 "Boolean Operator: '" +\
-                                                                 binOperator +\
-                                                                 "' must have children of the same type.",
-                                                                 false);
+                            Error *error = ErrorFactory::createSemanticError("Boolean Operator: '" + binOperator + "' must have children of the same type.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            
+                            ctx->getErrorReporter()->reportError(error);
+
                             return MAliceTypeBoolean;
                         }
                         // Check the type of the first child is a bool
@@ -280,13 +268,10 @@ namespace MAlice {
                         valid = checkExpression(Utilities::getChildNodeAtIndex(node, 1),walker,ctx, MAliceTypeBoolean) && valid ;
                         if (!valid)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                 Utilities::getNodeColumnIndex(node),
-                                                                 ErrorType::Semantic,
-                                                                 "Boolean Operator: '" +\
-                                                                 binOperator +\
-                                                                 "' must have boolean children.",
-                                                                 false);
+                            Error *error = ErrorFactory::createSemanticError("Boolean Operator: '" + binOperator + "' must have boolean children.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                            
+                            ctx->getErrorReporter()->reportError(error);
                         }
                         return MAliceTypeBoolean;
                         break;
@@ -300,13 +285,11 @@ namespace MAlice {
                         // make sure this has two children.
                         if (numChildrenOfChild != 2)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
-                                                                 Utilities::getNodeColumnIndex(childNode),
-                                                                 ErrorType::Internal,
-                                                                 "Malformed Array '" +\
-                                                                 binOperator +\
-                                                                 "' ",
-                                                                 false);
+                            Error *error = ErrorFactory::createInternalError("Malformed Array '" + binOperator + "'.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(childNode));
+                            
+                            ctx->getErrorReporter()->reportError(error);
+                            
                             return MAliceTypeNone;
                         }
                         nodeBuffer = Utilities::getChildNodeAtIndex(node, 0);
@@ -328,11 +311,12 @@ namespace MAlice {
                                     return lookupAEntity->getType();
                                 }
                                 default:
-                                    ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(node),
-                                                                         Utilities::getNodeColumnIndex(node),
-                                                                         ErrorType::Internal,
-                                                                         "Malformed Array Entity",
-                                                                         false);
+                                {
+                                    Error *error = ErrorFactory::createInternalError("Malformed Array Entity");
+                                    error->setErrorPosition(Utilities::getErrorPositionFromNode(node));
+                                    
+                                    ctx->getErrorReporter()->reportError(error);
+                                }
                             }
                         }
                         break;
@@ -340,9 +324,8 @@ namespace MAlice {
                     case BANG:
                         numChildrenOfChild = Utilities::getNumberOfChildNodes(node);
                         if (numChildrenOfChild != 1)
-                        {
-                             outputInvalidASTError(ctx, "Bang (!)");
-                        }
+                            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("Bang (!)"));
+                        
                         checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeBoolean);
                         return MAliceTypeBoolean;
 
@@ -370,13 +353,11 @@ namespace MAlice {
                         // make sure this has two children.
                         if (numChildrenOfChild != 2)
                         {
-                            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(childNode),
-                                                                 Utilities::getNodeColumnIndex(childNode),
-                                                                 ErrorType::Internal,
-                                                                 "Malformed Expression '" +\
-                                                                 binOperator +\
-                                                                 "' ",
-                                                                 false);
+                            Error *error = ErrorFactory::createInternalError("Malformed Expression '" + binOperator + "'.");
+                            error->setErrorPosition(Utilities::getErrorPositionFromNode(childNode));
+                            
+                            ctx->getErrorReporter()->reportError(error);
+                            
                             return MAliceTypeNone;
                         }
                         checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeNumber);
@@ -407,11 +388,10 @@ namespace MAlice {
         Entity *entity = NULL;
         
         if (!ctx->isSymbolInScope(identifier, &entity)) {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                 Utilities::getNodeColumnIndex(identifierNode),
-                                                 ErrorType::Semantic,
-                                                 "Invocation of function or procedure '" + identifier + "' which is not declared in current scope.",
-                                                 false);
+            Error *error = ErrorFactory::createSemanticError("Invocation of function or procedure '" + identifier + "' which is not declared in current scope.");
+            error->setErrorPosition(Utilities::getErrorPositionFromNode(identifierNode));
+            
+            ctx->getErrorReporter()->reportError(error);
             
             return false;
         }
@@ -419,11 +399,10 @@ namespace MAlice {
         MAliceEntityType entityType = Utilities::getTypeOfEntity(entity);
         
         if (entityType != MAliceEntityTypeFunction && entityType != MAliceEntityTypeProcedure) {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                 Utilities::getNodeLineNumber(identifierNode),
-                                                 ErrorType::Semantic,
-                                                 "Invoked symbol '" + identifier + "' is not a function or procedure.",
-                                                 false);
+            Error *error = ErrorFactory::createSemanticError("Invocation of symbol '" + identifier + "' is not a function or procedure.");
+            error->setErrorPosition(Utilities::getErrorPositionFromNode(identifierNode));
+            
+            ctx->getErrorReporter()->reportError(error);
             
             return false;
         }
@@ -450,9 +429,7 @@ namespace MAlice {
         
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(entity);
         if (functionEntity == NULL) {
-            ctx->getErrorReporter()->reportError(ErrorType::Internal,
-                                                 "Couldn't correctly validate function invocation return type.",
-                                                 true);
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Couldn't correctly validate function invocation return type."));
             
             return false;
         }
@@ -479,7 +456,7 @@ namespace MAlice {
     std::string getFunctionProcedureInvocationIdentifier(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(invocationNode) == 0) {
-            outputInvalidASTError(ctx, "function or procedure invocation");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function or procedure invocation"));
             return NULL;
         }
         
@@ -490,7 +467,7 @@ namespace MAlice {
     bool checkSymbolForInvocationIsValidOrOutputError(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(invocationNode) == 0) {
-            outputInvalidASTError(ctx, "function or procedure invocation");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function or procedure invocation"));
             return false;
         }
         
@@ -500,11 +477,10 @@ namespace MAlice {
         Entity *entity = NULL;
         
         if (!ctx->isSymbolInScope(identifier, &entity)) {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                 Utilities::getNodeColumnIndex(identifierNode),
-                                                 ErrorType::Semantic,
-                                                 "Cannot find declaration for invocation of function or procedure '" + identifier + "'.",
-                                                 false);
+            Error *error = ErrorFactory::createSemanticError("Cannot find declaration for invocation of function or procedure '" + identifier + "'.");
+            error->setErrorPosition(Utilities::getErrorPositionFromNode(identifierNode));
+            
+            ctx->getErrorReporter()->reportError(error);
             
             return false;
         }
@@ -561,19 +537,18 @@ namespace MAlice {
             
             MAliceType expressionType = getTypeFromExpressionNode(expressionNode, walker, ctx);
             if (expressionType != paramEntity.getType()) {
-                Range expressionRange;
+                Range *expressionRange = NULL;
                 Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
                 std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
                 std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
                 
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(expressionNode),
-                                                     expressionRange,
-                                                     ErrorType::Semantic,
-                                                     "Cannot match types of argument #" + SSTR(i+1) + " in invocation of '" + funcProcIdentifier + "' Expected argument of type '" + expectedTypeString + "' but found '" + expressionTypeString + "'.",
-                                                     "",
-                                                     false);
+                Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" + SSTR(i+1) + " in invocation of '" + funcProcIdentifier + "' Expected argument of type '" + expectedTypeString + "' but found '" + expressionTypeString + "'.");
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(expressionNode)));
+                error->setRange(expressionRange);
+                
+                ctx->getErrorReporter()->reportError(error);
                 
                 return false;
             }
@@ -587,7 +562,7 @@ namespace MAlice {
     bool checkValidAssignmentStatementNode(ASTNode assignmentStatementNode, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(assignmentStatementNode) < 2) {
-            outputInvalidASTError(ctx, "assignment statement");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment statement"));
             return false;
         }
         
@@ -599,7 +574,7 @@ namespace MAlice {
         ASTNode parentNode = lvalueNode;
         
         if (Utilities::getNodeType(lvalueNode) != EXPRESSION) {
-                outputInvalidASTError(ctx, "assignment statement");
+                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment statement"));
             return false;
         }
         
@@ -608,11 +583,11 @@ namespace MAlice {
         
         std::string lvalueIdentifier = Utilities::getNodeText(lvalueNode);
         
-        Range invalidExpressionRange;
+        Range *invalidExpressionRange = NULL;
         std::string invalidExpression = Utilities::getNodeTextIncludingChildren(lvalueNode, ctx, &invalidExpressionRange);
         
         if (topLevelExpressionNodeType != ARRAYSUBSCRIPT && topLevelExpressionNodeType != IDENTIFIER) {
-            outputInvalidLValueError(ctx, lvalueNode);
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidLValueError(lvalueNode, ctx));
             return false;
         }
         
@@ -624,7 +599,7 @@ namespace MAlice {
             int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
             
             if (numChildren == 0) {
-                outputInvalidASTError(ctx, "assignment statement");
+                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment statement"));
                 return false;
             }
             
@@ -640,38 +615,35 @@ namespace MAlice {
         
         // Check lvalue exists on the symbol table
         if (!ctx->isSymbolInScope(lvalueIdentifier, &symbolTableEntity)) {
-            ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                 Utilities::getNodeColumnIndex(lvalueNode),
-                                                 ErrorType::Semantic,
-                                                 "Cannot find variable declaration for '" + lvalueIdentifier + "'.",
-                                                 false);
+            Error *error = ErrorFactory::createSemanticError("Cannot find variable declaration for '" + lvalueIdentifier + "'.");
+            error->setErrorPosition(Utilities::getErrorPositionFromNode(lvalueNode));
+            
+            ctx->getErrorReporter()->reportError(error);
             
             return false;
         } else {
             MAliceEntityType symbolTableEntityType = Utilities::getTypeOfEntity(symbolTableEntity);
             
             if (symbolTableEntityType == MAliceEntityTypeArray && !isLValueArray) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                     Utilities::getNodeColumnIndex(lvalueNode),
-                                                     ErrorType::Semantic,
-                                                     "Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.",
-                                                     "To fix, assign to one of its elements.",
-                                                     false);
+                Error *error = ErrorFactory::createSemanticError("Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.");
+                error->setErrorPosition(Utilities::getErrorPositionFromNode(lvalueNode));
+                error->setAdditionalInformation("To fix, assign to one of its elements.");
+                
+                ctx->getErrorReporter()->reportError(error);
                 
                 return false;
             }
             
             if (symbolTableEntityType == MAliceEntityTypeVariable && isLValueArray) {
-                Range errorRange;
+                Range *errorRange = NULL;
                 
                 std::string lvalueText = Utilities::getNodeTextIncludingChildren(parentNode, ctx, &errorRange);
                 
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(lvalueNode),
-                                                     errorRange,
-                                                     ErrorType::Semantic,
-                                                     "Cannot assign value to '" + lvalueText + "' as '" + lvalueIdentifier + "' is not an array.",
-                                                     "",
-                                                     false);
+                Error *error = ErrorFactory::createSemanticError("Cannot assign value to '" + lvalueText + "' as '" + lvalueIdentifier + "' is not an array.");
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(lvalueNode)));
+                error->setRange(errorRange);
+                
+                ctx->getErrorReporter()->reportError(error);
                 
                 return false;
             }
@@ -705,7 +677,7 @@ namespace MAlice {
                     ctx->exitScope();
                     break;
                 default:
-                    outputInvalidASTError(ctx, "if statement");
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if statement"));
             }
         }
         
@@ -717,7 +689,7 @@ namespace MAlice {
         // make sure there is one child
         int numChildren = Utilities::getNumberOfChildNodes(printStatementNode);
         if (numChildren != 1) {
-            outputInvalidASTError(ctx, "print statement");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("print statement"));
             return false;
         }
         
@@ -730,12 +702,12 @@ namespace MAlice {
             MAliceType t = getTypeFromExpressionNode(childNode, walker, ctx);
             if (t == MAliceTypeNone)
             {
+                Error *error = ErrorFactory::createSemanticError("Expression: '" + Utilities::getNodeTextIncludingChildren(childNode, ctx, NULL) + "' is not a valid print statement.");
+                error->setErrorPosition(Utilities::getErrorPositionFromNode(printStatementNode));
+                
                 // Deepest child Node
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(printStatementNode),
-                                                     Utilities::getNodeColumnIndex(printStatementNode),
-                                                     ErrorType::Semantic,
-                                                     "Expression: '" + Utilities::getNodeTextIncludingChildren(childNode, ctx, NULL) + "' is not a valid print statement.",
-                                                     false);
+                ctx->getErrorReporter()->reportError(error);
+                
                 return false;
             }
         }

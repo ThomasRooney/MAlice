@@ -25,6 +25,8 @@ namespace MAlice {
     
     class ErrorReporter;
     class CompilerContext;
+    class Error;
+    class ErrorPosition;
     
     ErrorReporter *getParserErrorReporter();
     void setParserErrorReporter(ErrorReporter *errorReporter);
@@ -44,16 +46,13 @@ namespace MAlice {
         
         std::string getLineOfInput(unsigned int lineNumber);
         
-        void printLineWithArrow(std::string line, unsigned int arrowPosition);
-        void printLineWithUnderline(std::string line, Range range);
-        void printErrorHeader(MAlice::ErrorType errorType, unsigned int lineNumber, unsigned int columnIndex, std::string errorMessage);
+        void printLineWithArrow(ErrorPosition *errorPosition);
+        void printLineWithUnderline(std::string line, Range *range);
+        void printErrorHeader(Error *error);
     public:
         ErrorReporter();
-        void reportError(ErrorType errorType, std::string errorMessage, bool isFatal);
-        void reportError(unsigned int lineNumber, ErrorType errorType, std::string errorMessage, bool isFatal);
-        void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, bool isFatal);
-        void reportError(unsigned int lineNumber, unsigned int columnIndex, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal);
-        void reportError(unsigned int lineNumber, Range range, ErrorType errorType, std::string errorMessage, std::string additionalInformation, bool isFatal);
+        void reportError(Error *error);
+        
         void setInput(std::string input);
         
         bool hasReportedErrors();

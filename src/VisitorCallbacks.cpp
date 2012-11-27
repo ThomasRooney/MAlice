@@ -7,7 +7,7 @@
 #include "VisitorCallbacks.h"
 #include "ArrayEntity.h"
 #include "Entity.h"
-#include "ErrorHelpers.h"
+#include "ErrorFactory.h"
 #include "FunctionEntity.h"
 #include "ProcedureEntity.h"
 #include "SemanticChecks.h"
@@ -30,7 +30,7 @@ namespace MAlice {
     bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) != 1) {
-            outputInvalidASTError(ctx, "increment statement");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("increment statement"));
             return false;
         }
         
@@ -41,7 +41,7 @@ namespace MAlice {
     bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) != 1) {
-            outputInvalidASTError(ctx, "decrement statement");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("decrement statement"));
             return false;
         }
         
@@ -55,7 +55,7 @@ namespace MAlice {
         // If -> (Expression -> Statements)*
         int numChildren = Utilities::getNumberOfChildNodes(node);
         if (numChildren < 1) {
-            outputInvalidASTError(ctx, "If Statement");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if Statement"));
             return false;
         }
         //  the expression on node 1 must return a a boolean
@@ -79,7 +79,7 @@ namespace MAlice {
     {
         // input must be either a number or a letter.
         if (Utilities::getNumberOfChildNodes(node) < 1) {
-            outputInvalidASTError(ctx, "Input Statement");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("input Statement"));
             return false;
         }
         ASTNode input = Utilities::getChildNodeAtIndex(node, 0);
@@ -91,14 +91,11 @@ namespace MAlice {
             return true;
         default:
             {
-            Range r;
-            std::string text = Utilities::getNodeTextIncludingChildren(input, ctx, &r);
-            ctx->getErrorReporter()->reportError(  Utilities::getNodeLineNumber(input),
-                                        r,
-                                        ErrorType::Semantic,
-                                        "Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.",
-                                        "",
-                                        false);
+                Range *r = NULL;
+                std::string text = Utilities::getNodeTextIncludingChildren(input, ctx, &r);
+                Error *error = ErrorFactory::createSemanticError("Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.");
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(input)));
+                error->setRange(r);
             }
         }
         return walker->visitChildren(node, ctx);
@@ -124,7 +121,7 @@ namespace MAlice {
         // First child must be an expression
         int numChildren = Utilities::getNumberOfChildNodes(node);
         if (numChildren < 1) {
-            outputInvalidASTError(ctx, "While Statement with no conditional");
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("while Statement with no conditional"));
             return false;
         }
         //  the expression on node 1 must return a a boolean
@@ -380,11 +377,10 @@ namespace MAlice {
             std::string identifier(Utilities::getNodeText(identifierNode));
             
             if (ctx->isKeyword(identifier)) {
-                ctx->getErrorReporter()->reportError(Utilities::getNodeLineNumber(identifierNode),
-                                                     Utilities::getNodeColumnIndex(identifierNode),
-                                                     ErrorType::Semantic,
-                                                     "Cannot declare variable '" + identifier + "' because it is a keyword.",
-                                                     true);
+                Error *error = ErrorFactory::createSemanticError("Cannot declare variable '" + identifier + "' because it is a keyword.");
+                error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode)));
+                
+                ctx->getErrorReporter()->reportError(error);
                 
                 return false;
             }
