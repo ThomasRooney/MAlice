@@ -103,7 +103,7 @@ namespace MAlice {
         {
             if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
             {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Warning - not all execution paths have a return value"));
+                ctx->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Warning - not all execution paths of '" + entity->getIdentifier() + "' function have a return value"));
             }
                 
         }
@@ -746,13 +746,27 @@ namespace MAlice {
         bool validForAllChildren = true;
         ASTNode childNode;
         int numChildren = Utilities::getNumberOfChildNodes(bodyNode);
+        bool foundReturnStatement = false;
         for (int i = 0; i < numChildren; i++)
         {
             childNode = Utilities::getChildNodeAtIndex(bodyNode, i);
-            if (Utilities::getNodeType(childNode) == IFSTATEMENT)
-                validForAllChildren = validForAllChildren & checkHasReturnValueInAllExecutionPaths(childNode);
+            switch(Utilities::getNodeType(childNode))
+            {
+                case IFSTATEMENT:
+                    validForAllChildren = validForAllChildren && checkHasReturnValueInAllExecutionPaths(childNode);
+                    break;
+                case RETURNSTATEMENT:
+                    foundReturnStatement = true;
+                case BODY:
+                case STATEMENTLIST:
+                    return checkHasReturnValueInAllExecutionPaths(childNode);
+                    break;
 
+                default:
+                    continue;
+
+            }
         }
-        return validForAllChildren;
+        return validForAllChildren && foundReturnStatement;
     }
 }
