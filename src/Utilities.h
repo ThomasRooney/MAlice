@@ -3,6 +3,7 @@
 #define _MALICEUTILITIES
 
 #include <iostream>
+#include <sstream>
 #include <unordered_map>
 
 #include "Types.h"
@@ -41,6 +42,14 @@ namespace MAlice {
         static std::string stringWithLineIndentation(std::string string, unsigned int lineIndentation);
         
         static ErrorPosition *getErrorPositionFromNode(ASTNode node);
+        
+        template <typename T>
+        static std::string numberToString(T number) {
+            std::ostringstream stream;
+            stream << number;
+            
+            return stream.str();
+        }
     };
     
 }; // namespace MAlice

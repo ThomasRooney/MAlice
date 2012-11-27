@@ -103,7 +103,7 @@ namespace MAlice {
         {
             if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
             {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createSemanticError("Warning - not all execution paths of '" + entity->getIdentifier() + "' function have a return value"));
+                ctx->getErrorReporter()->reportError(ErrorFactory::createWarningError("Not all execution paths of function '" + entity->getIdentifier() + "' have a return value."));
             }
                 
         }
@@ -536,9 +536,37 @@ namespace MAlice {
         
         // Subtract one to take account for the identifier node
         unsigned int numberOfInvokedParameters = Utilities::getNumberOfChildNodes(invocationNode) - 1;
+        unsigned int numberOfFormalParameters = (unsigned int)funcProcEntity->getParameterListTypes().size();
         
-        if (funcProcEntity->getParameterListTypes().size() != numberOfInvokedParameters)
+        if (numberOfFormalParameters != numberOfInvokedParameters) {
+            std::string parametersString;
+            if (numberOfFormalParameters == 1)
+                parametersString = "parameter";
+            else
+                parametersString = "parameters";
+            
+            Range *range = NULL;
+            Utilities::getNodeTextIncludingChildren(invocationNode, ctx, &range);
+            
+            ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
+            
+            std::string funcProcHumanReadableType = funcProcEntity->humanReadableName();
+            funcProcHumanReadableType[0] = toupper(funcProcHumanReadableType[0]);
+            
+            Error *error = ErrorFactory::createSemanticError(funcProcHumanReadableType + " '" +
+                                                             funcProcEntity->getIdentifier() +
+                                                             "' expects " +
+                                                             Utilities::numberToString(numberOfFormalParameters) +
+                                                             " " + parametersString + ", but found " +
+                                                             Utilities::numberToString(numberOfInvokedParameters)
+                                                             + " in invocation.");
+            error->setErrorPosition(new ErrorPosition(Utilities::getNodeLineNumber(identifierNode)));
+            error->setRange(range);
+            
+            ctx->getErrorReporter()->reportError(error);
+            
             return false;
+        }
         
         return true;
     }
