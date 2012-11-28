@@ -947,9 +947,6 @@ namespace MAlice {
             isLValueArray = true;
         }
         
-        // TODO: Check these are not null. otherwise fatal error
-        
-        
         Entity *symbolTableEntity = NULL;
         
         // Check lvalue exists on the symbol table

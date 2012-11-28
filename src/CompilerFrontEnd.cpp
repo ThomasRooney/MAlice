@@ -85,6 +85,8 @@ namespace MAlice {
         setParserErrorReporter(m_errorReporter);
         compilerContext->setErrorReporter(m_errorReporter);
         
+        cout << "Analysing file '" + path + "'...\n\n";
+        
         SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(compilerContext);
         ASTNode tree = NULL;
         
@@ -96,6 +98,9 @@ namespace MAlice {
         
         SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
         semanticAnalyser->validate();
+        
+        if (!m_errorReporter->hasReportedErrors())
+            cout << "\n\nNo errors found.";
         
         delete semanticAnalyser;
         delete syntacticAnalyser;
