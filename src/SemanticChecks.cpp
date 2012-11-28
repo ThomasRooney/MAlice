@@ -120,7 +120,7 @@ namespace MAlice {
     bool checkExpression(ASTNode node, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)
     {
         MAliceType type = MAliceTypeNone;
-        if (!getTypeFromExpressionNode(node, &type, requiresLValue, walker, ctx))
+        if (!getTypeFromExpressionNode(node, &type, requiresLValue, walker, ctx, NULL))
             return false;
         
         if (typeConfirm != type)
@@ -149,7 +149,7 @@ namespace MAlice {
         return true;
     }
     
-    bool getTypeFromExpressionNode(ASTNode node, MAliceType *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx)
+    bool getTypeFromExpressionNode(ASTNode node, MAliceType *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
     {
         ASTNode firstChildNode = Utilities::getChildNodeAtIndex(node, 0);
         if (!firstChildNode) {
@@ -160,10 +160,13 @@ namespace MAlice {
         // Check identifiers first, because on their own they can reference an array if we don't want an l-value
         if (!requiresLValue && Utilities::getNodeType(firstChildNode) == IDENTIFIER) {
             MAliceType type = MAliceTypeNone;
+            MAliceEntityType entityType = MAliceEntityTypeUndefined;
 
-            if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, NULL, walker, ctx))
+            if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, &entityType, walker, ctx))
                 return false;
 
+            if (passedByReference)
+                *passedByReference = entityType==MAliceEntityTypeArray;
             
             if (outType)
                 *outType = type;
@@ -1082,9 +1085,39 @@ namespace MAlice {
                 return false;
             
             MAliceType expressionType = MAliceTypeNone;
-            
-            if (!getTypeFromExpressionNode(expressionNode, &expressionType, false, walker, ctx))
+            bool passedByReference = false;
+            if (!getTypeFromExpressionNode(expressionNode, &expressionType, false, walker, ctx, &passedByReference))
                 return false;
+
+            // Check passedByReference is as expected
+            
+            if (passedByReference != paramEntity.isPassedByReference()) {
+                Range *expressionRange = NULL;
+                Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
+                
+                std::string funcProcIdentifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
+                std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
+                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
+                
+                Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" +
+                                                                 Utilities::numberToString(i+1) +
+                                                                 " in invocation of '" +
+                                                                 funcProcIdentifier +
+                                                                 "'. Expected argument passed by " +
+                                                                 (passedByReference?"reference":"value") +
+                                                                 " but found argument passed by " +
+                                                                 (passedByReference?"value":"reference") +
+                                                                 ".");
+                error->setLineNumber(Utilities::getNodeLineNumber(expressionNode));
+                error->setUnderlineRanges(Utilities::rangeToSingletonList(expressionRange));
+                
+                ctx->getErrorReporter()->reportError(error);
+                
+                return false;
+
+            }
+            
+
                 
             if (expressionType != paramEntity.getType()) {
                 Range *expressionRange = NULL;
@@ -1261,7 +1294,7 @@ namespace MAlice {
             // Make sure its not undefined
             MAliceType type = MAliceTypeNone;
             
-            if (!getTypeFromExpressionNode(childNode, &type, true, walker, ctx))
+            if (!getTypeFromExpressionNode(childNode, &type, true, walker, ctx, NULL))
                 return false;
             
             if (type == MAliceTypeNone)
@@ -1356,7 +1389,7 @@ namespace MAlice {
         }
 
         MAliceType expressionType = MAliceTypeNone;
-        if (!getTypeFromExpressionNode(expressionNode, &expressionType, false, walker, ctx))
+        if (!getTypeFromExpressionNode(expressionNode, &expressionType, false, walker, ctx, NULL))
             return false;
         
         if (expressionType != functionEntity->getReturnType()) {

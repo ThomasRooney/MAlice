@@ -84,7 +84,7 @@ namespace MAlice {
         }
         MAliceType t = MAliceTypeNone;
         
-        if (!getTypeFromExpressionNode(node, &t, true, walker, ctx))
+        if (!getTypeFromExpressionNode(node, &t, true, walker, ctx, NULL))
             return false;
         
         switch(t)
