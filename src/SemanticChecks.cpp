@@ -131,7 +131,7 @@ namespace MAlice {
             ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
             Error *error = ErrorFactory::createSemanticError(errorMessage);
             error->setLineNumber(Utilities::getNodeLineNumber(firstNonImaginaryNode));
-            error->setArrowRanges(Utilities::rangeToSingletonList(exprRange));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(exprRange));
             
             ctx->getErrorReporter()->reportError(error);
             
