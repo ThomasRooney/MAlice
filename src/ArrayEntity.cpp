@@ -5,5 +5,10 @@ namespace MAlice {
     {
         this->length = length;
     }
+    
+    std::string ArrayEntity::humanReadableName()
+    {
+        return "array";
+    }
 
 };
