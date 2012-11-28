@@ -333,7 +333,7 @@ namespace MAlice {
                 break;
         }
         
-        if (error->getLineNumber() != UINT_MAX) {
+        if (error->getLineNumber() != UINT_MAX && error->getLineNumber() != 0) {
             cerr << " (";
             cerr << "Line " << error->getLineNumber();
             cerr << ")";

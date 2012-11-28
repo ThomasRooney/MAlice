@@ -9,7 +9,7 @@ Student Compiler Output:
 ---------------------
 Analysing file '../malice_examples/valid/ackermann.alice'...
 
-Warning (Line 0): Not all execution paths of function 'ackermann' have a return value.
+Warning: Not all execution paths of function 'ackermann' have a return value.
 
 1 warning.
 ---------------------
@@ -564,9 +564,9 @@ Student Compiler Output:
 ---------------------
 Analysing file '../malice_examples/invalid/test08.alice'...
 
-Warning (Line 0): Not all execution paths of function 'main' have a return value.
+Warning: Not all execution paths of function 'main' have a return value.
 
-Semantic error (Line 0): Entry point procedure hatta() is not declared.
+Semantic error: Entry point procedure hatta() is not declared.
 
 1 warning.
 1 error found.
@@ -591,7 +591,7 @@ Semantic error (Line 2): 'x' has already been declared in the current scope.
 
   Symbol 'x' is previously declared as a variable on line 1.
 
-Semantic error (Line 0): Entry point procedure hatta() is not declared.
+Semantic error: Entry point procedure hatta() is not declared.
 
 2 errors found.
 ---------------------
@@ -932,9 +932,9 @@ Student Compiler Output:
 ---------------------
 Analysing file '../malice_examples/invalid/test25.alice'...
 
-Warning (Line 0): Not all execution paths of function 'hatta' have a return value.
+Warning: Not all execution paths of function 'hatta' have a return value.
 
-Semantic error (Line 0): Entry point hatta() is declared as a function. It should be declared as a procedure.
+Semantic error: Entry point hatta() is declared as a function. It should be declared as a procedure.
 
 1 warning.
 1 error found.
@@ -1272,7 +1272,7 @@ Syntactic error (Line 4): Expected token 'became'.
   x became :a"+ "a".
                  ^  
 
-Syntactic error (Line 0): Mismatched set exception
+Syntactic error: Mismatched set exception
 
 5 errors found.
 ---------------------
@@ -1413,7 +1413,7 @@ Semantic error (Line 5): The return value 'z' does not match the return value of
   Alice found z.
               ~ 
 
-Semantic error (Line 0): Entry point procedure hatta() is not declared.
+Semantic error: Entry point procedure hatta() is not declared.
 
 3 errors found.
 ---------------------
@@ -1520,7 +1520,7 @@ Student Compiler Output:
 ---------------------
 Analysing file '../malice_examples/custom/test17.alice'...
 
-Warning (Line 0): Not all execution paths of function 'hello' have a return value.
+Warning: Not all execution paths of function 'hello' have a return value.
 
 1 warning.
 ---------------------
