@@ -247,11 +247,19 @@ namespace MAlice {
             if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
                 return false;
 
+            // Number of children should be two
+            int numChildren = Utilities::getNumberOfChildNodes(identifierNode);
+
+            if (numChildren != 2)
+                ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Malformed Array Invocation Node"));
+
             // array of what?
             ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
             if (typeNode != NULL)
                 type = Utilities::getNodeText(typeNode);
-            // length (doesn't matter for validation)
+            // length is a number
+            ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
+            checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
 
             
             ctx->addEntityInScope(identifier, new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type), 1));
