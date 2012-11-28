@@ -605,7 +605,7 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Cannot match type 'number' with expected type 'boolean' in operand '10'.
+Semantic error (Line 6): Cannot match type 'number' with expected type in operand '10'.
     x became 10 && 20.
              ~~       
 ---------------------
@@ -729,6 +729,12 @@ Reference to 'arr' in line 6 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 5): Cannot refer to array 'arr' directly.
+    arr said Alice.
+    ^              
+
+  To fix, specify an array element.
+
 Semantic error (Line 6): Trying to assign to array 'arr' directly is invalid.
     arr became y.
     ^            
@@ -748,6 +754,9 @@ Actual parameter #1 in call to 'proc' on line 11 is passed by reference but the 
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 11): Cannot match types of argument #1 in invocation of 'proc'. Expected argument passed by reference but found argument passed by value.
+    proc(arr).
+         ~~~  
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test24.alice
 ---------------------
@@ -761,6 +770,9 @@ Actual parameter #1 in call to 'proc' on line 9 is passed by value but the corre
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 9): Cannot match types of argument #1 in invocation of 'proc'. Expected argument passed by value but found argument passed by reference.
+    proc(x).
+         ~  
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test25.alice
 ---------------------
@@ -879,12 +891,12 @@ Logical operator '&&' on line 9 not applied to Boolean values.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Cannot match type 'letter' with expected type 'number' in operand 'z'.
+Semantic error (Line 6): Cannot match types 'letter' and 'number' for operands to binary operator.
     perhaps (z + x == 100) so
-             ~               
-Semantic error (Line 9): Cannot match type 'number' with expected type 'boolean' in operand 'x'.
+             ~ ^ ~           
+Semantic error (Line 9): Cannot match types 'number' and 'boolean' for operands to binary operator.
     perhaps (x && (y > x)) so
-             ~               
+             ~ ^^ ~~~~~~~    
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test31.alice
 ---------------------
@@ -984,9 +996,9 @@ Reference Compiler Output:
 Running the MAlice Reference compiler
 ===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test35.alice' =====
 --------------- Errors encountered in FunctionReturnChecker ---------------
-Type of return value on line 4 does not match return type of 'func1' on line 2.
 Type of return value on line 9 does not match return type of 'func2' on line 7.
 Type of return value on line 14 does not match return type of 'func3' on line 12.
+Type of return value on line 4 does not match return type of 'func1' on line 2.
 
 ---------------------
 Student Compiler Output:
@@ -1016,4 +1028,325 @@ Student Compiler Output:
 Semantic error (Line 6): Cannot assign value to 'y's 1 piece' as 'y' is not an array.
      y's 1 piece became 1.
      ^                    
+---------------------
+Processing Custom File: ../malice_examples/custom/test01.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test01.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Type clash in assignment on line 4. One type is 'sentence' and the other is 'letter'.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Can't match expected type 'sentence' with type 'letter' for expression 'a'.
+  x became 'a'.
+           ~~~ 
+---------------------
+Processing Custom File: ../malice_examples/custom/test02.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test02.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Type clash in assignment on line 4. One type is 'sentence' and the other is 'letter'.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Can't match expected type 'sentence' with type 'letter' for expression 'a'+ 'a'.
+  x became 'a'+ 'a'.
+           ~~~~~~~~ 
+---------------------
+Processing Custom File: ../malice_examples/custom/test03.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test03.alice' =====
+--------------- Errors encountered in AliceParser ---------------
+Parse error: 'LexToken(A,'a',4,61)'.
+Illegal character ':'.
+Illegal character '"'.
+
+---------------------
+Student Compiler Output:
+---------------------
+Lexical error (Line 4): Unrecognised or missing token.
+  x became :a"+ "a".
+           ^        
+ (Line 0): Unrecognised token
+Syntactic error (Line 4): Unrecognised or missing token.
+  x became :a"+ "a".
+Syntactic error (Line 4): Expected token 'became'.
+  x became :a"+ "a".
+                 ^  
+Syntactic error: Mismatched set exception
+  
+---------------------
+Processing Custom File: ../malice_examples/custom/test04.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test04.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Cannot match type 'sentence' with expected type in operand '"as"'.
+  x became "as"+ "as".
+           ~~~~       
+---------------------
+Processing Custom File: ../malice_examples/custom/test05.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test05.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Cannot match type 'sentence' with expected type in operand '"as"'.
+  x became "as" - "as".
+           ~~~~        
+---------------------
+Processing Custom File: ../malice_examples/custom/test06.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test06.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Relational operator '>' on line 4 not applied to integer or character values.
+Type clash in assignment on line 4. One type is 'sentence' and the other is 'boolean'.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Cannot match type 'sentence' with expected type in operand '"as"'.
+  x became "as" > "as".
+           ~~~~        
+---------------------
+Processing Custom File: ../malice_examples/custom/test07.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test07.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Relational operator '>' on line 4 not applied to integer or character values.
+Type clash in assignment on line 4. One type is 'sentence' and the other is 'boolean'.
+Relational operator '>' on line 5 not applied to integer or character values.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Cannot match type 'sentence' with expected type in operand '"as"'.
+  x became "as" > "as".
+           ~~~~        
+Semantic error (Line 5): Cannot match type 'sentence' with expected type in operand 'x'.
+  either(x>"as") so
+         ~         
+---------------------
+Processing Custom File: ../malice_examples/custom/test08.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test08.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 3): Cannot match type 'sentence' with expected type in operand 'x'.
+  Alice found x + "aaa".
+              ~         
+---------------------
+Processing Custom File: ../malice_examples/custom/test09.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test09.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+The reference to 'y' on line 4 is not to array.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 4): Cannot assign value to 'y's 1 piece' as 'y' is not an array.
+    y's 1 piece became 9.
+    ^                    
+---------------------
+Processing Custom File: ../malice_examples/custom/test10.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test10.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test11.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test11.alice' =====
+--------------- Errors encountered in SymbolTable ---------------
+Unable to find symbol for reference to 'z' in line 5.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 5): Identifier: 'z' is not in scope.
+  Alice found z.
+              ^ 
+Semantic error (Line 5): The return value 'z' does not match the return value of 'id' declared on line 3.
+  Alice found z.
+              ~ 
+Semantic error: Entry point procedure hatta() is not declared.
+  
+---------------------
+Processing Custom File: ../malice_examples/custom/test12.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test12.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test13.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test13.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test14.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test14.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Type clash for binary operator '+' on line 5. This operator cannot be applied to Boolean values.
+
+---------------------
+Student Compiler Output:
+---------------------
+Semantic error (Line 5): Cannot match type 'boolean' with expected type in operand '(1==1)'.
+  (1==1) + (1==2) spoke.
+  ~~~~~~                
+---------------------
+Processing Custom File: ../malice_examples/custom/test15.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test15.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+The call expression to 'r' on line 9 references a procedure, which does not return a value.
+Type clash in assignment on line 9. One type is 'number' and the other is 'void'.
+--------------- Errors encountered in FunctionReturnChecker ---------------
+Illegal return statement found in procedure 'r' on line 3.
+
+---------------------
+Student Compiler Output:
+---------------------
+Internal error: Incorrect internal AST representation encountered (from validation of return statement).
+  
+Semantic error (Line 9): Cannot use void result of procedure 'r' in expression.
+  x became r().
+           ~~~ 
+---------------------
+Processing Custom File: ../malice_examples/custom/test16.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test16.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Illegal type used to index array 'arr' on line 4. Found type 'letter'.
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test17.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test17.alice' =====
+--------------- Warnings encountered in FunctionReturnChecker ---------------
+There are paths through 'hello' that do not return a value.
+
+---------------------
+Student Compiler Output:
+---------------------
+Warning: Not all execution paths of function 'hello' have a return value.
+  
+---------------------
+Processing Custom File: ../malice_examples/custom/test18.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test18.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Illegal type used in size declaration of array 'y' on line 3. Found type 'boolean'.
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test19.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test19.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+Illegal type used to index array 'y' on line 4. Found type 'letter'.
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test20.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test20.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
+---------------------
+Processing Custom File: ../malice_examples/custom/test21.alice
+---------------------
+Reference Compiler Output:
+---------------------
+Running the MAlice Reference compiler
+===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test21.alice' =====
+
+---------------------
+Student Compiler Output:
+---------------------
 ---------------------

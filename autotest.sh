@@ -3,10 +3,10 @@
 
 VALIDFILES=../malice_examples/valid/*.alice
 INVALIDFILES=../malice_examples/invalid/*.alice
-
+CUSTOMFILES=../malice_examples/custom/*.alice
 OUTPUT=autotest_output.txt
-
-RUNNABLE = true
+CUSTOM=true
+RUNNABLE=true
 
 echo "Sanity Check"
 echo "------------"
@@ -17,7 +17,7 @@ then
 echo  "yes"
 else
 echo "no"
-RUNNABLE = false
+RUNNABLE=false
 fi
 
 echo "Checking the reference compiler is accessible..."
@@ -29,7 +29,7 @@ then
 echo "yes"
 else
 echo "no"
-RUNNABLE = false
+RUNNABLE=false
 fi
 
 echo -ne "Checking the valid directory is located at ../malice_examples/valid ..."
@@ -48,6 +48,16 @@ echo "yes"
 else
 echo "no"
 RUNNABLE=false
+fi
+
+echo -ne "Checking the custom directory is located at ../malice_examples/custom ..."
+if [ -d "../malice_examples/custom" ];
+then
+echo "yes"
+CUSTOM=true
+else
+echo "no"
+CUSTOM=false
 fi
 
 if $RUNNABLE ; then
@@ -88,3 +98,20 @@ echo "---------------------" >> $OUTPUT
 ./compile $vF >> $OUTPUT 2>&1
 echo "---------------------" >> $OUTPUT
 done
+
+if $CUSTOM ; then
+for vF in $CUSTOMFILES
+do
+echo "Processing Custom File: $vF"  >> $OUTPUT
+echo "Processing Custom File: $vF"
+echo "---------------------" >> $OUTPUT
+echo "Reference Compiler Output:" >> $OUTPUT
+echo "---------------------" >> $OUTPUT
+MAlice $vF >> $OUTPUT 2>&1
+echo "---------------------" >> $OUTPUT
+echo "Student Compiler Output:" >> $OUTPUT
+echo "---------------------" >> $OUTPUT
+./compile $vF >> $OUTPUT 2>&1
+echo "---------------------" >> $OUTPUT
+done
+fi
