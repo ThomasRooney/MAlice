@@ -299,6 +299,10 @@ namespace MAlice {
                 
                 if (outType)
                     *outType = arrayEntity->getType();
+
+                // Check the expression subscript has number type
+                ASTNode exprNode = Utilities::getChildNodeAtIndex(node, 1);
+                checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
                 
                 return true;
             }
