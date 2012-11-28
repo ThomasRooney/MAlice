@@ -180,6 +180,7 @@ namespace MAlice {
         cout << "\n\nFlags:";
         cout << "\n" << "  -h    Print this help message";
         cout << "\n" << "  -t    Print parsed AST tree";
+        cout << endl;
     }
     
     void CompilerFrontEnd::printErrorReport()
