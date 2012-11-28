@@ -28,36 +28,46 @@ typedef unsigned long int uint64_t;
 
 #include "ErrorReporter.h"
 
+typedef enum {
+    CompilerFlagsNone = 0,
+    CompilerFlagsPrintHelp,
+    CompilerFlagsPrintAST
+} CompilerFlags;
+
 using namespace MAlice;
+using namespace std;
 
 std::string getPathFromCommandLineArguments(int argc, char *argv[]);
 
 bool hasFlagsInCommandLineArguments(int argc, char *argv[]);
-bool hasPrintTreeFlagEnabled(std::string flags);
+unsigned int getEnabledFlags(std::string flags);
+
+void printHelp();
 
 int main(int argc, char *argv[])
 {
     // Take the calling parameter into account
     argv++, argc--;
     
-    bool printTree = false;
+    ErrorReporter *errorReporter = new ErrorReporter();
+    
+    unsigned int compilerFlags = CompilerFlagsNone;
     
     if (hasFlagsInCommandLineArguments(argc, argv)) {
         std::string flags(argv[0]);
+        compilerFlags = getEnabledFlags(flags);
         
-        printTree = hasPrintTreeFlagEnabled(flags);
+        if (compilerFlags == CompilerFlagsNone) {
+            errorReporter->reportError(ErrorFactory::createIOError("Unknown flag(s) passed."));
+            return EXIT_FAILURE;
+        }
         
         argv++, argc--;
     }
     
-    ErrorReporter *errorReporter = new ErrorReporter();
-    
-    if (argc == 0) {
-        errorReporter->reportError(ErrorFactory::createIOError("No input file specified"));
-        
-        // When we exit, memory used by the heap-allocated ErrorReporter will be freed by the system, so no need
-        // to do it here.
-        return EXIT_FAILURE;
+    if (argc == 0 || (compilerFlags & CompilerFlagsPrintHelp) != 0) {
+        printHelp();
+        return EXIT_SUCCESS;
     }
 
     std::string path = getPathFromCommandLineArguments(argc, argv);
@@ -74,15 +84,16 @@ int main(int argc, char *argv[])
     SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(compilerContext);
     ASTNode tree = NULL;
     
-    if (syntacticAnalyser->parseInput(path, &tree)) {
-        if (printTree)
-            Utilities::printTree(tree);
-        
-        SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-        semanticAnalyser->validate();
-        
-        delete semanticAnalyser;
-    }
+    if (!syntacticAnalyser->parseInput(path, &tree))
+        return EXIT_FAILURE;
+    
+    if ((compilerFlags & CompilerFlagsPrintAST) != 0)
+        Utilities::printTree(tree);
+    
+    SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
+    semanticAnalyser->validate();
+    
+    delete semanticAnalyser;
     
     delete syntacticAnalyser;
     delete errorReporter;
@@ -103,11 +114,15 @@ bool hasFlagsInCommandLineArguments(int argc, char *argv[])
     return false;
 }
 
-bool hasPrintTreeFlagEnabled(std::string flags)
+unsigned int getEnabledFlags(std::string flags)
 {
+    unsigned int retFlags = 0;
+    
     for (std::string::iterator c = flags.begin();c != flags.end();++c) {
         if (*c == 't')
-            return true;
+            retFlags |= CompilerFlagsPrintAST;
+        if (*c == 'h')
+            retFlags |= CompilerFlagsPrintHelp;
     }
     
     return false;
@@ -140,4 +155,13 @@ std::string getPathFromCommandLineArguments(int argc, char *argv[])
     }
     
     return path;
+}
+
+void printHelp()
+{
+    cout << "MAlice Compiler (by Thomas Rooney and Alex Rozanski)";
+    cout << "\n\n" << "Usage: compile [Flags] [InputFile]";
+    cout << "\n\nFlags:";
+    cout << "\n" << "  -h    Print this help message";
+    cout << "\n" << "  -t    Print parsed AST tree";
 }
