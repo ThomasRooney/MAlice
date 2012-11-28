@@ -53,6 +53,7 @@ namespace MAlice {
         void printDecoratedLine(Error *error, std::string line, unsigned int lineIndex);
         void decorateLineWithRanges(std::string *decorateLine, unsigned int lineIndex, std::list<Range*> ranges, char decorateCharacter);
         void getStartAndEndLinesForRanges(std::list<Range*> ranges, unsigned int startLine, unsigned int endLine, unsigned int *outStartLine, unsigned int *outEndLine);
+        bool checkValidRanges(std::list<Range*> ranges);
     public:
         ErrorReporter();
         void reportError(Error *error);

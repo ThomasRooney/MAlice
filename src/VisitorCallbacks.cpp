@@ -415,6 +415,7 @@ namespace MAlice {
             if (ctx->isKeyword(identifier)) {
                 Error *error = ErrorFactory::createSemanticError("Cannot declare variable '" + identifier + "' because it is a keyword.");
                 error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
+                
                 error->setArrowRanges(Utilities::rangeToSingletonList(
                     Utilities::createRange(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))
                     ));

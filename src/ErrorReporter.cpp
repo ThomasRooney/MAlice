@@ -215,12 +215,12 @@ namespace MAlice {
     {
         unsigned int startLine = UINT_MAX;
         unsigned int endLine = 0;
+        
+        if (!checkValidRanges(error->getArrowRanges()) || !checkValidRanges(error->getUnderlineRanges()))
+            return;
 
         getStartAndEndLinesForRanges(error->getArrowRanges(), startLine, endLine, &startLine, &endLine);
         getStartAndEndLinesForRanges(error->getUnderlineRanges(), startLine, endLine, &startLine, &endLine);
-        
-        if (startLine == UINT_MAX || endLine == 0)
-            return;
         
         for (unsigned int i = startLine; i <= endLine; ++i)
         {
@@ -256,6 +256,9 @@ namespace MAlice {
                 unsigned int startPosition = (startLineNumber == lineIndex) ? r->getStartPosition().getColumnIndex() : 0;
                 unsigned int endPosition = (endLineNumber == lineIndex) ? r->getEndPosition().getColumnIndex() : (unsigned int)(*decorateLine).size() - 1;
                 
+                if (startPosition > decorateLine->size() || endPosition > decorateLine->size())
+                    return;
+                
                 for (unsigned int i = startPosition; i <= endPosition; ++i) {
                     (*decorateLine)[i] = decorateCharacter;
                 }
@@ -286,6 +289,18 @@ namespace MAlice {
         
         if (outEndLine)
             *outEndLine = endLine;
+    }
+    
+    bool ErrorReporter::checkValidRanges(std::list<Range*> ranges)
+    {
+        for (std::list<Range*>::iterator it = ranges.begin(); it != ranges.end(); ++it) {
+            Range *r = *it;
+            
+            if (r->getStartPosition().getColumnIndex() == UINT_MAX || r->getEndPosition().getColumnIndex() == UINT_MAX)
+                return false;
+        }
+        
+        return true;
     }
     
 //    void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
