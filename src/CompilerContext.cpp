@@ -3,6 +3,7 @@
 
 #include "CompilerContext.h"
 
+#include "ErrorFactory.h"
 #include "SymbolTable.h"
 #include "FunctionProcedureEntity.h"
 
@@ -137,9 +138,14 @@ namespace MAlice {
     
     void CompilerContext::exitScope()
     {
-        // TODO: generate error if we pop too far.
-        if (m_symbolTables.empty())
-            return;
+        if (m_symbolTables.empty()) {
+            ErrorReporter *errorReporter = getErrorReporter();
+            
+            if (errorReporter) {
+                errorReporter->reportError(ErrorFactory::createInternalError("Trying to pop an empty Compiler Context scope stack."));
+                return;
+            }
+        }
         
         SymbolTable* & lastSymbolTable = m_symbolTables.back();
         delete lastSymbolTable;
