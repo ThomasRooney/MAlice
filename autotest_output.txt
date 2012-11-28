@@ -2,14 +2,13 @@ Processing Valid File: ../malice_examples/valid/ackermann.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/ackermann.alice' =====
---------------- Warnings encountered in FunctionReturnChecker ---------------
-There are paths through 'ackermann' that do not return a value.
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/ackermann.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/valid/ackermann.alice'...
+
 Warning: Not all execution paths of function 'ackermann' have a return value.
   
 ---------------------
@@ -17,355 +16,418 @@ Processing Valid File: ../malice_examples/valid/binarySearch.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/binarySearch.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/binarySearch.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/binarySearch.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/bubbleSort.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/bubbleSort.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/bubbleSort.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/bubbleSort.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciIterative.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/fibonacciIterative.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/fibonacciIterative.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/fibonacciIterative.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/fibonacciRecursive.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/fibonacciRecursive.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/fibonacciRecursive.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/fibonacciRecursive.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/gcdIterative.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/gcdIterative.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/gcdIterative.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/gcdIterative.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/gcdRecursive.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/gcdRecursive.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/gcdRecursive.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/gcdRecursive.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/sieveOfEratosthenes.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/sieveOfEratosthenes.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/sieveOfEratosthenes.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/sieveOfEratosthenes.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test01.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test01.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test01.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test01.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test02.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test02.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test02.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test02.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test03.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test03.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test03.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test03.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test04.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test04.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test04.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test04.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test05.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test05.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test05.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test05.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test06.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test06.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test06.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test06.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test07.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test07.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test07.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test07.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test08.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test08.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test08.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test08.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test09.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test09.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test09.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test09.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test10.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test10.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test10.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test10.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test11.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test11.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test11.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test11.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test12.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test12.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test12.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test12.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test13.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test13.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test13.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test13.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test14.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test14.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test14.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test14.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/test15.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/test15.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/test15.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/test15.alice'...
+
+
+No errors found.---------------------
 Processing Valid File: ../malice_examples/valid/vectorFunctions.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/valid/vectorFunctions.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/valid/vectorFunctions.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/valid/vectorFunctions.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest01.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest01.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest01.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest01.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest02.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest02.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest02.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest02.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest03.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest03.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest03.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest03.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest04.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest04.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest04.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest04.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest05.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest05.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest05.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest05.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest06.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest06.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest06.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest06.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest07.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest07.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest07.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest07.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/runTest08.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/runTest08.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/runTest08.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/invalid/runTest08.alice'...
+
+
+No errors found.---------------------
 Processing Invalid File: ../malice_examples/invalid/test01.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test01.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test01.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(ID,'numbere',1,8)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test01.alice'...
+
 Syntactic error (Line 1): Unrecognised or missing token.
   x was a numbere.
 ---------------------
@@ -373,14 +435,15 @@ Processing Invalid File: ../malice_examples/invalid/test02.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test02.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test02.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(ID,'y',2,15)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test02.alice'...
+
 Syntactic error (Line 1): Unrecognised or missing token.
   x was a number
 ---------------------
@@ -388,14 +451,15 @@ Processing Invalid File: ../malice_examples/invalid/test03.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test03.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test03.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(BECAME,'became',2,18)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test03.alice'...
+
 Syntactic error (Line 2): Unrecognised or missing token.
   x became 10.
   ^           
@@ -404,14 +468,15 @@ Processing Invalid File: ../malice_examples/invalid/test04.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test04.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test04.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(ROOM,'room',1,0)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test04.alice'...
+
 Semantic error (Line 1): Cannot declare variable 'room' because it is a keyword.
   room was a number.
   ^                 
@@ -420,8 +485,7 @@ Processing Invalid File: ../malice_examples/invalid/test05.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test05.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test05.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(ID,'Number',1,8)'.
 Parse error: 'LexToken(ID,'Number',1,27)'.
@@ -429,6 +493,8 @@ Parse error: 'LexToken(ID,'Number',1,27)'.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test05.alice'...
+
 Syntactic error (Line 1): Unrecognised or missing token.
   x was a Number and y was a Number.
 Syntactic error (Line 1): Unrecognised or missing token.
@@ -439,14 +505,15 @@ Processing Invalid File: ../malice_examples/invalid/test06.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test06.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test06.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(CLOSED,'closed',4,38)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test06.alice'...
+
 Syntactic error (Line 4): Expected token 'opened'.
   closed
   ^     
@@ -455,14 +522,15 @@ Processing Invalid File: ../malice_examples/invalid/test07.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test07.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test07.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'None'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test07.alice'...
+
 Syntactic error (Line 3): Expected token 'closed'.
   opened
   ^     
@@ -471,14 +539,15 @@ Processing Invalid File: ../malice_examples/invalid/test08.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test08.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test08.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Unable to find a procedure 'hatta' which is the entry point to the program.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test08.alice'...
+
 Warning: Not all execution paths of function 'main' have a return value.
   
 Semantic error: Entry point procedure hatta() is not declared.
@@ -488,8 +557,7 @@ Processing Invalid File: ../malice_examples/invalid/test09.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test09.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test09.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Symbol 'x' with type 'VarDeclStmtNode' already defined in this scope on line 1.
 Unable to find a procedure 'hatta' which is the entry point to the program.
@@ -497,6 +565,8 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test09.alice'...
+
 Semantic error (Line 2): 'x' has already been declared in the current scope.
   x was a number.
   ^              
@@ -510,14 +580,15 @@ Processing Invalid File: ../malice_examples/invalid/test10.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test10.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test10.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(OPENED,'opened',2,17)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test10.alice'...
+
 Syntactic error (Line 2): Unexpected token 'opened'.
   opened
   ^     
@@ -526,14 +597,15 @@ Processing Invalid File: ../malice_examples/invalid/test11.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test11.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test11.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(CONTAINED,'contained',2,27)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test11.alice'...
+
 Syntactic error (Line 2): Unexpected token 'contained a'.
   The looking-glass main () contained a number
                             ^                 
@@ -542,14 +614,15 @@ Processing Invalid File: ../malice_examples/invalid/test12.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test12.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test12.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(THE,'The',6,82)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test12.alice'...
+
 Syntactic error (Line 6): Expected token 'closed'.
      The room func () contained a number
      ^                                  
@@ -558,8 +631,7 @@ Processing Invalid File: ../malice_examples/invalid/test13.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test13.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test13.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Type clash in assignment on line 4. One type is 'number' and the other is 'letter'.
 Type clash in assignment on line 5. One type is 'number' and the other is 'letter'.
@@ -568,6 +640,8 @@ Type clash in assignment on line 6. One type is 'letter' and the other is 'numbe
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test13.alice'...
+
 Semantic error (Line 4): Can't match expected type 'number' with type 'letter' for expression 'z'.
     x was a number, y was a letter and z was a number of 'z' but
                                                          ~~~    
@@ -582,14 +656,15 @@ Processing Invalid File: ../malice_examples/invalid/test14.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test14.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test14.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(.,'.',5,78)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test14.alice'...
+
 Syntactic error (Line 5): Expected token ')'.
     x became (5+2 - 3/10.
                         ^
@@ -598,8 +673,7 @@ Processing Invalid File: ../malice_examples/invalid/test15.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test15.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test15.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Logical operator '&&' on line 6 not applied to Boolean values.
 Type clash in assignment on line 6. One type is 'number' and the other is 'boolean'.
@@ -607,6 +681,8 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test15.alice'...
+
 Semantic error (Line 6): Cannot match type 'number' with expected types 'boolean' for operand '10' over operator &&.
     x became 10 && 20.
              ~~ ^^    
@@ -615,14 +691,15 @@ Processing Invalid File: ../malice_examples/invalid/test16.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test16.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test16.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Type clash in assignment on line 6. One type is 'number' and the other is 'boolean'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test16.alice'...
+
 Semantic error (Line 6): Can't match expected type 'number' with type 'boolean' for expression '10 > 20'.
     x became 10 > 20.
              ~~~~~~~ 
@@ -631,8 +708,7 @@ Processing Invalid File: ../malice_examples/invalid/test17.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test17.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test17.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Increment statement on line 5 is not applied to an integer.
 Decrement statement on line 6 is not applied to an integer.
@@ -640,6 +716,8 @@ Decrement statement on line 6 is not applied to an integer.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test17.alice'...
+
 Semantic error (Line 5): Can't match expected type 'number' with type 'letter' for expression 'x'.
     x ate.
     ~     
@@ -651,14 +729,15 @@ Processing Invalid File: ../malice_examples/invalid/test18.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test18.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test18.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(ID,'x',4,38)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test18.alice'...
+
 Syntactic error (Line 4): Expected token 'became'.
     1x was a number.
      ^              
@@ -670,8 +749,7 @@ Processing Invalid File: ../malice_examples/invalid/test19.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test19.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test19.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(CLOSED,'closed',5,54)'.
 Illegal character '$'.
@@ -679,6 +757,8 @@ Illegal character '$'.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test19.alice'...
+
 Lexical error (Line 4): Unrecognised or missing token.
     x$ was a number.
      ^              
@@ -690,14 +770,15 @@ Processing Invalid File: ../malice_examples/invalid/test20.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test20.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test20.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Unable to find symbol for reference to 'y' in line 8.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test20.alice'...
+
 Semantic error (Line 8): Cannot find variable declaration for 'y'.
     y became 100.
     ~            
@@ -706,14 +787,15 @@ Processing Invalid File: ../malice_examples/invalid/test21.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test21.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test21.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(WAS,'was',5,74)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test21.alice'...
+
 Syntactic error (Line 5): Unrecognised or missing token.
     y was a number.
     ^              
@@ -725,8 +807,7 @@ Processing Invalid File: ../malice_examples/invalid/test22.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test22.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test22.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Reference to 'arr' in line 5 is not an r-value.
 Reference to 'arr' in line 6 is not an r-value.
@@ -734,6 +815,8 @@ Reference to 'arr' in line 6 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test22.alice'...
+
 Semantic error (Line 5): Cannot refer to array 'arr' directly.
     arr said Alice.
     ^              
@@ -751,14 +834,15 @@ Processing Invalid File: ../malice_examples/invalid/test23.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test23.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test23.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Actual parameter #1 in call to 'proc' on line 11 is passed by reference but the corresponding formal parameter is expecting a value.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test23.alice'...
+
 Semantic error (Line 11): Cannot match types of argument #1 in invocation of 'proc'. Expected argument passed by reference but found argument passed by value.
     proc(arr).
          ~~~  
@@ -767,14 +851,15 @@ Processing Invalid File: ../malice_examples/invalid/test24.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test24.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test24.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Actual parameter #1 in call to 'proc' on line 9 is passed by value but the corresponding formal parameter is expecting a reference to an array.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test24.alice'...
+
 Semantic error (Line 9): Cannot match types of argument #1 in invocation of 'proc'. Expected argument passed by value but found argument passed by reference.
     proc(x).
          ~  
@@ -783,8 +868,7 @@ Processing Invalid File: ../malice_examples/invalid/test25.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test25.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test25.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 The main subprogram 'hatta' is defined as a function. It should be a procedure.
 Unable to find a procedure 'hatta' which is the entry point to the program.
@@ -792,6 +876,8 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test25.alice'...
+
 Warning: Not all execution paths of function 'hatta' have a return value.
   
 Semantic error: Entry point hatta() is declared as a function. It should be declared as a procedure.
@@ -801,8 +887,7 @@ Processing Invalid File: ../malice_examples/invalid/test26.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test26.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test26.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Symbol 'hatta' with type 'ProcDefnNode' already defined in this scope on line 1.
 Multiple definitions of 'hatta' found.
@@ -810,6 +895,8 @@ Multiple definitions of 'hatta' found.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test26.alice'...
+
 Semantic error (Line 6): 'hatta' has already been declared in the current scope.
   The looking-glass hatta ()
                     ^       
@@ -821,14 +908,15 @@ Processing Invalid File: ../malice_examples/invalid/test27.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test27.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test27.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Left-hand side of assignment on line 5 is not an l-value.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test27.alice'...
+
 Semantic error (Line 5): '(100 + x)' is not an l-value.
      (100 + x) became 101.
      ~~~~~~~~~            
@@ -837,8 +925,7 @@ Processing Invalid File: ../malice_examples/invalid/test28.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test28.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test28.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Unary operator '+' on line 5 not applied to an integer.
 Unary operator '-' on line 6 not applied to an integer.
@@ -848,6 +935,8 @@ Unary operator '!' on line 8 is not applied to a boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test28.alice'...
+
 Semantic error (Line 5): Cannot match type 'letter' with expected type 'number' in operand 'c'.
     c became +c.
               ~ 
@@ -865,14 +954,17 @@ Processing Invalid File: ../malice_examples/invalid/test29.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test29.alice' =====
---------------- Errors encountered in SymbolTable ---------------
-Reference to 'func' on line 15 is not a procedure call.
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test29.alice' =====
+--------------- Errors encountered in ExprChecker ---------------
+The call to 'func' on line 15 ignores the function's return value.
+The call expression to 'proc' on line 16 references a procedure, which does not return a value.
+Type clash in assignment on line 16. One type is 'number' and the other is 'void'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test29.alice'...
+
 Warning (Line 15): Unused return value from function 'func'.
     func(10).
     ~~~~~~~~~
@@ -884,8 +976,7 @@ Processing Invalid File: ../malice_examples/invalid/test30.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test30.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test30.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Type clash for binary operator '+' on line 6. One type is 'letter' and the other is 'number'.
 Type clash for binary operator '==' on line 6. One type is 'letter' and the other is 'number'.
@@ -896,6 +987,8 @@ Logical operator '&&' on line 9 not applied to Boolean values.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test30.alice'...
+
 Semantic error (Line 6): Cannot match types 'letter' and 'number' for operands to binary operator.
     perhaps (z + x == 100) so
              ~ ^ ~           
@@ -907,8 +1000,7 @@ Processing Invalid File: ../malice_examples/invalid/test31.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test31.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test31.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 The number of actual parameters in the call to 'proc' on line 7 is 1, which does not match the number of expected formal parameters of 2.
 The number of actual parameters in the call to 'proc' on line 8 is 3, which does not match the number of expected formal parameters of 2.
@@ -918,6 +1010,8 @@ Type of actual argument #1 in call to 'proc' on line 10 does not match the type 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test31.alice'...
+
 Semantic error (Line 7): Procedure 'proc' expects 2 parameters, but found 1 parameter in invocation.
     proc (5).
     ~~~~~~~~~
@@ -935,8 +1029,7 @@ Processing Invalid File: ../malice_examples/invalid/test32.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test32.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test32.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Reference to 'arr' in line 10 is not an r-value.
 Reference to 'func' in line 11 is not an r-value.
@@ -944,6 +1037,8 @@ Reference to 'func' in line 11 is not an r-value.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test32.alice'...
+
 Semantic error (Line 10): Cannot refer to array 'arr' directly.
     what was arr?
              ^   
@@ -958,8 +1053,7 @@ Processing Invalid File: ../malice_examples/invalid/test33.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test33.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test33.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Loop header conditional on line 5 does not evaluate to a Boolean.
 If statement conditional on line 8 does not evaluate to a Boolean.
@@ -968,6 +1062,8 @@ If statement conditional on line 10 does not evaluate to a Boolean.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test33.alice'...
+
 Semantic error (Line 5): Can't match expected type 'boolean' with type 'number' for expression '(i & 16)'.
      eventually (i & 16) because
                 ~~~~~~~~        
@@ -982,14 +1078,15 @@ Processing Invalid File: ../malice_examples/invalid/test34.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test34.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test34.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(CLOSED,'closed',5,54)'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test34.alice'...
+
 Syntactic error (Line 5): Unexpected token 'closed'.
   closed
   ^     
@@ -998,16 +1095,17 @@ Processing Invalid File: ../malice_examples/invalid/test35.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test35.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/invalid/test35.alice' =====
 --------------- Errors encountered in FunctionReturnChecker ---------------
-Type of return value on line 9 does not match return type of 'func2' on line 7.
-Type of return value on line 14 does not match return type of 'func3' on line 12.
 Type of return value on line 4 does not match return type of 'func1' on line 2.
+Type of return value on line 14 does not match return type of 'func3' on line 12.
+Type of return value on line 9 does not match return type of 'func2' on line 7.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/invalid/test35.alice'...
+
 Semantic error (Line 4): The return value 'a' does not match the return value of 'func1' declared on line 2.
     Alice found 'a'.
                 ~~~ 
@@ -1018,34 +1116,19 @@ Semantic error (Line 14): The return value '4' does not match the return value o
     Alice found 4.
                 ~ 
 ---------------------
-Processing Invalid File: ../malice_examples/invalid/test36.alice
----------------------
-Reference Compiler Output:
----------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/invalid/test36.alice' =====
---------------- Errors encountered in ExprChecker ---------------
-The reference to 'y' on line 6 is not to array.
-
----------------------
-Student Compiler Output:
----------------------
-Semantic error (Line 6): Cannot assign value to 'y's 1 piece' as 'y' is not an array.
-     y's 1 piece became 1.
-     ~~~~~~~~~~~          
----------------------
 Processing Custom File: ../malice_examples/custom/test01.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test01.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test01.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Type clash in assignment on line 4. One type is 'sentence' and the other is 'letter'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test01.alice'...
+
 Semantic error (Line 4): Can't match expected type 'sentence' with type 'letter' for expression 'a'.
   x became 'a'.
            ~~~ 
@@ -1054,14 +1137,15 @@ Processing Custom File: ../malice_examples/custom/test02.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test02.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test02.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Type clash in assignment on line 4. One type is 'sentence' and the other is 'letter'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test02.alice'...
+
 Semantic error (Line 4): Can't match expected type 'sentence' with type 'letter' for expression 'a'+ 'a'.
   x became 'a'+ 'a'.
            ~~~~~~~~ 
@@ -1070,8 +1154,7 @@ Processing Custom File: ../malice_examples/custom/test03.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test03.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test03.alice' =====
 --------------- Errors encountered in AliceParser ---------------
 Parse error: 'LexToken(A,'a',4,61)'.
 Illegal character ':'.
@@ -1080,10 +1163,13 @@ Illegal character '"'.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test03.alice'...
+
 Lexical error (Line 4): Unrecognised or missing token.
   x became :a"+ "a".
            ^        
- (Line 0): Unrecognised token
+Lexical error (Line 4): Unrecognised token
+  x became :a"+ "a".
 Syntactic error (Line 4): Unrecognised or missing token.
   x became :a"+ "a".
             ^       
@@ -1097,30 +1183,33 @@ Processing Custom File: ../malice_examples/custom/test04.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test04.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test04.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test04.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test05.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test05.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test05.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test05.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test06.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test06.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test06.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Relational operator '>' on line 4 not applied to integer or character values.
 Type clash in assignment on line 4. One type is 'sentence' and the other is 'boolean'.
@@ -1128,6 +1217,8 @@ Type clash in assignment on line 4. One type is 'sentence' and the other is 'boo
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test06.alice'...
+
 Semantic error (Line 4): Cannot match type 'sentence' with expected types 'letter' or 'number' for operand '"as"' over operator >.
   x became "as" > "as".
            ~~~~ ^      
@@ -1136,8 +1227,7 @@ Processing Custom File: ../malice_examples/custom/test07.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test07.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test07.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Relational operator '>' on line 4 not applied to integer or character values.
 Type clash in assignment on line 4. One type is 'sentence' and the other is 'boolean'.
@@ -1146,6 +1236,8 @@ Relational operator '>' on line 5 not applied to integer or character values.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test07.alice'...
+
 Semantic error (Line 4): Cannot match type 'sentence' with expected types 'letter' or 'number' for operand '"as"' over operator >.
   x became "as" > "as".
            ~~~~ ^      
@@ -1157,25 +1249,28 @@ Processing Custom File: ../malice_examples/custom/test08.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test08.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test08.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test08.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test09.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test09.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test09.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 The reference to 'y' on line 4 is not to array.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test09.alice'...
+
 Semantic error (Line 4): Cannot assign value to 'y's 1 piece' as 'y' is not an array.
     y's 1 piece became 9.
     ~~~~~~~~~~~          
@@ -1184,25 +1279,28 @@ Processing Custom File: ../malice_examples/custom/test10.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test10.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test10.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test10.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test11.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test11.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test11.alice' =====
 --------------- Errors encountered in SymbolTable ---------------
 Unable to find symbol for reference to 'z' in line 5.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test11.alice'...
+
 Semantic error (Line 5): Identifier: 'z' is not in scope.
   Alice found z.
               ~ 
@@ -1216,36 +1314,41 @@ Processing Custom File: ../malice_examples/custom/test12.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test12.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test12.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test12.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test13.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test13.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test13.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test13.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test14.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test14.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test14.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Type clash for binary operator '+' on line 5. This operator cannot be applied to Boolean values.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test14.alice'...
+
 Semantic error (Line 5): Cannot match type 'boolean' with expected types 'letter', 'number' or 'sentence' for operand '(1==1)' over operator +.
   (1==1) + (1==2) spoke.
   ~~~~~~ ^              
@@ -1254,8 +1357,7 @@ Processing Custom File: ../malice_examples/custom/test15.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test15.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test15.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 The call expression to 'r' on line 9 references a procedure, which does not return a value.
 Type clash in assignment on line 9. One type is 'number' and the other is 'void'.
@@ -1265,6 +1367,8 @@ Illegal return statement found in procedure 'r' on line 3.
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test15.alice'...
+
 Semantic error (Line 3): Cannot return a value in procedure: 'r'
   Alice found 1.
   ~~~~~~~~~~~~~~
@@ -1279,14 +1383,15 @@ Processing Custom File: ../malice_examples/custom/test16.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test16.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test16.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Illegal type used to index array 'arr' on line 4. Found type 'letter'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test16.alice'...
+
 Semantic error (Line 4): Can't match expected type 'number' with type 'letter' for expression 'f'.
   arr's 'f' piece became 0.
         ~~~                
@@ -1295,14 +1400,13 @@ Processing Custom File: ../malice_examples/custom/test17.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test17.alice' =====
---------------- Warnings encountered in FunctionReturnChecker ---------------
-There are paths through 'hello' that do not return a value.
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test17.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test17.alice'...
+
 Warning: Not all execution paths of function 'hello' have a return value.
   
 ---------------------
@@ -1310,14 +1414,15 @@ Processing Custom File: ../malice_examples/custom/test18.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test18.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test18.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Illegal type used in size declaration of array 'y' on line 3. Found type 'boolean'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test18.alice'...
+
 Semantic error (Line 3): Can't match expected type 'number' with type 'boolean' for expression '(2>3)'.
    y had (2>3) number.
          ~~~~~        
@@ -1326,14 +1431,15 @@ Processing Custom File: ../malice_examples/custom/test19.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test19.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test19.alice' =====
 --------------- Errors encountered in ExprChecker ---------------
 Illegal type used to index array 'y' on line 4. Found type 'letter'.
 
 ---------------------
 Student Compiler Output:
 ---------------------
+Analysing file '../malice_examples/custom/test19.alice'...
+
 Semantic error (Line 4): Can't match expected type 'number' with type 'letter' for expression 'a'.
    y's 'a' piece spoke.
        ~~~             
@@ -1342,21 +1448,25 @@ Processing Custom File: ../malice_examples/custom/test20.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test20.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test20.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test20.alice'...
+
+
+No errors found.---------------------
 Processing Custom File: ../malice_examples/custom/test21.alice
 ---------------------
 Reference Compiler Output:
 ---------------------
-Running the MAlice Reference compiler
-===== Analysing file '/homes/tr111/Documents/malice_examples/custom/test21.alice' =====
+===== Analysing file '/Users/alexrozanski/Imperial/CS2/Labs/MAlice/malice_examples/custom/test21.alice' =====
 
 ---------------------
 Student Compiler Output:
 ---------------------
----------------------
+Analysing file '../malice_examples/custom/test21.alice'...
+
+
+No errors found.---------------------

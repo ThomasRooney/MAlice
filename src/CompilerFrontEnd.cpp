@@ -100,7 +100,7 @@ namespace MAlice {
         semanticAnalyser->validate();
         
         if (!m_errorReporter->hasReportedErrors())
-            cout << "\nNo errors found.";
+            cout << "\nNo errors found.\n";
         
         delete semanticAnalyser;
         delete syntacticAnalyser;
