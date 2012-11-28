@@ -6,6 +6,7 @@
 #include "MAliceParser.h"
 
 #include "CompilerContext.h"
+#include "ErrorFactory.h"
 #include "SyntacticAnalyser.h"
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
@@ -49,8 +50,17 @@ int main(int argc, char *argv[])
         argv++, argc--;
     }
     
-    std::string path = getPathFromCommandLineArguments(argc, argv);
+    ErrorReporter *errorReporter = new ErrorReporter();
     
+    if (argc == 0) {
+        errorReporter->reportError(ErrorFactory::createIOError("No input file specified"));
+        
+        // When we exit, memory used by the heap-allocated ErrorReporter will be freed by the system, so no need
+        // to do it here.
+        return EXIT_FAILURE;
+    }
+
+    std::string path = getPathFromCommandLineArguments(argc, argv);
     std::ifstream inputStream;
     inputStream.open(path);
     
@@ -58,14 +68,13 @@ int main(int argc, char *argv[])
     input << inputStream.rdbuf();
     
     CompilerContext *compilerContext = new CompilerContext(input.str());
-    ErrorReporter *errorReporter = new ErrorReporter();
     setParserErrorReporter(errorReporter);
     compilerContext->setErrorReporter(errorReporter);
 
-    SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(path, compilerContext);
+    SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(compilerContext);
     ASTNode tree = NULL;
     
-    if (syntacticAnalyser->parseInput(&tree)) {
+    if (syntacticAnalyser->parseInput(path, &tree)) {
         if (printTree)
             Utilities::printTree(tree);
         
