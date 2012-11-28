@@ -1132,11 +1132,25 @@ namespace MAlice {
         FunctionProcedureEntity *currentFunctionProcedureEntity = ctx->getCurrentFunctionProcedureEntity();
         MAliceEntityType type = Utilities::getTypeOfEntity(currentFunctionProcedureEntity);
         
-        if (!currentFunctionProcedureEntity || type != MAliceEntityTypeFunction) {
+        if (!currentFunctionProcedureEntity) {
             ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("return statement"));
             return false;
         }
         
+
+        if (type != MAliceEntityTypeFunction)
+        {
+                Range *errorRange = NULL;
+                
+                Utilities::getNodeTextIncludingChildren(returnStatementNode, ctx, &errorRange);
+                
+                Error *error = ErrorFactory::createSemanticError("Cannot return a value in procedure: \'" + currentFunctionProcedureEntity->getIdentifier() + "\'");
+                error->setLineNumber(Utilities::getNodeLineNumber(returnStatementNode));
+                error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
+                error->setAdditionalInformation("Define \'" + currentFunctionProcedureEntity->getIdentifier() + "\' as a function instead");
+                ctx->getErrorReporter()->reportError(error);
+                return false;
+        }
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(currentFunctionProcedureEntity);
         
         ASTNode expressionNode = Utilities::getChildNodeAtIndex(returnStatementNode, 0);
