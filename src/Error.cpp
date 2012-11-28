@@ -1,6 +1,8 @@
 
 #include "Error.h"
 
+#include "limits.h"
+
 namespace MAlice {
     
     Error::Error(ErrorType type)
@@ -11,6 +13,7 @@ namespace MAlice {
     Error::Error(ErrorType type, std::string errorMessage)
     {
         m_errorType = type;
+        m_lineNumber = UINT_MAX;
         
         if (!errorMessage.empty())
             m_errorMessage = errorMessage;

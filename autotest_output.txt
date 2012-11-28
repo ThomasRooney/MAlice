@@ -7,7 +7,7 @@ Reference Compiler Output:
 ---------------------
 Student Compiler Output:
 ---------------------
-Warning (Line 4026531840): Not all execution paths of function 'ackermann' have a return value.
+Warning: Not all execution paths of function 'ackermann' have a return value.
 ---------------------
 Processing Valid File: ../malice_examples/valid/binarySearch.alice
 ---------------------
@@ -454,7 +454,9 @@ Parse error: 'LexToken(ROOM,'room',1,0)'.
 Student Compiler Output:
 ---------------------
 Semantic error (Line 1): Cannot declare variable 'room' because it is a keyword.
-room was a number.---------------------
+room was a number.
+^                 
+---------------------
 Processing Invalid File: ../malice_examples/invalid/test05.alice
 ---------------------
 Reference Compiler Output:
@@ -511,8 +513,8 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Warning (Line 536870912): Not all execution paths of function 'main' have a return value.
-Semantic error (Line 536870912): Entry point procedure hatta() is not declared.
+Warning: Not all execution paths of function 'main' have a return value.
+Semantic error: Entry point procedure hatta() is not declared.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test09.alice
 ---------------------
@@ -529,7 +531,10 @@ Student Compiler Output:
 Semantic error (Line 2): 'x' has already been declared in the current scope.
 x was a number.
 ^              
-Semantic error (Line 2147483648): Entry point procedure hatta() is not declared.
+
+Symbol 'x' is previously declared as a variable on line 1.
+
+Semantic error: Entry point procedure hatta() is not declared.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test10.alice
 ---------------------
@@ -591,13 +596,13 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 4): Can't match expected type 'number' with type 'letter' for expression 'z'.
   x was a number, y was a letter and z was a number of 'z' but
-                                                       ^^^^   
+                                                       ~~~    
 Semantic error (Line 5): Can't match expected type 'number' with type 'letter' for expression 'a'.
   x became 'a'.
-           ^^^^
+           ~~~ 
 Semantic error (Line 6): Can't match expected type 'letter' with type 'number' for expression '10'.
   y became 10.
-           ^^^
+           ~~ 
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test14.alice
 ---------------------
@@ -628,16 +633,16 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 6): Can't match expected type 'boolean' with type 'number' for expression '10'.
   x became 10 && 20.
-           ^^^      
+           ~~       
 Semantic error (Line 6): Can't match expected type 'boolean' with type 'number' for expression '20'.
   x became 10 && 20.
-                 ^^^
+                 ~~ 
 Semantic error (Line 6): Boolean Operator: '&&' must have boolean children.
   x became 10 && 20.
               ^     
 Semantic error (Line 6): Can't match expected type 'number' with type 'boolean' for expression '10 && 20'.
   x became 10 && 20.
-           ^^^^^^^^^
+           ~~~~~~~~ 
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test16.alice
 ---------------------
@@ -652,7 +657,7 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 6): Can't match expected type 'number' with type 'boolean' for expression '10 > 20'.
   x became 10 > 20.
-           ^^^^^^^^
+           ~~~~~~~ 
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test17.alice
 ---------------------
@@ -668,10 +673,10 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 5): Can't match expected type 'number' with type 'letter' for expression 'x'.
   x ate.
-  ^^    
+  ~     
 Semantic error (Line 6): Can't match expected type 'number' with type 'letter' for expression 'x'.
   x drank.
-  ^^      
+  ~       
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test18.alice
 ---------------------
@@ -706,7 +711,7 @@ Lexical error (Line 4): Unrecognised or missing token.
    ^              
 Syntactic error (Line 5): Unexpected token 'closed'.
 closed 
-~      
+^      
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test20.alice
 ---------------------
@@ -757,7 +762,7 @@ To fix, specify an array element.
 
 Semantic error (Line 6): Trying to assign to array 'arr' directly is invalid.
   arr became y.
-  ~            
+  ^            
 
 To fix, assign to one of its elements.
 
@@ -804,8 +809,8 @@ Unable to find a procedure 'hatta' which is the entry point to the program.
 ---------------------
 Student Compiler Output:
 ---------------------
-Warning (Line 3221225472): Not all execution paths of function 'hatta' have a return value.
-Semantic error (Line 3221225472): Entry point hatta() is declared as a function. It should be declared as a procedure.
+Warning: Not all execution paths of function 'hatta' have a return value.
+Semantic error: Entry point hatta() is declared as a function. It should be declared as a procedure.
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test26.alice
 ---------------------
@@ -822,6 +827,9 @@ Student Compiler Output:
 Semantic error (Line 6): 'hatta' has already been declared in the current scope.
 The looking-glass hatta ()
                   ^       
+
+Symbol 'hatta' is previously declared as a procedure on line 1.
+
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test27.alice
 ---------------------
@@ -836,7 +844,7 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 5): '(100 + x)' is not a valid l-value.
    (100 + x) became 101.
-   ~~~~~~~~~~           
+   ~~~~~~~~~            
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test28.alice
 ---------------------
@@ -854,28 +862,28 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 5): Can't match expected type 'number' with type 'letter' for expression 'c'.
   c became +c.
-            ^^
+            ~ 
 Semantic error (Line 5): Can't match expected type 'letter' with type 'number' for expression '+c'.
   c became +c.
-           ^^^
+           ~~ 
 Semantic error (Line 6): Can't match expected type 'number' with type 'letter' for expression 'c'.
   c became -c.
-            ^^
+            ~ 
 Semantic error (Line 6): Can't match expected type 'letter' with type 'number' for expression '-c'.
   c became -c.
-           ^^^
+           ~~ 
 Semantic error (Line 7): Can't match expected type 'number' with type 'letter' for expression 'c'.
   c became ~c.
-            ^^
+            ~ 
 Semantic error (Line 7): Can't match expected type 'letter' with type 'number' for expression '~c'.
   c became ~c.
-           ^^^
+           ~~ 
 Semantic error (Line 8): Can't match expected type 'boolean' with type 'letter' for expression 'c'.
   c became !c.
-            ^^
+            ~ 
 Semantic error (Line 8): Can't match expected type 'letter' with type 'boolean' for expression '!c'.
   c became !c.
-           ^^^
+           ~~ 
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test29.alice
 ---------------------
@@ -895,7 +903,7 @@ Warning (Line 15): Unused return value from function 'func'.
   ~~~~~~~~~
 Semantic error (Line 16): Can't match expected type 'number' with procedure invocation.
   x became proc(10).
-           ^^^^^^^^^
+           ~~~~~~~~ 
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test30.alice
 ---------------------
@@ -914,13 +922,13 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 6): Can't match expected type 'number' with type 'letter' for expression 'z'.
   perhaps (z + x == 100) so
-           ^^              
+           ~               
 Semantic error (Line 6): Can't match expected type 'number' with type 'letter' for expression 'z'.
   perhaps (z + x == 100) so
-           ^^              
+           ~               
 Semantic error (Line 9): Can't match expected type 'boolean' with type 'number' for expression 'x'.
   perhaps (x && (y > x)) so
-           ^^              
+           ~               
 Semantic error (Line 9): Boolean Operator: '&&' must have boolean children.
   perhaps (x && (y > x)) so
              ^             
@@ -947,10 +955,10 @@ Semantic error (Line 8): Procedure 'proc' expects 2 parameters, but found 3 para
   ~~~~~~~~~~~~~~~
 Semantic error (Line 9): Cannot match types of argument #2 in invocation of 'proc'. Expected argument of type 'number' but found 'letter'.
   proc (5, 'a').
-           ~~~~ 
+           ~~~  
 Semantic error (Line 10): Cannot match types of argument #1 in invocation of 'proc'. Expected argument of type 'number' but found 'sentence'.
   proc ("MAlice labs", 6).
-        ~~~~~~~~~~~~~~    
+        ~~~~~~~~~~~~~     
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test32.alice
 ---------------------
@@ -989,13 +997,13 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 5): Can't match expected type 'boolean' with type 'number' for expression '(i & 16)'.
    eventually (i & 16) because
-              ^^^^^^^^^       
+              ~~~~~~~~        
 Semantic error (Line 8): Can't match expected type 'boolean' with type 'number' for expression '~i'.
    perhaps (~i) so
-            ^^^   
+            ~~    
 Semantic error (Line 10): Can't match expected type 'boolean' with type 'number' for expression 'i'.
    or maybe (i) so
-             ^^   
+             ~    
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test34.alice
 ---------------------
@@ -1010,7 +1018,7 @@ Student Compiler Output:
 ---------------------
 Syntactic error (Line 5): Unexpected token 'closed'.
 closed
-~     
+^     
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test35.alice
 ---------------------
@@ -1027,11 +1035,11 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 4): The return value 'a' does not match the return value of 'func1' declared on line 2.
   Alice found 'a'.
-              ~~~~
+              ~~~ 
 Semantic error (Line 9): The return value 'a' does not match the return value of 'func2' declared on line 7.
   Alice found 'a'.
-              ~~~~
+              ~~~ 
 Semantic error (Line 14): The return value '4' does not match the return value of 'func3' declared on line 12.
   Alice found 4.
-              ~~
+              ~ 
 ---------------------

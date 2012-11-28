@@ -76,7 +76,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
                 string identifier = (char*)token->getText(token)->chars;
                 MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage = "Unexpected token '" + identifier + "'.");
                 error->setLineNumber(token->line);
-                error->setUnderlineRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Utilities::createRange(token->line, token->charPosition)));
+                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Utilities::createRange(token->line, token->charPosition)));
                 
                 parserErrorReporter->reportError(error);
             }
@@ -215,9 +215,6 @@ namespace MAlice {
     {
         unsigned int startLine = UINT_MAX;
         unsigned int endLine = 0;
-        
-        if (!checkValidRanges(error->getArrowRanges()) || !checkValidRanges(error->getUnderlineRanges()))
-            return;
 
         getStartAndEndLinesForRanges(error->getArrowRanges(), startLine, endLine, &startLine, &endLine);
         getStartAndEndLinesForRanges(error->getUnderlineRanges(), startLine, endLine, &startLine, &endLine);
@@ -291,18 +288,6 @@ namespace MAlice {
             *outEndLine = endLine;
     }
     
-    bool ErrorReporter::checkValidRanges(std::list<Range*> ranges)
-    {
-        for (std::list<Range*>::iterator it = ranges.begin(); it != ranges.end(); ++it) {
-            Range *r = *it;
-            
-            if (r->getStartPosition().getColumnIndex() == UINT_MAX || r->getEndPosition().getColumnIndex() == UINT_MAX)
-                return false;
-        }
-        
-        return true;
-    }
-    
 //    void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
 //    {
 //        std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
@@ -349,7 +334,7 @@ namespace MAlice {
                 break;
         }
         
-        if (error->getLineNumber() > 0) {
+        if (error->getLineNumber() != UINT_MAX) {
             cerr << " (";
             cerr << "Line " << error->getLineNumber();
             cerr << ")";

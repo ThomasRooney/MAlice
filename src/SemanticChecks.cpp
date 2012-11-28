@@ -29,6 +29,7 @@ namespace MAlice {
             Error *error = ErrorFactory::createSemanticError(errorMessage);
             error->setLineNumber(Utilities::getNodeLineNumber(node));
             error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+            error->setAdditionalInformation(additionalInformation.str());
             
             ctx->getErrorReporter()->reportError(error);
             
@@ -704,7 +705,7 @@ namespace MAlice {
             if (symbolTableEntityType == MAliceEntityTypeArray && !isLValueArray) {
                 Error *error = ErrorFactory::createSemanticError("Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.");
                 error->setLineNumber(Utilities::getNodeLineNumber(lvalueNode));
-                error->setUnderlineRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
+                error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
                 error->setAdditionalInformation("To fix, assign to one of its elements.");
                 
                 ctx->getErrorReporter()->reportError(error);

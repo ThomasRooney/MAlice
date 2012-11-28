@@ -263,7 +263,7 @@ namespace MAlice {
             std::string endTokenString = (char*)endToken->input->substr(endToken->input, endToken->start, endToken->stop)->chars;
             
             *outRange = Utilities::createRange(startToken->line, startToken->charPosition,
-                                               endToken->line, endToken->charPosition + (unsigned int)endTokenString.size());
+                                               endToken->line, endToken->charPosition + (unsigned int)endTokenString.size() - 1);
         }
         
         return (char*)startToken->input->substr(startToken->input, startToken->start, endToken->stop)->chars;
