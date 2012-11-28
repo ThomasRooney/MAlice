@@ -421,4 +421,41 @@ namespace MAlice {
         }
     }
     
+    std::string Utilities::getTypeListFromTypeFlags(unsigned int flags)
+    {
+        std::list<std::string> typeStrings;
+        
+        if ((flags & MAliceTypeLetter) != 0)
+            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeLetter));
+        
+        if ((flags & MAliceTypeNumber) != 0)
+            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeNumber));
+        
+        if ((flags & MAliceTypeSentence) != 0)
+            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeSentence));
+        
+        if ((flags & MAliceTypeBoolean) != 0)
+            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeBoolean));
+        
+        std::string listString;
+        unsigned int i = 0;
+        
+        for (std::list<std::string>::iterator it = typeStrings.begin(); it != typeStrings.end(); ++it) {
+            if (it != typeStrings.begin()) {
+                if (i == typeStrings.size() - 1)
+                    listString.append(" or ");
+                else
+                    listString.append(", ");
+            }
+            
+            listString.append("'");
+            listString.append(*it);
+            listString.append("'");
+            
+            ++i;
+        }
+        
+        return listString;
+    }
+    
 }; // namespace MAlice

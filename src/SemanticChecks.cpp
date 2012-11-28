@@ -540,13 +540,13 @@ namespace MAlice {
         }
         
         if ((t1 & requiredTypes) == 0) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(leftOperandRootNode, t1, ctx));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(node, leftOperandRootNode, t1, requiredTypes, ctx));
             
             return false;
         }
         
         if ((t2 & requiredTypes) == 0) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(rightOperandRootNode, t2, ctx));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(node, rightOperandRootNode, t2, requiredTypes, ctx));
             
             return false;
         }
@@ -593,9 +593,13 @@ namespace MAlice {
         std::string identifier = Utilities::getNodeText(node);
 
         if (!ctx->isSymbolInScope(identifier, &lookupEntity)) {
+            Range *range = NULL;
+            
+            Utilities::getNodeTextIncludingChildren(node, ctx, &range);
+            
             Error *error = ErrorFactory::createSemanticError("Identifier: '" + identifier + "' is not in scope.");
             error->setLineNumber(Utilities::getNodeLineNumber(node));
-            error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(range));
             
             ctx->getErrorReporter()->reportError(error);
             
@@ -974,7 +978,7 @@ namespace MAlice {
                 
                 Error *error = ErrorFactory::createSemanticError("Cannot assign value to '" + lvalueText + "' as '" + lvalueIdentifier + "' is not an array.");
                 error->setLineNumber(Utilities::getNodeLineNumber(lvalueNode));
-                error->setArrowRanges(Utilities::rangeToSingletonList( Utilities::createRange(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
+                error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
                 
                 ctx->getErrorReporter()->reportError(error);
                 

@@ -78,17 +78,26 @@ namespace MAlice {
         return error;
     }
     
-    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operandNode, MAliceType actualType, CompilerContext *ctx)
+    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operatorNode, ASTNode operandNode, MAliceType actualType, unsigned int expectedTypes, CompilerContext *ctx)
     {
         Range *errorRange = NULL;
         std::string operandString = Utilities::getNodeTextIncludingChildren(operandNode, ctx, &errorRange);
         
         Error *error = ErrorFactory::createSemanticError("Cannot match type '" +
                                                          std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
-                                                         "' with expected type in operand '" +
+                                                         "' with expected types " +
+                                                         Utilities::getTypeListFromTypeFlags(expectedTypes) +
+                                                         " for operand '" +
                                                          operandString +
-                                                         "'.");
+                                                         "' over operator "
+                                                         + Utilities::getOperatorStringFromOperatorNode(operatorNode) +
+                                                         ".");
+        unsigned int lineNumber = Utilities::getNodeLineNumber(operatorNode);
+        unsigned int columnIndex = Utilities::getNodeColumnIndex(operatorNode);
+        unsigned int arrowUnderlineLength = (unsigned int)Utilities::getOperatorStringFromOperatorNode(operatorNode).size() - 1;
+        
         error->setLineNumber(Utilities::getNodeLineNumber(operandNode));
+        error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(lineNumber, columnIndex, columnIndex + arrowUnderlineLength)));
         error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
         
         return error;
