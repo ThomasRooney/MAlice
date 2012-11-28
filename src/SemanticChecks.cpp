@@ -902,7 +902,7 @@ namespace MAlice {
         
         ASTNode lvalueNode = Utilities::getChildNodeAtIndex(assignmentStatementNode, 0);
         ASTNode rvalueNode = Utilities::getChildNodeAtIndex(assignmentStatementNode, 1);
-        
+        ASTNode nodeBuffer;
         bool isLValueArray = false;
         
         ASTNode parentNode = lvalueNode;
@@ -929,6 +929,7 @@ namespace MAlice {
         // if lvalue is an array, iterate down to its child identifier.
         if (Utilities::getNodeType(lvalueNode) == ARRAYSUBSCRIPT)
         {
+            nodeBuffer = lvalueNode;
             // Check this has children and isn't just referenced directly.
             int numChildren = Utilities::getNumberOfChildNodes(lvalueNode);
             
@@ -982,6 +983,19 @@ namespace MAlice {
                 ctx->getErrorReporter()->reportError(error);
                 
                 return false;
+            }
+
+            if (isLValueArray)
+            {
+                int numChildren = Utilities::getNumberOfChildNodes(nodeBuffer);
+                if (numChildren < 2)
+                {
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment statement"));
+                    return false;
+                }
+                ASTNode exprNode = Utilities::getChildNodeAtIndex(nodeBuffer, 1);
+                // Check expression subscript evaluates to a number
+                checkExpression(exprNode, true, walker, ctx, MAliceTypeNumber);
             }
             
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(symbolTableEntity);
