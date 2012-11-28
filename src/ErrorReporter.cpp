@@ -19,6 +19,8 @@
 #define LINE_NUMBER_NA      UINT_MAX
 #define COL_INDEX_NA        UINT_MAX
 
+#define DECORATE_INDENTATION        2
+
 using namespace std;
 
 static MAlice::ErrorReporter *parserErrorReporter = NULL;
@@ -52,11 +54,11 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             break;
         case ANTLR3_NO_VIABLE_ALT_EXCEPTION:
         {
-            string tokenText = (char*)token->toString(token);
             string errorMessage = "Unrecognised or missing token.";
             
             MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
-            error->setLineNumber(token->line);
+            if (token)
+                error->setLineNumber(token->line);
             
             parserErrorReporter->reportError(error);
         }
@@ -198,9 +200,10 @@ namespace MAlice {
         printDecoratedLines(error);
 
         if (!error->getAdditionalInformation().empty()) {
-            cerr << "\n\n" << Utilities::stringWithLineIndentation(error->getAdditionalInformation(), 2);
+            //TODO: use setw()
+            cerr << "\n\n  " << Utilities::stringWithLineIndentation(error->getAdditionalInformation(), DECORATE_INDENTATION);
         }
-        
+
         cerr << endl;
         
         m_hasReportedErrors = true;
@@ -213,6 +216,12 @@ namespace MAlice {
     
     void ErrorReporter::printDecoratedLines(Error *error)
     {
+        if (error->getArrowRanges().size() == 0 && error->getUnderlineRanges().size() == 0) {
+            if (error->getLineNumber() > 0)
+                cerr << "\n" << "  " << getLineOfInput(error->getLineNumber() - 1);
+            return;
+        }
+        
         unsigned int startLine = UINT_MAX;
         unsigned int endLine = 0;
 
@@ -222,15 +231,16 @@ namespace MAlice {
         for (unsigned int i = startLine; i <= endLine; ++i)
         {
             std::string line = getLineOfInput(i - 1);
-            cerr << "\n" << line;
             
+            //TODO: use setw().
+            cerr << "\n" << "  " << line;
             printDecoratedLine(error, line, i - 1);
         }
     }
     
     void ErrorReporter::printDecoratedLine(Error *error, std::string line, unsigned int lineIndex)
     {
-        std::string decoratedLine(line.size(), ' ');
+        std::string decoratedLine(line.size() + DECORATE_INDENTATION, ' ');
         
         decorateLineWithRanges(&decoratedLine, lineIndex, error->getArrowRanges(), '^');
         decorateLineWithRanges(&decoratedLine, lineIndex, error->getUnderlineRanges(), '~');
@@ -257,7 +267,7 @@ namespace MAlice {
                     return;
                 
                 for (unsigned int i = startPosition; i <= endPosition; ++i) {
-                    (*decorateLine)[i] = decorateCharacter;
+                    (*decorateLine)[i + DECORATE_INDENTATION] = decorateCharacter;
                 }
             }
         }
@@ -287,28 +297,6 @@ namespace MAlice {
         if (outEndLine)
             *outEndLine = endLine;
     }
-    
-//    void ErrorReporter::printLineWithArrow(ErrorPosition *errorPosition)
-//    {
-//        std::string line = getLineOfInput(errorPosition->getLineNumber() - 1);
-//        
-//        cerr << "\n  " << line << "\n  ";
-//        cerr << setw(errorPosition->getColumnIndex()+1) << "^";
-//    }
-//    
-//    void ErrorReporter::printLineWithUnderline(std::string line, Range *range)
-//    {
-//        cerr << "\n  " << line << "\n  ";
-//        
-//        for (unsigned int i = 0; i < line.size(); ++i) {
-//            if (i < range->getLocation() || i > range->getLocation() + range->getLength()) {
-//                cerr << " ";
-//            }
-//            else if (i <= range->getLocation() + range->getLength()) {
-//                cerr << "~";
-//            }
-//        }
-//    }
     
     void ErrorReporter::printErrorHeader(Error *error)
     {

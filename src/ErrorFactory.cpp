@@ -53,8 +53,26 @@ namespace MAlice {
         Range *errorRange = NULL;
         std::string invalidExpression = Utilities::getNodeTextIncludingChildren(node, ctx, &errorRange);
         
-        Error *error = createSemanticError("'" + invalidExpression + "' is not a valid l-value.");
+        Error *error = createSemanticError("'" + invalidExpression + "' is not an l-value.");
         error->setLineNumber(Utilities::getNodeLineNumber(node));
+        error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
+        
+        return error;
+    }
+    
+    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operandNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx)
+    {
+        Range *errorRange = NULL;
+        std::string operandString = Utilities::getNodeTextIncludingChildren(operandNode, ctx, &errorRange);
+        
+        Error *error = ErrorFactory::createSemanticError("Cannot match type '" +
+                                                         std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
+                                                         "' with expected type '" +
+                                                         std::string(Utilities::getNameOfTypeFromMAliceType(expectedType)) +
+                                                         "' in operand '" +
+                                                         operandString +
+                                                         "'.");
+        error->setLineNumber(Utilities::getNodeLineNumber(operandNode));
         error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
         
         return error;

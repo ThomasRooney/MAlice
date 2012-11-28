@@ -14,10 +14,10 @@ namespace MAlice {
     
     typedef enum {
         MAliceTypeNone = 0,
-        MAliceTypeNumber,
-        MAliceTypeLetter,
-        MAliceTypeSentence,
-        MAliceTypeBoolean
+        MAliceTypeNumber = 1 << 0,
+        MAliceTypeLetter = 1 << 1,
+        MAliceTypeSentence = 1 << 2,
+        MAliceTypeBoolean = 1 << 3
     } MAliceType;
     
     typedef enum {

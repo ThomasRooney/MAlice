@@ -35,7 +35,7 @@ namespace MAlice {
         }
         
         // Check that the child of this node is a number, and it has a child
-        return checkExpression(Utilities::getChildNodeAtIndex(node, 0), walker, ctx, MAliceTypeNumber);
+        return checkExpression(Utilities::getChildNodeAtIndex(node, 0), true, walker, ctx, MAliceTypeNumber);
     }
     
     bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -46,7 +46,7 @@ namespace MAlice {
         }
         
         // Check that the child of this node is a number, and it has a child
-        return checkExpression(Utilities::getChildNodeAtIndex(node,0), walker, ctx, MAliceTypeNumber);
+        return checkExpression(Utilities::getChildNodeAtIndex(node,0), true, walker, ctx, MAliceTypeNumber);
     }
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -82,8 +82,11 @@ namespace MAlice {
             ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("input Statement"));
             return false;
         }
-        ASTNode input = Utilities::getChildNodeAtIndex(node, 0);
-        MAliceType t = getTypeFromExpressionNode(input, walker, ctx);
+        MAliceType t = MAliceTypeNone;
+        
+        if (!getTypeFromExpressionNode(node, &t, true, walker, ctx))
+            return false;
+        
         switch(t)
         {
         case MAliceTypeLetter:
@@ -92,10 +95,10 @@ namespace MAlice {
         default:
             {
                 Range *r = NULL;
-                std::string text = Utilities::getNodeTextIncludingChildren(input, ctx, &r);
+                std::string text = Utilities::getNodeTextIncludingChildren(node, ctx, &r);
                 Error *error = ErrorFactory::createSemanticError("Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.");
-                error->setLineNumber(Utilities::getNodeLineNumber(input));
-                error->setLineNumber(Utilities::getNodeLineNumber(input));
+                error->setLineNumber(Utilities::getNodeLineNumber(node));
+                error->setLineNumber(Utilities::getNodeLineNumber(node));
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
             }
         }

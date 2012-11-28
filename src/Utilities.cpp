@@ -128,18 +128,21 @@ namespace MAlice {
 
     const char* Utilities::getNameOfTypeFromMAliceType(MAliceType type)
     {
-        int t = type;
-        //TODO: Move me somewhere better (types.h no good as linker error)
-        const char* MAliceTypeNames [] = {
-            "undefined",
-            "number",
-            "letter",
-            "sentence",
-            "boolean",
-            };
-        if (t < 0 || t >= 5)
-          t = 0;
-        return (MAliceTypeNames [t]);
+        switch(type)
+        {
+            case MAliceTypeNumber:
+                return "number";
+                break;
+            case MAliceTypeLetter:
+                return "letter";
+                break;
+            case MAliceTypeBoolean:
+                return "boolean";
+            case MAliceTypeSentence:
+                return "sentence";
+            default:
+                return "undefined";
+        }
     }
 
     

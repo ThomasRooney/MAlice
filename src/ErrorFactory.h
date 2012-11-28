@@ -24,6 +24,7 @@ namespace MAlice {
         
         static Error *createInvalidASTError(std::string currentValidationType);
         static Error *createInvalidLValueError(ASTNode node, CompilerContext *ctx);
+        static Error *createInvalidOperandTypeError(ASTNode operandNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx);
     }; // class ErrorFactory
     
 };
