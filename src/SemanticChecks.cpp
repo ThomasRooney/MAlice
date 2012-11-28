@@ -209,7 +209,7 @@ namespace MAlice {
                 break;
             case EQUALS:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -218,7 +218,7 @@ namespace MAlice {
                 break;
             case NOTEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -227,7 +227,7 @@ namespace MAlice {
                 break;
             case LESSTHAN:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -236,7 +236,7 @@ namespace MAlice {
                 break;
             case LESSTHANEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -245,7 +245,7 @@ namespace MAlice {
                 break;
             case GREATERTHAN:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -254,7 +254,7 @@ namespace MAlice {
                 break;
             case GREATERTHANEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -307,7 +307,7 @@ namespace MAlice {
             {
                 if (Utilities::getNumberOfChildNodes(node) == 2) {
                     MAliceType type = MAliceTypeNone;
-                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
                         return false;
                     
                     if (outType)
@@ -325,7 +325,7 @@ namespace MAlice {
             {
                 if (Utilities::getNumberOfChildNodes(node) == 2) {
                     MAliceType type = MAliceTypeNone;
-                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
                         return false;
                     
                     if (outType)
