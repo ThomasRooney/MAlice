@@ -1152,7 +1152,7 @@ namespace MAlice {
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
                 error->setAdditionalInformation("Define \'" + currentFunctionProcedureEntity->getIdentifier() + "\' as a function instead");
                 ctx->getErrorReporter()->reportError(error);
-
+                return false;
         }
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(currentFunctionProcedureEntity);
         
