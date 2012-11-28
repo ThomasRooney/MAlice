@@ -19,9 +19,9 @@ namespace MAlice {
         CompilerContext *m_compilerContext;
         
     public:
-        SyntacticAnalyser(std::string filePath, CompilerContext *compilerContext);
-        
-        bool parseInput(ASTNode *outTree);
+        SyntacticAnalyser(CompilerContext *compilerContext);
+
+        bool parseInput(std::string path, ASTNode *outTree);
     }; // class SyntacticAnalyser
     
 } // namespace MAlice
