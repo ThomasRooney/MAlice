@@ -361,6 +361,7 @@ Student Compiler Output:
 ---------------------
 Syntactic error (Line 2): Unrecognised or missing token.
   x became 10.
+  ^           
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test04.alice
 ---------------------
@@ -393,6 +394,7 @@ Syntactic error (Line 1): Unrecognised or missing token.
   x was a Number and y was a Number.
 Syntactic error (Line 1): Unrecognised or missing token.
   x was a Number and y was a Number.
+                    ^               
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test06.alice
 ---------------------
@@ -610,6 +612,7 @@ Syntactic error (Line 4): Expected token 'became'.
      ^              
 Syntactic error (Line 4): Unrecognised or missing token.
     1x was a number.
+     ^              
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test19.alice
 ---------------------
@@ -658,8 +661,10 @@ Student Compiler Output:
 ---------------------
 Syntactic error (Line 5): Unrecognised or missing token.
     y was a number.
+    ^              
 Syntactic error (Line 5): Unrecognised or missing token.
     y was a number.
+    ^              
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test22.alice
 ---------------------
@@ -996,6 +1001,7 @@ Lexical error (Line 4): Unrecognised token
   x became :a"+ "a".
 Syntactic error (Line 4): Unrecognised or missing token.
   x became :a"+ "a".
+            ^       
 Syntactic error (Line 4): Expected token 'became'.
   x became :a"+ "a".
                  ^  

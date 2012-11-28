@@ -57,8 +57,15 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             string errorMessage = "Unrecognised or missing token.";
             
             MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
-            if (token)
+            if (token) {
                 error->setLineNumber(token->line);
+                
+                if (token->charPosition != UINT_MAX) {
+                    MAlice::Range *range = MAlice::Utilities::createRange(token->line, token->charPosition);
+                    error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(range));
+                }
+                    
+            }
             
             parserErrorReporter->reportError(error);
         }
