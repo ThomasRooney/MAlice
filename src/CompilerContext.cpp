@@ -3,6 +3,7 @@
 
 #include "CompilerContext.h"
 
+#include "ErrorFactory.h"
 #include "SymbolTable.h"
 #include "FunctionProcedureEntity.h"
 
@@ -33,8 +34,19 @@ namespace MAlice {
     
     CompilerContext::~CompilerContext()
     {
-        // TODO: Delete SymbolTables in destructor
-        // TODO: delete function/procedure entities
+        for (list<SymbolTable*>::iterator it = m_symbolTables.begin(); it != m_symbolTables.end(); ++it)
+        {
+            SymbolTable *table = *it;
+            delete table, table = NULL;
+        }
+        m_symbolTables.clear();
+        
+        for (list<FunctionProcedureEntity*>::iterator it = m_functionProcedureScope.begin(); it != m_functionProcedureScope.end(); ++it)
+        {
+            FunctionProcedureEntity *entity = *it;
+            delete entity, entity = NULL;
+        }
+        m_functionProcedureScope.clear();
         
         if (m_lexer)
             delete m_lexer, m_lexer = NULL;
@@ -126,9 +138,14 @@ namespace MAlice {
     
     void CompilerContext::exitScope()
     {
-        // TODO: generate error if we pop too far.
-        if (m_symbolTables.empty())
-            return;
+        if (m_symbolTables.empty()) {
+            ErrorReporter *errorReporter = getErrorReporter();
+            
+            if (errorReporter) {
+                errorReporter->reportError(ErrorFactory::createInternalError("Trying to pop an empty Compiler Context scope stack."));
+                return;
+            }
+        }
         
         SymbolTable* & lastSymbolTable = m_symbolTables.back();
         delete lastSymbolTable;
