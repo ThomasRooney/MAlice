@@ -18,6 +18,7 @@ namespace MAlice {
         unsigned int getEnabledFlags();
         void printHelp();
         std::string getPathFromCommandLineArguments();
+        void printErrorReport();
     public:
         CompilerFrontEnd(int argc, char **argv);
         ~CompilerFrontEnd();

@@ -44,7 +44,8 @@ namespace MAlice {
     class ErrorReporter {
     private:
         std::string m_input;
-        bool m_hasReportedErrors;
+        unsigned int m_numberOfReportedErrors;
+        unsigned int m_numberOfReportedWarnings;
         
         std::string getLineOfInput(unsigned int lineNumber);
         
@@ -61,6 +62,9 @@ namespace MAlice {
         void setInput(std::string input);
         
         bool hasReportedErrors();
+        bool hasReportedWarnings();
+        unsigned int getNumberOfReportedErrors();
+        unsigned int getNumberOfReportedWarnings();
     }; // class ErrorReporter
     
 }; // namespace MAlice

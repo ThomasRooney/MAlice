@@ -90,19 +90,24 @@ namespace MAlice {
         SyntacticAnalyser *syntacticAnalyser = new SyntacticAnalyser(compilerContext);
         ASTNode tree = NULL;
         
-        if (!syntacticAnalyser->parseInput(path, &tree))
-            return EXIT_FAILURE;
+        SemanticAnalyser *semanticAnalyser = NULL;
         
-        if ((compilerFlags & CompilerFlagsPrintAST) != 0)
-            Utilities::printTree(tree);
+        if (syntacticAnalyser->parseInput(path, &tree)) {
+            if ((compilerFlags & CompilerFlagsPrintAST) != 0)
+                Utilities::printTree(tree);
+            
+            semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
+            semanticAnalyser->validate();
+            
+        }
         
-        SemanticAnalyser *semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-        semanticAnalyser->validate();
+        printErrorReport();
+
+        if (semanticAnalyser) {
+            delete semanticAnalyser;
+            semanticAnalyser = NULL;
+        }
         
-        if (!m_errorReporter->hasReportedErrors())
-            cout << "\nNo errors found.\n";
-        
-        delete semanticAnalyser;
         delete syntacticAnalyser;
         delete compilerContext;
         
@@ -175,6 +180,27 @@ namespace MAlice {
         cout << "\n\nFlags:";
         cout << "\n" << "  -h    Print this help message";
         cout << "\n" << "  -t    Print parsed AST tree";
+    }
+    
+    void CompilerFrontEnd::printErrorReport()
+    {
+        if (!m_errorReporter->hasReportedErrors() && !m_errorReporter->hasReportedWarnings())
+            cout << "No errors found.\n";
+        else {
+            if (m_errorReporter->hasReportedWarnings()) {
+                unsigned int numberOfWarnings = m_errorReporter->getNumberOfReportedWarnings();
+                cout << Utilities::numberToString(numberOfWarnings) + " " +
+                ((numberOfWarnings == 1) ? "warning" : "warnings") +
+                ".\n";
+            }
+            
+            if (m_errorReporter->hasReportedErrors()) {
+                unsigned int numberOfErrors = m_errorReporter->getNumberOfReportedErrors();
+                cout << Utilities::numberToString(numberOfErrors) + " " +
+                ((numberOfErrors == 1) ? "error" : "errors") +
+                " found.\n";
+            }
+        }
     }
     
 };

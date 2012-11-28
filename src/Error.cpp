@@ -13,7 +13,7 @@ namespace MAlice {
     Error::Error(ErrorType type, std::string errorMessage)
     {
         m_errorType = type;
-        m_lineNumber = UINT_MAX;
+        m_lineNumber = 0;
         
         if (!errorMessage.empty())
             m_errorMessage = errorMessage;

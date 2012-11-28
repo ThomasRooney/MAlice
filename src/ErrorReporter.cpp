@@ -188,7 +188,8 @@ namespace MAlice {
     
     ErrorReporter::ErrorReporter()
     {
-        m_hasReportedErrors = false;
+        m_numberOfReportedErrors = 0;
+        m_numberOfReportedWarnings = 0;
     }
 
     ErrorReporter *getParserErrorReporter()
@@ -205,15 +206,19 @@ namespace MAlice {
     {
         printErrorHeader(error);
         printDecoratedLines(error);
+        
+        cerr << "\n";
 
         if (!error->getAdditionalInformation().empty()) {
-            //TODO: use setw()
-            cerr << "\n\n  " << Utilities::stringWithLineIndentation(error->getAdditionalInformation(), DECORATE_INDENTATION);
+            cerr << "\n  " << Utilities::stringWithLineIndentation(error->getAdditionalInformation(), DECORATE_INDENTATION);
         }
 
         cerr << endl;
         
-        m_hasReportedErrors = true;
+        if (error->getType() == ErrorType::Warning)
+            m_numberOfReportedWarnings++;
+        else
+            m_numberOfReportedErrors++;
         
         delete error;
         
@@ -239,7 +244,6 @@ namespace MAlice {
         {
             std::string line = getLineOfInput(i - 1);
             
-            //TODO: use setw().
             cerr << "\n" << "  " << line;
             printDecoratedLine(error, line, i - 1);
         }
@@ -367,7 +371,22 @@ namespace MAlice {
     
     bool ErrorReporter::hasReportedErrors()
     {
-        return m_hasReportedErrors;
+        return m_numberOfReportedErrors > 0;
+    }
+    
+    bool ErrorReporter::hasReportedWarnings()
+    {
+        return m_numberOfReportedWarnings > 0;
+    }
+    
+    unsigned int ErrorReporter::getNumberOfReportedErrors()
+    {
+        return m_numberOfReportedErrors;
+    }
+    
+    unsigned int ErrorReporter::getNumberOfReportedWarnings()
+    {
+        return m_numberOfReportedWarnings;
     }
     
 }; // namespace ErrorReporter
