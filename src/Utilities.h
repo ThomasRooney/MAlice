@@ -50,6 +50,7 @@ namespace MAlice {
         
         static std::string stripLeadingAndTrailingCharacters(std::string input, char character);
         static std::string getOperatorStringFromOperatorNode(ASTNode node);
+        static std::string getTypeListFromTypeFlags(unsigned int flags);
         
         template <typename T>
         static std::string numberToString(T number) {
