@@ -32,7 +32,8 @@ namespace MAlice {
         node = getFirstNonImaginaryChildNode(node);
         
         pANTLR3_COMMON_TOKEN token = node->getToken(node);
-        return token->getCharPositionInLine(token);
+        int charPos = token->getCharPositionInLine(token);
+        return charPos<0?0:charPos;
     }
     
     void Utilities::printTree(ASTNode tree)
