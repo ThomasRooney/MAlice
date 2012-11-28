@@ -904,7 +904,7 @@ namespace MAlice {
         ASTNode parentNode = lvalueNode;
         
         if (Utilities::getNodeType(lvalueNode) != EXPRESSION) {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment statement"));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment statement"));
             return false;
         }
         
@@ -983,7 +983,7 @@ namespace MAlice {
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(symbolTableEntity);
             
             // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
-            checkExpression(rvalueNode, walker, ctx, variableEntity->getType());
+            return checkExpression(rvalueNode, walker, ctx, variableEntity->getType());
         }
     }
     
@@ -1054,7 +1054,6 @@ namespace MAlice {
 
     bool checkHasReturnValueInAllExecutionPaths(ASTNode bodyNode)
     {
-        bool validForAllChildren = true;
         ASTNode childNode;
         int numberOfIfStatements = 0;
         int numberOfReturningIfStatements = 0;
