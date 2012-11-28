@@ -205,7 +205,7 @@ namespace MAlice {
                 break;
             case EQUALS:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", MAliceTypeNone, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -214,7 +214,7 @@ namespace MAlice {
                 break;
             case NOTEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", MAliceTypeNone, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -223,7 +223,7 @@ namespace MAlice {
                 break;
             case LESSTHAN:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", MAliceTypeNone, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", MAliceTypeNumber, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -232,7 +232,7 @@ namespace MAlice {
                 break;
             case LESSTHANEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", MAliceTypeNone, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", MAliceTypeNumber, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -241,7 +241,7 @@ namespace MAlice {
                 break;
             case GREATERTHAN:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", MAliceTypeNone, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", MAliceTypeNumber, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -250,7 +250,7 @@ namespace MAlice {
                 break;
             case GREATERTHANEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", MAliceTypeNone, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", MAliceTypeNumber, walker, ctx))
                     return false;
                 
                 if (outType)
@@ -303,7 +303,7 @@ namespace MAlice {
             {
                 if (Utilities::getNumberOfChildNodes(node) == 2) {
                     MAliceType type = MAliceTypeNone;
-                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", MAliceTypeNumber, walker, ctx))
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                         return false;
                     
                     if (outType)
@@ -321,7 +321,7 @@ namespace MAlice {
             {
                 if (Utilities::getNumberOfChildNodes(node) == 2) {
                     MAliceType type = MAliceTypeNone;
-                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", MAliceTypeNumber, walker, ctx))
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
                         return false;
                     
                     if (outType)
@@ -481,13 +481,16 @@ namespace MAlice {
         return true;
     }
     
-    bool getTypeFromBinaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, MAliceType requiredType, ASTWalker *walker, CompilerContext *ctx)
+    bool getTypeFromBinaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, unsigned int requiredTypes, ASTWalker *walker, CompilerContext *ctx)
     {
         MAliceType t1, t2;
         unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
         
         if (numChildNodes != 2) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError(operatorName + " operator in expression"));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError(operatorName +
+                                                                                     " operator in expression " +
+                                                                                     Utilities::getOperatorStringFromOperatorNode(node) +
+                                                                                     "."));
             return false;
         }
         
@@ -500,41 +503,48 @@ namespace MAlice {
         if (!getTypeFromExpressionRuleNode(rightOperandRootNode, &t2, walker, ctx))
             return false;
         
-        if (requiredType == MAliceTypeNone) {
-            if (t1 != t2) {
-                Error *error = ErrorFactory::createSemanticError("Cannot match types '" +
-                                                                 std::string(Utilities::getNameOfTypeFromMAliceType(t1)) +
-                                                                 "' and '" +
-                                                                 std::string(Utilities::getNameOfTypeFromMAliceType(t2)) +
-                                                                 "' for operands to binary operator.");
-                
-                error->setLineNumber(Utilities::getNodeLineNumber(node));
-                
-                Range *leftOperandRange = NULL, *rightOperandRange = NULL;
-                Utilities::getNodeTextIncludingChildren(leftOperandRootNode, ctx, &leftOperandRange);
-                Utilities::getNodeTextIncludingChildren(rightOperandRootNode, ctx, &rightOperandRange);
-                
-                std::list<Range*> underlineRanges;
-                underlineRanges.push_back(leftOperandRange);
-                underlineRanges.push_back(rightOperandRange);
-                
-                error->setUnderlineRanges(underlineRanges);
-                
-                return false;
-            }
-        }
-        else {
-            if (t1 != requiredType) {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(leftOperandRootNode, requiredType, t1, ctx));
-                
-                return false;
-            }
+        ;
+        
+        if (t1 != t2) {
+            Error *error = ErrorFactory::createSemanticError("Cannot match types '" +
+                                                             std::string(Utilities::getNameOfTypeFromMAliceType(t1)) +
+                                                             "' and '" +
+                                                             std::string(Utilities::getNameOfTypeFromMAliceType(t2)) +
+                                                             "' for operands to binary operator.");
             
-            if (t2 != requiredType) {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(rightOperandRootNode, requiredType, t2, ctx));
-                
-                return false;
-            }
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            
+            Range *leftOperandRange = NULL, *rightOperandRange = NULL;
+            Utilities::getNodeTextIncludingChildren(leftOperandRootNode, ctx, &leftOperandRange);
+            Utilities::getNodeTextIncludingChildren(rightOperandRootNode, ctx, &rightOperandRange);
+            
+            std::list<Range*> underlineRanges;
+            underlineRanges.push_back(leftOperandRange);
+            underlineRanges.push_back(rightOperandRange);
+            
+            error->setUnderlineRanges(underlineRanges);
+            
+            unsigned int operatorStringLength = (unsigned int)Utilities::getOperatorStringFromOperatorNode(node).size();
+            Range *arrowRange = Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node),
+                                                       Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node) + operatorStringLength - 1);
+            
+            error->setArrowRanges(Utilities::rangeToSingletonList(arrowRange));
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        if ((t1 & requiredTypes) == 0) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(leftOperandRootNode, t1, ctx));
+            
+            return false;
+        }
+        
+        if ((t2 & requiredTypes) == 0) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(rightOperandRootNode, t2, ctx));
+            
+            return false;
         }
         
         if (outType)

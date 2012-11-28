@@ -78,4 +78,20 @@ namespace MAlice {
         return error;
     }
     
+    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operandNode, MAliceType actualType, CompilerContext *ctx)
+    {
+        Range *errorRange = NULL;
+        std::string operandString = Utilities::getNodeTextIncludingChildren(operandNode, ctx, &errorRange);
+        
+        Error *error = ErrorFactory::createSemanticError("Cannot match type '" +
+                                                         std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
+                                                         "' with expected type in operand '" +
+                                                         operandString +
+                                                         "'.");
+        error->setLineNumber(Utilities::getNodeLineNumber(operandNode));
+        error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
+        
+        return error;
+    }
+    
 };

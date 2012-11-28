@@ -358,4 +358,67 @@ namespace MAlice {
         return input.substr(startIndex, endIndex - startIndex + 1);
     }
     
+    std::string Utilities::getOperatorStringFromOperatorNode(ASTNode node)
+    {
+        switch(Utilities::getNodeType(node))
+        {
+            case PLUS:
+                return "+";
+                break;
+            case MINUS:
+                return "-";
+                break;
+            case EQUALS:
+                return "==";
+                break;
+            case NOTEQUAL:
+                return "!=";
+                break;
+            case LESSTHAN:
+                return "<";
+                break;
+            case LESSTHANEQUAL:
+                return "<=";
+                break;
+            case GREATERTHAN:
+                return ">";
+                break;
+            case GREATERTHANEQUAL:
+                return ">=";
+                break;
+            case TILDE:
+                return "~";
+                break;
+            case BANG:
+                return "!";
+                break;
+            case BITWISEAND:
+                return "&";
+                break;
+            case BITWISEOR:
+                return "|";
+                break;
+            case BITWISEXOR:
+                return "^";
+                break;
+            case MODULO:
+                return "%";
+                break;
+            case MULTIPLY:
+                return "*";
+                break;
+            case DIVIDE:
+                return "/";
+            case LOGICALAND:
+                return "&&";
+                break;
+            case LOGICALOR:
+                return "||";
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+    
 }; // namespace MAlice

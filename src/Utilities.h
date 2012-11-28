@@ -49,6 +49,7 @@ namespace MAlice {
         static Range *createRange(unsigned int startLine, unsigned int startColumn, unsigned int endLine, unsigned int endColumn);
         
         static std::string stripLeadingAndTrailingCharacters(std::string input, char character);
+        static std::string getOperatorStringFromOperatorNode(ASTNode node);
         
         template <typename T>
         static std::string numberToString(T number) {
