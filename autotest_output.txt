@@ -556,9 +556,9 @@ Type clash in assignment on line 6. One type is 'number' and the other is 'boole
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 6): Cannot match type 'number' with expected type in operand '10'.
+Semantic error (Line 6): Cannot match type 'number' with expected types 'boolean' for operand '10' over operator &&.
     x became 10 && 20.
-             ~~       
+             ~~ ^^    
 ---------------------
 Processing Invalid File: ../malice_examples/invalid/test16.alice
 ---------------------
@@ -1034,9 +1034,9 @@ Type clash in assignment on line 4. One type is 'sentence' and the other is 'boo
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 4): Cannot match type 'sentence' with expected type in operand '"as"'.
+Semantic error (Line 4): Cannot match type 'sentence' with expected types 'letter' or 'number' for operand '"as"' over operator >.
   x became "as" > "as".
-           ~~~~        
+           ~~~~ ^      
 ---------------------
 Processing Custom File: ../malice_examples/custom/test07.alice
 ---------------------
@@ -1051,12 +1051,12 @@ Relational operator '>' on line 5 not applied to integer or character values.
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 4): Cannot match type 'sentence' with expected type in operand '"as"'.
+Semantic error (Line 4): Cannot match type 'sentence' with expected types 'letter' or 'number' for operand '"as"' over operator >.
   x became "as" > "as".
-           ~~~~        
-Semantic error (Line 5): Cannot match type 'sentence' with expected type in operand 'x'.
+           ~~~~ ^      
+Semantic error (Line 5): Cannot match type 'sentence' with expected types 'letter' or 'number' for operand 'x' over operator >.
   either(x>"as") so
-         ~         
+         ~^        
 ---------------------
 Processing Custom File: ../malice_examples/custom/test08.alice
 ---------------------
@@ -1081,7 +1081,7 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 4): Cannot assign value to 'y's 1 piece' as 'y' is not an array.
     y's 1 piece became 9.
-    ^                    
+    ~~~~~~~~~~~          
 ---------------------
 Processing Custom File: ../malice_examples/custom/test10.alice
 ---------------------
@@ -1106,7 +1106,7 @@ Student Compiler Output:
 ---------------------
 Semantic error (Line 5): Identifier: 'z' is not in scope.
   Alice found z.
-              ^ 
+              ~ 
 Semantic error (Line 5): The return value 'z' does not match the return value of 'id' declared on line 3.
   Alice found z.
               ~ 
@@ -1144,9 +1144,9 @@ Type clash for binary operator '+' on line 5. This operator cannot be applied to
 ---------------------
 Student Compiler Output:
 ---------------------
-Semantic error (Line 5): Cannot match type 'boolean' with expected type in operand '(1==1)'.
+Semantic error (Line 5): Cannot match type 'boolean' with expected types 'letter', 'number' or 'sentence' for operand '(1==1)' over operator +.
   (1==1) + (1==2) spoke.
-  ~~~~~~                
+  ~~~~~~ ^              
 ---------------------
 Processing Custom File: ../malice_examples/custom/test15.alice
 ---------------------
@@ -1176,6 +1176,9 @@ Illegal type used to index array 'arr' on line 4. Found type 'letter'.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 4): Can't match expected type 'number' with type 'letter' for expression 'f'.
+  arr's 'f' piece became 0.
+        ~~~                
 ---------------------
 Processing Custom File: ../malice_examples/custom/test17.alice
 ---------------------
@@ -1200,6 +1203,9 @@ Illegal type used in size declaration of array 'y' on line 3. Found type 'boolea
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 3): Can't match expected type 'number' with type 'boolean' for expression '(2>3)'.
+   y had (2>3) number.
+         ~~~~~        
 ---------------------
 Processing Custom File: ../malice_examples/custom/test19.alice
 ---------------------
@@ -1212,6 +1218,9 @@ Illegal type used to index array 'y' on line 4. Found type 'letter'.
 ---------------------
 Student Compiler Output:
 ---------------------
+Semantic error (Line 4): Can't match expected type 'number' with type 'letter' for expression 'a'.
+   y's 'a' piece spoke.
+       ~~~             
 ---------------------
 Processing Custom File: ../malice_examples/custom/test20.alice
 ---------------------
