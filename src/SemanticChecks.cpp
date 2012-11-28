@@ -153,8 +153,10 @@ namespace MAlice {
     {
         ASTNode firstChildNode = Utilities::getChildNodeAtIndex(node, 0);
         if (!firstChildNode) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("expression"));
-            return false;
+            // Possibly the firstChildNode has been passed in directly to this function.
+            firstChildNode = node;
+            // ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("expression"));
+            // return false;
         }
         
         // Check identifiers first, because on their own they can reference an array if we don't want an l-value
