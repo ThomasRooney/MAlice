@@ -40,3 +40,6 @@ grammar/output/*.txt
 
 #ignore Xcode project files
 *.xcodeproj
+
+#ignore the autotest results
+autotest_output.txt
