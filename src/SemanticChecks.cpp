@@ -160,9 +160,10 @@ namespace MAlice {
         // Check identifiers first, because on their own they can reference an array if we don't want an l-value
         if (!requiresLValue && Utilities::getNodeType(firstChildNode) == IDENTIFIER) {
             MAliceType type = MAliceTypeNone;
-            
+
             if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, NULL, walker, ctx))
                 return false;
+
             
             if (outType)
                 *outType = type;
@@ -1260,7 +1261,7 @@ namespace MAlice {
             // Make sure its not undefined
             MAliceType type = MAliceTypeNone;
             
-            if (!getTypeFromExpressionNode(childNode, &type, false, walker, ctx))
+            if (!getTypeFromExpressionNode(childNode, &type, true, walker, ctx))
                 return false;
             
             if (type == MAliceTypeNone)
