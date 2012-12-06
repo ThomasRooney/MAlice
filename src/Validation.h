@@ -11,9 +11,14 @@ namespace MAlice {
     class CompilerContext;
     
     namespace Validation {
-        validateAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-        validateIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
-        validateDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validatePrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         // Separator comment (for git).
         
         bool validateVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);

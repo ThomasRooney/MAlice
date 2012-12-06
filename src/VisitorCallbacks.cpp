@@ -25,95 +25,59 @@ namespace MAlice {
     
     bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return checkValidAssignmentStatementNode(node, walker, ctx);
+        if (!Validation::validateAssignmentStatementNode(node, walker, ctx))
+            return false;
+
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (Utilities::getNumberOfChildNodes(node) != 1) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("increment statement"));
+        if (!Validation::validateIncrementStatementNode(node, walker, ctx))
             return false;
-        }
-        
-        // Check that the child of this node is a number, and it has a child
-        return checkExpression(Utilities::getChildNodeAtIndex(node, 0), true, walker, ctx, MAliceTypeNumber);
+
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (Utilities::getNumberOfChildNodes(node) != 1) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("decrement statement"));
+        if (!Validation::validateDecrementStatementNode(node, walker, ctx))
             return false;
-        }
-        
-        // Check that the child of this node is a number, and it has a child
-        return checkExpression(Utilities::getChildNodeAtIndex(node,0), true, walker, ctx, MAliceTypeNumber);
+
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        bool checkTotal = true;
-        // If -> (Expression -> Statements)*
-        int numChildren = Utilities::getNumberOfChildNodes(node);
-        if (numChildren < 1) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if Statement"));
+        if (!Validation::validateIfStatementNode(node, walker, ctx))
             return false;
-        }
-        //  the expression on node 1 must return a a boolean
-        for (int i = 0 ; i < numChildren; i++)
-        {
-            ASTNode childNode = Utilities::getChildNodeAtIndex(node,i);
-            switch(Utilities::getNodeType(childNode))
-            {
-                case EXPRESSION:
-                    checkTotal = checkExpression(childNode, walker, ctx, MAliceTypeBoolean) && checkTotal;
-                    break;
-                default:
-                    continue;
-            }
-        }
-        
-        return checkTotal;
+
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        // input must be either a number or a letter.
-        if (Utilities::getNumberOfChildNodes(node) < 1) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("input Statement"));
+        if (!Validation::validateInputStatementNode(node, walker, ctx))
             return false;
-        }
-        MAliceType t = MAliceTypeNone;
-        
-        if (!getTypeFromExpressionNode(node, &t, true, walker, ctx, NULL))
-            return false;
-        
-        switch(t)
-        {
-        case MAliceTypeLetter:
-        case MAliceTypeNumber:
-            return true;
-        default:
-            {
-                Range *r = NULL;
-                std::string text = Utilities::getNodeTextIncludingChildren(node, ctx, &r);
-                Error *error = ErrorFactory::createSemanticError("Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.");
-                error->setLineNumber(Utilities::getNodeLineNumber(node));
-                error->setLineNumber(Utilities::getNodeLineNumber(node));
-                error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
-            }
-        }
+
         return walker->visitChildren(node, ctx);
     }
     
     bool visitPrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return checkValidPrintStatementNode(node, walker, ctx);
+        if (!Validation::validatePrintStatementNode(node, walker, ctx))
+            return false;
+
+        return walker->visitChildren(node, ctx);
+
     }
     
     bool visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return checkValidReturnStatementNode(node, walker, ctx);
+        if (!Validation::validateReturnStatementNode(node, walker, ctx))
+            return false;
+
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -123,22 +87,10 @@ namespace MAlice {
     
     bool visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        // First child must be an expression
-        int numChildren = Utilities::getNumberOfChildNodes(node);
-        if (numChildren < 1) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("while Statement with no conditional"));
+        if (!Validation::validateWhileStatementNode(node, walker, ctx))
             return false;
-        }
-        //  the expression on node 1 must return a a boolean
-        ASTNode exprNode = Utilities::getChildNodeAtIndex(node,0);
-        switch(Utilities::getNodeType(exprNode))
-        {
-            case EXPRESSION:
-                return checkExpression(exprNode, walker, ctx, MAliceTypeBoolean);
-            default:
-                return false;
-        }        
-        return false;
+
+        return walker->visitChildren(node, ctx);
     }
     
     // Expressions
