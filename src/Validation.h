@@ -19,8 +19,10 @@ namespace MAlice {
         bool validatePrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
-        // Separator comment (for git).
-        
+        bool validateArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         
         

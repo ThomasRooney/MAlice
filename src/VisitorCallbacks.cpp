@@ -192,33 +192,10 @@ namespace MAlice {
     // Imaginary nodes – used to improve AST structure
     bool visitArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!Validation::validateArrayDeclarationNode(node, walker, ctx))
+            return false;
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            std::string type;
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-
-            // Number of children should be two
-            int numChildren = Utilities::getNumberOfChildNodes(identifierNode);
-
-            if (numChildren != 2)
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Malformed Array Invocation Node"));
-
-            // array of what?
-            ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
-            if (typeNode != NULL)
-                type = Utilities::getNodeText(typeNode);
-            // length is a number
-            ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
-            checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
-
-            
-            ctx->addEntityInScope(identifier, new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type), 1));
-        }
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -262,80 +239,18 @@ namespace MAlice {
     
     bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!Validation::validateFunctionDeclarationNode(node, walker, ctx))
+            return false;
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            // Get the return type
-            MAliceType returnType = MAliceType::MAliceTypeNone;
-            // 
-            bool hasParams = false;
-            // get node index 1, if its a parameter node, get params...
-            ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
-            if (Utilities::getNodeType(nodeI1) == PARAMS)
-                hasParams = true;
-            ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
-            if (returnNode != NULL)
-                returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
-
-            FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), returnType);
-            if (hasParams)
-            {
-                std::list<ParameterEntity> parameterList = getParameterTypesFromParamsNode(nodeI1);
-                functionEntity->setParameterListTypes(parameterList);
-                    
-                for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
-                    ctx->addEntityInScope(p->getIdentifier(), p->clone());
-                }
-            }
-            ctx->addEntityInScope(identifier, functionEntity);
-            ctx->pushFunctionProcedureEntity(functionEntity);
-            
-            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx);
-            
-            ctx->popFunctionProcedureEntity();
-            
-            return result;
-        }
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
+        if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
             return false;
         
-        // This is being called in the context of a statement, not within an expression.
-        if (getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone) {
-            FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
-            std::string identifier = funcProcEntity->getIdentifier();
-            
-            Range *range = NULL;
-            Utilities::getNodeTextIncludingChildren(node, ctx, &range);
-
-            Error *error = ErrorFactory::createWarningError("Unused return value from function '" + identifier + "'.");
-            
-            ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
-            if (identifierNode) {
-                error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
-                error->setUnderlineRanges(Utilities::rangeToSingletonList(range));
-            }
-            
-            ctx->getErrorReporter()->reportError(error);
-        }
-        
-        if (!checkNumberOfArgumentsForInvocationIsValid(node, walker, ctx))
-            return false;
-        
-        if (!checkTypesOfArgumentsForInvocationIsValid(node, walker, ctx))
-            return false;
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -345,27 +260,10 @@ namespace MAlice {
     
     bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!Validation::validateProcedureDeclarationNode(node, walker, ctx))
+            return false;
         
-        if (identifierNode != NULL) {
-            std::string identifier = Utilities::getNodeText(identifierNode);
-            
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
-            
-            ctx->addEntityInScope(identifier, procedureEntity);
-            ctx->pushFunctionProcedureEntity(procedureEntity);
-            
-            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx);
-            
-            ctx->popFunctionProcedureEntity();
-            
-            return result;
-        }
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -373,7 +271,7 @@ namespace MAlice {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
         
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     // Literals
