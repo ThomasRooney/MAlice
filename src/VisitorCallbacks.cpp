@@ -249,7 +249,13 @@ namespace MAlice {
     
     bool visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        bool checkChildrenAreValid;
+        ctx->beginExpression();
+
+        checkChildrenAreValid = walker->visitChildren(node, ctx);
+
+        ctx->endExpression();
+        return checkChildrenAreValid;
     }
     
     bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

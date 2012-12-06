@@ -194,8 +194,7 @@ namespace MAlice {
         if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
             return false;
         
-        // This is being called in the context of a statement, not within an expression.
-        if (getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone) {
+        if (getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone && !ctx->withinExpression()) {
             FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
             std::string identifier = funcProcEntity->getIdentifier();
             
