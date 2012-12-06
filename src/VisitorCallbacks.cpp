@@ -309,7 +309,7 @@ namespace MAlice {
                 ctx->addEntityInScope(p->getIdentifier(), p->clone());
         }
         
-        return walker->visitChildren(node, ctx);
+        return true;
     }
     
     bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
