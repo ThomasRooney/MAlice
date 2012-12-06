@@ -206,6 +206,21 @@ namespace MAlice {
     bool visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
+        if (!checkReturnValueForAllExecutionPaths(node, walker, ctx))
+            return false;
+        
+        bool result = walker->visitChildren(node, ctx);
+        
+        ctx->exitScope();
+        
+        return result;
+    }
+    
+    bool visitArbitraryBlockNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ctx->enterScope();
+        
+        
         bool result = walker->visitChildren(node, ctx);
         ctx->exitScope();
         
@@ -242,7 +257,28 @@ namespace MAlice {
         if (!Validation::validateFunctionDeclarationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, ctx);
+        // We've already validated that there is an identifier node here, so this won't be NULL.
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        bool hasParams = false;
+        
+        // get node index 1, if its a parameter node, get params...
+        ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
+        if (Utilities::getNodeType(nodeI1) == PARAMS)
+            hasParams = true;
+        ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
+        MAliceType returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
+        
+        FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), returnType);
+        ctx->addEntityInScope(identifier, functionEntity);
+        ctx->pushFunctionProcedureEntity(functionEntity);
+        
+        bool result = walker->visitChildren(node, ctx);
+        
+        ctx->popFunctionProcedureEntity();
+        
+        return result;
     }
     
     bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -255,6 +291,18 @@ namespace MAlice {
     
     bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
+        
+        std::list<ParameterEntity> parameterList = getParameterTypesFromParamsNode(node);
+        entity->setParameterListTypes(parameterList);
+        
+        for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
+            if (p->isPassedByReference())
+                ctx->addEntityInScope(p->getIdentifier(), new ArrayEntity(p->getIdentifier(), p->getLineNumber(),p->getType(), 1));
+            else
+                ctx->addEntityInScope(p->getIdentifier(), p->clone());
+        }
+        
         return walker->visitChildren(node, ctx);
     }
     
@@ -263,7 +311,16 @@ namespace MAlice {
         if (!Validation::validateProcedureDeclarationNode(node, walker, ctx))
             return false;
         
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
+        ctx->addEntityInScope(identifier, procedureEntity);
+        ctx->pushFunctionProcedureEntity(procedureEntity);
+        
         return walker->visitChildren(node, ctx);
+        
+        ctx->popFunctionProcedureEntity();
     }
     
     bool visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

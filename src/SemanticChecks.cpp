@@ -62,52 +62,18 @@ namespace MAlice {
         return parameterTypes;
     }
     
-    bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx)
+    bool checkReturnValueForAllExecutionPaths(ASTNode bodyNode, ASTWalker *walker, CompilerContext *ctx)
     {
-        std::list<ParameterEntity> parameterList;
-        unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
-        ASTNode bodyNode;
-        bool hasBodyFlag = false;
-        ctx->enterScope();
+        FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
+        if (Utilities::getTypeOfEntity(entity) != MAliceEntityTypeFunction)
+            return true;
         
-        // Loop through the rest of the child nodes
-        for (unsigned int i = 1; i < numChildNodes; ++i) {
-            ASTNode childNode = Utilities::getChildNodeAtIndex(node, i);
+        if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
+        {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createWarningError("Not all execution paths of function '" + entity->getIdentifier() + "' have a return value."));
             
-            switch (Utilities::getNodeType(childNode))
-            {
-                case PARAMS:
-                    parameterList = getParameterTypesFromParamsNode(childNode);
-                    entity->setParameterListTypes(parameterList);
-                    
-                    for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
-                        if (p->isPassedByReference())
-                        {
-                            ctx->addEntityInScope(p->getIdentifier(), new ArrayEntity(p->getIdentifier(), p->getLineNumber(),p->getType(), 1));
-                        }
-                        else {
-                            ctx->addEntityInScope(p->getIdentifier(), p->clone());
-                        }
-                    }
-                    break;
-                case BODY:
-                    bodyNode = childNode;
-                    walker->visitNode(bodyNode, ctx);
-                    hasBodyFlag = true;
-                    break;
-                default:
-                    break;
-            }
+            return false;
         }
-        // Warning if not all execution paths return the type of the entity, should this be a function
-        if (hasBodyFlag && Utilities::getTypeOfEntity(entity) == MAliceEntityTypeFunction)
-        {   
-            if (!checkHasReturnValueInAllExecutionPaths(bodyNode))
-            {
-                ctx->getErrorReporter()->reportError(ErrorFactory::createWarningError("Not all execution paths of function '" + entity->getIdentifier() + "' have a return value."));
-            }
-        }
-        ctx->exitScope();
         
         return true;
     }

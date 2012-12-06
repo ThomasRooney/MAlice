@@ -23,7 +23,6 @@ namespace MAlice {
     bool checkNumberOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkTypesOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkHasReturnValueInAllExecutionPaths(ASTNode bodyNode);
-    bool visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(ASTNode node, FunctionProcedureEntity *entity, ASTWalker *walker, CompilerContext *ctx);
     std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
     bool checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType type);
     bool checkExpression(ASTNode node, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, MAliceType type);
@@ -39,6 +38,8 @@ namespace MAlice {
     bool checkValidIfStatementNode(ASTNode ifStatementNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkValidPrintStatementNode(ASTNode printStatementNode, ASTWalker *walker, CompilerContext *ctx);
     bool checkValidReturnStatementNode(ASTNode returnStatementNode, ASTWalker *walker, CompilerContext *ctx);
+    
+    bool checkReturnValueForAllExecutionPaths(ASTNode bodyNode, ASTWalker *walker, CompilerContext *ctx);
 };
 
 #endif /* #ifndef _MALICESEMANTICCHECKS */

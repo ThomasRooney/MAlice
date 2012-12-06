@@ -165,42 +165,25 @@ namespace MAlice {
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            // Get the return type
-            MAliceType returnType = MAliceType::MAliceTypeNone;
-            //
-            bool hasParams = false;
-            // get node index 1, if its a parameter node, get params...
-            ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
-            if (Utilities::getNodeType(nodeI1) == PARAMS)
-                hasParams = true;
-            ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
-            if (returnNode != NULL)
-                returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
-            
-            FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), returnType);
-            if (hasParams)
-            {
-                std::list<ParameterEntity> parameterList = getParameterTypesFromParamsNode(nodeI1);
-                functionEntity->setParameterListTypes(parameterList);
-                
-                for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
-                    ctx->addEntityInScope(p->getIdentifier(), p->clone());
-                }
-            }
-            ctx->addEntityInScope(identifier, functionEntity);
-            ctx->pushFunctionProcedureEntity(functionEntity);
-            
-            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx);
-            
-            ctx->popFunctionProcedureEntity();
-            
-            return result;
+        if (identifierNode == NULL) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function declaration"));
+            return false;
+        }
+        
+        std::string identifier(Utilities::getNodeText(identifierNode));
+        
+        if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
+            return false;
+        
+        bool hasParams = false;
+        // get node index 1, if its a parameter node, get params...
+        ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
+        if (Utilities::getNodeType(nodeI1) != PARAMS)
+            hasParams = true;
+        ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
+        if (returnNode == NULL) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function declaration"));
+            return false;
         }
         
         return true;
@@ -242,24 +225,15 @@ namespace MAlice {
     bool Validation::validateProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
-        
-        if (identifierNode != NULL) {
-            std::string identifier = Utilities::getNodeText(identifierNode);
-            
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
-            
-            ctx->addEntityInScope(identifier, procedureEntity);
-            ctx->pushFunctionProcedureEntity(procedureEntity);
-            
-            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx);
-            
-            ctx->popFunctionProcedureEntity();
-            
-            return result;
+        if (identifierNode == NULL) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("procedure declaration"));
+            return false;
         }
+        
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
+            return false;
         
         return true;
     }

@@ -28,6 +28,7 @@ tokens {
 	ARRAYSUBSCRIPT;
 	IFSTATEMENT;
 	VARDECLARATION;
+	BLOCK;
 }
 
 @parser::includes
@@ -85,6 +86,11 @@ declaration_argument_list
 
 block	:	OPENED body? CLOSED
 		-> ^(BODY body?)
+	;
+	
+arbitraryblock
+	:	OPENED body? CLOSED
+		-> ^(BLOCK body?)
 	;
 	
 body

@@ -56,6 +56,7 @@ namespace MAlice {
     bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     bool visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+    bool visitArbitraryBlockNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
     
     // Literals
     bool visitCharacterLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
