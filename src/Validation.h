@@ -6,8 +6,9 @@
 
 namespace MAlice {
     namespace Validation {
-        
-        
+        validateAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        validateIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+        validateDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         // Separator comment (for git).
         
         
