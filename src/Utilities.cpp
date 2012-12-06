@@ -718,12 +718,13 @@ namespace MAlice {
                     return false;
                 }
                 
-                MAliceType subscriptType;
-                if (!getTypeFromExpressionRuleNode(node, &subscriptType, walker, ctx))
+                MAliceType subscriptType = MAliceTypeNone;
+                ASTNode subscriptExpressionNode = Utilities::getChildNodeAtIndex(node, 1);
+                if (!getTypeFromExpressionNode(subscriptExpressionNode, &subscriptType, false, walker, ctx, NULL))
                     return false;
                 
                 if (subscriptType != MAliceTypeNumber) {
-                    ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(node, MAliceTypeNumber, subscriptType, ctx));
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(subscriptExpressionNode, MAliceTypeNumber, subscriptType, ctx));
                     return false;
                 }
                 
