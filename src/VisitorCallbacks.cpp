@@ -240,33 +240,10 @@ namespace MAlice {
     // Imaginary nodes – used to improve AST structure
     bool visitArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!Validation::validateArrayDeclarationNode(node, walker, ctx))
+            return false;
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            std::string type;
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-
-            // Number of children should be two
-            int numChildren = Utilities::getNumberOfChildNodes(identifierNode);
-
-            if (numChildren != 2)
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Malformed Array Invocation Node"));
-
-            // array of what?
-            ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
-            if (typeNode != NULL)
-                type = Utilities::getNodeText(typeNode);
-            // length is a number
-            ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
-            checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
-
-            
-            ctx->addEntityInScope(identifier, new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type), 1));
-        }
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

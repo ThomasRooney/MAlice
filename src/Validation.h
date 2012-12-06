@@ -15,6 +15,7 @@ namespace MAlice {
         
         // Separator comment (for git).
         
+        bool validateArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
