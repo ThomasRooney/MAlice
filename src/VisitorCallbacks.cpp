@@ -206,7 +206,7 @@ namespace MAlice {
     bool visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
-        if (!checkReturnValueForAllExecutionPaths(node, walker, ctx))
+        if (!Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx))
             return false;
         
         bool result = walker->visitChildren(node, ctx);
@@ -298,7 +298,7 @@ namespace MAlice {
     bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
-        std::list<ParameterEntity> parameterList = getParameterTypesFromParamsNode(node);
+        std::list<ParameterEntity> parameterList = Utilities::getParameterTypesFromParamsNode(node);
         
         for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
             if (p->isPassedByReference())

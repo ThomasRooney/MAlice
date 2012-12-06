@@ -26,6 +26,7 @@ namespace MAlice {
         static Error *createInvalidLValueError(ASTNode node, CompilerContext *ctx);
         static Error *createInvalidOperandTypeError(ASTNode operandNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx);
         static Error *createInvalidOperandTypeError(ASTNode operatorNode, ASTNode operandNode, MAliceType actualType, unsigned int expectedTypes, CompilerContext *ctx);
+        static Error *createCannotMatchTypesError(ASTNode exprNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx);
     }; // class ErrorFactory
     
 };

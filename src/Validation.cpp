@@ -75,7 +75,7 @@ namespace MAlice {
         }
         MAliceType t = MAliceTypeNone;
         
-        if (!getTypeFromExpressionNode(node, &t, true, walker, ctx, NULL))
+        if (!Utilities::getTypeFromExpressionNode(node, &t, true, walker, ctx, NULL))
             return false;
         
         switch(t)
@@ -194,8 +194,8 @@ namespace MAlice {
         if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
             return false;
         
-        if (getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone && !ctx->withinExpression()) {
-            FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
+        if (Utilities::getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone && !ctx->withinExpression()) {
+            FunctionProcedureEntity *funcProcEntity = Utilities::getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
             std::string identifier = funcProcEntity->getIdentifier();
             
             Range *range = NULL;

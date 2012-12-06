@@ -103,4 +103,22 @@ namespace MAlice {
         return error;
     }
     
+    Error *ErrorFactory::createCannotMatchTypesError(ASTNode exprNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx)
+    {
+        Range *exprRange = NULL;
+        std::string exprText = Utilities::getNodeTextIncludingChildren(exprNode, ctx, &exprRange);
+        
+        ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(exprNode);
+        Error *error = ErrorFactory::createSemanticError("Can't match expected type '" +
+                                                         std::string(Utilities::getNameOfTypeFromMAliceType(expectedType)) +
+                                                         "' with type '" +
+                                                         std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
+                                                         "' for expression '" +
+                                                         Utilities::stripLeadingAndTrailingCharacters(exprText, '\'') + "'.");
+        error->setLineNumber(Utilities::getNodeLineNumber(firstNonImaginaryNode));
+        error->setUnderlineRanges(Utilities::rangeToSingletonList(exprRange));
+        
+        return error;
+    }
+    
 };

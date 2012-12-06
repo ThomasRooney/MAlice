@@ -9,7 +9,9 @@
 
 #include "CompilerContext.h"
 #include "Entity.h"
+#include "ErrorFactory.h"
 #include "ErrorPosition.h"
+#include "FunctionProcedureEntity.h"
 #include "VariableEntity.h"
 #include "ProcedureEntity.h"
 #include "FunctionEntity.h"
@@ -465,6 +467,559 @@ namespace MAlice {
         for (std::list<std::string>::iterator it = identifiers.begin(); it != identifiers.end(); ++it) {
             std::cout << *it << ": " << symbolTable->get(*it) << "\n";
         }
+    }
+    
+    std::list<ParameterEntity> Utilities::getParameterTypesFromParamsNode(ASTNode paramsNode)
+    {
+        std::list<ParameterEntity> parameterTypes;
+        
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(paramsNode); ++i) {
+            ASTNode childNode = Utilities::getChildNodeAtIndex(paramsNode, i);
+            bool passedByReference = (Utilities::getNodeType(childNode) == BYREFERENCE);
+            
+            ASTNode passTypeNode = Utilities::getChildNodeAtIndex(childNode, 1);
+            std::string identifier = Utilities::getNodeText(passTypeNode);
+            int lineNumber = Utilities::getNodeLineNumber(passTypeNode);
+            ASTNode typeNode = Utilities::getChildNodeAtIndex(childNode, 0);
+            
+            std::string typeString = Utilities::getNodeText(typeNode);
+            MAliceType t = (Utilities::getTypeFromTypeString(typeString));
+            ParameterEntity p = ParameterEntity(identifier, lineNumber, t, passedByReference);
+            
+            parameterTypes.push_back(p);
+        }
+        
+        return parameterTypes;
+    }
+    
+    FunctionProcedureEntity *Utilities::getFunctionProcedureEntityForInvocationNode(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        std::string identifier = getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
+        Entity *entity = NULL;
+        
+        if (!ctx->isSymbolInScope(identifier, &entity))
+            return NULL;
+        
+        MAliceEntityType entityType = Utilities::getTypeOfEntity(entity);
+        
+        if (entityType != MAliceEntityTypeProcedure && entityType != MAliceEntityTypeFunction)
+            return NULL;
+        
+        return dynamic_cast<FunctionProcedureEntity*>(entity);
+    }
+    
+    MAliceType Utilities::getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
+        if (!funcProcEntity) {
+            return MAliceTypeNone;
+        }
+        
+        MAliceEntityType entityType = Utilities::getTypeOfEntity(funcProcEntity);
+        
+        if (entityType == MAliceEntityTypeProcedure)
+            return MAliceTypeNone;
+        
+        FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
+        
+        return functionEntity->getReturnType();
+    }
+    
+    std::string Utilities::getFunctionProcedureInvocationIdentifier(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    {
+        if (Utilities::getNumberOfChildNodes(invocationNode) == 0) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function or procedure invocation"));
+            return NULL;
+        }
+        
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
+        return Utilities::getNodeText(identifierNode);
+    }
+    
+    bool Utilities::getTypeFromInvocationExpressionNode(ASTNode node, MAliceType *outType, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = Utilities::getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
+        if (!funcProcEntity)
+            return false;
+        
+        MAliceEntityType funcProcType = Utilities::getTypeOfEntity(funcProcEntity);
+        if (funcProcType != MAliceEntityTypeFunction && funcProcType != MAliceEntityTypeProcedure) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("identifier in expression"));
+            return false;
+        }
+        
+        if (funcProcType == MAliceEntityTypeProcedure) {
+            Range *procCallRange = NULL;
+            Utilities::getNodeTextIncludingChildren(node, ctx, &procCallRange);
+            
+            Error *error = ErrorFactory::createSemanticError("Cannot use void result of procedure '" +
+                                                             funcProcEntity->getIdentifier() +
+                                                             "' in expression.");
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(procCallRange));
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        MAliceType returnType = Utilities::getReturnTypeForInvocation(node, walker, ctx);
+        if (outType)
+            *outType = returnType;
+        
+        return true;
+    }
+    
+    bool Utilities::getTypeFromExpressionNode(ASTNode node, MAliceType *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
+    {
+        ASTNode firstChildNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!firstChildNode) {
+            // Possibly the firstChildNode has been passed in directly to this function. For example in the case of 'ate'/'drank'
+            firstChildNode = node;
+        }
+        
+        // Check identifiers first, because on their own they can reference an array if we don't want an l-value
+        if (!requiresLValue && Utilities::getNodeType(firstChildNode) == IDENTIFIER) {
+            MAliceType type = MAliceTypeNone;
+            MAliceEntityType entityType = MAliceEntityTypeUndefined;
+            
+            if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, &entityType, walker, ctx))
+                return false;
+            
+            if (passedByReference)
+                *passedByReference = entityType==MAliceEntityTypeArray;
+            
+            if (outType)
+                *outType = type;
+            
+            return true;
+        }
+        
+        return getTypeFromExpressionRuleNode(firstChildNode, outType, walker, ctx);
+    }
+    
+    bool Utilities::getTypeFromExpressionRuleNode(ASTNode node, MAliceType *outType, ASTWalker *walker, CompilerContext *ctx)
+    {
+        switch (Utilities::getNodeType(node))
+        {
+            case IDENTIFIER:
+            {
+                MAliceType type = MAliceTypeNone;
+                MAliceEntityType entityType = MAliceEntityTypeUndefined;
+                
+                if (!getTypeFromExpressionIdentifierNode(node, &type, &entityType, walker, ctx))
+                    return false;
+                
+                if (entityType == MAliceEntityTypeArray) {
+                    // Array has no children, hence this is an error!
+                    Error *error = ErrorFactory::createSemanticError("Cannot refer to array '" + std::string(Utilities::getNodeText(node)) + "' directly.");
+                    error->setLineNumber(Utilities::getNodeLineNumber(node));
+                    error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+                    error->setAdditionalInformation("To fix, specify an array element.");
+                    ctx->getErrorReporter()->reportError(error);
+                }
+                
+                if (outType)
+                    *outType = type;
+                
+                return true;
+            }
+                break;
+            case INVOCATION:
+                return Utilities::getTypeFromInvocationExpressionNode(node, outType, walker, ctx);
+                break;
+            case EQUALS:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case NOTEQUAL:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case LESSTHAN:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case LESSTHANEQUAL:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case GREATERTHAN:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case GREATERTHANEQUAL:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case ARRAYSUBSCRIPT:
+            {
+                ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+                if (!identifierNode || Utilities::getNodeType(identifierNode) != IDENTIFIER) {
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("array subscript"));
+                    return false;
+                }
+                
+                std::string identifier = Utilities::getNodeText(identifierNode);
+                
+                MAliceEntityType entityType = MAliceEntityTypeUndefined;
+                if (!getTypeFromExpressionIdentifierNode(identifierNode, NULL, &entityType, walker, ctx))
+                    return false;
+                
+                if (entityType != MAliceEntityTypeArray) {
+                    Range *identifierRange = NULL;
+                    Utilities::getNodeTextIncludingChildren(node, ctx, &identifierRange);
+                    
+                    Error *error = ErrorFactory::createSemanticError("Invalid array subscript: '" + identifier + "' does not reference an array.");
+                    error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
+                    error->setUnderlineRanges(Utilities::rangeToSingletonList(identifierRange));
+                    
+                    ctx->getErrorReporter()->reportError(error);
+                    
+                    return false;
+                }
+                
+                Entity *entity = NULL;
+                ctx->isSymbolInScope(identifier, &entity);
+                
+                ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
+                if (!arrayEntity) {
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Could not get valid entity from symbol table for array '" + identifier + "'."));
+                    return false;
+                }
+                
+                MAliceType subscriptType;
+                if (!getTypeFromExpressionRuleNode(node, &subscriptType, walker, ctx))
+                    return false;
+                
+                if (subscriptType != MAliceTypeNumber) {
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(node, MAliceTypeNumber, subscriptType, ctx));
+                    return false;
+                }
+                
+                
+                if (outType)
+                    *outType = arrayEntity->getType();
+                
+                return true;
+            }
+                break;
+            case PLUS:
+            {
+                if (Utilities::getNumberOfChildNodes(node) == 2) {
+                    MAliceType type = MAliceTypeNone;
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                        return false;
+                    
+                    if (outType)
+                        *outType = type;
+                } else {
+                    if (!getTypeFromUnaryOperatorNode(node, NULL, "unary plus", MAliceTypeNumber, walker, ctx))
+                        return false;
+                    
+                    if (outType)
+                        *outType = MAliceTypeNumber;
+                }
+            }
+                break;
+            case MINUS:
+            {
+                if (Utilities::getNumberOfChildNodes(node) == 2) {
+                    MAliceType type = MAliceTypeNone;
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                        return false;
+                    
+                    if (outType)
+                        *outType = type;
+                } else {
+                    if (!getTypeFromUnaryOperatorNode(node, NULL, "unary minus", MAliceTypeNumber, walker, ctx))
+                        return false;
+                    
+                    if (outType)
+                        *outType = MAliceTypeNumber;
+                }
+            }
+                break;
+            case TILDE:
+            {
+                if (!getTypeFromUnaryOperatorNode(node, NULL, "tilde", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeNumber;
+            }
+                break;
+            case BANG:
+            {
+                if (!getTypeFromUnaryOperatorNode(node, NULL, "unary NOT", MAliceTypeBoolean, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case BITWISEAND:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise AND", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeNumber;
+            }
+                break;
+            case BITWISEOR:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise OR", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeNumber;
+            }
+                break;
+            case BITWISEXOR:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise XOR", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeNumber;
+            }
+                break;
+            case MODULO:
+            {
+                MAliceType type = MAliceTypeNone;
+                if (!getTypeFromBinaryOperatorNode(node, &type, "modulo", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = type;
+            }
+                break;
+            case MULTIPLY:
+            {
+                MAliceType type = MAliceTypeNone;
+                if (!getTypeFromBinaryOperatorNode(node, &type, "multiplication", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = type;
+            }
+                break;
+            case DIVIDE:
+            {
+                MAliceType type = MAliceTypeNone;
+                if (!getTypeFromBinaryOperatorNode(node, &type, "division", MAliceTypeNumber, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = type;
+            }
+                break;
+            case LOGICALAND:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "logical and", MAliceTypeBoolean, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case LOGICALOR:
+            {
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "logical or", MAliceTypeBoolean, walker, ctx))
+                    return false;
+                
+                if (outType)
+                    *outType = MAliceTypeBoolean;
+            }
+                break;
+            case NUMBER_LITERAL:
+                if (outType)
+                    *outType = MAliceTypeNumber;
+                break;
+            case CHARACTER_LITERAL:
+                if (outType)
+                    *outType = MAliceTypeLetter;
+                break;
+            case STRING_LITERAL:
+                if (outType)
+                    *outType = MAliceTypeSentence;
+                break;
+            default:
+                break;
+        }
+        
+        return true;
+    }
+    
+    bool Utilities::getTypeFromBinaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, unsigned int requiredTypes, ASTWalker *walker, CompilerContext *ctx)
+    {
+        MAliceType t1, t2;
+        unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
+        
+        if (numChildNodes != 2) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError(operatorName +
+                                                                                     " operator in expression " +
+                                                                                     Utilities::getOperatorStringFromOperatorNode(node) +
+                                                                                     "."));
+            return false;
+        }
+        
+        ASTNode leftOperandRootNode = Utilities::getChildNodeAtIndex(node, 0);
+        ASTNode rightOperandRootNode = Utilities::getChildNodeAtIndex(node, 1);
+        
+        if (!getTypeFromExpressionRuleNode(leftOperandRootNode, &t1, walker, ctx))
+            return false;
+        
+        if (!getTypeFromExpressionRuleNode(rightOperandRootNode, &t2, walker, ctx))
+            return false;
+        
+        ;
+        
+        if (t1 != t2) {
+            Error *error = ErrorFactory::createSemanticError("Cannot match types '" +
+                                                             std::string(Utilities::getNameOfTypeFromMAliceType(t1)) +
+                                                             "' and '" +
+                                                             std::string(Utilities::getNameOfTypeFromMAliceType(t2)) +
+                                                             "' for operands to binary operator.");
+            
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            
+            Range *leftOperandRange = NULL, *rightOperandRange = NULL;
+            Utilities::getNodeTextIncludingChildren(leftOperandRootNode, ctx, &leftOperandRange);
+            Utilities::getNodeTextIncludingChildren(rightOperandRootNode, ctx, &rightOperandRange);
+            
+            std::list<Range*> underlineRanges;
+            underlineRanges.push_back(leftOperandRange);
+            underlineRanges.push_back(rightOperandRange);
+            
+            error->setUnderlineRanges(underlineRanges);
+            
+            unsigned int operatorStringLength = (unsigned int)Utilities::getOperatorStringFromOperatorNode(node).size();
+            Range *arrowRange = Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node),
+                                                       Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node) + operatorStringLength - 1);
+            
+            error->setArrowRanges(Utilities::rangeToSingletonList(arrowRange));
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        if ((t1 & requiredTypes) == 0) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(node, leftOperandRootNode, t1, requiredTypes, ctx));
+            
+            return false;
+        }
+        
+        if ((t2 & requiredTypes) == 0) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(node, rightOperandRootNode, t2, requiredTypes, ctx));
+            
+            return false;
+        }
+        
+        if (outType)
+            *outType = t1;
+        
+        return true;
+    }
+    
+    bool Utilities::getTypeFromUnaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, MAliceType requiredType, ASTWalker *walker, CompilerContext *ctx)
+    {
+        MAliceType type;
+        unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
+        
+        if (numChildNodes != 1) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError(operatorName + " operator in expression"));
+            return false;
+        }
+        
+        ASTNode operandRootNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (!getTypeFromExpressionRuleNode(operandRootNode, &type, walker, ctx))
+            return false;
+        
+        if (requiredType != MAliceTypeNone) {
+            if (type != requiredType) {
+                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(operandRootNode, requiredType, type, ctx));
+                
+                return false;
+            }
+        }
+        
+        if (outType)
+            *outType = type;
+        
+        return true;
+    }
+    
+    bool Utilities::getTypeFromExpressionIdentifierNode(ASTNode node, MAliceType *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx)
+    {
+        Entity *lookupEntity;
+        
+        std::string identifier = Utilities::getNodeText(node);
+        
+        if (!ctx->isSymbolInScope(identifier, &lookupEntity)) {
+            Range *range = NULL;
+            
+            Utilities::getNodeTextIncludingChildren(node, ctx, &range);
+            
+            Error *error = ErrorFactory::createSemanticError("Identifier: '" + identifier + "' is not in scope.");
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(range));
+            
+            ctx->getErrorReporter()->reportError(error);
+            
+            return MAliceTypeNone;
+        }
+        
+        VariableEntity *lookupVEntity = dynamic_cast<VariableEntity*>(lookupEntity);
+        if (!lookupVEntity) {
+            Error *error = ErrorFactory::createSemanticError("Identifier '" + identifier + "' does not have a type.");
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+            ctx->getErrorReporter()->reportError(error);
+            
+            return false;
+        }
+        
+        if (outType)
+            *outType = lookupVEntity->getType();
+        
+        if (outEntityType)
+            *outEntityType = Utilities::getTypeOfEntity(lookupVEntity);
+        
+        return true;
     }
     
 }; // namespace MAlice
