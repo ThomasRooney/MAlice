@@ -14,7 +14,7 @@ namespace MAlice {
     CompilerContext::CompilerContext(std::string input)
     {
         m_input = input;
-        
+        withinExpressionTree = false;
         // Set the ANTLR structure defaults
         m_lexer = NULL;
         m_parser = NULL;
@@ -280,5 +280,17 @@ namespace MAlice {
         m_functionProcedureScope.pop_back();
         
     }
-    
+    bool CompilerContext::withinExpression() {
+        return withinExpressionTree;
+    }
+
+    void CompilerContext::beginExpression()
+    {
+        withinExpressionTree = true;
+    }
+    void CompilerContext::endExpression()
+    {
+        withinExpressionTree = false;
+    }
+
 }; // namespace MAlice

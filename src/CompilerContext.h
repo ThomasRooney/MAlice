@@ -29,7 +29,7 @@ namespace MAlice {
     class CompilerContext{
     private:
         std::string m_input;
-        
+        bool withinExpressionTree;
         pMAliceLexer m_lexer;
         pMAliceParser m_parser;
         pANTLR3_INPUT_STREAM m_inputStream;
@@ -58,7 +58,11 @@ namespace MAlice {
     
         void enterScope();
         void exitScope();
-        
+
+        void beginExpression();
+        bool withinExpression();
+        void endExpression();
+
         ErrorReporter *getErrorReporter();
         void setErrorReporter(ErrorReporter *errorReporter);
         
