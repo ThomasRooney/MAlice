@@ -310,47 +310,10 @@ namespace MAlice {
     
     bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!Validation::validateFunctionDeclarationNode(node, walker, ctx))
+            return false;
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            // Get the return type
-            MAliceType returnType = MAliceType::MAliceTypeNone;
-            // 
-            bool hasParams = false;
-            // get node index 1, if its a parameter node, get params...
-            ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
-            if (Utilities::getNodeType(nodeI1) == PARAMS)
-                hasParams = true;
-            ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
-            if (returnNode != NULL)
-                returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
-
-            FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>(), returnType);
-            if (hasParams)
-            {
-                std::list<ParameterEntity> parameterList = getParameterTypesFromParamsNode(nodeI1);
-                functionEntity->setParameterListTypes(parameterList);
-                    
-                for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
-                    ctx->addEntityInScope(p->getIdentifier(), p->clone());
-                }
-            }
-            ctx->addEntityInScope(identifier, functionEntity);
-            ctx->pushFunctionProcedureEntity(functionEntity);
-            
-            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, functionEntity, walker, ctx);
-            
-            ctx->popFunctionProcedureEntity();
-            
-            return result;
-        }
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
