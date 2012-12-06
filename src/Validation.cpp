@@ -1,5 +1,10 @@
 
 #include "Validation.h"
 
+namespace MAlice {
 
-// Separator comment (for git).
+
+    // Separator comment (for git).
+
+
+}
