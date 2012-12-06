@@ -292,9 +292,7 @@ namespace MAlice {
     bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
-        
         std::list<ParameterEntity> parameterList = getParameterTypesFromParamsNode(node);
-        entity->setParameterListTypes(parameterList);
         
         for (auto p = parameterList.begin(); p!=  parameterList.end();p++) {
             if (p->isPassedByReference())
@@ -303,7 +301,9 @@ namespace MAlice {
                 ctx->addEntityInScope(p->getIdentifier(), p->clone());
         }
         
-        return walker->visitChildren(node, ctx);
+        entity->setParameterListTypes(parameterList);
+        
+        return true;
     }
     
     bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

@@ -12,6 +12,7 @@ namespace MAlice {
     
     class Entity;
     class ErrorPosition;
+    class SymbolTable;
 
     class Utilities {
     private:
@@ -59,6 +60,8 @@ namespace MAlice {
             
             return stream.str();
         }
+        
+        static void printSymbolTableEntries(SymbolTable *symbolTable);
     };
     
 }; // namespace MAlice

@@ -44,7 +44,11 @@ namespace MAlice {
         for (list<FunctionProcedureEntity*>::iterator it = m_functionProcedureScope.begin(); it != m_functionProcedureScope.end(); ++it)
         {
             FunctionProcedureEntity *entity = *it;
-            delete entity, entity = NULL;
+            
+            if (entity != NULL) {
+                delete entity;
+                entity = NULL;
+            }
         }
         m_functionProcedureScope.clear();
         
@@ -264,7 +268,7 @@ namespace MAlice {
     
     void CompilerContext::pushFunctionProcedureEntity(FunctionProcedureEntity *entity)
     {
-        m_functionProcedureScope.push_back(entity->clone());
+        m_functionProcedureScope.push_back(entity);
     }
     
     void CompilerContext::popFunctionProcedureEntity()
@@ -272,10 +276,9 @@ namespace MAlice {
         if (m_functionProcedureScope.empty())
             return;
         
-        FunctionProcedureEntity *entity = m_functionProcedureScope.back();
+//        FunctionProcedureEntity *entity = m_functionProcedureScope.back();
         m_functionProcedureScope.pop_back();
         
-        delete entity;
     }
     
 }; // namespace MAlice

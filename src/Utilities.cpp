@@ -458,4 +458,13 @@ namespace MAlice {
         return listString;
     }
     
+    void Utilities::printSymbolTableEntries(SymbolTable *symbolTable)
+    {
+        std::list<std::string> identifiers = symbolTable->getAllIdentifiers();
+        
+        for (std::list<std::string>::iterator it = identifiers.begin(); it != identifiers.end(); ++it) {
+            std::cout << *it << ": " << symbolTable->get(*it) << "\n";
+        }
+    }
+    
 }; // namespace MAlice

@@ -6,6 +6,7 @@
 //
 //
 
+#include <iostream>
 #include "SymbolTable.h"
 #include <iterator>
 #include <stdexcept>
@@ -23,6 +24,8 @@ namespace MAlice {
             keys.push_back(it->first);
         }
         
+        unsigned int i = 0;
+        
         for (vector<string>::iterator it = keys.begin(); it != keys.end(); ++it) {
             Entity *entity = m_symbolMap[*it];
             
@@ -30,6 +33,8 @@ namespace MAlice {
                 delete entity;
                 entity = NULL;
             }
+            
+            ++i;
         }
         
         m_symbolMap.clear();
@@ -66,5 +71,16 @@ namespace MAlice {
     unsigned int SymbolTable::numberOfSymbols()
     {
         return (unsigned int)m_symbolMap.size();
+    }
+    
+    std::list<std::string> SymbolTable::getAllIdentifiers()
+    {
+        std::list<std::string> identifiers;
+        
+        for (auto pair : m_symbolMap) {
+            identifiers.push_back(pair.first);
+        }
+        
+        return identifiers;
     }
 }; // namespace MAlice
