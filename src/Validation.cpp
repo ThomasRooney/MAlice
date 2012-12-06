@@ -6,6 +6,7 @@
 #include "ErrorReporter.h"
 #include "ErrorFactory.h"
 #include "Utilities.h"
+#include "ProcedureEntity.h"
 #include "SemanticChecks.h"
 #include "VariableEntity.h"
 
@@ -13,6 +14,31 @@ namespace MAlice {
 
 
     // Separator comment (for git).
+    
+    bool Validation::validateProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        
+        if (identifierNode != NULL) {
+            std::string identifier = Utilities::getNodeText(identifierNode);
+            
+            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
+                return false;
+            
+            ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
+            
+            ctx->addEntityInScope(identifier, procedureEntity);
+            ctx->pushFunctionProcedureEntity(procedureEntity);
+            
+            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx);
+            
+            ctx->popFunctionProcedureEntity();
+            
+            return result;
+        }
+        
+        return true;
+    }
     
     bool Validation::validateVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {

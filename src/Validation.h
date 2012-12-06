@@ -15,6 +15,7 @@ namespace MAlice {
         
         // Separator comment (for git).
         
+        bool validateProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         
         

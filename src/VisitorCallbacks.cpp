@@ -393,27 +393,10 @@ namespace MAlice {
     
     bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!Validation::validateProcedureDeclarationNode(node, walker, ctx))
+            return false;
         
-        if (identifierNode != NULL) {
-            std::string identifier = Utilities::getNodeText(identifierNode);
-            
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::list<ParameterEntity>());
-            
-            ctx->addEntityInScope(identifier, procedureEntity);
-            ctx->pushFunctionProcedureEntity(procedureEntity);
-            
-            bool result = visitIntoFunctionProcedureChildNodesAndPopulateSymbolTableEntity(node, procedureEntity, walker, ctx);
-            
-            ctx->popFunctionProcedureEntity();
-            
-            return result;
-        }
-        
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     bool visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -421,7 +404,7 @@ namespace MAlice {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
         
-        return true;
+        return walker->visitChildren(node, ctx);
     }
     
     // Literals
