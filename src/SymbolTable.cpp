@@ -6,6 +6,7 @@
 //
 //
 
+#include <iostream>
 #include "SymbolTable.h"
 #include <iterator>
 #include <stdexcept>
@@ -66,5 +67,16 @@ namespace MAlice {
     unsigned int SymbolTable::numberOfSymbols()
     {
         return (unsigned int)m_symbolMap.size();
+    }
+    
+    std::list<std::string> SymbolTable::getAllIdentifiers()
+    {
+        std::list<std::string> identifiers;
+        
+        for (auto pair = m_symbolMap.begin(); pair != m_symbolMap.end(); pair++) {
+            identifiers.push_back((*pair).first);
+        }
+        
+        return identifiers;
     }
 }; // namespace MAlice

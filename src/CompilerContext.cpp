@@ -37,15 +37,11 @@ namespace MAlice {
         for (list<SymbolTable*>::iterator it = m_symbolTables.begin(); it != m_symbolTables.end(); ++it)
         {
             SymbolTable *table = *it;
+
             delete table, table = NULL;
         }
         m_symbolTables.clear();
-        
-        for (list<FunctionProcedureEntity*>::iterator it = m_functionProcedureScope.begin(); it != m_functionProcedureScope.end(); ++it)
-        {
-            FunctionProcedureEntity *entity = *it;
-            delete entity, entity = NULL;
-        }
+        // (Dangling pointers to symbol table pointers.. clear them.)
         m_functionProcedureScope.clear();
         
         if (m_lexer)
@@ -264,18 +260,15 @@ namespace MAlice {
     
     void CompilerContext::pushFunctionProcedureEntity(FunctionProcedureEntity *entity)
     {
-        m_functionProcedureScope.push_back(entity->clone());
+        m_functionProcedureScope.push_back(entity);
     }
     
     void CompilerContext::popFunctionProcedureEntity()
     {
         if (m_functionProcedureScope.empty())
             return;
-        
-        FunctionProcedureEntity *entity = m_functionProcedureScope.back();
         m_functionProcedureScope.pop_back();
         
-        delete entity;
     }
     bool CompilerContext::withinExpression() {
         return withinExpressionTree;

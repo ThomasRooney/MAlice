@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <list>
 #include "Entity.h"
 
 namespace MAlice {
@@ -19,6 +20,8 @@ class SymbolTable
     void clear();
     bool contains(std::string);
     unsigned int numberOfSymbols();
+    
+    std::list<std::string> getAllIdentifiers();
 }; // class SymbolTableNode
     
 }; // namespace MAlice
