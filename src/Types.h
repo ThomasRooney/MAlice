@@ -3,6 +3,7 @@
 
 #include "MAliceParser.h"
 #include <ostream>
+#include <vector>
 
 #include "llvm/Value.h"
 
@@ -12,7 +13,8 @@ namespace MAlice {
     class CompilerContext;
 
     typedef pANTLR3_BASE_TREE ASTNode;
-    typedef bool (*MAliceVisitFunction)(ASTNode, llvm::Value**, ASTWalker*, CompilerContext*);
+    typedef std::vector<llvm::Value*> ValueList;
+    typedef bool (*MAliceVisitFunction)(ASTNode, ValueList*, ASTWalker*, CompilerContext*);
     
     typedef enum {
         MAliceTypeNone = 1 << 0,

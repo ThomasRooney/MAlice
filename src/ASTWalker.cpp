@@ -32,10 +32,10 @@ void ASTWalker :: constructVisitDictionary() {
       visitDictionary.insert(std::make_pair(BITWISEAND, &visitBitwiseAndExpressionNode));
       visitDictionary.insert(std::make_pair(BITWISEOR, &visitBitwiseOrExpressionNode));
       visitDictionary.insert(std::make_pair(BITWISEXOR, &visitBitwiseXorExpressionNode));
+      visitDictionary.insert(std::make_pair(BLOCK, &visitArbitraryBlockNode));
       visitDictionary.insert(std::make_pair(BODY, &visitBodyNode));
-      visitDictionary.insert(std::make_pair(ARRAY, &visitArrayDeclarationNode));
       visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByReferenceParameterNode));
-      visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByValueParameterNode));
+      visitDictionary.insert(std::make_pair(BYVALUE, &visitByValueParameterNode));
       visitDictionary.insert(std::make_pair(CHARACTER_LITERAL, &visitCharacterLiteralNode));
       visitDictionary.insert(std::make_pair(DECLS, &visitDeclarationsNode));
       visitDictionary.insert(std::make_pair(DECREMENTSTATEMENT, &visitDecrementStatementNode));
@@ -66,6 +66,7 @@ void ASTWalker :: constructVisitDictionary() {
       visitDictionary.insert(std::make_pair(PLUS, &visitPlusExpressionNode));
       visitDictionary.insert(std::make_pair(PRINTSTATEMENT, &visitPrintStatementNode));
       visitDictionary.insert(std::make_pair(PROCDEFINITION, &visitProcedureDeclarationNode));
+      visitDictionary.insert(std::make_pair(PROGRAM, &visitProgramNode));
       visitDictionary.insert(std::make_pair(RETURNSTATEMENT, &visitReturnStatementNode));
       visitDictionary.insert(std::make_pair(SENTENCE_TYPE, &visitSentenceTypeNode));
       visitDictionary.insert(std::make_pair(STATEMENTLIST, &visitStatementListNode));
@@ -73,43 +74,39 @@ void ASTWalker :: constructVisitDictionary() {
       visitDictionary.insert(std::make_pair(TILDE, &visitLogicalNotExpressionNode));
       visitDictionary.insert(std::make_pair(VARDECLARATION, &visitVariableDeclarationNode));
       visitDictionary.insert(std::make_pair(WHILESTATEMENT, &visitWhileStatementNode));
-      visitDictionary.insert(std::make_pair(BYVALUE, &visitByValueParameterNode));
-      visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByReferenceParameterNode));
-      visitDictionary.insert(std::make_pair(BLOCK, &visitArbitraryBlockNode));
   }
 }
 
 bool ASTWalker::validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx)
 {
-  return visitNode(root, ctx);
+  return visitNode(root, NULL, ctx);
 }
 
 
-bool ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
+bool ASTWalker::visitNode(ASTNode node, ValueList *outValues, CompilerContext *ctx)
 {
     MAliceVisitFunction f = getNodeVisitFunction(node);
     
-    // If we haven't implemented visitor functions for certain node types (e.g. nodes which we don't do anything
-    // with but are there to make the AST nicer to work with), simply recurse on their children and vist them.
-    if (f == NULL) {
-        return visitChildren(node, ctx);
-    }
-    
-    llvm::Value *value = NULL;
-    
-    return f(node, &value, this, ctx);
+    return f(node, outValues, this, ctx);
 }
     
-bool ASTWalker::visitChildren(ASTNode node, CompilerContext *ctx)
+bool ASTWalker::visitChildren(ASTNode node, std::vector<ValueList> *childValueLists, CompilerContext *ctx)
 {
     unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
-    
     bool result = true;
     
+    std::vector<ValueList> valueLists;
+    
     for (unsigned int i = 0; i < numChildren; ++i) {
-        if (!visitNode(Utilities::getChildNodeAtIndex(node, i), ctx))
+        ValueList valueList;
+        if (!visitNode(Utilities::getChildNodeAtIndex(node, i), &valueList, ctx))
             result = false;
+        
+        valueLists.push_back(valueList);
     }
+    
+    if (childValueLists)
+        *childValueLists = valueLists;
     
     return result;
 }

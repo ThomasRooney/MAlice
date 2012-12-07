@@ -93,7 +93,7 @@ namespace MAlice {
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
             }
         }
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
     bool Validation::validatePrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

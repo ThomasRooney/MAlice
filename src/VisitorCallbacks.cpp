@@ -17,121 +17,121 @@
 
 namespace MAlice {
 
-    bool visitArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArbitraryBlockNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
     
-        bool result = walker->visitChildren(node, ctx);
+        bool result = walker->visitChildren(node, NULL, ctx);
 
         ctx->exitScope();
         
         return result;
     }
 
-    bool visitArithmeticExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArithmeticExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitArrayDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArrayDeclarationNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateArrayDeclarationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitArraySubscriptNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArraySubscriptNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitAssignmentStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateAssignmentStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitBitwiseAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBitwiseAndExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitBitwiseOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBitwiseOrExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitBitwiseXorExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBitwiseXorExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBodyNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
         if (!Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx))
             return false;
         
-        bool result = walker->visitChildren(node, ctx);
+        bool result = walker->visitChildren(node, NULL, ctx);
         
         ctx->exitScope();
         
         return result;
     }
     
-    bool visitByReferenceParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitByReferenceParameterNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitByValueParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitByValueParameterNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitCharacterLiteralNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitDeclarationsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitDeclarationsNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitDecrementStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateDecrementStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitDivideExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitEqualsExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         bool checkChildrenAreValid;
         ctx->beginExpression();
 
-        checkChildrenAreValid = walker->visitChildren(node, ctx);
+        checkChildrenAreValid = walker->visitChildren(node, NULL, ctx);
 
         ctx->endExpression();
         return checkChildrenAreValid;
     }
 
-    bool visitFunctionDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitFunctionDeclarationNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateFunctionDeclarationNode(node, walker, ctx))
             return false;
@@ -153,118 +153,118 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
         
-        bool result = walker->visitChildren(node, ctx);
+        bool result = walker->visitChildren(node, NULL, ctx);
         
         ctx->popFunctionProcedureEntity();
         
         return result;
     }
 
-    bool visitGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitGreaterThanExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitGreaterThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitGreaterThanOrEqualExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitIdentifierNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIdentifierNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIfStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateIfStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIncrementStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateIncrementStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }    
 
-    bool visitInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitInputStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateInputStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLessThanExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLessThanOrEqualExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitLetterTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLetterTypeNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLogicalAndExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLogicalNotExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitLogicalOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLogicalOrExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitMinusExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitModuloExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitMultiplyExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitNotEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNotEqualExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitNullStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNullStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitNumberLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNumberLiteralNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitNumberTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNumberTypeNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitParamsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitParamsNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
         std::list<ParameterEntity> parameterList = Utilities::getParameterTypesFromParamsNode(node);
@@ -280,12 +280,12 @@ namespace MAlice {
         return true;
     }
 
-    bool visitPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitPlusExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitProcedureDeclarationNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateProcedureDeclarationNode(node, walker, ctx))
             return false;
@@ -297,69 +297,74 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
         
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
         
         ctx->popFunctionProcedureEntity();
     }
 
-    bool visitProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitProcFuncInvocationNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
+    }
+    
+    bool visitProgramNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitPrintStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validatePrintStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
 
     }
 
-    bool visitReturnStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitReturnStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateReturnStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitSentenceTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitSentenceTypeNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitStatementListNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitStatementListNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitStringLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitStringLiteralNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitTildeExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitTildeExpressionNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 
-    bool visitVariableDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitVariableDeclarationNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitWhileStatementNode(ASTNode node, ValueList *outValueList, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateWhileStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, ctx);
+        return walker->visitChildren(node, NULL, ctx);
     }
 };

@@ -394,13 +394,13 @@ namespace MAlice {
             switch(nodeType)
             {
                 case EXPRESSION:
-                    if (!walker->visitNode(childNode, ctx))
+                    if (!walker->visitNode(childNode, NULL, ctx))
                         result = false;
                     break;
                 case STATEMENTLIST:
                     ctx->enterScope();
                     
-                    walker->visitNode(childNode, ctx);
+                    walker->visitNode(childNode, NULL, ctx);
                     
                     ctx->exitScope();
                     break;
