@@ -7,6 +7,8 @@
 #include "ErrorReporter.h"
 #include "Types.h"
 
+#include "llvm/Module.h"
+
 namespace MAlice {
     
     class CompilerContext;
@@ -20,7 +22,7 @@ namespace MAlice {
 
     public:
         SemanticAnalyser(ASTNode tree, CompilerContext *ctx);
-        bool validate();
+        bool validateAndGenerateIR(llvm::Module **IRModule);
         
         void setErrorReporter(ErrorReporter *errorReporter);
     }; // class SemanticAnalyser

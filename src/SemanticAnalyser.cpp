@@ -14,15 +14,19 @@ namespace MAlice {
         m_compilerContext = ctx;
     }
     
-    bool SemanticAnalyser::validate()
+    bool SemanticAnalyser::validateAndGenerateIR(llvm::Module **IRModule)
     {
         ASTWalker treeWalker = ASTWalker();
+        llvm::Module *module = new llvm::Module("root module", llvm::getGlobalContext());
         
         if (!treeWalker.validateTree(m_tree, m_compilerContext))
             return false;
         
         if (!validateCompilerContext(m_compilerContext))
             return false;
+        
+        if (IRModule)
+            *IRModule = module;
         
         return true;
     }

@@ -11,6 +11,8 @@
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
 
+#include "llvm/Module.h"
+
 #ifdef _WIN32
 typedef unsigned char     uint8_t;
 typedef unsigned short    uint16_t;
@@ -97,8 +99,14 @@ namespace MAlice {
                 Utilities::printTree(tree);
             
             semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-            semanticAnalyser->validate();
             
+            llvm::Module *module = NULL;
+            if (!semanticAnalyser->validateAndGenerateIR(&module)) {
+                // Handle error
+                return EXIT_FAILURE;
+            }
+            
+            // Do optimisation and output code
         }
         
         printErrorReport();

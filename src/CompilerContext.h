@@ -50,7 +50,6 @@ namespace MAlice {
         std::string getLineOfInput(unsigned int lineNumber);
         
         // For code generation
-        llvm::Module *m_irModule;
         llvm::IRBuilder<> *m_irBuilder;
         
     public:
@@ -87,7 +86,6 @@ namespace MAlice {
         void pushFunctionProcedureEntity(FunctionProcedureEntity *entity);
         void popFunctionProcedureEntity();
         
-        llvm::Module *getIRModule();
         llvm::IRBuilder<> *getIRBuilder();
     
     }; // class CompilerContext
