@@ -30,6 +30,9 @@ namespace MAlice {
         #else
            pthread_mutex_init (&temporarySymbolTableLock, NULL);;
         #endif
+        
+        m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
+        m_irModule = new llvm::Module("root module", llvm::getGlobalContext());
     }
     
     CompilerContext::~CompilerContext()
@@ -55,6 +58,9 @@ namespace MAlice {
         
         if (m_tokenStream)
             delete m_tokenStream, m_tokenStream = NULL;
+        
+        if (m_irBuilder)
+            delete m_irBuilder, m_irBuilder = NULL;
     }
 
     bool CompilerContext::lockTemporarySymbolTable()
@@ -281,6 +287,16 @@ namespace MAlice {
     void CompilerContext::endExpression()
     {
         withinExpressionTree = false;
+    }
+    
+    llvm::Module *CompilerContext::getIRModule()
+    {
+        return m_irModule;
+    }
+    
+    llvm::IRBuilder<> *CompilerContext::getIRBuilder()
+    {
+        return m_irBuilder;
     }
 
 }; // namespace MAlice

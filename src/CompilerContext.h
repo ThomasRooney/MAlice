@@ -22,6 +22,9 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
+#include "llvm/Module.h"
+#include "llvm/Support/IRBuilder.h"
+
 namespace MAlice {
 
     class FunctionProcedureEntity;
@@ -45,6 +48,11 @@ namespace MAlice {
         std::list<FunctionProcedureEntity*> m_functionProcedureScope;
         
         std::string getLineOfInput(unsigned int lineNumber);
+        
+        // For code generation
+        llvm::Module *m_irModule;
+        llvm::IRBuilder<> *m_irBuilder;
+        
     public:
         CompilerContext(std::string input);
         ~CompilerContext();
@@ -78,6 +86,9 @@ namespace MAlice {
         FunctionProcedureEntity *getCurrentFunctionProcedureEntity();
         void pushFunctionProcedureEntity(FunctionProcedureEntity *entity);
         void popFunctionProcedureEntity();
+        
+        llvm::Module *getIRModule();
+        llvm::IRBuilder<> *getIRBuilder();
     
     }; // class CompilerContext
     
