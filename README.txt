@@ -1,13 +1,11 @@
 ##########################################################################
-You should replace this README file with a makefile that will build an 
-executable 'compile' from your source code.
+A Compiler for the MAlice language, defined in the malice_spec.tex.
 
-The auto-tester will perform the following steps in the current 
-directory: 
+This was produced (Still WIP) by Thomas Rooney and Alex Rozanski.
 
-1) it will run the command 'make' to generate the executable 'compile'
-2) it will run './compile FILENAME.alice' to compile FILENAME
-3) it will run './FILENAME' to run the compiled alice program
+This is built with a combination of ANTLR and LLVM (Code Generation TODO), and requires llvm to be installed on the system, though the ANTLR dependency is included.
 
-You should ensure that these steps produce the desired output.
+Call 'make' to produce './compile', then run this on a .alice File, or with the -h parameter for more detailed specification.
+
+07/12/2012
 ##########################################################################
