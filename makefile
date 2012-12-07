@@ -15,9 +15,9 @@ SRC_DIR = src
 
 # For LLVM - adapted from http://stackoverflow.com/a/8440972
 LLVM_MODULES = core
-LLVM_CPPFLAGS = `llvm-config --cppflags $(LLVM_MODULES)`
-LLVM_LDFLAGS = `llvm-config --ldflags $(LLVM_MODULES)`
-LIBS = `llvm-config --libs $(LLVM_MODULES)`
+LLVM_CPPFLAGS = `llvm-config --cppflags` 
+LLVM_LDFLAGS = `llvm-config --ldflags`
+LLVM_LIBS = `llvm-config --libs $(LLVM_MODULES)`
 
 all:  compile
 
