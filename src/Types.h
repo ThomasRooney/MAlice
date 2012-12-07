@@ -4,13 +4,15 @@
 #include "MAliceParser.h"
 #include <ostream>
 
+#include "llvm/Value.h"
+
 namespace MAlice {
     
     class ASTWalker;
     class CompilerContext;
 
     typedef pANTLR3_BASE_TREE ASTNode;
-    typedef bool (*MAliceVisitFunction)(ASTNode, ASTWalker*, CompilerContext*);
+    typedef bool (*MAliceVisitFunction)(ASTNode, llvm::Value**, ASTWalker*, CompilerContext*);
     
     typedef enum {
         MAliceTypeNone = 1 << 0,

@@ -17,7 +17,7 @@
 
 namespace MAlice {
 
-    bool visitArbitraryBlockNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
     
@@ -28,12 +28,12 @@ namespace MAlice {
         return result;
     }
 
-    bool visitArithmeticExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArithmeticExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArrayDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateArrayDeclarationNode(node, walker, ctx))
             return false;
@@ -41,12 +41,12 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitArraySubscriptNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitArraySubscriptNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateAssignmentStatementNode(node, walker, ctx))
             return false;
@@ -54,22 +54,22 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitBitwiseAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBitwiseAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitBitwiseOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBitwiseOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitBitwiseXorExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBitwiseXorExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
         if (!Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx))
@@ -82,27 +82,27 @@ namespace MAlice {
         return result;
     }
     
-    bool visitByReferenceParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitByReferenceParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitByValueParameterNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitByValueParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitCharacterLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitDeclarationsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitDeclarationsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateDecrementStatementNode(node, walker, ctx))
             return false;
@@ -110,17 +110,17 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitDivideExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitEqualsExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         bool checkChildrenAreValid;
         ctx->beginExpression();
@@ -131,7 +131,7 @@ namespace MAlice {
         return checkChildrenAreValid;
     }
 
-    bool visitFunctionDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitFunctionDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateFunctionDeclarationNode(node, walker, ctx))
             return false;
@@ -160,22 +160,22 @@ namespace MAlice {
         return result;
     }
 
-    bool visitGreaterThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitGreaterThanOrEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitGreaterThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitIdentifierNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIdentifierNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateIfStatementNode(node, walker, ctx))
             return false;
@@ -183,7 +183,7 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateIncrementStatementNode(node, walker, ctx))
             return false;
@@ -191,7 +191,7 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }    
 
-    bool visitInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateInputStatementNode(node, walker, ctx))
             return false;
@@ -199,72 +199,72 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitLessThanExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitLessThanOrEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitLetterTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLetterTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitLogicalAndExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitLogicalNotExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitLogicalOrExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitLogicalOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitMinusExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitModuloExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitMultiplyExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitNotEqualExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNotEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitNullStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNullStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitNumberLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNumberLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitNumberTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitNumberTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitParamsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
         std::list<ParameterEntity> parameterList = Utilities::getParameterTypesFromParamsNode(node);
@@ -280,12 +280,12 @@ namespace MAlice {
         return true;
     }
 
-    bool visitPlusExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateProcedureDeclarationNode(node, walker, ctx))
             return false;
@@ -302,7 +302,7 @@ namespace MAlice {
         ctx->popFunctionProcedureEntity();
     }
 
-    bool visitProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
             return false;
@@ -310,7 +310,7 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitPrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validatePrintStatementNode(node, walker, ctx))
             return false;
@@ -319,7 +319,7 @@ namespace MAlice {
 
     }
 
-    bool visitReturnStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitReturnStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateReturnStatementNode(node, walker, ctx))
             return false;
@@ -327,27 +327,27 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitSentenceTypeNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitSentenceTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitStatementListNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitStatementListNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitStringLiteralNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitStringLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitTildeExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitTildeExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->visitChildren(node, ctx);
     }
 
-    bool visitVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitVariableDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
@@ -355,7 +355,7 @@ namespace MAlice {
         return walker->visitChildren(node, ctx);
     }
     
-    bool visitWhileStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool visitWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateWhileStatementNode(node, walker, ctx))
             return false;

@@ -95,7 +95,9 @@ bool ASTWalker::visitNode(ASTNode node, CompilerContext *ctx)
         return visitChildren(node, ctx);
     }
     
-    return f(node, this, ctx);
+    llvm::Value *value = NULL;
+    
+    return f(node, &value, this, ctx);
 }
     
 bool ASTWalker::visitChildren(ASTNode node, CompilerContext *ctx)
