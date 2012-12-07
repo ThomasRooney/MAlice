@@ -8,6 +8,7 @@
 #include "ErrorFactory.h"
 #include "ErrorReporter.h"
 #include "SyntacticAnalyser.h"
+#include "CodeGenerator.h"
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
 
@@ -107,6 +108,12 @@ namespace MAlice {
             }
             
             // Do optimisation and output code
+            
+            CodeGenerator codeGenerator(module);
+            std::string output = codeGenerator.generateCode();
+            
+            // Output the code to stdout for the time being
+            std::cout << output;
         }
         
         printErrorReport();
