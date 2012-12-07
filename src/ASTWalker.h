@@ -8,8 +8,6 @@
 #include "CompilerContext.h"
 #include "Types.h"
 
-#define NUMBER_OF_VISIT_FUNCTIONS 34
-
 namespace MAlice {
 
     class ASTWalker {
