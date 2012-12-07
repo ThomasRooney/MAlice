@@ -19,6 +19,8 @@
 #include "ArrayEntity.h"
 #include "Types.h"
 
+#include "llvm/Type.h"
+
 namespace MAlice {
     
     unsigned int Utilities::getNodeLineNumber(ASTNode node)
@@ -1023,4 +1025,26 @@ namespace MAlice {
         return true;
     }
     
+    llvm::Type *Utilities::getLLVMTypeFromMAliceType(MAliceType type)
+    {
+        switch(type)
+        {
+            case MAliceTypeNumber:
+                return llvm::Type::getInt64Ty(llvm::getGlobalContext());
+                break;
+            case MAliceTypeLetter:
+                return llvm::Type::getInt8Ty(llvm::getGlobalContext());
+                break;
+            case MAliceTypeBoolean:
+                return llvm::Type::getInt1Ty(llvm::getGlobalContext());
+                break;
+            case MAliceTypeSentence:
+                return llvm::Type::getInt8PtrTy(llvm::getGlobalContext());
+                break;
+            case MAliceTypeNone:
+                return llvm::Type::getVoidTy(llvm::getGlobalContext());
+                break;
+        }
+    }
+
 }; // namespace MAlice

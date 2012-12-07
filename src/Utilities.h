@@ -15,6 +15,8 @@ namespace MAlice {
     class SymbolTable;
     class ParameterEntity;
     class FunctionProcedureEntity;
+    
+    class llvm::Type;
 
     class Utilities {
     private:
@@ -74,6 +76,8 @@ namespace MAlice {
         static bool getTypeFromBinaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, unsigned int requiredTypes, ASTWalker *walker, CompilerContext *ctx);
         static bool getTypeFromUnaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, MAliceType requiredType, ASTWalker *walker, CompilerContext *ctx);
         static bool getTypeFromExpressionIdentifierNode(ASTNode node, MAliceType *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx);
+        
+        static llvm::Type *getLLVMTypeFromMAliceType(MAliceType type);
     };
     
 }; // namespace MAlice

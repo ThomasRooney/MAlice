@@ -3,7 +3,6 @@
 #include <list>
 #include <typeinfo>
 
-
 #include "VisitorCallbacks.h"
 #include "ArrayEntity.h"
 #include "Entity.h"
@@ -14,6 +13,10 @@
 #include "VariableEntity.h"
 #include "Utilities.h"
 #include "Validation.h"
+
+#include "llvm/Type.h"
+
+using namespace llvm;
 
 namespace MAlice {
 
@@ -157,7 +160,28 @@ namespace MAlice {
         
         ctx->popFunctionProcedureEntity();
         
-        return result;
+        if (!result)
+            return false;
+        
+        std::vector<Type*> parameterTypes;
+        std::list<ParameterEntity> parameterEntities = functionEntity->getParameterListTypes();
+        
+        for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
+            ParameterEntity entity = *it;
+            parameterTypes.push_back(Utilities::getLLVMTypeFromMAliceType(entity.getType()));
+        }
+        
+        ArrayRef<Type*> parameterArrayRefs = makeArrayRef(parameterTypes);
+        FunctionType *functionType = FunctionType::get(Utilities::getLLVMTypeFromMAliceType(functionEntity->getReturnType()),
+                                                       parameterArrayRefs,
+                                                       false);
+        Function *function = Function::Create(functionType,
+                                              Function::InternalLinkage);
+        
+        if (outValue)
+            *outValue = function;
+        
+        return true;
     }
 
     bool visitGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
