@@ -82,7 +82,7 @@ namespace MAlice {
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(exprRange));
             }
             else
-                Error *error = ErrorFactory::createCannotMatchTypesError(node, typeConfirm, type, ctx);
+                error = ErrorFactory::createCannotMatchTypesError(node, typeConfirm, type, ctx);
             
             ctx->getErrorReporter()->reportError(error);
             
