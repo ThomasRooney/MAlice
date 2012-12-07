@@ -3,6 +3,7 @@
 
 #include "ASTWalker.h"
 #include "Entity.h"
+#include "llvm/LLVMContext.h"
 #include "ErrorFactory.h"
 #include "Utilities.h"
 

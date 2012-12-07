@@ -4,9 +4,8 @@
 #include <sstream>
 #include <list>
 #include <iomanip>
-
+#include "llvm/LLVMContext.h"
 #include "Utilities.h"
-
 #include "CompilerContext.h"
 #include "Entity.h"
 #include "ErrorFactory.h"
@@ -1027,24 +1026,27 @@ namespace MAlice {
     
     llvm::Type *Utilities::getLLVMTypeFromMAliceType(MAliceType type)
     {
+        const llvm::Type *rType = NULL; 
+
         switch(type)
         {
             case MAliceTypeNumber:
-                return llvm::Type::getInt64Ty(llvm::getGlobalContext());
+                rType = llvm::Type::getInt64Ty(llvm::getGlobalContext());
                 break;
             case MAliceTypeLetter:
-                return llvm::Type::getInt8Ty(llvm::getGlobalContext());
+                rType = llvm::Type::getInt8Ty(llvm::getGlobalContext());
                 break;
             case MAliceTypeBoolean:
-                return llvm::Type::getInt1Ty(llvm::getGlobalContext());
+                rType = llvm::Type::getInt1Ty(llvm::getGlobalContext());
                 break;
             case MAliceTypeSentence:
-                return llvm::Type::getInt8PtrTy(llvm::getGlobalContext());
+                rType = llvm::Type::getInt8PtrTy(llvm::getGlobalContext());
                 break;
             case MAliceTypeNone:
-                return llvm::Type::getVoidTy(llvm::getGlobalContext());
+                rType = llvm::Type::getVoidTy(llvm::getGlobalContext());
                 break;
         }
+        return const_cast<llvm::Type *>(rType);
     }
 
 }; // namespace MAlice

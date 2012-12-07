@@ -14,6 +14,8 @@
 #include "Utilities.h"
 #include "Validation.h"
 
+
+#include "llvm/ADT/ArrayRef.h"
 #include "llvm/Type.h"
 
 using namespace llvm;
