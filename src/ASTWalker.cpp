@@ -83,30 +83,30 @@ bool ASTWalker::validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx)
 }
 
 
-bool ASTWalker::visitNode(ASTNode node, ValueList *outValues, CompilerContext *ctx)
+bool ASTWalker::visitNode(ASTNode node, llvm::Value **outValue, CompilerContext *ctx)
 {
     MAliceVisitFunction f = getNodeVisitFunction(node);
     
-    return f(node, outValues, this, ctx);
+    return f(node, outValue, this, ctx);
 }
     
-bool ASTWalker::visitChildren(ASTNode node, std::vector<ValueList> *childValueLists, CompilerContext *ctx)
+bool ASTWalker::visitChildren(ASTNode node, std::vector<llvm::Value*> *outValueList, CompilerContext *ctx)
 {
     unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
     bool result = true;
     
-    std::vector<ValueList> valueLists;
+    std::vector<llvm::Value*> valueList;
     
     for (unsigned int i = 0; i < numChildren; ++i) {
-        ValueList valueList;
-        if (!visitNode(Utilities::getChildNodeAtIndex(node, i), &valueList, ctx))
+        llvm::Value *value;
+        if (!visitNode(Utilities::getChildNodeAtIndex(node, i), &value, ctx))
             result = false;
         
-        valueLists.push_back(valueList);
+        valueList.push_back(value);
     }
     
-    if (childValueLists)
-        *childValueLists = valueLists;
+    if (outValueList)
+        *outValueList = valueList;
     
     return result;
 }

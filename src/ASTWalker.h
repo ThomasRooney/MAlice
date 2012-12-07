@@ -19,8 +19,8 @@ namespace MAlice {
         bool validateTree(ASTNode node, CompilerContext *ctx);
         void compileTree();
         ~ASTWalker();
-        bool visitNode(ASTNode node, ValueList *outValues, CompilerContext *ctx);
-        bool visitChildren(ASTNode node, std::vector<ValueList> *childValueLists, CompilerContext *ctx);
+        bool visitNode(ASTNode node, llvm::Value **outValue, CompilerContext *ctx);
+        bool visitChildren(ASTNode node, std::vector<llvm::Value*> *childValueLists, CompilerContext *ctx);
     protected:
 
     private:
