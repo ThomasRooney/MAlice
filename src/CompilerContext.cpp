@@ -299,5 +299,24 @@ namespace MAlice {
     {
         return m_module;
     }
+    
+    void CompilerContext::pushCurrentInsertionPoint()
+    {
+        llvm::IRBuilderBase::InsertPoint currentPoint = getIRBuilder()->saveIP();
+        llvm::IRBuilderBase::InsertPoint *point = new llvm::IRBuilderBase::InsertPoint(currentPoint.getBlock(), currentPoint.getPoint());
+        
+        m_insertionPoints.push(point);
+    }
+    
+    llvm::IRBuilderBase::InsertPoint *CompilerContext::popInsertionPoint()
+    {
+        if (m_insertionPoints.empty())
+            return NULL;
+        
+        llvm::IRBuilderBase::InsertPoint *currentPoint = m_insertionPoints.top();
+        m_insertionPoints.pop();
+        
+        return currentPoint;
+    }
 
 }; // namespace MAlice

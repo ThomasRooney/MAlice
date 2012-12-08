@@ -7,6 +7,7 @@
 #include <string>
 #include <stdexcept>
 #include <set>
+#include <stack>
 #ifdef _WIN32
 #include <windows.h>
 #include <process.h>			//Data types
@@ -22,6 +23,7 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
+#include "llvm/Support/IRBuilder.h"
 
 namespace MAlice {
 
@@ -44,6 +46,7 @@ namespace MAlice {
         SymbolTable* t_symbolTable;
         
         std::list<FunctionProcedureEntity*> m_functionProcedureScope;
+        std::stack<llvm::IRBuilderBase::InsertPoint*> m_insertionPoints;
         
         std::string getLineOfInput(unsigned int lineNumber);
         
@@ -87,6 +90,9 @@ namespace MAlice {
         
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
+        
+        void pushCurrentInsertionPoint();
+        llvm::IRBuilderBase::InsertPoint *popInsertionPoint();
     
     }; // class CompilerContext
     

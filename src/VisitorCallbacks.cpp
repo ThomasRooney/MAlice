@@ -154,13 +154,7 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
         
-        bool result = walker->visitChildren(node, NULL, ctx);
-        
-        ctx->popFunctionProcedureEntity();
-        
-        if (!result)
-            return false;
-        
+        // Create the llvm::Function and insert it into the module
         std::vector<Type*> parameterTypes;
         std::list<ParameterEntity> parameterEntities = functionEntity->getParameterListTypes();
         
@@ -178,6 +172,17 @@ namespace MAlice {
                                               Function::InternalLinkage,
                                               identifier.c_str(),
                                               ctx->getModule());
+        
+        // Walk through the children
+        bool result = walker->visitChildren(node, NULL, ctx);
+        
+        ctx->popFunctionProcedureEntity();
+        
+        if (!result) {
+            // Remove the function from the module it's a part of.
+            function->removeFromParent();
+            return false;
+        }
         
         if (outValue)
             *outValue = function;
@@ -322,9 +327,48 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
         
-        return walker->visitChildren(node, NULL, ctx);
+        // Create the llvm::Function for the procedure and add it to the llvm::Module.
+        std::vector<Type*> parameterTypes;
+        std::list<ParameterEntity> parameterEntities = procedureEntity->getParameterListTypes();
+        
+        for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
+            ParameterEntity entity = *it;
+            parameterTypes.push_back(Utilities::getLLVMTypeFromMAliceType(entity.getType()));
+        }
+        
+        ArrayRef<Type*> parameterArrayRefs = makeArrayRef(parameterTypes);
+        FunctionType *procedureType = FunctionType::get(Type::getVoidTy(getGlobalContext()),
+                                                        parameterArrayRefs,
+                                                        false);
+        
+        Function *procedure = Function::Create(procedureType,
+                                               Function::InternalLinkage,
+                                               identifier.c_str(),
+                                               ctx->getModule());
+        
+        BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
+        ctx->pushCurrentInsertionPoint();
+        ctx->getIRBuilder()->SetInsertPoint(block);
+        
+        bool result = walker->visitChildren(node, NULL, ctx);
+        if (!result) {
+            // Remove the procedure from the Module it's a part of.
+            procedure->removeFromParent();
+            return false;
+        }
         
         ctx->popFunctionProcedureEntity();
+        
+        IRBuilderBase::InsertPoint *insertPoint = ctx->popInsertionPoint();
+        if (insertPoint)
+            ctx->getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
+        
+        // Create the return value for the function, which will exit the scope for the function.
+        
+        if (outValue)
+            *outValue = procedure;
+        
+        return true;
     }
 
     bool visitProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
