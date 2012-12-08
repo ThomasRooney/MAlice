@@ -461,7 +461,16 @@ namespace MAlice {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, NULL, ctx);
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
+        std::string typeString = Utilities::getNodeText(typeNode);
+        
+        VariableEntity *variable = new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
+        ctx->addEntityInScope(identifier, variable);
+        
+        return ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()));
     }
     
     bool visitWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
