@@ -174,8 +174,11 @@ namespace MAlice {
         FunctionType *functionType = FunctionType::get(Utilities::getLLVMTypeFromMAliceType(functionEntity->getReturnType()),
                                                        parameterArrayRefs,
                                                        false);
+        
         Function *function = Function::Create(functionType,
-                                              Function::InternalLinkage);
+                                              Function::InternalLinkage,
+                                              identifier.c_str(),
+                                              ctx->getModule());
         
         if (outValue)
             *outValue = function;

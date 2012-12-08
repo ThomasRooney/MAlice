@@ -13,9 +13,11 @@ namespace MAlice {
     std::string CodeGenerator::generateCode()
     {
         std::string output;
+        if (!m_module)
+            return "";
         
         llvm::raw_string_ostream outputStream(output);
-        m_module->print(outputStream, NULL);
+        m_module->dump();
         
         return output;
     }
