@@ -98,6 +98,7 @@ namespace MAlice {
         
         void saveInsertPoint(llvm::BasicBlock *block);
         void restoreInsertPoint();
+        llvm::BasicBlock *getCurrentBlock();
         
     }; // class CompilerContext
     

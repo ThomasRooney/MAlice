@@ -349,5 +349,13 @@ namespace MAlice {
         if (insertPoint)
             getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
     }
+    
+    llvm::BasicBlock *CompilerContext::getCurrentBlock()
+    {
+        if (m_insertionPoints.empty())
+            return NULL;
+        
+        return m_insertionPoints.top()->getBlock();
+    }
 
 }; // namespace MAlice

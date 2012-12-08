@@ -13,6 +13,7 @@
 #include "VariableEntity.h"
 #include "Utilities.h"
 #include "Validation.h"
+#include "llvm/Value.h"
 
 namespace llvm{}
 using namespace llvm;
@@ -131,21 +132,32 @@ namespace MAlice {
     
     bool visitEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateICmpEQ(leftParamValue, rightParamValue);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
     }
 
     bool visitExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        bool checkChildrenAreValid;
+        bool result;
         ctx->beginExpression();
         // Populate the Expression Code Generation
         llvm::Value *v = NULL;
         // We are going to have only one child
         ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
-        checkChildrenAreValid = walker->visitNode(childNode, &v, ctx);
-
+        result = walker->visitNode(childNode, &v, ctx);
         ctx->endExpression();
-        return checkChildrenAreValid;
+        
+        return result;
     }
 
     bool visitFunctionDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -190,7 +202,8 @@ namespace MAlice {
                                               ctx->getModule());
         
         // Walk through the children
-        bool result = walker->visitChildren(node, NULL, ctx);
+        bool result = true;
+//        bool result = walker->visitChildren(node, NULL, ctx);
         
         ctx->popFunctionProcedureEntity();
         
@@ -376,7 +389,7 @@ namespace MAlice {
                                                ctx->getModule());
         
         BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
-        ctx->saveInsertPoint(block);
+        ctx->getIRBuilder()->SetInsertPoint(block);
         
         bool result = walker->visitChildren(node, NULL, ctx);
         if (!result) {
@@ -386,7 +399,6 @@ namespace MAlice {
         }
         
         ctx->popFunctionProcedureEntity();
-        ctx->restoreInsertPoint();
         
         // Create the return value for the function, which will exit the scope for the function.
         
@@ -458,7 +470,24 @@ namespace MAlice {
     {
         if (!Validation::validateWhileStatementNode(node, walker, ctx))
             return false;
+        
+        BasicBlock *currentBlock = ctx->getIRBuilder()->GetInsertBlock();
+        Function *parentFunction = currentBlock->getParent();
+        
+        llvm::Value *conditionValue = NULL;
+        if (!walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &conditionValue, ctx))
+            return false;
+        
+        BasicBlock *loopHeaderBlock = ctx->getIRBuilder()->GetInsertBlock();
+        BasicBlock *loopBody = BasicBlock::Create(getGlobalContext(), "loop", parentFunction);
+        ctx->getIRBuilder()->SetInsertPoint(loopBody);
+        
+        BasicBlock *afterLoopBodyBlock = BasicBlock::Create(getGlobalContext(), "afterloop", parentFunction);
+        
+        ctx->getIRBuilder()->SetInsertPoint(loopHeaderBlock);
+        ctx->getIRBuilder()->CreateCondBr(conditionValue, loopBody, afterLoopBodyBlock);
+        ctx->getIRBuilder()->SetInsertPoint(afterLoopBodyBlock);
 
-        return walker->visitChildren(node, NULL, ctx);
+        return true;
     }
 };
