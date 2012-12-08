@@ -74,8 +74,7 @@ namespace MAlice {
     bool visitBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
-        if (!Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx))
-            return false;
+        Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx); // Generates warning, carry on.
         
         bool result = walker->visitChildren(node, NULL, ctx);
         
