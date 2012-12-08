@@ -7,6 +7,7 @@
 #include "SymbolTable.h"
 #include "FunctionProcedureEntity.h"
 
+#include "llvm/BasicBlock.h"
 
 using namespace std;
 
@@ -320,6 +321,19 @@ namespace MAlice {
         m_insertionPoints.pop();
         
         return currentPoint;
+    }
+    
+    void CompilerContext::saveInsertPoint(llvm::BasicBlock *block)
+    {
+        pushCurrentInsertionPoint();
+        getIRBuilder()->SetInsertPoint(block);
+    }
+    
+    void CompilerContext::restoreInsertPoint()
+    {
+        llvm::IRBuilderBase::InsertPoint *insertPoint = popInsertionPoint();
+        if (insertPoint)
+            getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
     }
 
 }; // namespace MAlice

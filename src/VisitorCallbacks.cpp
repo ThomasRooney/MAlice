@@ -347,8 +347,7 @@ namespace MAlice {
                                                ctx->getModule());
         
         BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
-        ctx->pushCurrentInsertionPoint();
-        ctx->getIRBuilder()->SetInsertPoint(block);
+        ctx->saveInsertPoint(block);
         
         bool result = walker->visitChildren(node, NULL, ctx);
         if (!result) {
@@ -358,10 +357,7 @@ namespace MAlice {
         }
         
         ctx->popFunctionProcedureEntity();
-        
-        IRBuilderBase::InsertPoint *insertPoint = ctx->popInsertionPoint();
-        if (insertPoint)
-            ctx->getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
+        ctx->restoreInsertPoint();
         
         // Create the return value for the function, which will exit the scope for the function.
         
