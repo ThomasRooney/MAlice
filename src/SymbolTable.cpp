@@ -39,9 +39,11 @@ namespace MAlice {
     Entity *SymbolTable::get(string identifier)
     {
         Entity *entity = NULL;
-        
         try {
-            entity = m_symbolMap.at(identifier);
+            if (this->contains(identifier)) // Modified to stop run time stack corruption despite unoptimal
+                entity = m_symbolMap.at(identifier);
+            else
+                return NULL;
         }
         catch(out_of_range e) {
             return NULL;
