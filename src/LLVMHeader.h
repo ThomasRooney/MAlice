@@ -8,6 +8,7 @@
 
 #include "llvm/Type.h"
 #include "llvm/Module.h"
+#include "llvm/LLVMContext.h"
 #include "llvm/Support/IRBuilder.h"
 
 #endif
