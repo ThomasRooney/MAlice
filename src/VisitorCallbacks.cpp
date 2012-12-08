@@ -95,6 +95,18 @@ namespace MAlice {
 
     bool visitCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        std::stringstream strVal;
+        strVal.str(Utilities::getNodeText(node));   
+
+        uint64_t val;
+        strVal >> val;
+        
+        APInt ConstructedASM = APInt(
+            1, // 1 Byte Long
+            val, // Value
+            false // Unsigned
+            );
+        *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
         return walker->visitChildren(node, NULL, ctx);
     }
 
@@ -286,6 +298,18 @@ namespace MAlice {
 
     bool visitNumberLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        std::stringstream strVal;
+        strVal.str(Utilities::getNodeText(node));   
+
+        uint64_t val;
+        strVal >> val;
+        
+        APInt ConstructedASM = APInt(
+            4, // 4 Bytes Long
+            val, // Value
+            true // signed
+            );
+        *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
         return walker->visitChildren(node, NULL, ctx);
     }
 
