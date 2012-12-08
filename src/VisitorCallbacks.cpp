@@ -151,10 +151,10 @@ namespace MAlice {
         bool result;
         ctx->beginExpression();
         // Populate the Expression Code Generation
-        llvm::Value *v = NULL;
+        
         // We are going to have only one child
         ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
-        result = walker->visitNode(childNode, &v, ctx);
+        result = walker->visitNode(childNode, outValue, ctx);
         ctx->endExpression();
         
         return result;
@@ -231,7 +231,10 @@ namespace MAlice {
     
     bool visitIdentifierNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        if (outValue)
+            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeNumber), 0);
+        
+        return true;
     }
 
     bool visitIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -321,13 +324,8 @@ namespace MAlice {
         uint64_t val;
         strVal >> val;
         
-        APInt ConstructedASM = APInt(
-            4, // 4 Bytes Long
-            val, // Value
-            true // signed
-            );
         if (outValue)
-            *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
+            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeNumber), val);
         return walker->visitChildren(node, NULL, ctx);
     }
 
@@ -463,7 +461,16 @@ namespace MAlice {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, NULL, ctx);
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
+        std::string typeString = Utilities::getNodeText(typeNode);
+        
+        VariableEntity *variable = new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
+        ctx->addEntityInScope(identifier, variable);
+        
+        return ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()));
     }
     
     bool visitWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
