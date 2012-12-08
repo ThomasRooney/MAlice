@@ -17,8 +17,8 @@ namespace MAlice {
             return "";
         
         llvm::raw_string_ostream outputStream(output);
-        //m_module->dump();
-        m_module->print(outputStream, NULL);
+        m_module->dump();
+//        m_module->print(outputStream, NULL);
         
         return output;
     }

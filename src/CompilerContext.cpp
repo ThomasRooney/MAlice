@@ -303,6 +303,9 @@ namespace MAlice {
     void CompilerContext::pushCurrentInsertionPoint()
     {
         llvm::IRBuilderBase::InsertPoint currentPoint = getIRBuilder()->saveIP();
+        if (!currentPoint.getBlock())
+            return;
+        
         llvm::IRBuilderBase::InsertPoint *point = new llvm::IRBuilderBase::InsertPoint(currentPoint.getBlock(), currentPoint.getPoint());
         
         m_insertionPoints.push(point);
