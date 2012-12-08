@@ -15,7 +15,7 @@ private:
     MAliceType m_returnType;
     
 public:
-    FunctionEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes, MAliceType returnType);
+    FunctionEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes, MAliceType returnType);
     FunctionEntity *clone();
     
     std::string humanReadableName();

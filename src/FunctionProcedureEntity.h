@@ -13,16 +13,16 @@ namespace MAlice {
     
     class FunctionProcedureEntity : public Entity {
     private:
-        std::list<ParameterEntity> m_parameterListTypes;
+        std::vector<ParameterEntity*> m_parameterListTypes;
         
     public:
-        FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes);
+        FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes);
         virtual FunctionProcedureEntity *clone() = 0;
         
         virtual std::string humanReadableName() = 0;
         
-        void setParameterListTypes(std::list<ParameterEntity> types);
-        std::list<ParameterEntity> getParameterListTypes();
+        void setParameterListTypes(std::vector<ParameterEntity*> types);
+        std::vector<ParameterEntity*> getParameterListTypes();
     };
     
 };

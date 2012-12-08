@@ -193,7 +193,7 @@ namespace MAlice {
         if (!funcProcEntity)
             return false;
         
-        std::list<ParameterEntity> parameterTypes = funcProcEntity->getParameterListTypes();
+        std::vector<ParameterEntity*> parameterTypes = funcProcEntity->getParameterListTypes();
         
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(invocationNode, 0);
         if (!identifierNode) {
@@ -202,8 +202,8 @@ namespace MAlice {
         }
         
         unsigned int i = 0;
-        for (std::list<ParameterEntity>::iterator it = parameterTypes.begin(); it != parameterTypes.end(); ++it) {
-            ParameterEntity paramEntity = *it;
+        for (auto it = parameterTypes.begin(); it != parameterTypes.end(); ++it) {
+            ParameterEntity *paramEntity = *it;
             ASTNode expressionNode = Utilities::getChildNodeAtIndex(identifierNode, i);
             if (!expressionNode)
                 return false;
@@ -215,13 +215,13 @@ namespace MAlice {
 
             // Check passedByReference is as expected
             
-            if (passedByReference != paramEntity.isPassedByReference()) {
+            if (passedByReference != paramEntity->isPassedByReference()) {
                 Range *expressionRange = NULL;
                 Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = Utilities::getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
                 std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
-                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
+                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity->getType()));
                 
                 Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" +
                                                                  Utilities::numberToString(i+1) +
@@ -243,13 +243,13 @@ namespace MAlice {
             
 
                 
-            if (expressionType != paramEntity.getType()) {
+            if (expressionType != paramEntity->getType()) {
                 Range *expressionRange = NULL;
                 Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = Utilities::getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
                 std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
-                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity.getType()));
+                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity->getType()));
                 
                 Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" +
                                                                  Utilities::numberToString(i+1) +

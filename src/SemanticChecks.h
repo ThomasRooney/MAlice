@@ -22,7 +22,6 @@ namespace MAlice {
         bool checkNumberOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
         bool checkTypesOfArgumentsForInvocationIsValid(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
         bool checkHasReturnValueInAllExecutionPaths(ASTNode bodyNode);
-        std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
         bool checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType type);
         bool checkExpression(ASTNode node, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, MAliceType type);
         
