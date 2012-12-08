@@ -13,6 +13,7 @@
 #include "VariableEntity.h"
 #include "Utilities.h"
 #include "Validation.h"
+#include "llvm/Value.h"
 
 namespace llvm{}
 using namespace llvm;
@@ -131,7 +132,18 @@ namespace MAlice {
     
     bool visitEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateICmpEQ(leftParamValue, rightParamValue);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
     }
 
     bool visitExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
