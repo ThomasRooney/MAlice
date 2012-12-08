@@ -5,7 +5,7 @@
 #include "ASTWalker.h"
 #include "ParameterEntity.h"
 
-#include "llvm/Value.h"
+class Value;
 
 namespace MAlice {
     

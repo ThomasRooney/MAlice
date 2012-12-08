@@ -14,10 +14,7 @@
 #include "Utilities.h"
 #include "Validation.h"
 
-
-#include "llvm/ADT/ArrayRef.h"
-#include "llvm/Type.h"
-
+namespace llvm{}
 using namespace llvm;
 
 namespace MAlice {

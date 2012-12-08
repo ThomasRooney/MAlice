@@ -2,10 +2,11 @@
 #define _MALICETYPES
 
 #include "MAliceParser.h"
+#include "llvmHeader.h"
 #include <ostream>
 #include <vector>
 
-#include "llvm/Value.h"
+class Value;
 
 namespace MAlice {
     

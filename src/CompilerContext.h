@@ -1,7 +1,7 @@
 
 #ifndef _MALICECOMPILERCONTEXT
 #define _MALICECOMPILERCONTEXT
-
+#include "llvmHeader.h"
 #include <iostream>
 #include <list>
 #include <string>
@@ -22,8 +22,6 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
-#include "llvm/Module.h"
-#include "llvm/Support/IRBuilder.h"
 
 namespace MAlice {
 

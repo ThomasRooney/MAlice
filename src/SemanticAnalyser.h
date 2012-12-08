@@ -7,8 +7,6 @@
 #include "ErrorReporter.h"
 #include "Types.h"
 
-#include "llvm/Module.h"
-
 namespace MAlice {
     
     class CompilerContext;

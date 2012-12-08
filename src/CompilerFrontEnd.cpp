@@ -12,13 +12,13 @@
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
 
-#include "llvm/Module.h"
-
 #ifdef _WIN32
+#ifndef _LLVM_HEADER_
 typedef unsigned char     uint8_t;
 typedef unsigned short    uint16_t;
 typedef unsigned int      uint32_t;
 typedef unsigned long int uint64_t;
+#endif
 #include <direct.h>
 #include <io.h>
 #define getcwd _getcwd

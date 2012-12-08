@@ -16,8 +16,6 @@ namespace MAlice {
     class ParameterEntity;
     class FunctionProcedureEntity;
     
-    class llvm::Type;
-
     class Utilities {
     private:
         static pANTLR3_STRING _printTree(ASTNode node, int depth);

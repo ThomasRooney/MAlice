@@ -4,7 +4,6 @@
 #include <sstream>
 #include <list>
 #include <iomanip>
-#include "llvm/LLVMContext.h"
 #include "Utilities.h"
 #include "CompilerContext.h"
 #include "Entity.h"
@@ -18,7 +17,6 @@
 #include "ArrayEntity.h"
 #include "Types.h"
 
-#include "llvm/Type.h"
 
 namespace MAlice {
     
