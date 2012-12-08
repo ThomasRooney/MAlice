@@ -138,8 +138,11 @@ namespace MAlice {
     {
         bool checkChildrenAreValid;
         ctx->beginExpression();
-
-        checkChildrenAreValid = walker->visitChildren(node, NULL, ctx);
+        // Populate the Expression Code Generation
+        llvm::Value *v = NULL;
+        // We are going to have only one child
+        ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
+        checkChildrenAreValid = walker->visitNode(childNode, &v, ctx);
 
         ctx->endExpression();
         return checkChildrenAreValid;
