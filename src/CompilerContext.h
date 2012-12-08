@@ -49,6 +49,7 @@ namespace MAlice {
         
         // For code generation
         llvm::IRBuilder<> *m_irBuilder;
+        llvm::Module *m_module;
         
     public:
         CompilerContext(std::string input);
@@ -85,6 +86,7 @@ namespace MAlice {
         void popFunctionProcedureEntity();
         
         llvm::IRBuilder<> *getIRBuilder();
+        llvm::Module *getModule();
     
     }; // class CompilerContext
     

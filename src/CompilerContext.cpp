@@ -33,6 +33,7 @@ namespace MAlice {
         #endif
         
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
+        m_module = new llvm::Module("root module", llvm::getGlobalContext());
     }
     
     CompilerContext::~CompilerContext()
@@ -292,6 +293,11 @@ namespace MAlice {
     llvm::IRBuilder<> *CompilerContext::getIRBuilder()
     {
         return m_irBuilder;
+    }
+    
+    llvm::Module *CompilerContext::getModule()
+    {
+        return m_module;
     }
 
 }; // namespace MAlice

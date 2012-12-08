@@ -17,7 +17,6 @@ namespace MAlice {
     bool SemanticAnalyser::validateAndGenerateIR(llvm::Module **IRModule)
     {
         ASTWalker treeWalker = ASTWalker();
-        llvm::Module *module = new llvm::Module("root module", llvm::getGlobalContext());
         
         if (!treeWalker.validateTree(m_tree, m_compilerContext))
             return false;
@@ -26,7 +25,7 @@ namespace MAlice {
             return false;
         
         if (IRModule)
-            *IRModule = module;
+            *IRModule = m_compilerContext->getModule();
         
         return true;
     }
