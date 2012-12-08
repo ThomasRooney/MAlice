@@ -106,7 +106,8 @@ namespace MAlice {
             val, // Value
             false // Unsigned
             );
-        *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
+        if (outValue)
+            *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
         return walker->visitChildren(node, NULL, ctx);
     }
 
@@ -309,7 +310,8 @@ namespace MAlice {
             val, // Value
             true // signed
             );
-        *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
+        if (outValue)
+            *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
         return walker->visitChildren(node, NULL, ctx);
     }
 
