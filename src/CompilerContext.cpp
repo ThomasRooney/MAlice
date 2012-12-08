@@ -47,7 +47,12 @@ namespace MAlice {
         }
         m_symbolTables.clear();
         // (Dangling pointers to symbol table pointers.. clear them.)
-        m_functionProcedureScope.clear();
+        while(!m_functionProcedureScopeStack.empty()) {
+            FunctionProcedureEntity *entity = m_functionProcedureScopeStack.top();
+            delete entity, entity = NULL;
+            
+            m_functionProcedureScopeStack.pop();
+        }
         
         while (!m_insertionPoints.empty()) {
             llvm::IRBuilderBase::InsertPoint *point = m_insertionPoints.top();
@@ -267,22 +272,22 @@ namespace MAlice {
     
     FunctionProcedureEntity *CompilerContext::getCurrentFunctionProcedureEntity()
     {
-        if (m_functionProcedureScope.empty())
+        if (m_functionProcedureScopeStack.empty())
             return NULL;
         
-        return m_functionProcedureScope.back();
+        return m_functionProcedureScopeStack.top();
     }
     
     void CompilerContext::pushFunctionProcedureEntity(FunctionProcedureEntity *entity)
     {
-        m_functionProcedureScope.push_back(entity);
+        m_functionProcedureScopeStack.push(entity);
     }
     
     void CompilerContext::popFunctionProcedureEntity()
     {
-        if (m_functionProcedureScope.empty())
+        if (m_functionProcedureScopeStack.empty())
             return;
-        m_functionProcedureScope.pop_back();
+        m_functionProcedureScopeStack.pop();
         
     }
     bool CompilerContext::withinExpression() {

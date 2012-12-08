@@ -47,7 +47,7 @@ namespace MAlice {
         void configureKeywords();
         SymbolTable* t_symbolTable;
         
-        std::list<FunctionProcedureEntity*> m_functionProcedureScope;
+        std::stack<FunctionProcedureEntity*> m_functionProcedureScopeStack;
         std::stack<llvm::IRBuilderBase::InsertPoint*> m_insertionPoints;
         
         std::string getLineOfInput(unsigned int lineNumber);
