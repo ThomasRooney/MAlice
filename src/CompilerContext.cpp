@@ -7,6 +7,7 @@
 #include "SymbolTable.h"
 #include "FunctionProcedureEntity.h"
 
+#include "llvm/BasicBlock.h"
 
 using namespace std;
 
@@ -46,7 +47,19 @@ namespace MAlice {
         }
         m_symbolTables.clear();
         // (Dangling pointers to symbol table pointers.. clear them.)
-        m_functionProcedureScope.clear();
+        while(!m_functionProcedureScopeStack.empty()) {
+            FunctionProcedureEntity *entity = m_functionProcedureScopeStack.top();
+            delete entity, entity = NULL;
+            
+            m_functionProcedureScopeStack.pop();
+        }
+        
+        while (!m_insertionPoints.empty()) {
+            llvm::IRBuilderBase::InsertPoint *point = m_insertionPoints.top();
+            delete point, point = NULL;
+            
+            m_insertionPoints.pop();
+        }
         
         if (m_lexer)
             delete m_lexer, m_lexer = NULL;
@@ -259,22 +272,22 @@ namespace MAlice {
     
     FunctionProcedureEntity *CompilerContext::getCurrentFunctionProcedureEntity()
     {
-        if (m_functionProcedureScope.empty())
+        if (m_functionProcedureScopeStack.empty())
             return NULL;
         
-        return m_functionProcedureScope.back();
+        return m_functionProcedureScopeStack.top();
     }
     
     void CompilerContext::pushFunctionProcedureEntity(FunctionProcedureEntity *entity)
     {
-        m_functionProcedureScope.push_back(entity);
+        m_functionProcedureScopeStack.push(entity);
     }
     
     void CompilerContext::popFunctionProcedureEntity()
     {
-        if (m_functionProcedureScope.empty())
+        if (m_functionProcedureScopeStack.empty())
             return;
-        m_functionProcedureScope.pop_back();
+        m_functionProcedureScopeStack.pop();
         
     }
     bool CompilerContext::withinExpression() {
@@ -317,9 +330,24 @@ namespace MAlice {
             return NULL;
         
         llvm::IRBuilderBase::InsertPoint *currentPoint = m_insertionPoints.top();
+        delete currentPoint, currentPoint = NULL;
+        
         m_insertionPoints.pop();
         
         return currentPoint;
+    }
+    
+    void CompilerContext::saveInsertPoint(llvm::BasicBlock *block)
+    {
+        pushCurrentInsertionPoint();
+        getIRBuilder()->SetInsertPoint(block);
+    }
+    
+    void CompilerContext::restoreInsertPoint()
+    {
+        llvm::IRBuilderBase::InsertPoint *insertPoint = popInsertionPoint();
+        if (insertPoint)
+            getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
     }
 
 }; // namespace MAlice

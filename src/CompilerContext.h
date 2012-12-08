@@ -25,6 +25,8 @@
 
 #include "llvm/Support/IRBuilder.h"
 
+class llvm::BasicBlock;
+
 namespace MAlice {
 
     class FunctionProcedureEntity;
@@ -45,7 +47,7 @@ namespace MAlice {
         void configureKeywords();
         SymbolTable* t_symbolTable;
         
-        std::list<FunctionProcedureEntity*> m_functionProcedureScope;
+        std::stack<FunctionProcedureEntity*> m_functionProcedureScopeStack;
         std::stack<llvm::IRBuilderBase::InsertPoint*> m_insertionPoints;
         
         std::string getLineOfInput(unsigned int lineNumber);
@@ -53,6 +55,9 @@ namespace MAlice {
         // For code generation
         llvm::IRBuilder<> *m_irBuilder;
         llvm::Module *m_module;
+        
+        void pushCurrentInsertionPoint();
+        llvm::IRBuilderBase::InsertPoint *popInsertionPoint();
         
     public:
         CompilerContext(std::string input);
@@ -91,9 +96,9 @@ namespace MAlice {
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
         
-        void pushCurrentInsertionPoint();
-        llvm::IRBuilderBase::InsertPoint *popInsertionPoint();
-    
+        void saveInsertPoint(llvm::BasicBlock *block);
+        void restoreInsertPoint();
+        
     }; // class CompilerContext
     
 }; // namespace MAlice
