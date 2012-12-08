@@ -64,7 +64,7 @@ namespace MAlice {
         }
         
         static void printSymbolTableEntries(SymbolTable *symbolTable);
-        static std::list<ParameterEntity> getParameterTypesFromParamsNode(ASTNode paramsNode);
+        static std::vector<ParameterEntity*> getParameterTypesFromParamsNode(ASTNode paramsNode);
         static FunctionProcedureEntity *getFunctionProcedureEntityForInvocationNode(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
         static MAliceType getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
         static std::string getFunctionProcedureInvocationIdentifier(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);

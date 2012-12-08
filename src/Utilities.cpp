@@ -468,9 +468,9 @@ namespace MAlice {
         }
     }
     
-    std::list<ParameterEntity> Utilities::getParameterTypesFromParamsNode(ASTNode paramsNode)
+    std::vector<ParameterEntity*> Utilities::getParameterTypesFromParamsNode(ASTNode paramsNode)
     {
-        std::list<ParameterEntity> parameterTypes;
+        std::vector<ParameterEntity*> parameterTypes;
         
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(paramsNode); ++i) {
             ASTNode childNode = Utilities::getChildNodeAtIndex(paramsNode, i);
@@ -483,7 +483,7 @@ namespace MAlice {
             
             std::string typeString = Utilities::getNodeText(typeNode);
             MAliceType t = (Utilities::getTypeFromTypeString(typeString));
-            ParameterEntity p = ParameterEntity(identifier, lineNumber, t, passedByReference);
+            ParameterEntity *p = new ParameterEntity(identifier, lineNumber, t, passedByReference);
             
             parameterTypes.push_back(p);
         }

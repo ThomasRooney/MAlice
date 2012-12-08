@@ -12,7 +12,7 @@ namespace MAlice {
   
     class ProcedureEntity : public FunctionProcedureEntity {
     public:
-        ProcedureEntity(std::string identifier, unsigned int lineNumber, std::list<ParameterEntity> parameterListTypes);
+        ProcedureEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes);
         ProcedureEntity *clone();
         
         std::string humanReadableName();

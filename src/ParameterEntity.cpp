@@ -8,7 +8,7 @@ namespace MAlice {
     {
       this->passedByReference = passedByReference;
     }
-
+    
     ParameterEntity* ParameterEntity :: clone () {
       return new ParameterEntity(this->getIdentifier(), this->getLineNumber(), this->getType(), this->isPassedByReference());
     }
