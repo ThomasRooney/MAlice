@@ -49,6 +49,13 @@ namespace MAlice {
         // (Dangling pointers to symbol table pointers.. clear them.)
         m_functionProcedureScope.clear();
         
+        while (!m_insertionPoints.empty()) {
+            llvm::IRBuilderBase::InsertPoint *point = m_insertionPoints.top();
+            delete point, point = NULL;
+            
+            m_insertionPoints.pop();
+        }
+        
         if (m_lexer)
             delete m_lexer, m_lexer = NULL;
         
@@ -318,6 +325,8 @@ namespace MAlice {
             return NULL;
         
         llvm::IRBuilderBase::InsertPoint *currentPoint = m_insertionPoints.top();
+        delete currentPoint, currentPoint = NULL;
+        
         m_insertionPoints.pop();
         
         return currentPoint;
