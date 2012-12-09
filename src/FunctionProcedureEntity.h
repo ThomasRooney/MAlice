@@ -14,6 +14,7 @@ namespace MAlice {
     class FunctionProcedureEntity : public Entity {
     private:
         std::vector<ParameterEntity*> m_parameterListTypes;
+        llvm::Function *m_LLVMFunction;
         
     public:
         FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes);
@@ -23,6 +24,9 @@ namespace MAlice {
         
         void setParameterListTypes(std::vector<ParameterEntity*> types);
         std::vector<ParameterEntity*> getParameterListTypes();
+    
+        llvm::Function *getLLVMFunction();
+        void setLLVMFunction(llvm::Function *function);
     };
     
 };
