@@ -641,7 +641,12 @@ namespace MAlice {
         if (!Validation::validateReturnStatementNode(node, walker, ctx))
             return false;
 
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *returnValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &returnValue, ctx);
+        
+        ctx->getIRBuilder()->CreateRet(returnValue);
+        
+        return true;
     }
 
     bool visitSentenceTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
