@@ -42,7 +42,7 @@ namespace MAlice {
     bool Validation::checkReturnValueForAllExecutionPaths(ASTNode bodyNode, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
-        if (Utilities::getTypeOfEntity(entity) != MAliceEntityTypeFunction)
+        if (!Utilities::isKindOfEntity(entity, MAliceEntityTypeFunction))
             return true;
         
         if (!checkHasReturnValueInAllExecutionPaths(bodyNode))

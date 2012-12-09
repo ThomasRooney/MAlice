@@ -10,6 +10,7 @@
 #include "ErrorFactory.h"
 #include "ErrorPosition.h"
 #include "FunctionProcedureEntity.h"
+#include "GlobalVariableEntity.h"
 #include "VariableEntity.h"
 #include "ProcedureEntity.h"
 #include "FunctionEntity.h"
@@ -146,7 +147,6 @@ namespace MAlice {
         }
     }
 
-    
     MAliceEntityType Utilities::getTypeOfEntity(Entity *entity)
     {
         ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
@@ -156,7 +156,11 @@ namespace MAlice {
         ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
         if (parameterEntity)
             return MAliceEntityTypeParameter;
-
+        
+        GlobalVariableEntity *globalVariableEntity = dynamic_cast<GlobalVariableEntity*>(entity);
+        if (globalVariableEntity)
+            return MAliceEntityTypeGlobalVariable;
+        
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         if (variableEntity)
             return MAliceEntityTypeVariable;
@@ -169,9 +173,36 @@ namespace MAlice {
         if (procedureEntity)
             return MAliceEntityTypeProcedure;
         
-
-        
         return MAliceEntityTypeUndefined;
+    }
+    
+    bool Utilities::isKindOfEntity(Entity *entity, MAliceEntityType type)
+    {
+        ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
+        if (arrayEntity && (type & MAliceEntityTypeArray) != 0)
+            return true;
+        
+        ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
+        if (parameterEntity && (type & MAliceEntityTypeParameter) != 0)
+            return true;
+        
+        GlobalVariableEntity *globalVariableEntity = dynamic_cast<GlobalVariableEntity*>(entity);
+        if (globalVariableEntity && (type & MAliceEntityTypeGlobalVariable) != 0)
+            return true;
+
+        VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+        if (variableEntity && (type & MAliceEntityTypeVariable) != 0)
+            return true;
+        
+        FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(entity);
+        if (functionEntity && (type & MAliceEntityTypeFunction) != 0)
+            return true;
+        
+        ProcedureEntity *procedureEntity = dynamic_cast<ProcedureEntity*>(entity);
+        if (procedureEntity && (type & MAliceEntityTypeProcedure) != 0)
+            return true;
+        
+        return false;
     }
     
     std::string Utilities::getTokenTextFromTokenIdentifier(ANTLR3_UINT32 tokenIdentifier)
