@@ -42,7 +42,19 @@ namespace MAlice {
         if (!Validation::validateArrayDeclarationNode(node, walker, ctx))
             return false;
         
-        return walker->visitChildren(node, NULL, ctx);
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
+        std::string typeString = Utilities::getNodeText(typeNode);
+        
+        ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
+        ctx->addEntityInScope(identifier, arrayEntity);
+        
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(arrayEntity->getType()));
+        arrayEntity->setLLVMValue(value);
+        
+        return true;
     }
 
     bool visitArraySubscriptNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -430,7 +442,7 @@ namespace MAlice {
         BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
         ctx->getIRBuilder()->SetInsertPoint(block);
         
-//        bool result = walker->visitChildren(node, NULL, ctx);
+        bool result = walker->visitChildren(node, NULL, ctx);
 //        if (!result) {
 //            // Remove the procedure from the Module it's a part of.
 //            procedure->removeFromParent();

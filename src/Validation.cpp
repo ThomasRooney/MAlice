@@ -153,9 +153,6 @@ namespace MAlice {
             // length is a number
             ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
             checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
-            
-            
-            ctx->addEntityInScope(identifier, new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(type), 1));
         }
         
         return true;
