@@ -1029,13 +1029,13 @@ namespace MAlice {
         switch(type)
         {
             case MAliceTypeNumber:
-                rType = llvm::Type::getInt64PtrTy(llvm::getGlobalContext());
+                rType = llvm::Type::getInt64Ty(llvm::getGlobalContext());
                 break;
             case MAliceTypeLetter:
-                rType = llvm::Type::getInt8PtrTy(llvm::getGlobalContext());
+                rType = llvm::Type::getInt8Ty(llvm::getGlobalContext());
                 break;
             case MAliceTypeBoolean:
-                rType = llvm::Type::getInt1PtrTy(llvm::getGlobalContext());
+                rType = llvm::Type::getInt1Ty(llvm::getGlobalContext());
                 break;
             case MAliceTypeSentence:
                 rType = llvm::Type::getInt8PtrTy(llvm::getGlobalContext());

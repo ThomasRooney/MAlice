@@ -327,17 +327,54 @@ namespace MAlice {
     
     bool visitMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+                
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+
         return walker->visitChildren(node, NULL, ctx);
     }
     
     bool visitModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+                
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateSRem(leftParamValue, rightParamValue, "modtmp");
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+
+        return true;
+
     }
     
     bool visitMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+                
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFMul(leftParamValue, rightParamValue, "multmp");
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+
+        return true;
     }
     
     bool visitNotEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -360,7 +397,7 @@ namespace MAlice {
         
         if (outValue)
             *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeNumber), val);
-        return walker->visitChildren(node, NULL, ctx);
+        return true;
     }
 
     bool visitNumberTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -384,7 +421,19 @@ namespace MAlice {
 
     bool visitPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+                
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFAdd(leftParamValue, rightParamValue, "addtmp");
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+
+        return true;
     }
 
     bool visitProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
