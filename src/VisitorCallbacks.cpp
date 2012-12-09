@@ -537,9 +537,17 @@ namespace MAlice {
         if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
             return false;
         
-        return true;
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
         
-        return walker->visitChildren(node, NULL, ctx);
+        Entity *entity = NULL;
+        ctx->isSymbolInCurrentScope(identifier, &entity);
+        
+        llvm::Function *function = ctx->getModule()->getFunction(identifier);
+        
+        ctx->getIRBuilder()->CreateCall(function);
+        
+        return true;
     }
     
     bool visitProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
