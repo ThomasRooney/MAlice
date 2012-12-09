@@ -89,7 +89,10 @@ namespace MAlice {
             auto t = lvalueValue->getType();
             auto t2 = assignmentValue->getType();
             if (t->getTypeID() == llvm::Type::PointerTyID)
-                *outValue = ctx->getIRBuilder()->CreateLoad(assignmentValue, lvalueValue);
+            {
+                // Get what lvalueValue points to, load assignmentValue into there
+                *outValue = ctx->getIRBuilder()->Insert(new llvm::LoadInst(assignmentValue, lvalueValue->getName()),lvalueValue->getName());
+            }
             else
                 *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
         }
