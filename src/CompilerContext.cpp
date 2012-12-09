@@ -43,14 +43,14 @@ namespace MAlice {
         {
             SymbolTable *table = *it;
 
-            delete table, table = NULL;
+            if (table) {
+                delete table, table = NULL;
+            }
         }
         m_symbolTables.clear();
-        // (Dangling pointers to symbol table pointers.. clear them.)
+        
+        // The entities for the function procedure scope stack are cleaned up in the symbol tables.
         while(!m_functionProcedureScopeStack.empty()) {
-            FunctionProcedureEntity *entity = m_functionProcedureScopeStack.top();
-            delete entity, entity = NULL;
-            
             m_functionProcedureScopeStack.pop();
         }
         

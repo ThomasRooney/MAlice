@@ -103,6 +103,8 @@ namespace MAlice {
             
             llvm::Module *module = NULL;
             if (!semanticAnalyser->validateAndGenerateIR(&module)) {
+                std::cerr << "Failure";
+                
                 // Handle error
                 return EXIT_FAILURE;
             }

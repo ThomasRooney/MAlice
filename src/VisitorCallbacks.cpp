@@ -52,7 +52,7 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, arrayEntity);
         
         llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(arrayEntity->getType()));
-        arrayEntity->setLLVMValue(value);
+        arrayEntity->setLLVMValue(NULL);
         
         return true;
     }
@@ -66,8 +66,17 @@ namespace MAlice {
     {
         if (!Validation::validateAssignmentStatementNode(node, walker, ctx))
             return false;
-
-        return walker->visitChildren(node, NULL, ctx);
+        
+        llvm::Value *lvalueValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &lvalueValue, ctx);
+        
+        llvm::Value *assignmentValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
+        
+        if (outValue)
+            *outValue = ctx->getIRBuilder()->CreateStore(lvalueValue, assignmentValue);
+        
+        return true;
     }
 
     bool visitBitwiseAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -109,20 +118,13 @@ namespace MAlice {
 
     bool visitCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        std::stringstream strVal;
-        strVal.str(Utilities::getNodeText(node));   
-
-        uint64_t val;
-        strVal >> val;
+        std::string strVal = Utilities::getNodeText(node);
+        uint64_t val = strVal[0];
         
-        APInt ConstructedASM = APInt(
-            1, // 1 Byte Long
-            val, // Value
-            false // Unsigned
-            );
         if (outValue)
-            *outValue = ConstantInt::get(getGlobalContext(), ConstructedASM);
-        return walker->visitChildren(node, NULL, ctx);
+            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeLetter), val);
+        
+        return true;
     }
 
     bool visitDeclarationsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -219,12 +221,16 @@ namespace MAlice {
                                               Function::ExternalLinkage,
                                               identifier.c_str(),
                                               ctx->getModule());
-        unsigned int i = 0;
-        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
-            ParameterEntity *entity = parameterEntities.at(i);
-            entity->setLLVMValue(it);
-            it->setName(entity->getIdentifier());
-        }
+        
+//        unsigned int i = 0;
+//        for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
+//            ParameterEntity *entity = parameterEntities.at(i);
+//            llvm::Value *v = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(entity->getType()),
+//                                                               0,
+//                                                               "test");
+////            it->setName(entity->getIdentifier());
+//            ++i;
+//        }
         
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
@@ -294,6 +300,8 @@ namespace MAlice {
     {
         if (!Validation::validateIfStatementNode(node, walker, ctx))
             return false;
+        
+        return true;
 
         return walker->visitChildren(node, NULL, ctx);
     }
@@ -352,10 +360,10 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
-        
-        if (outValue)
-            *outValue = storedValue;
+//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
+//        
+//        if (outValue)
+//            *outValue = storedValue;
         
 
         return walker->visitChildren(node, NULL, ctx);
@@ -369,10 +377,10 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateSRem(leftParamValue, rightParamValue, "modtmp");
-        
-        if (outValue)
-            *outValue = storedValue;
+//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateSRem(leftParamValue, rightParamValue, "modtmp");
+//        
+//        if (outValue)
+//            *outValue = storedValue;
         
 
         return true;
@@ -387,10 +395,10 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFMul(leftParamValue, rightParamValue, "multmp");
-        
-        if (outValue)
-            *outValue = storedValue;
+//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFMul(leftParamValue, rightParamValue, "multmp");
+//        
+//        if (outValue)
+//            *outValue = storedValue;
         
 
         return true;
@@ -416,6 +424,7 @@ namespace MAlice {
         
         if (outValue)
             *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeNumber), val);
+        
         return true;
     }
 
@@ -446,10 +455,10 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFAdd(leftParamValue, rightParamValue, "addtmp");
-        
-        if (outValue)
-            *outValue = storedValue;
+//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFAdd(leftParamValue, rightParamValue, "addtmp");
+//        
+//        if (outValue)
+//            *outValue = storedValue;
         
 
         return true;
@@ -466,6 +475,19 @@ namespace MAlice {
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
+        
+        bool hasParams = false;
+        
+        // get node index 1, if its a parameter node, get params...
+        ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
+        if (Utilities::getNodeType(nodeI1) == PARAMS)
+            hasParams = true;
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
+        
+        if (hasParams) {
+            if (!walker->visitNode(nodeI1, NULL, ctx))
+                return false;
+        }
         
         // Create the llvm::Function for the procedure and add it to the llvm::Module.
         std::vector<Type*> parameterTypes;
@@ -489,12 +511,12 @@ namespace MAlice {
         BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
         ctx->getIRBuilder()->SetInsertPoint(block);
         
-        bool result = walker->visitChildren(node, NULL, ctx);
-//        if (!result) {
-//            // Remove the procedure from the Module it's a part of.
-//            procedure->removeFromParent();
-//            return false;
-//        }
+        bool result = walker->visitNode(bodyNode, NULL, ctx);
+        if (!result) {
+            // Remove the procedure from the Module it's a part of.
+            procedure->removeFromParent();
+            return false;
+        }
         
         ctx->popFunctionProcedureEntity();
         
@@ -511,6 +533,8 @@ namespace MAlice {
         if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
             return false;
         
+        return true;
+        
         return walker->visitChildren(node, NULL, ctx);
     }
     
@@ -523,7 +547,9 @@ namespace MAlice {
     {
         if (!Validation::validatePrintStatementNode(node, walker, ctx))
             return false;
-
+        
+        return true;
+        
         return walker->visitChildren(node, NULL, ctx);
 
     }
@@ -599,11 +625,22 @@ namespace MAlice {
         ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
         std::string typeString = Utilities::getNodeText(typeNode);
         
-        VariableEntity *variable = new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()),0,identifier);
-        variable->setLLVMValue(value);
+        ASTNode valueNode = Utilities::getChildNodeAtIndex(node, 2);
         
+        VariableEntity *variable = new VariableEntity(identifier,
+                                                      Utilities::getNodeLineNumber(identifierNode),
+                                                      Utilities::getTypeFromTypeString(typeString));
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()),
+                                                               0,
+                                                               identifier.c_str());
+        variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
+        
+        if (valueNode) {
+            llvm::Value *assignmentValue = NULL;
+            if (walker->visitNode(valueNode, &assignmentValue, ctx))
+                ctx->getIRBuilder()->CreateStore(value, assignmentValue);
+        }
         
         if (outValue)
             *outValue = value;
@@ -615,6 +652,8 @@ namespace MAlice {
     {
         if (!Validation::validateWhileStatementNode(node, walker, ctx))
             return false;
+        
+        return true;
         
         BasicBlock *currentBlock = ctx->getIRBuilder()->GetInsertBlock();
         Function *parentFunction = currentBlock->getParent();

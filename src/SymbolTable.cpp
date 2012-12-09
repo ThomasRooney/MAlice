@@ -26,13 +26,11 @@ namespace MAlice {
         
         for (vector<string>::iterator it = keys.begin(); it != keys.end(); ++it) {
             Entity *entity = m_symbolMap[*it];
-            
-            if (entity != NULL) {
+            if (entity) {
                 delete entity;
                 entity = NULL;
             }
         }
-        
         m_symbolMap.clear();
     }
     // Throws out of range exception to calling function
