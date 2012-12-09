@@ -34,7 +34,7 @@ namespace MAlice {
         static MAliceType getTypeFromTypeString(std::string);
         static MAliceType getTypeFromNodeType(int nodeType);
         static const char* getNameOfTypeFromMAliceType(MAliceType);
-        static MAliceEntityType Utilities::getTypeOfEntity(Entity *entity);
+        static MAliceEntityType getTypeOfEntity(Entity *entity);
         static bool isKindOfEntity(Entity *entity, MAliceEntityType type);
         static std::string getTokenTextFromTokenIdentifier(ANTLR3_UINT32 tokenIdentifier);
         
