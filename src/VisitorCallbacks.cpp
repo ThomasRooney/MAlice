@@ -204,11 +204,11 @@ namespace MAlice {
                                               Function::InternalLinkage,
                                               identifier.c_str(),
                                               ctx->getModule());
-        
+        unsigned int i = 0;
         for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
-//            ParameterEntity *entity = parameterEntities.at(i);
-        
-//            entity->setLLVMValue(it);
+            ParameterEntity *entity = parameterEntities.at(i);
+            entity->setLLVMValue(it);
+            it->setName(entity->getIdentifier());
         }
     
         // Walk through the children
@@ -254,7 +254,7 @@ namespace MAlice {
         llvm::Value *value = variableEntity->getLLVMValue();
         
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateLoad(value, "");
+            *outValue = ctx->getIRBuilder()->CreateLoad(value, identifier.c_str());
         
         return true;
     }
@@ -363,7 +363,6 @@ namespace MAlice {
         
         for (auto it = parameterList.begin(); it != parameterList.end(); ++it) {
             ParameterEntity *entity = *it;
-            
             ctx->addEntityInScope(entity->getIdentifier(), entity);
         }
         
@@ -489,7 +488,7 @@ namespace MAlice {
         std::string typeString = Utilities::getNodeText(typeNode);
         
         VariableEntity *variable = new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()));
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()),0,identifier);
         variable->setLLVMValue(value);
         
         ctx->addEntityInScope(identifier, variable);

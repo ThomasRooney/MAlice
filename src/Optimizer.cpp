@@ -6,11 +6,12 @@ namespace MAlice {
         Optimizer::Optimizer (llvm::Module* module)
         {
             m_module = module;
+            
         }
 
         void Optimizer::constantFoldingPass()
-        {
-
+        {   
+            //FunctionPassManager
         }
     
         llvm::Module *Optimizer::getModule()
