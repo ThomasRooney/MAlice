@@ -235,15 +235,13 @@ namespace MAlice {
         
         functionEntity->setLLVMFunction(function);
         
-        unsigned int i = 0;
-        for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
-            ParameterEntity *entity = parameterEntities.at(i);
-            llvm::Value *v = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(entity->getType()),
-                                                               0,
-                                                               "test");
-            it->setName(entity->getIdentifier());
-            ++i;
-        }
+//        unsigned int i = 0;
+//        for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
+//            ParameterEntity *entity = parameterEntities.at(i);
+////            llvm::Value *v = it;
+////            it->setName("hello");
+//            ++i;
+//        }
         
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);

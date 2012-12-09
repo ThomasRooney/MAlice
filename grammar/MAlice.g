@@ -257,8 +257,8 @@ bitwise_operator
 
 unary_expr
 	:	(IDENTIFIER LPAREN) => proc_func_invocation
-	| 	unary_operator^ unary_expr
 	|	constant
+	| 	unary_operator^ unary_expr
 	|	lvalue
 	|	LPAREN boolean_combinator_expr RPAREN
 		-> boolean_combinator_expr
@@ -287,7 +287,7 @@ STRING_LITERAL
 	:	QUOTE (ESCAPE | ~(QUOTE))* QUOTE
 	;
 NUMBER_LITERAL
-	:	'0' | '1'..'9' DIGIT*
+	:	'0' | ('-')? '1'..'9' DIGIT*
 	;
 	
 fragment NEWLINE
