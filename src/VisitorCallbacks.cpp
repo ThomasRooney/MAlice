@@ -92,17 +92,32 @@ namespace MAlice {
 
     bool visitBitwiseAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateAnd,
+                                       "andtmp",
+                                       walker,
+                                       ctx);
     }
     
     bool visitBitwiseOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateOr,
+                                       "andtmp",
+                                       walker,
+                                       ctx);
     }
     
     bool visitBitwiseXorExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateXor,
+                                       "xortmp",
+                                       walker,
+                                       ctx);
     }
 
     bool visitBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -158,18 +173,12 @@ namespace MAlice {
     
     bool visitEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        llvm::Value *leftParamValue = NULL;
-        llvm::Value *rightParamValue = NULL;
-        
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
-        
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateICmpEQ(leftParamValue, rightParamValue);
-        
-        if (outValue)
-            *outValue = storedValue;
-        
-        return true;
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateICmpEQ,
+                                       "eqtmp",
+                                       walker,
+                                       ctx);
     }
 
     bool visitExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -266,12 +275,22 @@ namespace MAlice {
 
     bool visitGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateICmpSGT,
+                                       "gttmp",
+                                       walker,
+                                       ctx);
     }
     
     bool visitGreaterThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateICmpSGE,
+                                       "gtetmp",
+                                       walker,
+                                       ctx);
     }
     
     bool visitIdentifierNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -360,13 +379,33 @@ namespace MAlice {
 
     bool visitLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateICmpSLT,
+                                       "lttemp",
+                                       walker,
+                                       ctx);
+    }
+    
+    bool visitLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateICmpSLE,
+                                       "ltetmp",
+                                       walker,
+                                       ctx);
+    }
+    
+    bool visitBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    {
         llvm::Value *leftParamValue = NULL;
         llvm::Value *rightParamValue = NULL;
         
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
         
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateICmpULT(leftParamValue, rightParamValue);
+        llvm::Value *storedValue = (ctx->getIRBuilder()->*llvmFunction)(leftParamValue, rightParamValue, twine);
         
         if (outValue)
             *outValue = storedValue;
@@ -374,9 +413,46 @@ namespace MAlice {
         return true;
     }
     
-    bool visitLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool visitBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        
+        llvm::Value *storedValue = (ctx->getIRBuilder()->*llvmFunction)(leftParamValue, rightParamValue, twine, false, false);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
+    }
+    
+    bool visitUnaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, const llvm::Twine&), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    {
+        llvm::Value *paramValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &paramValue, ctx);
+        
+        llvm::Value *storedValue = (ctx->getIRBuilder()->*llvmFunction)(paramValue, twine);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
+    }
+    
+    bool visitUnaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    {
+        llvm::Value *paramValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &paramValue, ctx);
+        
+        llvm::Value *storedValue = (ctx->getIRBuilder()->*llvmFunction)(paramValue, twine, false, false);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
     }
 
     bool visitLetterTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -391,7 +467,12 @@ namespace MAlice {
     
     bool visitLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitUnaryOperatorNode(node,
+                                      outValue,
+                                      &llvm::IRBuilder<>::CreateNot,
+                                      "nottmp",
+                                      walker,
+                                      ctx);
     }
 
     bool visitLogicalOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -401,72 +482,44 @@ namespace MAlice {
     
     bool visitMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
+        if (Utilities::getNumberOfChildNodes(node) == 1)
+            return visitUnaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateNeg, "negtmp", walker, ctx);
         
-        llvm::Value *leftParamValue = NULL;
-        llvm::Value *storedValue = NULL;
-        
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
-        
-        if (numChildren == 2) {
-            llvm::Value *rightParamValue = NULL;
-            walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
-            storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
-        }
-        else
-            storedValue = ctx->getIRBuilder()->CreateNeg(leftParamValue);
-        
-        if (outValue)
-            *outValue = storedValue;
-
-        return true;
+        return visitBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSub, "subtmp", walker, ctx);
     }
     
     bool visitModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return true;
-        
-        llvm::Value *leftParamValue = NULL;
-        llvm::Value *rightParamValue = NULL;
-        
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
-                
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateSRem(leftParamValue, rightParamValue, "modtmp");
-        
-        if (outValue)
-            *outValue = storedValue;
-        
-
-        return true;
-
+        return visitBinaryOperatorNode(node, outValue,
+                                       &llvm::IRBuilder<>::CreateSRem,
+                                       "modtmp",
+                                       walker,
+                                       ctx);
     }
     
     bool visitMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        llvm::Value *leftParamValue = NULL;
-        llvm::Value *rightParamValue = NULL;
-        
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
-                
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFMul(leftParamValue, rightParamValue, "multmp");
-        
-        if (outValue)
-            *outValue = storedValue;
-        
-
-        return true;
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateMul,
+                                       "multmp",
+                                       walker,
+                                       ctx);
     }
     
     bool visitNotEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return visitBinaryOperatorNode(node,
+                                       outValue,
+                                       &llvm::IRBuilder<>::CreateICmpEQ,
+                                       "netmp",
+                                       walker,
+                                       ctx);
     }
 
     bool visitNullStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        return true;
     }
 
     bool visitNumberLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -508,21 +561,13 @@ namespace MAlice {
 
     bool visitPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return true;
+        if (Utilities::getNumberOfChildNodes(node) == 1) {
+            // TODO: Implement absolute value transform.
+            
+            return true;
+        }
         
-        llvm::Value *leftParamValue = NULL;
-        llvm::Value *rightParamValue = NULL;
-        
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
-                
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFAdd(leftParamValue, rightParamValue, "addtmp");
-        
-        if (outValue)
-            *outValue = storedValue;
-        
-
-        return true;
+        return visitBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSub, "addtmp", walker, ctx);
     }
 
     bool visitProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
