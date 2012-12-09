@@ -493,6 +493,38 @@ namespace MAlice {
         if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
             return false;
         
+        if (!ctx->getCurrentFunctionProcedureEntity())
+            return visitVariableDeclarationNodeAsGlobalVariable(node, outValue, walker, ctx);
+        
+        return visitVariableDeclarationNodeAsLocalVariable(node, outValue, walker, ctx);
+    }
+    
+    bool visitVariableDeclarationNodeAsGlobalVariable(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
+        std::string typeString = Utilities::getNodeText(typeNode);
+        
+        VariableEntity *variable = new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
+        llvm::Value *value = new GlobalVariable(*(ctx->getModule()),
+                                                Utilities::getLLVMTypeFromMAliceType(variable->getType()),
+                                                false,
+                                                GlobalValue::LinkerPrivateLinkage,
+                                                NULL,
+                                                Twine(identifier.c_str()));
+        variable->setLLVMValue(value);
+        ctx->addEntityInScope(identifier, variable);
+        
+        if (outValue)
+            *outValue = value;
+        
+        return true;
+    }
+    
+    bool visitVariableDeclarationNodeAsLocalVariable(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
