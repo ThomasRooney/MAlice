@@ -74,7 +74,14 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
         
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
+        {
+            auto t = lvalueValue->getType();
+            auto t2 = assignmentValue->getType();
+            if (t->getTypeID() == llvm::Type::PointerTyID)
+                *outValue = ctx->getIRBuilder()->CreateLoad(assignmentValue, lvalueValue);
+            else
+                *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
+        }
         
         return true;
     }
@@ -532,6 +539,72 @@ namespace MAlice {
         return true;
     }
 
+    bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
+        if (!Validation::validatePrintStatementNode(node, walker, ctx))
+            return false;
+
+        ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
+
+        // Evaluate the expression underneath
+        llvm::Value * printVal = NULL;
+
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &printVal, ctx);
+//        printVal = ctx->getIRBuilder()->CreateGlobalStringPtr("TODO: puts");
+        
+//        Utilities::getTypeFromExpressionNode(childNode, &type, true, walker, ctx, NULL);
+        llvm::Constant *zero_32 = llvm::Constant::getNullValue(IntegerType::getInt32Ty(llvm::getGlobalContext()));
+
+        // Ensure printf has been declared as an external.
+        Function *puts_func = cast<Function>(ctx->getModule()->
+            getOrInsertFunction("puts", IntegerType::getInt32Ty(llvm::getGlobalContext()),
+                                PointerType::getUnqual(IntegerType::getInt8Ty(llvm::getGlobalContext())), NULL));
+
+
+
+
+        //llvm::Value *printValP = ctx->getIRBuilder()->
+        //    CreateSExt(printVal, IntegerType::getInt32Ty(llvm::getGlobalContext()), "printtmp");
+
+        //llvm::Value *printValP = ctx->getIRBuilder()->
+        //    CreateIntToPtr(printVal, IntegerType::getInt32Ty(llvm::getGlobalContext()), "printtmp");
+        // get the type of printVal
+        llvm::Type *t = printVal->getType();
+
+        llvm::Constant *gep_params[] = {
+            zero_32,
+            zero_32
+        };
+        llvm::Constant *printValParam;
+        //llvm::GlobalVariable *v = llvm::cast<llvm::GlobalVariable,llvm::Value*>(printVal);
+        switch (t->getTypeID())
+        {
+            case llvm::Type::TypeID::IntegerTyID:
+                printValParam = llvm::ConstantExpr::getGetElementPtr(llvm::cast<llvm::Constant, llvm::Value*>(printVal), gep_params);
+                break;
+            case llvm::Type::TypeID::PointerTyID:
+                // Add it to the const (int)'0'  
+                //printValParam = llvm::ConstantExpr::getGetElementPtr(llvm::cast<llvm::Constant, llvm::Value*>(printVal), gep_params);
+            default:
+                break;
+        }
+
+        llvm::Value *putchar_params[] = {
+              printVal,
+//            zero_32,
+//            zero_32 // Append '\0\0'
+          };
+        
+
+        CallInst *puts_call = ctx->getIRBuilder()->CreateCall(puts_func,
+                             printVal);
+
+        puts_call->setTailCall(false);
+        
+        return walker->visitChildren(node, NULL, ctx);
+
+    }
+
     bool visitProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
@@ -540,15 +613,6 @@ namespace MAlice {
         return true;
         
         return walker->visitChildren(node, NULL, ctx);
-    }
-    
-    bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
-    {
-        if (!Validation::validatePrintStatementNode(node, walker, ctx))
-            return false;
-        
-        return walker->visitChildren(node, NULL, ctx);
-
     }
 
     bool visitProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -576,7 +640,12 @@ namespace MAlice {
 
     bool visitStringLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        std::string strVal = Utilities::getNodeText(node);   
+
+        if (outValue)
+            *outValue = ctx->getIRBuilder()->CreateGlobalString(strVal.c_str(), "string");
+        
+        return true;
     }
 
     bool visitTildeExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
