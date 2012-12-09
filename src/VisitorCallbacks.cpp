@@ -119,7 +119,7 @@ namespace MAlice {
     bool visitCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::string strVal = Utilities::getNodeText(node);
-        uint64_t val = strVal[0];
+        uint64_t val = strVal[1]; // [0] = "'", [1] = LITERAL, [2] = "'"
         
         if (outValue)
             *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeLetter), val);
