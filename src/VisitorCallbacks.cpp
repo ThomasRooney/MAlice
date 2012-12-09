@@ -339,14 +339,6 @@ namespace MAlice {
             }
         }
         
-        llvm::Value *condValue = NULL;
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &condValue, ctx);
-        
-        BasicBlock *thenBlock = BasicBlock::Create(getGlobalContext(), "then", function);
-        BasicBlock *afterBlock = BasicBlock::Create(getGlobalContext(), "after", function);
-        
-        ctx->getIRBuilder()->CreateCondBr(condValue, thenBlock, afterBlock);
-        
         return true;
     }
 
