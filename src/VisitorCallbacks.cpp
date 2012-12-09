@@ -52,7 +52,7 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, arrayEntity);
         
         llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(arrayEntity->getType()));
-        arrayEntity->setLLVMValue(NULL);
+        arrayEntity->setLLVMValue(value);
         
         return true;
     }
@@ -74,7 +74,7 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
         
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateStore(lvalueValue, assignmentValue);
+            *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
         
         return true;
     }
@@ -222,15 +222,15 @@ namespace MAlice {
                                               identifier.c_str(),
                                               ctx->getModule());
         
-//        unsigned int i = 0;
-//        for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
-//            ParameterEntity *entity = parameterEntities.at(i);
-//            llvm::Value *v = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(entity->getType()),
-//                                                               0,
-//                                                               "test");
-////            it->setName(entity->getIdentifier());
-//            ++i;
-//        }
+        unsigned int i = 0;
+        for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
+            ParameterEntity *entity = parameterEntities.at(i);
+            llvm::Value *v = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(entity->getType()),
+                                                               0,
+                                                               "test");
+            it->setName(entity->getIdentifier());
+            ++i;
+        }
         
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
@@ -300,8 +300,6 @@ namespace MAlice {
     {
         if (!Validation::validateIfStatementNode(node, walker, ctx))
             return false;
-        
-        return true;
 
         return walker->visitChildren(node, NULL, ctx);
     }
@@ -354,33 +352,36 @@ namespace MAlice {
     
     bool visitMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        return true;
+        
         llvm::Value *leftParamValue = NULL;
         llvm::Value *rightParamValue = NULL;
         
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
-//        
-//        if (outValue)
-//            *outValue = storedValue;
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
         
+        if (outValue)
+            *outValue = storedValue;
 
         return walker->visitChildren(node, NULL, ctx);
     }
     
     bool visitModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        return true;
+        
         llvm::Value *leftParamValue = NULL;
         llvm::Value *rightParamValue = NULL;
         
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateSRem(leftParamValue, rightParamValue, "modtmp");
-//        
-//        if (outValue)
-//            *outValue = storedValue;
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateSRem(leftParamValue, rightParamValue, "modtmp");
+        
+        if (outValue)
+            *outValue = storedValue;
         
 
         return true;
@@ -395,10 +396,10 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFMul(leftParamValue, rightParamValue, "multmp");
-//        
-//        if (outValue)
-//            *outValue = storedValue;
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFMul(leftParamValue, rightParamValue, "multmp");
+        
+        if (outValue)
+            *outValue = storedValue;
         
 
         return true;
@@ -444,21 +445,24 @@ namespace MAlice {
         }
         
         entity->setParameterListTypes(parameterList);
+        
         return true;
     }
 
     bool visitPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        return true;
+        
         llvm::Value *leftParamValue = NULL;
         llvm::Value *rightParamValue = NULL;
         
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
                 
-//        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFAdd(leftParamValue, rightParamValue, "addtmp");
-//        
-//        if (outValue)
-//            *outValue = storedValue;
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFAdd(leftParamValue, rightParamValue, "addtmp");
+        
+        if (outValue)
+            *outValue = storedValue;
         
 
         return true;
@@ -542,8 +546,6 @@ namespace MAlice {
     {
         if (!Validation::validatePrintStatementNode(node, walker, ctx))
             return false;
-        
-        return true;
         
         return walker->visitChildren(node, NULL, ctx);
 
@@ -639,7 +641,7 @@ namespace MAlice {
         if (valueNode) {
             llvm::Value *assignmentValue = NULL;
             if (walker->visitNode(valueNode, &assignmentValue, ctx))
-                ctx->getIRBuilder()->CreateStore(value, assignmentValue);
+                ctx->getIRBuilder()->CreateStore(assignmentValue, value);
         }
         
         if (outValue)

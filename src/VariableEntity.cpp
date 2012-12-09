@@ -11,8 +11,6 @@ namespace MAlice {
     
     VariableEntity::~VariableEntity()
     {
-        if (m_LLVMValue)
-            delete m_LLVMValue, m_LLVMValue = NULL;
     }
     
     std::string VariableEntity::humanReadableName()
