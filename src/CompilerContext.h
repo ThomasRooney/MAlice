@@ -23,7 +23,7 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
-#include "llvm/IRBuilder.h"
+#include "llvm/Support/IRBuilder.h"
 
 //class llvm::BasicBlock;
 
