@@ -26,12 +26,13 @@ namespace MAlice {
     } MAliceType;
     
     typedef enum {
-        MAliceEntityTypeUndefined = 0,
-        MAliceEntityTypeVariable,
-        MAliceEntityTypeFunction,
-        MAliceEntityTypeProcedure,
-        MAliceEntityTypeParameter,
-        MAliceEntityTypeArray,
+        MAliceEntityTypeUndefined = 1 << 0,
+        MAliceEntityTypeVariable = 1 << 1,
+        MAliceEntityTypeFunction = 1 << 2,
+        MAliceEntityTypeProcedure = 1 << 3,
+        MAliceEntityTypeParameter = 1 << 4,
+        MAliceEntityTypeGlobalVariable = 1 << 5,
+        MAliceEntityTypeArray = 1 << 6,
     } MAliceEntityType;
 
 };

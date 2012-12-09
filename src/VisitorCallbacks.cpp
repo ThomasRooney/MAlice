@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "ErrorFactory.h"
 #include "FunctionEntity.h"
+#include "GlobalVariableEntity.h"
 #include "ProcedureEntity.h"
 #include "SemanticChecks.h"
 #include "VariableEntity.h"
@@ -252,20 +253,26 @@ namespace MAlice {
         if (!ctx->isSymbolInScope(identifier, &entity))
             return false;
         
-        MAliceEntityType type = Utilities::getTypeOfEntity(entity);
-        if (type != MAliceEntityTypeParameter && type != MAliceEntityTypeVariable)
+        if (!Utilities::isKindOfEntity(entity, MAliceEntityTypeVariable))
             return false;
         
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         llvm::Value *value = variableEntity->getLLVMValue();
         
-        if (type == MAliceEntityTypeParameter) {
+        if (Utilities::getTypeOfEntity(entity) == MAliceEntityTypeParameter) {
             if (outValue)
                 *outValue = value;
             
             return true;
         }
         
+        if (Utilities::getTypeOfEntity(entity) == MAliceEntityTypeGlobalVariable) {
+            if (outValue)
+                *outValue = value;
+            
+            return true;
+        }
+
         if (outValue)
             *outValue = ctx->getIRBuilder()->CreateLoad(value, identifier.c_str());
         
@@ -509,7 +516,7 @@ namespace MAlice {
         ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
         std::string typeString = Utilities::getNodeText(typeNode);
         
-        VariableEntity *variable = new VariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
+        GlobalVariableEntity *variable = new GlobalVariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
         llvm::Value *value = new GlobalVariable(*(ctx->getModule()),
                                                 Utilities::getLLVMTypeFromMAliceType(variable->getType()),
                                                 false,
