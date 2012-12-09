@@ -142,7 +142,7 @@ statement_component
 	|	null_statement
 	|	if_block (options{greedy=true;} : FULL_STOP!)?
 	|	assignment statement_inner_separator!
-	|	block (options{greedy=true;} : FULL_STOP!)?
+	|	arbitraryblock (options{greedy=true;} : FULL_STOP!)?
 	;
 
 return_statement

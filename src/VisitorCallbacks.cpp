@@ -25,10 +25,20 @@ namespace MAlice {
     bool visitArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
-    
+        
+        Function *function = NULL;
+        BasicBlock *insertBlock = ctx->getIRBuilder()->GetInsertBlock();
+        if (insertBlock)
+            function = insertBlock->getParent();
+        
+        BasicBlock *enterBlock = BasicBlock::Create(getGlobalContext(), "_opened", function);
+        ctx->getIRBuilder()->SetInsertPoint(enterBlock);
+                                                    
         bool result = walker->visitChildren(node, NULL, ctx);
 
         ctx->exitScope();
+        BasicBlock *exitBlock = BasicBlock::Create(getGlobalContext(), "_closed", function);
+        ctx->getIRBuilder()->SetInsertPoint(exitBlock);
         
         return result;
     }
