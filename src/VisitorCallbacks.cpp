@@ -538,11 +538,6 @@ namespace MAlice {
         return walker->visitChildren(node, NULL, ctx);
     }
     
-    bool visitProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
-    {
-        return walker->visitChildren(node, NULL, ctx);
-    }
-
     bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!Validation::validatePrintStatementNode(node, walker, ctx))
@@ -552,6 +547,11 @@ namespace MAlice {
         
         return walker->visitChildren(node, NULL, ctx);
 
+    }
+
+    bool visitProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
+        return walker->visitChildren(node, NULL, ctx);
     }
 
     bool visitReturnStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -605,7 +605,7 @@ namespace MAlice {
         llvm::Value *value = new GlobalVariable(*(ctx->getModule()),
                                                 Utilities::getLLVMTypeFromMAliceType(variable->getType()),
                                                 false,
-                                                GlobalValue::LinkerPrivateLinkage,
+                                                GlobalValue::InternalLinkage,
                                                 NULL,
                                                 Twine(identifier.c_str()));
         variable->setLLVMValue(value);
