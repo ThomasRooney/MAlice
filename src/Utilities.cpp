@@ -152,6 +152,10 @@ namespace MAlice {
         ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
         if (arrayEntity)
             return MAliceEntityTypeArray;
+        
+        ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
+        if (parameterEntity)
+            return MAliceEntityTypeParameter;
 
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         if (variableEntity)
@@ -164,10 +168,6 @@ namespace MAlice {
         ProcedureEntity *procedureEntity = dynamic_cast<ProcedureEntity*>(entity);
         if (procedureEntity)
             return MAliceEntityTypeProcedure;
-        
-        ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
-        if (parameterEntity)
-            return MAliceEntityTypeParameter;
         
 
         
