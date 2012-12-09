@@ -311,6 +311,34 @@ namespace MAlice {
         if (insertBlock)
             function = insertBlock->getParent();
         
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
+            ASTNode node1 = Utilities::getChildNodeAtIndex(node, i);
+            if (Utilities::getNodeType(node1) == EXPRESSION) {
+                llvm::Value *condValue = NULL;
+                walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &condValue, ctx);
+                
+                ASTNode node2 = Utilities::getChildNodeAtIndex(node, i + 1);
+                // We have looked at another node.
+                i++;
+                
+                BasicBlock *thenBlock = BasicBlock::Create(getGlobalContext(), "then", function);
+                BasicBlock *elseBlock = BasicBlock::Create(getGlobalContext(), "else", function);
+                
+                ctx->getIRBuilder()->CreateCondBr(condValue, thenBlock, elseBlock);
+                
+                ctx->getIRBuilder()->SetInsertPoint(thenBlock);
+                walker->visitNode(node2, NULL, ctx);
+                
+                ctx->getIRBuilder()->SetInsertPoint(elseBlock);
+            }
+            else {
+                walker->visitNode(node1, NULL, ctx);
+                
+                BasicBlock *afterBlock = BasicBlock::Create(getGlobalContext(), "after", function);
+                ctx->getIRBuilder()->SetInsertPoint(afterBlock);
+            }
+        }
+        
         llvm::Value *condValue = NULL;
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &condValue, ctx);
         
