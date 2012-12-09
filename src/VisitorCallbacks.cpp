@@ -431,7 +431,7 @@ namespace MAlice {
         std::stringstream strVal;
         strVal.str(Utilities::getNodeText(node));   
 
-        uint64_t val;
+        int64_t val;
         strVal >> val;
         
         if (outValue)
