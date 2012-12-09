@@ -178,6 +178,8 @@ namespace MAlice {
         ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
         MAliceType returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
         
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
+        
         FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>(), returnType);
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
@@ -201,7 +203,7 @@ namespace MAlice {
                                                        false);
         
         Function *function = Function::Create(functionType,
-                                              Function::InternalLinkage,
+                                              Function::ExternalLinkage,
                                               identifier.c_str(),
                                               ctx->getModule());
         unsigned int i = 0;
@@ -210,10 +212,12 @@ namespace MAlice {
             entity->setLLVMValue(it);
             it->setName(entity->getIdentifier());
         }
+        
+        BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
+        ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
     
         // Walk through the children
-        bool result = true;
-//        bool result = walker->visitChildren(node, NULL, ctx);
+        bool result = walker->visitNode(bodyNode, NULL, ctx);
         
         ctx->popFunctionProcedureEntity();
         
@@ -247,11 +251,19 @@ namespace MAlice {
         if (!ctx->isSymbolInScope(identifier, &entity))
             return false;
         
-        if (Utilities::getTypeOfEntity(entity) != MAliceEntityTypeVariable)
+        MAliceEntityType type = Utilities::getTypeOfEntity(entity);
+        if (type != MAliceEntityTypeParameter && type != MAliceEntityTypeVariable)
             return false;
         
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         llvm::Value *value = variableEntity->getLLVMValue();
+        
+        if (type == MAliceEntityTypeParameter) {
+            if (outValue)
+                *outValue = value;
+            
+            return true;
+        }
         
         if (outValue)
             *outValue = ctx->getIRBuilder()->CreateLoad(value, identifier.c_str());
@@ -409,12 +421,12 @@ namespace MAlice {
         BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
         ctx->getIRBuilder()->SetInsertPoint(block);
         
-        bool result = walker->visitChildren(node, NULL, ctx);
-        if (!result) {
-            // Remove the procedure from the Module it's a part of.
-            procedure->removeFromParent();
-            return false;
-        }
+//        bool result = walker->visitChildren(node, NULL, ctx);
+//        if (!result) {
+//            // Remove the procedure from the Module it's a part of.
+//            procedure->removeFromParent();
+//            return false;
+//        }
         
         ctx->popFunctionProcedureEntity();
         
