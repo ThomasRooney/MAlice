@@ -409,20 +409,25 @@ namespace MAlice {
     
     bool visitMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return true;
+        unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
         
         llvm::Value *leftParamValue = NULL;
-        llvm::Value *rightParamValue = NULL;
+        llvm::Value *storedValue = NULL;
         
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
-                
-        llvm::Value *storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
+        
+        if (numChildren == 2) {
+            llvm::Value *rightParamValue = NULL;
+            walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+            storedValue = ctx->getIRBuilder()->CreateFSub(leftParamValue, rightParamValue, "subtmp");
+        }
+        else
+            storedValue = ctx->getIRBuilder()->CreateNeg(leftParamValue);
         
         if (outValue)
             *outValue = storedValue;
 
-        return walker->visitChildren(node, NULL, ctx);
+        return true;
     }
     
     bool visitModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
