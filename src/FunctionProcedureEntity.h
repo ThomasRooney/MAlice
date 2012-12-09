@@ -24,6 +24,9 @@ namespace MAlice {
         
         void setParameterListTypes(std::vector<ParameterEntity*> types);
         std::vector<ParameterEntity*> getParameterListTypes();
+    
+        llvm::Function *getLLVMFunction();
+        void setLLVMFunction(llvm::Function *function);
     };
     
 };

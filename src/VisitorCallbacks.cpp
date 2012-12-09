@@ -9,6 +9,7 @@
 #include "ErrorFactory.h"
 #include "FunctionEntity.h"
 #include "GlobalVariableEntity.h"
+#include "IdentifierDispenser.h"
 #include "ProcedureEntity.h"
 #include "SemanticChecks.h"
 #include "VariableEntity.h"
@@ -221,6 +222,8 @@ namespace MAlice {
                                               Function::ExternalLinkage,
                                               identifier.c_str(),
                                               ctx->getModule());
+        
+        functionEntity->setLLVMFunction(function);
         
         unsigned int i = 0;
         for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
@@ -477,6 +480,8 @@ namespace MAlice {
         std::string identifier = Utilities::getNodeText(identifierNode);
         
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
+        std::string LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
+        
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
         
@@ -509,8 +514,10 @@ namespace MAlice {
         
         Function *procedure = Function::Create(procedureType,
                                                Function::InternalLinkage,
-                                               identifier.c_str(),
+                                               LLVMIdentifier.c_str(),
                                                ctx->getModule());
+        
+        procedureEntity->setLLVMFunction(procedure);
         
         BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
         ctx->getIRBuilder()->SetInsertPoint(block);
@@ -541,11 +548,10 @@ namespace MAlice {
         std::string identifier = Utilities::getNodeText(identifierNode);
         
         Entity *entity = NULL;
-        ctx->isSymbolInCurrentScope(identifier, &entity);
+        ctx->isSymbolInScope(identifier, &entity);
         
-        llvm::Function *function = ctx->getModule()->getFunction(identifier);
-        
-        ctx->getIRBuilder()->CreateCall(function);
+        FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
+        ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction());
         
         return true;
     }

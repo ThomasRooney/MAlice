@@ -6,6 +6,7 @@
 #include "ErrorFactory.h"
 #include "SymbolTable.h"
 #include "FunctionProcedureEntity.h"
+#include "IdentifierDispenser.h"
 
 #include "llvm/BasicBlock.h"
 
@@ -35,6 +36,7 @@ namespace MAlice {
         
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
         m_module = new llvm::Module("root module", llvm::getGlobalContext());
+        m_identifierDispenser = new IdentifierDispenser();
     }
     
     CompilerContext::~CompilerContext()
@@ -75,6 +77,9 @@ namespace MAlice {
         
         if (m_irBuilder)
             delete m_irBuilder, m_irBuilder = NULL;
+        
+        if (m_identifierDispenser)
+            delete m_identifierDispenser, m_identifierDispenser = NULL;
     }
 
     bool CompilerContext::lockTemporarySymbolTable()
@@ -356,6 +361,16 @@ namespace MAlice {
             return NULL;
         
         return m_insertionPoints.top()->getBlock();
+    }
+    
+    IdentifierDispenser *CompilerContext::getIdentifierDispenser()
+    {
+        return m_identifierDispenser;
+    }
+    
+    void CompilerContext::setIdentifierDispenser(IdentifierDispenser *dispenser)
+    {
+        m_identifierDispenser = dispenser;
     }
 
 }; // namespace MAlice

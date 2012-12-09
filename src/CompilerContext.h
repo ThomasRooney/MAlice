@@ -30,6 +30,7 @@
 namespace MAlice {
 
     class FunctionProcedureEntity;
+    class IdentifierDispenser;
     
     class CompilerContext{
     private:
@@ -58,6 +59,8 @@ namespace MAlice {
         
         void pushCurrentInsertionPoint();
         llvm::IRBuilderBase::InsertPoint *popInsertionPoint();
+        
+        IdentifierDispenser *m_identifierDispenser;
         
     public:
         CompilerContext(std::string input);
@@ -99,6 +102,9 @@ namespace MAlice {
         void saveInsertPoint(llvm::BasicBlock *block);
         void restoreInsertPoint();
         llvm::BasicBlock *getCurrentBlock();
+        
+        IdentifierDispenser *getIdentifierDispenser();
+        void setIdentifierDispenser(IdentifierDispenser *dispenser);
         
     }; // class CompilerContext
     
