@@ -229,19 +229,20 @@ namespace MAlice {
                                                        false);
         
         Function *function = Function::Create(functionType,
-                                              Function::ExternalLinkage,
+                                              Function::InternalLinkage,
                                               identifier.c_str(),
                                               ctx->getModule());
         
         functionEntity->setLLVMFunction(function);
         
-//        unsigned int i = 0;
-//        for (auto it = function->arg_begin(); i != parameterEntities.size(); ++it) {
-//            ParameterEntity *entity = parameterEntities.at(i);
-////            llvm::Value *v = it;
-////            it->setName("hello");
+//        for (auto it = function->arg_begin(); i < parameterEntities.size(); ++it) {
+////            ParameterEntity *entity = parameterEntities.at(i);
+//            if (it)
+//                it->setName(entity->getIdentifier().c_str());
+//            
 //            ++i;
 //        }
+        
         
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
@@ -287,13 +288,6 @@ namespace MAlice {
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         llvm::Value *value = variableEntity->getLLVMValue();
         
-        if (Utilities::getTypeOfEntity(entity) == MAliceEntityTypeParameter) {
-            if (outValue)
-                *outValue = value;
-            
-            return true;
-        }
-        
         if (Utilities::getTypeOfEntity(entity) == MAliceEntityTypeGlobalVariable) {
             if (outValue)
                 *outValue = value;
@@ -311,8 +305,21 @@ namespace MAlice {
     {
         if (!Validation::validateIfStatementNode(node, walker, ctx))
             return false;
-
-        return walker->visitChildren(node, NULL, ctx);
+        
+        Function *function = NULL;
+        BasicBlock *insertBlock = ctx->getIRBuilder()->GetInsertBlock();
+        if (insertBlock)
+            function = insertBlock->getParent();
+        
+        llvm::Value *condValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &condValue, ctx);
+        
+        BasicBlock *thenBlock = BasicBlock::Create(getGlobalContext(), "then", function);
+        BasicBlock *afterBlock = BasicBlock::Create(getGlobalContext(), "after", function);
+        
+        ctx->getIRBuilder()->CreateCondBr(condValue, thenBlock, afterBlock);
+        
+        return true;
     }
 
     bool visitIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -333,7 +340,18 @@ namespace MAlice {
 
     bool visitLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        
+        llvm::Value *storedValue = ctx->getIRBuilder()->CreateICmpULT(leftParamValue, rightParamValue);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
     }
     
     bool visitLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -452,6 +470,9 @@ namespace MAlice {
         
         for (auto it = parameterList.begin(); it != parameterList.end(); ++it) {
             ParameterEntity *entity = *it;
+            llvm::Value *parameterValue = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(entity->getType()), 0, entity->getIdentifier().c_str());
+            entity->setLLVMValue(parameterValue);
+            
             ctx->addEntityInScope(entity->getIdentifier(), entity);
         }
         
