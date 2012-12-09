@@ -3,7 +3,7 @@
 #include <sstream>
 
 #include "CompilerFrontEnd.h"
-
+#include "Optimizer.h"
 #include "CompilerContext.h"
 #include "ErrorFactory.h"
 #include "ErrorReporter.h"
@@ -109,6 +109,9 @@ namespace MAlice {
             
             // Do optimisation and output code
             
+            Optimizer optimizationPass(module);
+            optimizationPass.constantFoldingPass();
+
             CodeGenerator codeGenerator(module);
             std::string output = codeGenerator.generateCode();
             
