@@ -558,8 +558,17 @@ namespace MAlice {
         Entity *entity = NULL;
         ctx->isSymbolInScope(identifier, &entity);
         
+        std::vector<llvm::Value*> arguments;
+        
+        for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(identifierNode); ++i) {
+            llvm::Value *value = NULL;
+            walker->visitNode(Utilities::getChildNodeAtIndex(identifierNode, i), &value, ctx);
+            
+            arguments.push_back(value);
+        }
+        
         FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
-        ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction());
+        ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), arguments);
         
         return true;
     }
