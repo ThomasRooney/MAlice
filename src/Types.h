@@ -2,7 +2,7 @@
 #define _MALICETYPES
 
 #include "MAliceParser.h"
-#include "llvmHeader.h"
+#include "LLVMHeader.h"
 #include <ostream>
 #include <vector>
 

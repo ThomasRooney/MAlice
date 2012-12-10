@@ -1,6 +1,6 @@
 
 #include "SemanticAnalyser.h"
-#include "llvmHeader.h"
+#include "LLVMHeader.h"
 #include "ASTWalker.h"
 #include "Entity.h"
 #include "ErrorFactory.h"
