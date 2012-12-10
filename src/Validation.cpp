@@ -193,7 +193,7 @@ namespace MAlice {
         bool hasParams = false;
         // get node index 1, if its a parameter node, get params...
         ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
-        if (Utilities::getNodeType(nodeI1) != PARAMS)
+        if (Utilities::getNodeType(nodeI1) == PARAMS)
             hasParams = true;
         ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
         if (returnNode == NULL) {
@@ -202,7 +202,9 @@ namespace MAlice {
         }
 
         // get node index 1, if its a parameter node, get params...
-        MAliceType returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
+        std::string returnString = Utilities::getNodeText(returnNode);
+        
+        MAliceType returnType = Utilities::getTypeFromTypeString(returnString);
         
         FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>(), returnType);
         ctx->addEntityInScope(identifier, functionEntity);
