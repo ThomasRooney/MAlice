@@ -160,30 +160,34 @@ namespace MAlice {
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            std::string type;
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            // Number of children should be two
-            int numChildren = Utilities::getNumberOfChildNodes(identifierNode);
-            
-            if (numChildren != 2)
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Malformed Array Invocation Node"));
-            
-            // array of what?
-            ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
-            if (typeNode != NULL)
-                type = Utilities::getNodeText(typeNode);
-            // length is a number
-            ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
-            checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
-            
-            std::string typeString = Utilities::getNodeText(typeNode);
-            ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
-            ctx->addEntityInScope(identifier, arrayEntity);
+        if (identifierNode == NULL)
+            return false;
+        
+        std::string identifier(Utilities::getNodeText(identifierNode));
+        std::string type;
+        if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
+            return false;
+        
+        if (Utilities::getNumberOfChildNodes(identifierNode) != 2) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("array declaration"));
+            return false;
         }
+    
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
+        if (typeNode == NULL) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("array declaration"));
+            return false;
+        }
+        
+        type = Utilities::getNodeText(typeNode);
+        
+        ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
+        if (!checkExpression(exprNode, false, walker, ctx, MAliceTypeNumber))
+            return false;
+        
+        std::string typeString = Utilities::getNodeText(typeNode);
+        ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
+        ctx->addEntityInScope(identifier, arrayEntity);
         
         return true;
     }
