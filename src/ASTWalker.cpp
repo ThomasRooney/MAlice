@@ -97,6 +97,7 @@ void ASTWalker :: constructVisitDictionary() {
       ASTWalker::validationDictionary.insert(std::make_pair(RETURNSTATEMENT, &Validation::validateReturnStatementNode));
       ASTWalker::validationDictionary.insert(std::make_pair(VARDECLARATION, &Validation::validateVariableDeclarationNode));
       ASTWalker::validationDictionary.insert(std::make_pair(WHILESTATEMENT, &Validation::validateWhileStatementNode));
+      ASTWalker::validationDictionary.insert(std::make_pair(PARAMS, &Validation::validateParamsNode));
 
 
   }

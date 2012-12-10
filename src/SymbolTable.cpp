@@ -69,9 +69,9 @@ namespace MAlice {
         return (unsigned int)m_symbolMap.size();
     }
     
-    std::list<std::string> SymbolTable::getAllIdentifiers()
+    std::vector<std::string> SymbolTable::getAllIdentifiers()
     {
-        std::list<std::string> identifiers;
+        std::vector<std::string> identifiers;
         
         for (auto pair = m_symbolMap.begin(); pair != m_symbolMap.end(); pair++) {
             identifiers.push_back((*pair).first);

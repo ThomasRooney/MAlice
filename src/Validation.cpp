@@ -147,10 +147,6 @@ namespace MAlice {
         }        
         return walker->validateChildren(node, ctx);
     }
-
-
-
-    // Separator comment (for git).
     
     bool Validation::validateArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
@@ -208,8 +204,6 @@ namespace MAlice {
         // get node index 1, if its a parameter node, get params...
         MAliceType returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
         
-        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
-        
         FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>(), returnType);
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
@@ -226,6 +220,21 @@ namespace MAlice {
         ctx->popFunctionProcedureEntity();
         
         return result;
+    }
+    
+    bool Validation::validateParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
+        std::vector<ParameterEntity*> parameterList = Utilities::getParameterTypesFromParamsNode(node);
+        
+        for (auto it = parameterList.begin(); it != parameterList.end(); ++it) {
+            ParameterEntity *entity = *it;
+            ctx->addEntityInScope(entity->getIdentifier(), entity);
+        }
+        
+        entity->setParameterListTypes(parameterList);
+        
+        return true;
     }
 
     bool Validation::validateExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -342,10 +351,7 @@ namespace MAlice {
         }
         
         std::string identifier = Utilities::getNodeText(identifierNode);
-        
         std::string typeString = Utilities::getNodeText(typeNode);
-        
-        ASTNode valueNode = Utilities::getChildNodeAtIndex(node, 2);
         
         VariableEntity *variable = new VariableEntity(identifier,
                                                       Utilities::getNodeLineNumber(identifierNode),

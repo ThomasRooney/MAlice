@@ -27,6 +27,7 @@ namespace MAlice {
         bool validateProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateProcedureDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateVariableDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateParamsNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         
         
     } // namespace Validation
