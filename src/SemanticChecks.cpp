@@ -57,7 +57,7 @@ namespace MAlice {
     
     bool Validation::checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)
     {
-        return checkExpression(node, walker, false, ctx, typeConfirm);
+        return checkExpression(node, false, walker, ctx, typeConfirm);
     }
     
     bool Validation::checkExpression(ASTNode node, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)

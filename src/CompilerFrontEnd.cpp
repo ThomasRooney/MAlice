@@ -108,10 +108,10 @@ namespace MAlice {
             compilerContext->clearSemanticInformation();
             llvm::Module *module = NULL;
 
-            if (!semanticAnalyser->generateIR(&module)) {
-                std::cerr << "Failure";
-                return EXIT_FAILURE;
-            }
+  //          if (!semanticAnalyser->generateIR(&module)) {
+    //            std::cerr << "Failure";
+      //          return EXIT_FAILURE;
+        //    }
             
             // Do optimisation and output code
             
