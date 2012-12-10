@@ -545,7 +545,11 @@ namespace MAlice {
         std::string identifier = Utilities::getNodeText(identifierNode);
         
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
-        std::string LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
+        std::string LLVMIdentifier;
+        if (!ctx->getCurrentFunctionProcedureEntity() && identifier == "hatta")
+            LLVMIdentifier = "main";
+        else
+            LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
         
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
@@ -597,6 +601,7 @@ namespace MAlice {
         ctx->popFunctionProcedureEntity();
         
         // Create the return value for the function, which will exit the scope for the function.
+        ctx->getIRBuilder()->CreateRetVoid();
         
         if (outValue)
             *outValue = procedure;
@@ -687,7 +692,7 @@ namespace MAlice {
         std::string strVal = Utilities::getNodeText(node);   
 
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateGlobalString(strVal.c_str(), "string");
+            *outValue = ctx->getIRBuilder()->CreateGlobalStringPtr(strVal.c_str(), "string");
         
         return true;
     }

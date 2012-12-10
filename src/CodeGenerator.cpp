@@ -17,13 +17,9 @@ namespace MAlice {
         if (!m_module)
             return "";
         
-        llvm::raw_string_ostream outputStream(output);
-        #ifdef __APPLE__
+//        llvm::raw_string_ostream outputStream(output);
         m_module->dump();
-        #else
-        m_module->print(outputStream, NULL);
-        #endif
-        //outputStream. >> output;
+        
         return output;
     }
     

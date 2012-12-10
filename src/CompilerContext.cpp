@@ -403,16 +403,16 @@ namespace MAlice {
         switch(type)
         {
             case MAliceTypeSentence:
-                value = getIRBuilder()->CreateGlobalString("%s", "__printf_string_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%s", "__printf_string_format");
                 break;
             case MAliceTypeNumber:
-                value = getIRBuilder()->CreateGlobalString("%llu", "__printf_number_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__printf_number_format");
                 break;
             case MAliceTypeBoolean:
-                value = getIRBuilder()->CreateGlobalString("%c", "__printf_bool_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_bool_format");
                 break;
             case MAliceTypeLetter:
-                value = getIRBuilder()->CreateGlobalString("%c", "__printf_char_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_char_format");
                 break;
             default:
                 return NULL;
