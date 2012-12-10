@@ -1,7 +1,7 @@
 
 #ifndef _MALICECOMPILERCONTEXT
 #define _MALICECOMPILERCONTEXT
-#include "llvmHeader.h"
+#include "LLVMHeader.h"
 #include <iostream>
 #include <list>
 #include <string>
