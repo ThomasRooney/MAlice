@@ -85,17 +85,7 @@ namespace MAlice {
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
         
         if (outValue)
-        {
-            auto t = lvalueValue->getType();
-            auto t2 = assignmentValue->getType();
-            if (t->getTypeID() == llvm::Type::PointerTyID)
-            {
-                // Get what lvalueValue points to, load assignmentValue into there
-                *outValue = ctx->getIRBuilder()->Insert(new llvm::LoadInst(assignmentValue, lvalueValue->getName()),lvalueValue->getName());
-            }
-            else
-                *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
-        }
+            *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
         
         return true;
     }
@@ -653,65 +643,32 @@ namespace MAlice {
         if (!Validation::validatePrintStatementNode(node, walker, ctx))
             return false;
 
-        ASTNode childNode = Utilities::getChildNodeAtIndex(node, 0);
-
-        // Evaluate the expression underneath
-        llvm::Value * printVal = NULL;
-
+        std::vector<Type*> parameterTypes;
+        parameterTypes.push_back(Type::getInt8PtrTy(getGlobalContext()));
+        
+        FunctionType *printfFunctionType = FunctionType::get(Type::getInt32Ty(getGlobalContext()),
+                                                             parameterTypes,
+                                                             true);
+        
+        Function *printfFunction = cast<Function>(ctx->getModule()->getOrInsertFunction("printf", printfFunctionType));
+        
+        llvm::Value *printVal = NULL;
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &printVal, ctx);
-//        printVal = ctx->getIRBuilder()->CreateGlobalStringPtr("TODO: puts");
         
-//        Utilities::getTypeFromExpressionNode(childNode, &type, true, walker, ctx, NULL);
-        llvm::Constant *zero_32 = llvm::Constant::getNullValue(IntegerType::getInt32Ty(llvm::getGlobalContext()));
-
-        // Ensure printf has been declared as an external.
-        Function *puts_func = cast<Function>(ctx->getModule()->
-            getOrInsertFunction("puts", IntegerType::getInt32Ty(llvm::getGlobalContext()),
-                                PointerType::getUnqual(IntegerType::getInt8Ty(llvm::getGlobalContext())), NULL));
-
-
-
-
-        //llvm::Value *printValP = ctx->getIRBuilder()->
-        //    CreateSExt(printVal, IntegerType::getInt32Ty(llvm::getGlobalContext()), "printtmp");
-
-        //llvm::Value *printValP = ctx->getIRBuilder()->
-        //    CreateIntToPtr(printVal, IntegerType::getInt32Ty(llvm::getGlobalContext()), "printtmp");
-        // get the type of printVal
-        llvm::Type *t = printVal->getType();
-
-        llvm::Constant *gep_params[] = {
-            zero_32,
-            zero_32
-        };
-        llvm::Constant *printValParam;
-        //llvm::GlobalVariable *v = llvm::cast<llvm::GlobalVariable,llvm::Value*>(printVal);
-        switch (t->getTypeID())
-        {
-            case llvm::Type::TypeID::IntegerTyID:
-                printValParam = llvm::ConstantExpr::getGetElementPtr(llvm::cast<llvm::Constant, llvm::Value*>(printVal), gep_params);
-                break;
-            case llvm::Type::TypeID::PointerTyID:
-                // Add it to the const (int)'0'  
-                //printValParam = llvm::ConstantExpr::getGetElementPtr(llvm::cast<llvm::Constant, llvm::Value*>(printVal), gep_params);
-            default:
-                break;
-        }
-
-        llvm::Value *putchar_params[] = {
-              printVal,
-//            zero_32,
-//            zero_32 // Append '\0\0'
-          };
+        MAliceType type;
+        Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
+                                             &type,
+                                             false,
+                                             walker,
+                                             ctx,
+                                             NULL);
         
-
-        CallInst *puts_call = ctx->getIRBuilder()->CreateCall(puts_func,
-                             printVal);
-
-        puts_call->setTailCall(false);
+        llvm::Value *formatStringValue = ctx->printfFormatStringForExpressionType(type);
         
-        return walker->visitChildren(node, NULL, ctx);
-
+        // Create the printf() call.
+        ctx->getIRBuilder()->CreateCall2(printfFunction, formatStringValue, printVal);
+        
+        return true;
     }
 
     bool visitProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)

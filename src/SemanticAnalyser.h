@@ -2,8 +2,6 @@
 #ifndef _MALICESEMANTICANALYSIS
 #define _MALICESEMANTICANALYSIS
 
-#include <iostream>
-
 #include "ErrorReporter.h"
 #include "Types.h"
 

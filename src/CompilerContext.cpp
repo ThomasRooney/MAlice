@@ -372,5 +372,37 @@ namespace MAlice {
     {
         m_identifierDispenser = dispenser;
     }
+    
+    llvm::Value *CompilerContext::printfFormatStringForExpressionType(MAliceType type)
+    {
+        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find((unsigned int)type);
+        if (element != m_printfFormatStringMap.end())
+            return element->second;
+        
+        llvm::Value *value = NULL;
+        
+        switch(type)
+        {
+            case MAliceTypeSentence:
+                value = getIRBuilder()->CreateGlobalString("%s", "__printf_string_format");
+                break;
+            case MAliceTypeNumber:
+                value = getIRBuilder()->CreateGlobalString("%llu", "__printf_number_format");
+                break;
+            case MAliceTypeBoolean:
+                value = getIRBuilder()->CreateGlobalString("%c", "__printf_bool_format");
+                break;
+            case MAliceTypeLetter:
+                value = getIRBuilder()->CreateGlobalString("%c", "__printf_char_format");
+                break;
+            default:
+                return NULL;
+                break;
+        }
+        
+        m_printfFormatStringMap.insert(std::make_pair((unsigned int)type, value));
+        
+        return value;
+    }
 
 }; // namespace MAlice

@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <set>
 #include <stack>
+#include <unordered_map>
 #ifdef _WIN32
 #include <windows.h>
 #include <process.h>			//Data types
@@ -24,8 +25,7 @@
 #include "MAliceParser.h"
 
 #include "llvm/Support/IRBuilder.h"
-
-//class llvm::BasicBlock;
+#include "Types.h"
 
 namespace MAlice {
 
@@ -61,6 +61,7 @@ namespace MAlice {
         llvm::IRBuilderBase::InsertPoint *popInsertionPoint();
         
         IdentifierDispenser *m_identifierDispenser;
+        std::unordered_map<unsigned int, llvm::Value*> m_printfFormatStringMap;
         
     public:
         CompilerContext(std::string input);
@@ -105,6 +106,8 @@ namespace MAlice {
         
         IdentifierDispenser *getIdentifierDispenser();
         void setIdentifierDispenser(IdentifierDispenser *dispenser);
+        
+        llvm::Value *printfFormatStringForExpressionType(MAliceType type);
         
     }; // class CompilerContext
     
