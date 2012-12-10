@@ -287,7 +287,7 @@ STRING_LITERAL
 	:	QUOTE (ESCAPE | ~(QUOTE))* QUOTE
 	;
 NUMBER_LITERAL
-	:	'0' | ('-')? '1'..'9' DIGIT*
+	:	'0' | '1'..'9' DIGIT*
 	;
 	
 fragment NEWLINE
