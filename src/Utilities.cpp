@@ -612,12 +612,8 @@ namespace MAlice {
         if (!requiresLValue && Utilities::getNodeType(firstChildNode) == IDENTIFIER) {
             MAliceType type = MAliceTypeNone;
             MAliceEntityType entityType = MAliceEntityTypeUndefined;
-            
-            if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, &entityType, walker, ctx))
+            if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, &entityType, walker, ctx, passedByReference))
                 return false;
-            
-            if (passedByReference)
-                *passedByReference = (entityType == MAliceEntityTypeArray);
             
             if (outType)
                 *outType = type;
@@ -637,7 +633,7 @@ namespace MAlice {
                 MAliceType type = MAliceTypeNone;
                 MAliceEntityType entityType = MAliceEntityTypeUndefined;
                 
-                if (!getTypeFromExpressionIdentifierNode(node, &type, &entityType, walker, ctx))
+                if (!getTypeFromExpressionIdentifierNode(node, &type, &entityType, walker, ctx, NULL))
                     return false;
                 
                 if (entityType == MAliceEntityTypeArray) {
@@ -723,7 +719,7 @@ namespace MAlice {
                 std::string identifier = Utilities::getNodeText(identifierNode);
                 
                 MAliceEntityType entityType = MAliceEntityTypeUndefined;
-                if (!getTypeFromExpressionIdentifierNode(identifierNode, NULL, &entityType, walker, ctx))
+                if (!getTypeFromExpressionIdentifierNode(identifierNode, NULL, &entityType, walker, ctx, NULL))
                     return false;
                 
                 if (entityType != MAliceEntityTypeArray) {
@@ -1014,7 +1010,7 @@ namespace MAlice {
         return true;
     }
     
-    bool Utilities::getTypeFromExpressionIdentifierNode(ASTNode node, MAliceType *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx)
+    bool Utilities::getTypeFromExpressionIdentifierNode(ASTNode node, MAliceType *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
     {
         Entity *lookupEntity;
         
@@ -1045,7 +1041,17 @@ namespace MAlice {
         }
         
         if (outType)
+        {
             *outType = lookupVEntity->getType();
+            if (passedByReference)
+            {
+                auto entityType = Utilities::getTypeOfEntity(lookupVEntity);
+                if (entityType == MAliceEntityTypeParameter)
+                    *passedByReference = dynamic_cast<ParameterEntity*>(lookupVEntity)->isPassedByReference();
+                else if (entityType == MAliceEntityTypeArray)
+                    *passedByReference = true;
+            }
+        }
         
         if (outEntityType)
             *outEntityType = Utilities::getTypeOfEntity(lookupVEntity);
