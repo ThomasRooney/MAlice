@@ -64,28 +64,29 @@ namespace MAlice {
 
     bool Validation::validateIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
-        bool checkTotal = true;
-        // If -> (Expression -> Statements)*
         int numChildren = Utilities::getNumberOfChildNodes(node);
         if (numChildren < 1) {
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if Statement"));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if statement"));
             return false;
         }
-        //  the expression on node 1 must return a a boolean
+
         for (int i = 0 ; i < numChildren; i++)
         {
             ASTNode childNode = Utilities::getChildNodeAtIndex(node,i);
-            switch(Utilities::getNodeType(childNode))
-            {
-                case EXPRESSION:
-                    checkTotal = checkExpression(childNode, walker, ctx, MAliceTypeBoolean) && checkTotal;
-                    break;
-                default:
-                    continue;
+            ANTLR3_UINT32 nodeType = Utilities::getNodeType(childNode);
+            
+            if (nodeType == EXPRESSION) {
+                if (!checkExpression(childNode, walker, ctx, MAliceTypeBoolean))
+                    return false;
+            } else if (i == 0) {
+                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if statement"));
+                
+                // First node needs to be an expression
+                return false;
             }
         }
         
-        return checkTotal;
+        return true;
     }
 
     bool Validation::validateInputStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)

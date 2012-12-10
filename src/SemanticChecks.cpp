@@ -228,9 +228,9 @@ namespace MAlice {
                                                                  " in invocation of '" +
                                                                  funcProcIdentifier +
                                                                  "'. Expected argument passed by " +
-                                                                 (passedByReference?"reference":"value") +
+                                                                 (paramEntity->isPassedByReference() ? "reference" : "value") +
                                                                  " but found argument passed by " +
-                                                                 (passedByReference?"value":"reference") +
+                                                                 (passedByReference ? "reference" : "value") +
                                                                  ".");
                 error->setLineNumber(Utilities::getNodeLineNumber(expressionNode));
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(expressionRange));
