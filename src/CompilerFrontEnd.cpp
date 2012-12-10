@@ -86,7 +86,7 @@ namespace MAlice {
         
         CompilerContext *compilerContext = new CompilerContext(input.str());
         setParserErrorReporter(m_errorReporter);
-        compilerContext->setErrorReporter(m_errorReporter);
+        compilerContext->setErrorReporter(m_errorReporter); 
         
         cout << "Analysing file '" + path + "'...\n\n";
         
