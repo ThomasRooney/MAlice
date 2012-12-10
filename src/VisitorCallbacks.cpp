@@ -50,9 +50,6 @@ namespace MAlice {
 
     bool visitArrayDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateArrayDeclarationNode(node, walker, ctx))
-            return false;
-        
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
@@ -75,9 +72,6 @@ namespace MAlice {
 
     bool visitAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateAssignmentStatementNode(node, walker, ctx))
-            return false;
-        
         llvm::Value *lvalueValue = NULL;
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &lvalueValue, ctx);
         
@@ -123,7 +117,6 @@ namespace MAlice {
     bool visitBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
-        Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx); // Generates warning, carry on.
         
         bool result = walker->visitChildren(node, NULL, ctx);
         
@@ -160,9 +153,6 @@ namespace MAlice {
 
     bool visitDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateDecrementStatementNode(node, walker, ctx))
-            return false;
-
         return walker->visitChildren(node, NULL, ctx);
     }
 
@@ -197,9 +187,6 @@ namespace MAlice {
 
     bool visitFunctionDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateFunctionDeclarationNode(node, walker, ctx))
-            return false;
-        
         // We've already validated that there is an identifier node here, so this won't be NULL.
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
@@ -243,15 +230,6 @@ namespace MAlice {
                                               ctx->getModule());
         
         functionEntity->setLLVMFunction(function);
-        
-//        for (auto it = function->arg_begin(); i < parameterEntities.size(); ++it) {
-////            ParameterEntity *entity = parameterEntities.at(i);
-//            if (it)
-//                it->setName(entity->getIdentifier().c_str());
-//            
-//            ++i;
-//        }
-        
         
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
@@ -322,9 +300,6 @@ namespace MAlice {
 
     bool visitIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateIfStatementNode(node, walker, ctx))
-            return false;
-        
         Function *function = NULL;
         BasicBlock *insertBlock = ctx->getIRBuilder()->GetInsertBlock();
         if (insertBlock)
@@ -363,17 +338,11 @@ namespace MAlice {
 
     bool visitIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateIncrementStatementNode(node, walker, ctx))
-            return false;
-
         return walker->visitChildren(node, NULL, ctx);
     }    
 
     bool visitInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateInputStatementNode(node, walker, ctx))
-            return false;
-
         return walker->visitChildren(node, NULL, ctx);
     }
 
@@ -572,9 +541,6 @@ namespace MAlice {
 
     bool visitProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateProcedureDeclarationNode(node, walker, ctx))
-            return false;
-        
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
@@ -640,9 +606,6 @@ namespace MAlice {
 
     bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validatePrintStatementNode(node, walker, ctx))
-            return false;
-
         std::vector<Type*> parameterTypes;
         parameterTypes.push_back(Type::getInt8PtrTy(getGlobalContext()));
         
@@ -673,9 +636,6 @@ namespace MAlice {
 
     bool visitProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateProcFuncInvocationNode(node, walker, ctx))
-            return false;
-        
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
@@ -704,9 +664,6 @@ namespace MAlice {
 
     bool visitReturnStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateReturnStatementNode(node, walker, ctx))
-            return false;
-
         llvm::Value *returnValue = NULL;
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &returnValue, ctx);
         
@@ -742,9 +699,6 @@ namespace MAlice {
 
     bool visitVariableDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateVariableDeclarationNode(node, walker, ctx))
-            return false;
-        
         if (!ctx->getCurrentFunctionProcedureEntity())
             return visitVariableDeclarationNodeAsGlobalVariable(node, outValue, walker, ctx);
         
@@ -808,9 +762,6 @@ namespace MAlice {
     
     bool visitWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (!Validation::validateWhileStatementNode(node, walker, ctx))
-            return false;
-        
         return true;
         
         BasicBlock *currentBlock = ctx->getIRBuilder()->GetInsertBlock();

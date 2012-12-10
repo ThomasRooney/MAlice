@@ -15,16 +15,22 @@ namespace MAlice {
         ASTWalker();
         void feedTree();
         bool validateTree(ASTNode node, CompilerContext *ctx);
+        bool generateIRFromTree(ASTNode root, CompilerContext *ctx);
         void compileTree();
         ~ASTWalker();
         bool visitNode(ASTNode node, llvm::Value **outValue, CompilerContext *ctx);
+        bool validateNode(ASTNode node, CompilerContext *ctx);
         bool visitChildren(ASTNode node, std::vector<llvm::Value*> *childValueLists, CompilerContext *ctx);
+        bool validateChildren(ASTNode node, CompilerContext *ctx);
     protected:
 
     private:
-        std::unordered_map<unsigned int, MAliceVisitFunction> visitDictionary;
+        static std::unordered_map<unsigned int, MAliceVisitFunction> visitDictionary;
+        static std::unordered_map<unsigned int, MAliceValidationFunction> validationDictionary;
         void constructVisitDictionary ();
+
         MAliceVisitFunction getNodeVisitFunction(ASTNode node);
+        MAliceValidationFunction getNodeValidationFunction(ASTNode node);
     }; // class ASTWalker
 
 }; // namespace MAlice

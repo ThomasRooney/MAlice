@@ -100,19 +100,23 @@ namespace MAlice {
                 Utilities::printTree(tree);
             
             semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-            
+            if (!semanticAnalyser->validateAST()) {
+                // Exit before generation if there are serious errors
+                return EXIT_FAILURE;
+            }
+            // Reset Compiler Context after validation, TODO: Generate once.
+            compilerContext->clearSemanticInformation();
             llvm::Module *module = NULL;
-            if (!semanticAnalyser->validateAndGenerateIR(&module)) {
+
+            if (!semanticAnalyser->generateIR(&module)) {
                 std::cerr << "Failure";
-                
-                // Handle error
                 return EXIT_FAILURE;
             }
             
             // Do optimisation and output code
             
-            Optimizer optimizationPass(module);
-            optimizationPass.constantFoldingPass();
+            //Optimizer optimizationPass(module);
+            //optimizationPass.constantFoldingPass();
 
             CodeGenerator codeGenerator(module);
             std::string output = codeGenerator.generateCode();

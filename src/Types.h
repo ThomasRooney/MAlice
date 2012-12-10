@@ -16,6 +16,7 @@ namespace MAlice {
     typedef pANTLR3_BASE_TREE ASTNode;
     typedef std::vector<llvm::Value*> ValueList;
     typedef bool (*MAliceVisitFunction)(ASTNode, llvm::Value **outValue, ASTWalker*, CompilerContext*);
+    typedef bool (*MAliceValidationFunction)(ASTNode, ASTWalker*, CompilerContext*);
     
     typedef enum {
         MAliceTypeNone = 1 << 0,

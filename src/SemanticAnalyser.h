@@ -19,6 +19,8 @@ namespace MAlice {
     public:
         SemanticAnalyser(ASTNode tree, CompilerContext *ctx);
         bool validateAndGenerateIR(llvm::Module **IRModule);
+        bool validateAST();
+        bool generateIR(llvm::Module **IRModule);
         
         void setErrorReporter(ErrorReporter *errorReporter);
     }; // class SemanticAnalyser

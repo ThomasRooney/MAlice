@@ -67,6 +67,7 @@ namespace MAlice {
         CompilerContext(std::string input);
         ~CompilerContext();
         bool         lockTemporarySymbolTable();
+        void         clearSemanticInformation();
         SymbolTable *getTemporarySymbolTable();
         bool         unlockTemporarySymbolTable();
         bool addEntityInScope(std::string identifier, Entity *entity);

@@ -12,6 +12,9 @@ namespace MAlice {
     
     namespace Validation {
         bool validateAssignmentStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateArbitraryBlockNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
+        bool validateExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         bool validateIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);

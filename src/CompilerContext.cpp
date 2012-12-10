@@ -317,7 +317,26 @@ namespace MAlice {
     {
         return m_module;
     }
-    
+
+    void CompilerContext::clearSemanticInformation() 
+    {
+        for (list<SymbolTable*>::iterator it = m_symbolTables.begin(); it != m_symbolTables.end(); ++it)
+        {
+            SymbolTable *table = *it;
+
+            if (table) {
+                delete table, table = NULL;
+            }
+        }
+        
+        m_symbolTables.clear();
+        
+        // The entities for the function procedure scope stack are cleaned up in the symbol tables.
+        while(!m_functionProcedureScopeStack.empty()) {
+            m_functionProcedureScopeStack.pop();
+        }
+    }
+
     void CompilerContext::pushCurrentInsertionPoint()
     {
         llvm::IRBuilderBase::InsertPoint currentPoint = getIRBuilder()->saveIP();

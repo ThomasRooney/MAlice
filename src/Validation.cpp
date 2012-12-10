@@ -17,6 +17,28 @@ namespace MAlice {
     {
         return checkValidAssignmentStatementNode(node, walker, ctx);
     }
+
+    bool Validation::validateArbitraryBlockNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        bool result;
+        ctx->enterScope();
+        result = walker->validateChildren(node, ctx);
+        ctx->exitScope();
+        return result;
+    }
+
+    bool Validation::validateBodyNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ctx->enterScope();
+        
+        Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx); // Generates warning
+        
+        bool result = walker->validateChildren(node, ctx);
+        
+        ctx->exitScope();
+        
+        return result;
+    }
     
     bool Validation::validateIncrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
@@ -93,7 +115,7 @@ namespace MAlice {
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
             }
         }
-        return walker->visitChildren(node, NULL, ctx);
+        return walker->validateChildren(node, ctx);
     }
     
     bool Validation::validatePrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -123,7 +145,7 @@ namespace MAlice {
             default:
                 return false;
         }        
-        return false;
+        return walker->validateChildren(node, ctx);
     }
 
 
@@ -182,8 +204,38 @@ namespace MAlice {
             ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("function declaration"));
             return false;
         }
+
+        // get node index 1, if its a parameter node, get params...
+        MAliceType returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
         
-        return true;
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
+        
+        FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>(), returnType);
+        ctx->addEntityInScope(identifier, functionEntity);
+        ctx->pushFunctionProcedureEntity(functionEntity);
+        
+        // Populate the function arguments.
+        if (hasParams) {
+            if (!walker->validateNode(nodeI1, ctx))
+                return false;
+        }
+        
+        // Walk through the children
+        bool result = walker->validateChildren(node, ctx);
+        
+        ctx->popFunctionProcedureEntity();
+        
+        return result;
+    }
+
+    bool Validation::validateExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        bool result;
+        ctx->beginExpression();
+        result = walker->validateChildren(node, ctx);
+        ctx->endExpression();
+        return result;
+
     }
     
     bool Validation::validateProcFuncInvocationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -231,6 +283,28 @@ namespace MAlice {
         if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
             return false;
         
+        ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
+        
+        ctx->addEntityInScope(identifier, procedureEntity);
+        ctx->pushFunctionProcedureEntity(procedureEntity);
+        
+        bool hasParams = false;
+        
+        // get node index 1, if its a parameter node, get params...
+        ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
+        if (Utilities::getNodeType(nodeI1) == PARAMS)
+            hasParams = true;
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
+        
+        if (hasParams) {
+            if (!walker->validateNode(nodeI1, ctx))
+                return false;
+        }
+
+        walker->validateNode(bodyNode, ctx);
+        
+        ctx->popFunctionProcedureEntity();
+        
         return true;
     }
     
@@ -267,6 +341,18 @@ namespace MAlice {
             
         }
         
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        std::string typeString = Utilities::getNodeText(typeNode);
+        
+        ASTNode valueNode = Utilities::getChildNodeAtIndex(node, 2);
+        
+        VariableEntity *variable = new VariableEntity(identifier,
+                                                      Utilities::getNodeLineNumber(identifierNode),
+                                                      Utilities::getTypeFromTypeString(typeString));
+        
+        ctx->addEntityInScope(identifier, variable);
+
         return true;
     }
 

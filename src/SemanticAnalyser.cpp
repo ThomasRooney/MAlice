@@ -16,6 +16,18 @@ namespace MAlice {
     
     bool SemanticAnalyser::validateAndGenerateIR(llvm::Module **IRModule)
     {
+        
+        if (!validateAST())
+            return false;
+
+        if (!generateIR(IRModule))
+            return false;
+
+        return true;
+    }
+
+    bool SemanticAnalyser::validateAST()
+    {
         ASTWalker treeWalker = ASTWalker();
         
         if (!treeWalker.validateTree(m_tree, m_compilerContext))
@@ -23,13 +35,22 @@ namespace MAlice {
         
         if (!validateCompilerContext(m_compilerContext))
             return false;
-        
-        if (IRModule)
-            *IRModule = m_compilerContext->getModule();
-        
+
         return true;
     }
-    
+
+    bool SemanticAnalyser::generateIR(llvm::Module **IRModule)
+    {
+        ASTWalker treeWalker = ASTWalker();
+
+        if (!treeWalker.generateIRFromTree(m_tree, m_compilerContext))
+            return false;
+
+        if (IRModule)
+            *IRModule = m_compilerContext->getModule();
+
+    }
+
     bool SemanticAnalyser::validateCompilerContext(CompilerContext *ctx)
     {
         Entity *hattaEntity = NULL;
