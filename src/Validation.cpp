@@ -171,6 +171,10 @@ namespace MAlice {
             // length is a number
             ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
             checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
+            
+            std::string typeString = Utilities::getNodeText(typeNode);
+            ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
+            ctx->addEntityInScope(identifier, arrayEntity);
         }
         
         return true;
@@ -363,6 +367,5 @@ namespace MAlice {
 
         return true;
     }
-
 
 }

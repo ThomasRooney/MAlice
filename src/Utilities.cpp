@@ -617,7 +617,7 @@ namespace MAlice {
                 return false;
             
             if (passedByReference)
-                *passedByReference = entityType==MAliceEntityTypeArray;
+                *passedByReference = entityType == MAliceEntityTypeArray;
             
             if (outType)
                 *outType = type;
