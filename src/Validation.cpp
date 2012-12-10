@@ -139,14 +139,21 @@ namespace MAlice {
         }
         //  the expression on node 1 must return a a boolean
         ASTNode exprNode = Utilities::getChildNodeAtIndex(node,0);
-        switch(Utilities::getNodeType(exprNode))
-        {
-            case EXPRESSION:
-                return checkExpression(exprNode, walker, ctx, MAliceTypeBoolean);
-            default:
-                return false;
-        }        
-        return walker->validateChildren(node, ctx);
+        ANTLR3_UINT32 nodeType = Utilities::getNodeType(exprNode);
+        
+        if (nodeType != EXPRESSION)
+            return false;
+        
+        if (!checkExpression(exprNode, walker, ctx, MAliceTypeBoolean))
+            return false;
+        
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, 1);
+        if (!bodyNode) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("while loop"));
+            return false;
+        }
+        
+        return walker->validateNode(bodyNode, ctx);
     }
     
     bool Validation::validateArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
