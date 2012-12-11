@@ -43,11 +43,11 @@ namespace MAlice {
     {
         ASTWalker treeWalker = ASTWalker();
 
-//        if (!treeWalker.generateIRFromTree(m_tree, m_compilerContext))
-//            return false;
-//
-//        if (IRModule)
-//            *IRModule = m_compilerContext->getModule();
+        if (!treeWalker.generateIRFromTree(m_tree, m_compilerContext))
+            return false;
+
+        if (IRModule)
+            *IRModule = m_compilerContext->getModule();
 
         return true;
         
