@@ -10,18 +10,20 @@
 
 namespace MAlice {
 
-class FunctionEntity : public FunctionProcedureEntity {
-private:
-    MAliceType m_returnType;
+    class Type;
     
-public:
-    FunctionEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes, MAliceType returnType);
-    FunctionEntity *clone();
-    
-    std::string humanReadableName();
-    
-    MAliceType getReturnType() {return m_returnType;}
-}; // class FunctionEntity
+    class FunctionEntity : public FunctionProcedureEntity {
+    private:
+        Type m_returnType;
+        
+    public:
+        FunctionEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes, Type returnType);
+        FunctionEntity *clone();
+        
+        std::string humanReadableName();
+        
+        Type getReturnType() {return m_returnType;}
+    }; // class FunctionEntity
     
 }; // namespace MAlice
 

@@ -31,6 +31,7 @@ namespace MAlice {
 
     class FunctionProcedureEntity;
     class IdentifierDispenser;
+    class Type;
     
     class CompilerContext{
     private:
@@ -108,7 +109,7 @@ namespace MAlice {
         IdentifierDispenser *getIdentifierDispenser();
         void setIdentifierDispenser(IdentifierDispenser *dispenser);
         
-        llvm::Value *printfFormatStringForExpressionType(MAliceType type);
+        llvm::Value *printfFormatStringForExpressionType(Type type);
         
     }; // class CompilerContext
     

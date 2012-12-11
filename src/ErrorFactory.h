@@ -3,6 +3,7 @@
 #define _MALICEERRORFACTORY
 
 #include <iostream>
+#include <vector>
 
 #include "MAliceParser.h"
 #include "Types.h"
@@ -11,6 +12,7 @@
 namespace MAlice {
 
     class CompilerContext;
+    class Type;
     
     class ErrorFactory {
     public:
@@ -24,9 +26,9 @@ namespace MAlice {
         
         static Error *createInvalidASTError(std::string currentValidationType);
         static Error *createInvalidLValueError(ASTNode node, CompilerContext *ctx);
-        static Error *createInvalidOperandTypeError(ASTNode operandNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx);
-        static Error *createInvalidOperandTypeError(ASTNode operatorNode, ASTNode operandNode, MAliceType actualType, unsigned int expectedTypes, CompilerContext *ctx);
-        static Error *createCannotMatchTypesError(ASTNode exprNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx);
+        static Error *createInvalidOperandTypeError(ASTNode operandNode, Type expectedType, Type actualType, CompilerContext *ctx);
+        static Error *createInvalidOperandTypeError(ASTNode operatorNode, ASTNode operandNode, Type actualType, std::vector<Type> expectedTypes, CompilerContext *ctx);
+        static Error *createCannotMatchTypesError(ASTNode exprNode, Type expectedType, Type actualType, CompilerContext *ctx);
     }; // class ErrorFactory
     
 };

@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "Types.h"
+#include "Type.h"
 
 namespace MAlice {
     
@@ -15,6 +16,7 @@ namespace MAlice {
     class SymbolTable;
     class ParameterEntity;
     class FunctionProcedureEntity;
+    class Type;
     
     class Utilities {
     private:
@@ -31,9 +33,9 @@ namespace MAlice {
         static unsigned int getNumberOfChildNodes(ASTNode node);
         static ASTNode getChildNodeAtIndex(ASTNode node, unsigned int index);
         static char *getNodeText(ASTNode node);
-        static MAliceType getTypeFromTypeString(std::string);
-        static MAliceType getTypeFromNodeType(int nodeType);
-        static const char* getNameOfTypeFromMAliceType(MAliceType);
+        static Type getTypeFromTypeString(std::string);
+        static Type getTypeFromNodeType(int nodeType);
+        static std::string getNameOfPrimitiveType(Type type);
         static MAliceEntityType getTypeOfEntity(Entity *entity);
         static bool isKindOfEntity(Entity *entity, MAliceEntityType type);
         static std::string getTokenTextFromTokenIdentifier(ANTLR3_UINT32 tokenIdentifier);
@@ -54,7 +56,7 @@ namespace MAlice {
         
         static std::string stripLeadingAndTrailingCharacters(std::string input, char character);
         static std::string getOperatorStringFromOperatorNode(ASTNode node);
-        static std::string getTypeListFromTypeFlags(unsigned int flags);
+        static std::string getTypeListFromTypes(std::vector<Type> types);
         
         template <typename T>
         static std::string numberToString(T number) {
@@ -64,19 +66,27 @@ namespace MAlice {
             return stream.str();
         }
         
+        template <typename T>
+        static std::vector<T> singletonVector(T type) {
+            std::vector<T> vec;
+            vec.push_back(type);
+            
+            return vec;
+        }
+        
         static void printSymbolTableEntries(SymbolTable *symbolTable);
         static std::vector<ParameterEntity*> getParameterTypesFromParamsNode(ASTNode paramsNode);
         static FunctionProcedureEntity *getFunctionProcedureEntityForInvocationNode(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
-        static MAliceType getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
+        static Type getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
         static std::string getFunctionProcedureInvocationIdentifier(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx);
-        static bool getTypeFromInvocationExpressionNode(ASTNode node, MAliceType *outType, ASTWalker *walker, CompilerContext *ctx);
-        static bool getTypeFromExpressionNode(ASTNode node, MAliceType *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference);
-        static bool getTypeFromExpressionRuleNode(ASTNode node, MAliceType *outType, ASTWalker *walker, CompilerContext *ctx);
-        static bool getTypeFromBinaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, unsigned int requiredTypes, ASTWalker *walker, CompilerContext *ctx);
-        static bool getTypeFromUnaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, MAliceType requiredType, ASTWalker *walker, CompilerContext *ctx);
-        static bool getTypeFromExpressionIdentifierNode(ASTNode node, MAliceType *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference);
+        static bool getTypeFromInvocationExpressionNode(ASTNode node, Type *outType, ASTWalker *walker, CompilerContext *ctx);
+        static bool getTypeFromExpressionNode(ASTNode node, Type *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference);
+        static bool getTypeFromExpressionRuleNode(ASTNode node, Type *outType, ASTWalker *walker, CompilerContext *ctx);
+        static bool getTypeFromBinaryOperatorNode(ASTNode node, Type *outType, std::string operatorName, std::vector<Type> requiredTypes, ASTWalker *walker, CompilerContext *ctx);
+        static bool getTypeFromUnaryOperatorNode(ASTNode node, Type *outType, std::string operatorName, Type requiredType, ASTWalker *walker, CompilerContext *ctx);
+        static bool getTypeFromExpressionIdentifierNode(ASTNode node, Type *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference);
         
-        static llvm::Type *getLLVMTypeFromMAliceType(MAliceType type);
+        static llvm::Type *getLLVMTypeFromType(Type type);
     };
     
 }; // namespace MAlice

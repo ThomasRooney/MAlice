@@ -11,7 +11,7 @@ namespace MAlice {
     
     class GlobalVariableEntity : public VariableEntity {
     public:
-        GlobalVariableEntity(std::string identifier, unsigned int lineNumber, MAliceType type);
+        GlobalVariableEntity(std::string identifier, unsigned int lineNumber, Type type);
     }; //class GlobalVariableEntity
     
 } // namespace MAlice

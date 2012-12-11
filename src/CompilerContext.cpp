@@ -392,26 +392,26 @@ namespace MAlice {
         m_identifierDispenser = dispenser;
     }
     
-    llvm::Value *CompilerContext::printfFormatStringForExpressionType(MAliceType type)
+    llvm::Value *CompilerContext::printfFormatStringForExpressionType(Type type)
     {
-        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find((unsigned int)type);
+        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find(type.getPrimitiveType());
         if (element != m_printfFormatStringMap.end())
             return element->second;
         
         llvm::Value *value = NULL;
         
-        switch(type)
+        switch(type.getPrimitiveType())
         {
-            case MAliceTypeSentence:
+            case PrimitiveTypeSentence:
                 value = getIRBuilder()->CreateGlobalStringPtr("%s", "__printf_string_format");
                 break;
-            case MAliceTypeNumber:
+            case PrimitiveTypeNumber:
                 value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__printf_number_format");
                 break;
-            case MAliceTypeBoolean:
+            case PrimitiveTypeBoolean:
                 value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_bool_format");
                 break;
-            case MAliceTypeLetter:
+            case PrimitiveTypeLetter:
                 value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_char_format");
                 break;
             default:
@@ -419,7 +419,7 @@ namespace MAlice {
                 break;
         }
         
-        m_printfFormatStringMap.insert(std::make_pair((unsigned int)type, value));
+        m_printfFormatStringMap.insert(std::make_pair(type.getPrimitiveType(), value));
         
         return value;
     }

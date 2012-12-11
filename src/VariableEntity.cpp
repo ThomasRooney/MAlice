@@ -1,16 +1,12 @@
 
 #include "VariableEntity.h"
+#include "Type.h"
 
 namespace MAlice {
 
-    VariableEntity::VariableEntity(std::string identifier, unsigned int lineNumber, MAliceType type) : Entity(identifier, lineNumber)
+    VariableEntity::VariableEntity(std::string identifier, unsigned int lineNumber, MAlice::Type type) : Entity(identifier, lineNumber), m_type(type)
     {
-        m_type = type;
         m_LLVMValue = NULL;
-    }
-    
-    VariableEntity::~VariableEntity()
-    {
     }
     
     std::string VariableEntity::humanReadableName()
@@ -18,8 +14,8 @@ namespace MAlice {
         return "variable";
     }
 
-    MAliceType VariableEntity :: getType() {
-        return this->m_type;
+    Type VariableEntity :: getType() {
+        return m_type;
     }
     
     llvm::Value *VariableEntity::getLLVMValue()
