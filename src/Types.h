@@ -19,14 +19,6 @@ namespace MAlice {
     typedef bool (*MAliceValidationFunction)(ASTNode, ASTWalker*, CompilerContext*);
     
     typedef enum {
-        MAliceTypeNone = 1 << 0,
-        MAliceTypeNumber = 1 << 1,
-        MAliceTypeLetter = 1 << 2,
-        MAliceTypeSentence = 1 << 3,
-        MAliceTypeBoolean = 1 << 4
-    } MAliceType;
-    
-    typedef enum {
         MAliceEntityTypeUndefined = 1 << 0,
         MAliceEntityTypeVariable = 1 << 1,
         MAliceEntityTypeFunction = 1 << 2,

@@ -5,6 +5,7 @@
 #include "Error.h"
 #include "Range.h"
 #include "Utilities.h"
+#include "Type.h"
 
 namespace MAlice {
     
@@ -60,15 +61,15 @@ namespace MAlice {
         return error;
     }
     
-    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operandNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx)
+    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operandNode, Type expectedType, Type actualType, CompilerContext *ctx)
     {
         Range *errorRange = NULL;
         std::string operandString = Utilities::getNodeTextIncludingChildren(operandNode, ctx, &errorRange);
         
         Error *error = ErrorFactory::createSemanticError("Cannot match type '" +
-                                                         std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
+                                                         std::string(Utilities::getNameOfPrimitiveType(actualType)) +
                                                          "' with expected type '" +
-                                                         std::string(Utilities::getNameOfTypeFromMAliceType(expectedType)) +
+                                                         std::string(Utilities::getNameOfPrimitiveType(expectedType)) +
                                                          "' in operand '" +
                                                          operandString +
                                                          "'.");
@@ -78,15 +79,15 @@ namespace MAlice {
         return error;
     }
     
-    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operatorNode, ASTNode operandNode, MAliceType actualType, unsigned int expectedTypes, CompilerContext *ctx)
+    Error *ErrorFactory::createInvalidOperandTypeError(ASTNode operatorNode, ASTNode operandNode, Type actualType, std::vector<Type> expectedTypes, CompilerContext *ctx)
     {
         Range *errorRange = NULL;
         std::string operandString = Utilities::getNodeTextIncludingChildren(operandNode, ctx, &errorRange);
         
         Error *error = ErrorFactory::createSemanticError("Cannot match type '" +
-                                                         std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
+                                                         std::string(Utilities::getNameOfPrimitiveType(actualType)) +
                                                          "' with expected types " +
-                                                         Utilities::getTypeListFromTypeFlags(expectedTypes) +
+                                                         Utilities::getTypeListFromTypes(expectedTypes) +
                                                          " for operand '" +
                                                          operandString +
                                                          "' over operator "
@@ -103,16 +104,16 @@ namespace MAlice {
         return error;
     }
     
-    Error *ErrorFactory::createCannotMatchTypesError(ASTNode exprNode, MAliceType expectedType, MAliceType actualType, CompilerContext *ctx)
+    Error *ErrorFactory::createCannotMatchTypesError(ASTNode exprNode, Type expectedType, Type actualType, CompilerContext *ctx)
     {
         Range *exprRange = NULL;
         std::string exprText = Utilities::getNodeTextIncludingChildren(exprNode, ctx, &exprRange);
         
         ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(exprNode);
         Error *error = ErrorFactory::createSemanticError("Can't match expected type '" +
-                                                         std::string(Utilities::getNameOfTypeFromMAliceType(expectedType)) +
+                                                         std::string(Utilities::getNameOfPrimitiveType(expectedType)) +
                                                          "' with type '" +
-                                                         std::string(Utilities::getNameOfTypeFromMAliceType(actualType)) +
+                                                         std::string(Utilities::getNameOfPrimitiveType(actualType)) +
                                                          "' for expression '" +
                                                          Utilities::stripLeadingAndTrailingCharacters(exprText, '\'') + "'.");
         error->setLineNumber(Utilities::getNodeLineNumber(firstNonImaginaryNode));

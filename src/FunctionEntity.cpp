@@ -1,13 +1,13 @@
 
 #include "FunctionEntity.h"
+#include "Type.h"
 
 using namespace std;
 
 namespace MAlice {
 
-    FunctionEntity::FunctionEntity(string identifier, unsigned int lineNumber, vector<ParameterEntity*> parameterListTypes, MAliceType returnType) : FunctionProcedureEntity(identifier, lineNumber, parameterListTypes)
+    FunctionEntity::FunctionEntity(string identifier, unsigned int lineNumber, vector<ParameterEntity*> parameterListTypes, Type returnType) : FunctionProcedureEntity(identifier, lineNumber, parameterListTypes), m_returnType(returnType)
     {
-        m_returnType = returnType;
     }
     
     std::string FunctionEntity::humanReadableName()

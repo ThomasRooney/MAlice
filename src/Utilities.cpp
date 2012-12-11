@@ -15,7 +15,6 @@
 #include "ProcedureEntity.h"
 #include "FunctionEntity.h"
 #include "VisitorCallbacks.h"
-#include "ArrayEntity.h"
 #include "Types.h"
 
 
@@ -99,48 +98,48 @@ namespace MAlice {
         return (char*)node->getText(node)->chars;
     }
     
-    MAliceType Utilities::getTypeFromTypeString(std::string typeString)
+    Type Utilities::getTypeFromTypeString(std::string typeString)
     {
         if (!typeString.compare("number"))
-            return MAliceTypeNumber;
+            return Type(PrimitiveTypeNumber);
         
         if (!typeString.compare("letter"))
-            return MAliceTypeLetter;
+            return Type(PrimitiveTypeLetter);
         
         if (!typeString.compare("sentence"))
-            return MAliceTypeSentence;
+            return Type(PrimitiveTypeSentence);
         
-        return MAliceTypeNone;
+        return Type();
     }
 
-    MAliceType Utilities::getTypeFromNodeType(int nodeType) 
+    Type Utilities::getTypeFromNodeType(int nodeType)
     {
         switch (nodeType)
         {
             case STRING_LITERAL:
-                return MAliceTypeSentence;
+                return Type(PrimitiveTypeSentence);
             case CHARACTER_LITERAL:
-                return MAliceTypeLetter;
+                return Type(PrimitiveTypeLetter);
             case NUMBER_LITERAL:
-                return MAliceTypeNumber;
+                return Type(PrimitiveTypeNumber);
             default:
-                return MAliceTypeNone;
+                return Type();
         }        
     }
 
-    const char* Utilities::getNameOfTypeFromMAliceType(MAliceType type)
+    std::string Utilities::getNameOfPrimitiveType(Type type)
     {
-        switch(type)
+        switch(type.getPrimitiveType())
         {
-            case MAliceTypeNumber:
+            case PrimitiveTypeNumber:
                 return "number";
                 break;
-            case MAliceTypeLetter:
+            case PrimitiveTypeLetter:
                 return "letter";
                 break;
-            case MAliceTypeBoolean:
+            case PrimitiveTypeBoolean:
                 return "boolean";
-            case MAliceTypeSentence:
+            case PrimitiveTypeSentence:
                 return "sentence";
             default:
                 return "undefined";
@@ -149,10 +148,6 @@ namespace MAlice {
 
     MAliceEntityType Utilities::getTypeOfEntity(Entity *entity)
     {
-        ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
-        if (arrayEntity)
-            return MAliceEntityTypeArray;
-        
         ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
         if (parameterEntity)
             return MAliceEntityTypeParameter;
@@ -178,10 +173,6 @@ namespace MAlice {
     
     bool Utilities::isKindOfEntity(Entity *entity, MAliceEntityType type)
     {
-        ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
-        if (arrayEntity && (type & MAliceEntityTypeArray) != 0)
-            return true;
-        
         ParameterEntity *parameterEntity = dynamic_cast<ParameterEntity*>(entity);
         if (parameterEntity && (type & MAliceEntityTypeParameter) != 0)
             return true;
@@ -453,21 +444,13 @@ namespace MAlice {
         }
     }
     
-    std::string Utilities::getTypeListFromTypeFlags(unsigned int flags)
+    std::string Utilities::getTypeListFromTypes(std::vector<Type> types)
     {
         std::list<std::string> typeStrings;
         
-        if ((flags & MAliceTypeLetter) != 0)
-            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeLetter));
-        
-        if ((flags & MAliceTypeNumber) != 0)
-            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeNumber));
-        
-        if ((flags & MAliceTypeSentence) != 0)
-            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeSentence));
-        
-        if ((flags & MAliceTypeBoolean) != 0)
-            typeStrings.push_back(getNameOfTypeFromMAliceType(MAliceTypeBoolean));
+        for (auto it = types.begin(); it != types.end(); ++it) {
+            typeStrings.push_back(getNameOfPrimitiveType(*it));
+        }
         
         std::string listString;
         unsigned int i = 0;
@@ -513,8 +496,11 @@ namespace MAlice {
             ASTNode typeNode = Utilities::getChildNodeAtIndex(childNode, 0);
             
             std::string typeString = Utilities::getNodeText(typeNode);
-            MAliceType t = (Utilities::getTypeFromTypeString(typeString));
-            ParameterEntity *p = new ParameterEntity(identifier, lineNumber, t, passedByReference);
+            Type t = Utilities::getTypeFromTypeString(typeString);
+            if (passedByReference)
+                t.setIsArray(true);
+            
+            ParameterEntity *p = new ParameterEntity(identifier, lineNumber, t);
             
             parameterTypes.push_back(p);
         }
@@ -538,17 +524,17 @@ namespace MAlice {
         return dynamic_cast<FunctionProcedureEntity*>(entity);
     }
     
-    MAliceType Utilities::getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
+    Type Utilities::getReturnTypeForInvocation(ASTNode invocationNode, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *funcProcEntity = getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
         if (!funcProcEntity) {
-            return MAliceTypeNone;
+            return Type::voidType();
         }
         
         MAliceEntityType entityType = Utilities::getTypeOfEntity(funcProcEntity);
         
         if (entityType == MAliceEntityTypeProcedure)
-            return MAliceTypeNone;
+            return Type::voidType();
         
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
         
@@ -566,7 +552,7 @@ namespace MAlice {
         return Utilities::getNodeText(identifierNode);
     }
     
-    bool Utilities::getTypeFromInvocationExpressionNode(ASTNode node, MAliceType *outType, ASTWalker *walker, CompilerContext *ctx)
+    bool Utilities::getTypeFromInvocationExpressionNode(ASTNode node, Type *outType, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *funcProcEntity = Utilities::getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
         if (!funcProcEntity)
@@ -593,14 +579,14 @@ namespace MAlice {
             return false;
         }
         
-        MAliceType returnType = Utilities::getReturnTypeForInvocation(node, walker, ctx);
+        Type returnType = Utilities::getReturnTypeForInvocation(node, walker, ctx);
         if (outType)
             *outType = returnType;
         
         return true;
     }
     
-    bool Utilities::getTypeFromExpressionNode(ASTNode node, MAliceType *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
+    bool Utilities::getTypeFromExpressionNode(ASTNode node, Type *outType, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
     {
         ASTNode firstChildNode = Utilities::getChildNodeAtIndex(node, 0);
         if (!firstChildNode) {
@@ -610,7 +596,7 @@ namespace MAlice {
         
         // Check identifiers first, because on their own they can reference an array if we don't want an l-value
         if (!requiresLValue && Utilities::getNodeType(firstChildNode) == IDENTIFIER) {
-            MAliceType type = MAliceTypeNone;
+            Type type = Type::voidType();
             MAliceEntityType entityType = MAliceEntityTypeUndefined;
             if (!getTypeFromExpressionIdentifierNode(firstChildNode, &type, &entityType, walker, ctx, passedByReference))
                 return false;
@@ -624,13 +610,13 @@ namespace MAlice {
         return getTypeFromExpressionRuleNode(firstChildNode, outType, walker, ctx);
     }
     
-    bool Utilities::getTypeFromExpressionRuleNode(ASTNode node, MAliceType *outType, ASTWalker *walker, CompilerContext *ctx)
+    bool Utilities::getTypeFromExpressionRuleNode(ASTNode node, Type *outType, ASTWalker *walker, CompilerContext *ctx)
     {
         switch (Utilities::getNodeType(node))
         {
             case IDENTIFIER:
             {
-                MAliceType type = MAliceTypeNone;
+                Type type = Type::voidType();
                 MAliceEntityType entityType = MAliceEntityTypeUndefined;
                 
                 if (!getTypeFromExpressionIdentifierNode(node, &type, &entityType, walker, ctx, NULL))
@@ -656,56 +642,82 @@ namespace MAlice {
                 break;
             case EQUALS:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                std::vector<Type> types;
+                types.push_back(Type(PrimitiveTypeNumber));
+                types.push_back(Type(PrimitiveTypeLetter));
+                types.push_back(Type(PrimitiveTypeSentence));
+                
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "equality", types, walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case NOTEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                std::vector<Type> types;
+                types.push_back(Type(PrimitiveTypeNumber));
+                types.push_back(Type(PrimitiveTypeLetter));
+                types.push_back(Type(PrimitiveTypeSentence));
+                
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "inequality", types, walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case LESSTHAN:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                std::vector<Type> types;
+                types.push_back(Type(PrimitiveTypeNumber));
+                types.push_back(Type(PrimitiveTypeLetter));
+                
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than", types, walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case LESSTHANEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                std::vector<Type> types;
+                types.push_back(Type(PrimitiveTypeNumber));
+                types.push_back(Type(PrimitiveTypeLetter));
+                
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "less than or equal", types, walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case GREATERTHAN:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                std::vector<Type> types;
+                types.push_back(Type(PrimitiveTypeNumber));
+                types.push_back(Type(PrimitiveTypeLetter));
+                
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than", types, walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case GREATERTHANEQUAL:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", MAliceTypeNumber | MAliceTypeLetter, walker, ctx))
+                std::vector<Type> types;
+                types.push_back(Type(PrimitiveTypeNumber));
+                types.push_back(Type(PrimitiveTypeLetter));
+                
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "greater than or equal", types, walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case ARRAYSUBSCRIPT:
@@ -717,12 +729,13 @@ namespace MAlice {
                 }
                 
                 std::string identifier = Utilities::getNodeText(identifierNode);
-                bool byReference = false;
+                
                 MAliceEntityType entityType = MAliceEntityTypeUndefined;
-                if (!getTypeFromExpressionIdentifierNode(identifierNode, NULL, &entityType, walker, ctx, &byReference ))
+                Type type = Type::voidType();
+                if (!getTypeFromExpressionIdentifierNode(identifierNode, &type, &entityType, walker, ctx, NULL))
                     return false;
                 
-                if (entityType != MAliceEntityTypeArray && entityType != MAliceEntityTypeParameter && !byReference) {
+                if (!type.isArray()) {
                     Range *identifierRange = NULL;
                     Utilities::getNodeTextIncludingChildren(node, ctx, &identifierRange);
                     
@@ -737,126 +750,128 @@ namespace MAlice {
                 
                 Entity *entity = NULL;
                 ctx->isSymbolInScope(identifier, &entity);
-                if (entityType == MAliceEntityTypeArray)
-                {
-                    ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
-                    if (!arrayEntity) {
-                        ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Could not get valid entity from symbol table for array '" + identifier + "'."));
-                        return false;
-                    }
                 
-                    MAliceType subscriptType = MAliceTypeNone;
-                    ASTNode subscriptExpressionNode = Utilities::getChildNodeAtIndex(node, 1);
-                    if (!getTypeFromExpressionNode(subscriptExpressionNode, &subscriptType, false, walker, ctx, NULL))
-                        return false;
-                
-                    if (subscriptType != MAliceTypeNumber) {
-                        ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(subscriptExpressionNode, MAliceTypeNumber, subscriptType, ctx));
-                        return false;
-                    }
-                
-                
-                    if (outType)
-                        *outType = arrayEntity->getType();
+                VariableEntity *arrayEntity = dynamic_cast<VariableEntity*>(entity);
+                if (!arrayEntity) {
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Could not get valid entity from symbol table for array '" + identifier + "'."));
+                    return false;
                 }
-                else if (entityType == MAliceEntityTypeParameter && byReference)
-                {
-                    auto entityType = dynamic_cast<ParameterEntity*>(entity)->getType();
-                    if (entityType != MAliceTypeNumber) {
-                        ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(node, MAliceTypeNumber, entityType, ctx));
-                        return false;
-                    }
-                    if (outType)
-                        *outType = entityType;
+                
+                Type subscriptType = Type::voidType();
+                ASTNode subscriptExpressionNode = Utilities::getChildNodeAtIndex(node, 1);
+                if (!getTypeFromExpressionNode(subscriptExpressionNode, &subscriptType, false, walker, ctx, NULL))
+                    return false;
+                
+                if (subscriptType.getPrimitiveType() != PrimitiveTypeNumber) {
+                    ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(subscriptExpressionNode,
+                                                                                                   Type(PrimitiveTypeNumber),
+                                                                                                   subscriptType,
+                                                                                                   ctx));
+                    return false;
                 }
+                
+                
+                if (outType)
+                    *outType = arrayEntity->getType();
+                
                 return true;
             }
                 break;
             case PLUS:
             {
                 if (Utilities::getNumberOfChildNodes(node) == 2) {
-                    MAliceType type = MAliceTypeNone;
-                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                    Type type = Type::voidType();
+                    std::vector<Type> types;
+                    types.push_back(Type(PrimitiveTypeNumber));
+                    types.push_back(Type(PrimitiveTypeSentence));
+                    types.push_back(Type(PrimitiveTypeLetter));
+                    
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "addition", types, walker, ctx))
                         return false;
                     
                     if (outType)
                         *outType = type;
                 } else {
-                    if (!getTypeFromUnaryOperatorNode(node, NULL, "unary plus", MAliceTypeNumber, walker, ctx))
+                    if (!getTypeFromUnaryOperatorNode(node, NULL, "unary plus", Type(PrimitiveTypeNumber), walker, ctx))
                         return false;
                     
                     if (outType)
-                        *outType = MAliceTypeNumber;
+                        *outType = Type(PrimitiveTypeNumber);
                 }
             }
                 break;
             case MINUS:
             {
                 if (Utilities::getNumberOfChildNodes(node) == 2) {
-                    MAliceType type = MAliceTypeNone;
-                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", MAliceTypeNumber | MAliceTypeLetter | MAliceTypeSentence, walker, ctx))
+                    Type type = Type::voidType();
+                    std::vector<Type> types;
+                    types.push_back(Type(PrimitiveTypeNumber));
+                    types.push_back(Type(PrimitiveTypeLetter));
+                    types.push_back(Type(PrimitiveTypeSentence));
+                    
+                    if (!getTypeFromBinaryOperatorNode(node, &type, "subtraction", types, walker, ctx))
                         return false;
                     
                     if (outType)
                         *outType = type;
                 } else {
-                    if (!getTypeFromUnaryOperatorNode(node, NULL, "unary minus", MAliceTypeNumber, walker, ctx))
+                    if (!getTypeFromUnaryOperatorNode(node, NULL, "unary minus", Type(PrimitiveTypeNumber), walker, ctx))
                         return false;
                     
                     if (outType)
-                        *outType = MAliceTypeNumber;
+                        *outType = Type(PrimitiveTypeNumber);
                 }
             }
                 break;
             case TILDE:
             {
-                if (!getTypeFromUnaryOperatorNode(node, NULL, "tilde", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromUnaryOperatorNode(node, NULL, "tilde", Type(PrimitiveTypeNumber), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeNumber;
+                    *outType = Type(PrimitiveTypeNumber);
             }
                 break;
             case BANG:
             {
-                if (!getTypeFromUnaryOperatorNode(node, NULL, "unary NOT", MAliceTypeBoolean, walker, ctx))
+                if (!getTypeFromUnaryOperatorNode(node, NULL, "unary NOT", Type(PrimitiveTypeBoolean), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case BITWISEAND:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise AND", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise AND", singletonVector(Type(PrimitiveTypeNumber)), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeNumber;
+                    *outType = Type(PrimitiveTypeNumber);
             }
                 break;
             case BITWISEOR:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise OR", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise OR", singletonVector(Type(PrimitiveTypeNumber)), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeNumber;
+                    *outType = Type(PrimitiveTypeNumber);
             }
                 break;
             case BITWISEXOR:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise XOR", MAliceTypeNumber, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "bitwise XOR", singletonVector(Type(PrimitiveTypeNumber)), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeNumber;
+                    *outType = Type(PrimitiveTypeNumber);
             }
                 break;
             case MODULO:
             {
-                MAliceType type = MAliceTypeNone;
-                if (!getTypeFromBinaryOperatorNode(node, &type, "modulo", MAliceTypeNumber, walker, ctx))
+                Type type = Type::voidType();
+                if (!getTypeFromBinaryOperatorNode(node, &type, "modulo", singletonVector(Type(PrimitiveTypeNumber)), walker, ctx))
                     return false;
                 
                 if (outType)
@@ -865,8 +880,8 @@ namespace MAlice {
                 break;
             case MULTIPLY:
             {
-                MAliceType type = MAliceTypeNone;
-                if (!getTypeFromBinaryOperatorNode(node, &type, "multiplication", MAliceTypeNumber, walker, ctx))
+                Type type = Type::voidType();
+                if (!getTypeFromBinaryOperatorNode(node, &type, "multiplication", singletonVector(Type(PrimitiveTypeNumber)), walker, ctx))
                     return false;
                 
                 if (outType)
@@ -875,8 +890,8 @@ namespace MAlice {
                 break;
             case DIVIDE:
             {
-                MAliceType type = MAliceTypeNone;
-                if (!getTypeFromBinaryOperatorNode(node, &type, "division", MAliceTypeNumber, walker, ctx))
+                Type type = Type::voidType();
+                if (!getTypeFromBinaryOperatorNode(node, &type, "division", singletonVector(Type(PrimitiveTypeNumber)), walker, ctx))
                     return false;
                 
                 if (outType)
@@ -885,33 +900,33 @@ namespace MAlice {
                 break;
             case LOGICALAND:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "logical and", MAliceTypeBoolean, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "logical and", singletonVector(Type(PrimitiveTypeBoolean)), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case LOGICALOR:
             {
-                if (!getTypeFromBinaryOperatorNode(node, NULL, "logical or", MAliceTypeBoolean, walker, ctx))
+                if (!getTypeFromBinaryOperatorNode(node, NULL, "logical or", singletonVector(Type(PrimitiveTypeBoolean)), walker, ctx))
                     return false;
                 
                 if (outType)
-                    *outType = MAliceTypeBoolean;
+                    *outType = Type(PrimitiveTypeBoolean);
             }
                 break;
             case NUMBER_LITERAL:
                 if (outType)
-                    *outType = MAliceTypeNumber;
+                    *outType = Type(PrimitiveTypeNumber);
                 break;
             case CHARACTER_LITERAL:
                 if (outType)
-                    *outType = MAliceTypeLetter;
+                    *outType = Type(PrimitiveTypeLetter);
                 break;
             case STRING_LITERAL:
                 if (outType)
-                    *outType = MAliceTypeSentence;
+                    *outType = Type(PrimitiveTypeSentence);
                 break;
             default:
                 break;
@@ -920,9 +935,9 @@ namespace MAlice {
         return true;
     }
     
-    bool Utilities::getTypeFromBinaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, unsigned int requiredTypes, ASTWalker *walker, CompilerContext *ctx)
+    bool Utilities::getTypeFromBinaryOperatorNode(ASTNode node, Type *outType, std::string operatorName, std::vector<Type> requiredTypes, ASTWalker *walker, CompilerContext *ctx)
     {
-        MAliceType t1, t2;
+        Type t1, t2;
         unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
         
         if (numChildNodes != 2) {
@@ -946,9 +961,9 @@ namespace MAlice {
         
         if (t1 != t2) {
             Error *error = ErrorFactory::createSemanticError("Cannot match types '" +
-                                                             std::string(Utilities::getNameOfTypeFromMAliceType(t1)) +
+                                                             std::string(Utilities::getNameOfPrimitiveType(t1)) +
                                                              "' and '" +
-                                                             std::string(Utilities::getNameOfTypeFromMAliceType(t2)) +
+                                                             std::string(Utilities::getNameOfPrimitiveType(t2)) +
                                                              "' for operands to binary operator.");
             
             error->setLineNumber(Utilities::getNodeLineNumber(node));
@@ -974,13 +989,13 @@ namespace MAlice {
             return false;
         }
         
-        if ((t1 & requiredTypes) == 0) {
+        if (std::find(requiredTypes.begin(), requiredTypes.end(), t1) == requiredTypes.end()) {
             ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(node, leftOperandRootNode, t1, requiredTypes, ctx));
             
             return false;
         }
         
-        if ((t2 & requiredTypes) == 0) {
+        if (std::find(requiredTypes.begin(), requiredTypes.end(), t2) == requiredTypes.end()) {
             ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(node, rightOperandRootNode, t2, requiredTypes, ctx));
             
             return false;
@@ -992,9 +1007,9 @@ namespace MAlice {
         return true;
     }
     
-    bool Utilities::getTypeFromUnaryOperatorNode(ASTNode node, MAliceType *outType, std::string operatorName, MAliceType requiredType, ASTWalker *walker, CompilerContext *ctx)
+    bool Utilities::getTypeFromUnaryOperatorNode(ASTNode node, Type *outType, std::string operatorName, Type requiredType, ASTWalker *walker, CompilerContext *ctx)
     {
-        MAliceType type;
+        Type type = Type::voidType();
         unsigned int numChildNodes = Utilities::getNumberOfChildNodes(node);
         
         if (numChildNodes != 1) {
@@ -1007,7 +1022,7 @@ namespace MAlice {
         if (!getTypeFromExpressionRuleNode(operandRootNode, &type, walker, ctx))
             return false;
         
-        if (requiredType != MAliceTypeNone) {
+        if (requiredType != Type::voidType()) {
             if (type != requiredType) {
                 ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidOperandTypeError(operandRootNode, requiredType, type, ctx));
                 
@@ -1021,7 +1036,7 @@ namespace MAlice {
         return true;
     }
     
-    bool Utilities::getTypeFromExpressionIdentifierNode(ASTNode node, MAliceType *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
+    bool Utilities::getTypeFromExpressionIdentifierNode(ASTNode node, Type *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference)
     {
         Entity *lookupEntity;
         
@@ -1038,7 +1053,7 @@ namespace MAlice {
             
             ctx->getErrorReporter()->reportError(error);
             
-            return MAliceTypeNone;
+            return false;
         }
         
         VariableEntity *lookupVEntity = dynamic_cast<VariableEntity*>(lookupEntity);
@@ -1054,15 +1069,8 @@ namespace MAlice {
         if (outType)
         {
             *outType = lookupVEntity->getType();
-        }
-
-        if (passedByReference)
-        {
-            auto entityType = Utilities::getTypeOfEntity(lookupVEntity);
-            if (entityType == MAliceEntityTypeParameter)
-                *passedByReference = dynamic_cast<ParameterEntity*>(lookupVEntity)->isPassedByReference();
-            else if (entityType == MAliceEntityTypeArray)
-               *passedByReference = true;
+            if (passedByReference)
+                *passedByReference = lookupVEntity->getType().isArray();
         }
         
         if (outEntityType)
@@ -1071,25 +1079,25 @@ namespace MAlice {
         return true;
     }
     
-    llvm::Type *Utilities::getLLVMTypeFromMAliceType(MAliceType type)
+    llvm::Type *Utilities::getLLVMTypeFromType(Type type)
     {
         const llvm::Type *rType = NULL; 
 
-        switch(type)
+        switch(type.getPrimitiveType())
         {
-            case MAliceTypeNumber:
+            case PrimitiveTypeNumber:
                 rType = llvm::Type::getInt64Ty(llvm::getGlobalContext());
                 break;
-            case MAliceTypeLetter:
+            case PrimitiveTypeLetter:
                 rType = llvm::Type::getInt64Ty(llvm::getGlobalContext());
                 break;
-            case MAliceTypeBoolean:
+            case PrimitiveTypeBoolean:
                 rType = llvm::Type::getInt1Ty(llvm::getGlobalContext());
                 break;
-            case MAliceTypeSentence:
+            case PrimitiveTypeSentence:
                 rType = llvm::Type::getInt8PtrTy(llvm::getGlobalContext());
                 break;
-            case MAliceTypeNone:
+            default:
                 rType = llvm::Type::getVoidTy(llvm::getGlobalContext());
                 break;
         }

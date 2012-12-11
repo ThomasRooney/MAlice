@@ -4,7 +4,6 @@
 #include "SemanticChecks.h"
 
 #include "CompilerContext.h"
-#include "ArrayEntity.h"
 #include "ASTWalker.h"
 #include "ErrorFactory.h"
 #include "Entity.h"
@@ -55,14 +54,14 @@ namespace MAlice {
         return true;
     }
     
-    bool Validation::checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)
+    bool Validation::checkExpression(ASTNode node, ASTWalker *walker, CompilerContext *ctx, Type typeConfirm)
     {
         return checkExpression(node, false, walker, ctx, typeConfirm);
     }
     
-    bool Validation::checkExpression(ASTNode node, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, MAliceType typeConfirm)
+    bool Validation::checkExpression(ASTNode node, bool requiresLValue, ASTWalker *walker, CompilerContext *ctx, Type typeConfirm)
     {
-        MAliceType type = MAliceTypeNone;
+        Type type(PrimitiveTypeNone);
         if (!Utilities::getTypeFromExpressionNode(node, &type, requiresLValue, walker, ctx, NULL))
             return false;
         
@@ -73,10 +72,10 @@ namespace MAlice {
             
             Error *error = NULL;
             
-            if (type == MAliceTypeNone) {
+            if (type.getPrimitiveType() == PrimitiveTypeNone) {
                 ASTNode firstNonImaginaryNode = Utilities::getFirstNonImaginaryChildNode(node);
                 Error *error = ErrorFactory::createSemanticError("Can't match expected type '" +
-                                                                 std::string(Utilities::getNameOfTypeFromMAliceType(typeConfirm)) +
+                                                                 std::string(Utilities::getNameOfPrimitiveType(typeConfirm)) +
                                                                  "' with procedure invocation.");
                 error->setLineNumber(Utilities::getNodeLineNumber(firstNonImaginaryNode));
                 error->setUnderlineRanges(Utilities::rangeToSingletonList(exprRange));
@@ -91,7 +90,7 @@ namespace MAlice {
         return true;
     }
    
-    bool Validation::checkCompatibleFunctionInvocationReturnType(ASTNode invocationNode, MAliceType expectedType, ASTWalker *walker, CompilerContext *ctx)
+    bool Validation::checkCompatibleFunctionInvocationReturnType(ASTNode invocationNode, Type expectedType, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(invocationNode) == 0)
             return false;
@@ -208,27 +207,27 @@ namespace MAlice {
             if (!expressionNode)
                 return false;
             
-            MAliceType expressionType = MAliceTypeNone;
+            Type expressionType(PrimitiveTypeNone);
             bool passedByReference = false;
             if (!Utilities::getTypeFromExpressionNode(expressionNode, &expressionType, false, walker, ctx, &passedByReference))
                 return false;
 
-            // Check passedByReference is as expected
+            bool isArray = paramEntity->getType().isArray();
             
-            if (passedByReference != paramEntity->isPassedByReference()) {
+            if (passedByReference != isArray) {
                 Range *expressionRange = NULL;
                 Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = Utilities::getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
-                std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
-                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity->getType()));
+                std::string expressionTypeString(Utilities::getNameOfPrimitiveType(expressionType));
+                std::string expectedTypeString(Utilities::getNameOfPrimitiveType(paramEntity->getType()));
                 
                 Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" +
                                                                  Utilities::numberToString(i+1) +
                                                                  " in invocation of '" +
                                                                  funcProcIdentifier +
                                                                  "'. Expected argument passed by " +
-                                                                 (paramEntity->isPassedByReference() ? "reference" : "value") +
+                                                                 (isArray ? "reference" : "value") +
                                                                  " but found argument passed by " +
                                                                  (passedByReference ? "reference" : "value") +
                                                                  ".");
@@ -248,8 +247,8 @@ namespace MAlice {
                 Utilities::getNodeTextIncludingChildren(expressionNode, ctx, &expressionRange);
                 
                 std::string funcProcIdentifier = Utilities::getFunctionProcedureInvocationIdentifier(invocationNode, walker, ctx);
-                std::string expressionTypeString(Utilities::getNameOfTypeFromMAliceType(expressionType));
-                std::string expectedTypeString(Utilities::getNameOfTypeFromMAliceType(paramEntity->getType()));
+                std::string expressionTypeString(Utilities::getNameOfPrimitiveType(expressionType));
+                std::string expectedTypeString(Utilities::getNameOfPrimitiveType(paramEntity->getType()));
                 
                 Error *error = ErrorFactory::createSemanticError("Cannot match types of argument #" +
                                                                  Utilities::numberToString(i+1) +
@@ -336,9 +335,13 @@ namespace MAlice {
             
             return false;
         } else {
-            MAliceEntityType symbolTableEntityType = Utilities::getTypeOfEntity(symbolTableEntity);
+            VariableEntity *entity = dynamic_cast<VariableEntity*>(symbolTableEntity);
+            if (!entity) {
+                ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("assignment node"));
+                return false;
+            }
             
-            if (symbolTableEntityType == MAliceEntityTypeArray && !isLValueArray) {
+            if (entity->getType().isArray() && !isLValueArray) {
                 Error *error = ErrorFactory::createSemanticError("Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.");
                 error->setLineNumber(Utilities::getNodeLineNumber(lvalueNode));
                 error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
@@ -349,7 +352,7 @@ namespace MAlice {
                 return false;
             }
             
-            if (symbolTableEntityType == MAliceEntityTypeVariable && isLValueArray) {
+            if (!entity->getType().isArray() && isLValueArray) {
                 Range *errorRange = NULL;
                 
                 std::string lvalueText = Utilities::getNodeTextIncludingChildren(parentNode, ctx, &errorRange);
@@ -373,13 +376,15 @@ namespace MAlice {
                 }
                 ASTNode exprNode = Utilities::getChildNodeAtIndex(nodeBuffer, 1);
                 // Check expression subscript evaluates to a number
-                checkExpression(exprNode, true, walker, ctx, MAliceTypeNumber);
+                checkExpression(exprNode, true, walker, ctx, Type(PrimitiveTypeNumber));
             }
             
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(symbolTableEntity);
             
             // Iterate through expression and return the type, producing errors where relevant, returning the type as rvalue
-            return checkExpression(rvalueNode, walker, ctx, variableEntity->getType());
+            Type primitiveType = Type(variableEntity->getType().getPrimitiveType());
+            
+            return checkExpression(rvalueNode, walker, ctx, primitiveType);
         }
     }
     
@@ -427,12 +432,12 @@ namespace MAlice {
         if (nodeType == EXPRESSION)
         {
             // Make sure its not undefined
-            MAliceType type = MAliceTypeNone;
+            Type type(PrimitiveTypeNone);
             
             if (!Utilities::getTypeFromExpressionNode(childNode, &type, true, walker, ctx, NULL))
                 return false;
             
-            if (type == MAliceTypeNone)
+            if (type.isVoid())
             {
                 Error *error = ErrorFactory::createSemanticError("Expression: '" + Utilities::getNodeTextIncludingChildren(childNode, ctx, NULL) + "' is not a valid print statement.");
                 error->setLineNumber(Utilities::getNodeLineNumber(printStatementNode));
@@ -536,7 +541,7 @@ namespace MAlice {
             return false;
         }
 
-        MAliceType expressionType = MAliceTypeNone;
+        Type expressionType;
         if (!Utilities::getTypeFromExpressionNode(expressionNode, &expressionType, false, walker, ctx, NULL))
             return false;
         
@@ -562,7 +567,7 @@ namespace MAlice {
         return true;
     }
     
-    bool Validation::checkReturnTypeForInvocation(ASTNode invocationNode, MAliceType type, ASTWalker *walker, CompilerContext *ctx)
+    bool Validation::checkReturnTypeForInvocation(ASTNode invocationNode, Type type, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *funcProcEntity = Utilities::getFunctionProcedureEntityForInvocationNode(invocationNode, walker, ctx);
         
@@ -570,7 +575,7 @@ namespace MAlice {
         
         // Check for a valid procedure invocation
         if (entityType == MAliceEntityTypeProcedure) {
-            std::string expectedType = std::string(Utilities::getNameOfTypeFromMAliceType(type));
+            std::string expectedType = std::string(Utilities::getNameOfPrimitiveType(type));
             Range *range = NULL;
             Utilities::getNodeTextIncludingChildren(invocationNode, ctx, &range);
             
@@ -586,8 +591,8 @@ namespace MAlice {
         FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
         
         if (type != functionEntity->getReturnType()) {
-            std::string expectedType = std::string(Utilities::getNameOfTypeFromMAliceType(type));
-            std::string actualType = std::string(Utilities::getNameOfTypeFromMAliceType(functionEntity->getReturnType()));
+            std::string expectedType = std::string(Utilities::getNameOfPrimitiveType(type));
+            std::string actualType = std::string(Utilities::getNameOfPrimitiveType(functionEntity->getReturnType()));
             Range *range = NULL;
             Utilities::getNodeTextIncludingChildren(invocationNode, ctx, &range);
             

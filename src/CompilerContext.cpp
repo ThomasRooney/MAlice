@@ -24,7 +24,6 @@ namespace MAlice {
         m_inputStream = NULL;
         m_tokenStream = NULL;
         
-        m_symbolTables.push_back(new SymbolTable());
         t_symbolTable = new SymbolTable();
         m_errorReporter = NULL;
         configureKeywords();
@@ -37,6 +36,8 @@ namespace MAlice {
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
         m_module = new llvm::Module("root module", llvm::getGlobalContext());
         m_identifierDispenser = new IdentifierDispenser();
+        
+        initialiseCompilerContext();
     }
     
     CompilerContext::~CompilerContext()
@@ -82,6 +83,11 @@ namespace MAlice {
             delete m_identifierDispenser, m_identifierDispenser = NULL;
     }
 
+    void CompilerContext::initialiseCompilerContext()
+    {
+        m_symbolTables.push_back(new SymbolTable());
+    }
+    
     bool CompilerContext::lockTemporarySymbolTable()
     {
         #ifdef _WIN32
@@ -331,6 +337,9 @@ namespace MAlice {
         
         m_symbolTables.clear();
         
+        // Re-initialise the default values again.
+        initialiseCompilerContext();
+        
         // The entities for the function procedure scope stack are cleaned up in the symbol tables.
         while(!m_functionProcedureScopeStack.empty()) {
             m_functionProcedureScopeStack.pop();
@@ -392,26 +401,26 @@ namespace MAlice {
         m_identifierDispenser = dispenser;
     }
     
-    llvm::Value *CompilerContext::printfFormatStringForExpressionType(MAliceType type)
+    llvm::Value *CompilerContext::printfFormatStringForExpressionType(Type type)
     {
-        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find((unsigned int)type);
+        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find(type.getPrimitiveType());
         if (element != m_printfFormatStringMap.end())
             return element->second;
         
         llvm::Value *value = NULL;
         
-        switch(type)
+        switch(type.getPrimitiveType())
         {
-            case MAliceTypeSentence:
+            case PrimitiveTypeSentence:
                 value = getIRBuilder()->CreateGlobalStringPtr("%s", "__printf_string_format");
                 break;
-            case MAliceTypeNumber:
+            case PrimitiveTypeNumber:
                 value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__printf_number_format");
                 break;
-            case MAliceTypeBoolean:
+            case PrimitiveTypeBoolean:
                 value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_bool_format");
                 break;
-            case MAliceTypeLetter:
+            case PrimitiveTypeLetter:
                 value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_char_format");
                 break;
             default:
@@ -419,7 +428,7 @@ namespace MAlice {
                 break;
         }
         
-        m_printfFormatStringMap.insert(std::make_pair((unsigned int)type, value));
+        m_printfFormatStringMap.insert(std::make_pair(type.getPrimitiveType(), value));
         
         return value;
     }

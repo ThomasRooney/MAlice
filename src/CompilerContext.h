@@ -31,6 +31,7 @@ namespace MAlice {
 
     class FunctionProcedureEntity;
     class IdentifierDispenser;
+    class Type;
     
     class CompilerContext{
     private:
@@ -62,6 +63,8 @@ namespace MAlice {
         
         IdentifierDispenser *m_identifierDispenser;
         std::unordered_map<unsigned int, llvm::Value*> m_printfFormatStringMap;
+        
+        void initialiseCompilerContext();
         
     public:
         CompilerContext(std::string input);
@@ -108,7 +111,7 @@ namespace MAlice {
         IdentifierDispenser *getIdentifierDispenser();
         void setIdentifierDispenser(IdentifierDispenser *dispenser);
         
-        llvm::Value *printfFormatStringForExpressionType(MAliceType type);
+        llvm::Value *printfFormatStringForExpressionType(Type type);
         
     }; // class CompilerContext
     

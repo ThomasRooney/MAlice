@@ -4,15 +4,13 @@
 #include "VariableEntity.h"
 
 namespace MAlice {
+    
+    class Type;
 
     class ParameterEntity : public VariableEntity {
-    private:
-      bool passedByReference;
     public:
-        bool isPassedByReference () { return passedByReference; }
-        bool isPassedByValue() { return !passedByReference; }
         ParameterEntity *clone();
-        ParameterEntity (std::string identifier, int lineNumber, MAliceType type, bool passedByReference);
+        ParameterEntity (std::string identifier, int lineNumber, Type type);
         
         std::string humanReadableName();
     }; // class ParameterEntity

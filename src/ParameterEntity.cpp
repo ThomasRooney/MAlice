@@ -4,13 +4,12 @@
 
 namespace MAlice {
     
-    ParameterEntity :: ParameterEntity (std::string identifier, int lineNumber, MAliceType type, bool passedByReference) : VariableEntity(identifier, lineNumber, type)
+    ParameterEntity :: ParameterEntity (std::string identifier, int lineNumber, Type type) : VariableEntity(identifier, lineNumber, type)
     {
-      this->passedByReference = passedByReference;
     }
     
     ParameterEntity* ParameterEntity :: clone () {
-      return new ParameterEntity(this->getIdentifier(), this->getLineNumber(), this->getType(), this->isPassedByReference());
+      return new ParameterEntity(this->getIdentifier(), this->getLineNumber(), this->getType());
     }
     
     std::string ParameterEntity::humanReadableName()

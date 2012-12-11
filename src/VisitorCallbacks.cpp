@@ -4,7 +4,6 @@
 #include <typeinfo>
 
 #include "VisitorCallbacks.h"
-#include "ArrayEntity.h"
 #include "Entity.h"
 #include "ErrorFactory.h"
 #include "FunctionEntity.h"
@@ -56,10 +55,12 @@ namespace MAlice {
         ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
         std::string typeString = Utilities::getNodeText(typeNode);
         
-        ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
+        Type arrayType = Utilities::getTypeFromTypeString(typeString);
+        arrayType.setIsArray(true);
+        VariableEntity *arrayEntity = new VariableEntity(identifier, Utilities::getNodeLineNumber(node), arrayType);
         ctx->addEntityInScope(identifier, arrayEntity);
         
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(arrayEntity->getType()));
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()));
         arrayEntity->setLLVMValue(value);
         
         return true;
@@ -141,7 +142,7 @@ namespace MAlice {
         uint64_t val = strVal[1]; // [0] = "'", [1] = LITERAL, [2] = "'"
         
         if (outValue)
-            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeLetter), val);
+            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeLetter)), val);
         
         return true;
     }
@@ -198,7 +199,7 @@ namespace MAlice {
         if (Utilities::getNodeType(nodeI1) == PARAMS)
             hasParams = true;
         ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
-        MAliceType returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
+        Type returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
         
         ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
         
@@ -214,13 +215,15 @@ namespace MAlice {
         
         // Create the llvm::Function and insert it into the module
         std::vector<ParameterEntity*> parameterEntities = functionEntity->getParameterListTypes();
-        std::vector<Type*> parameterTypes;
+        std::vector<llvm::Type*> parameterTypes;
         for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
             ParameterEntity *entity = *it;
-            parameterTypes.push_back(Utilities::getLLVMTypeFromMAliceType(entity->getType()));
+            llvm::Type *llvmType = Utilities::getLLVMTypeFromType(entity->getType());
+            
+            parameterTypes.push_back(llvmType);
         }
         
-        FunctionType *functionType = FunctionType::get(Utilities::getLLVMTypeFromMAliceType(functionEntity->getReturnType()),
+        FunctionType *functionType = FunctionType::get(Utilities::getLLVMTypeFromType(functionEntity->getReturnType()),
                                                        parameterTypes,
                                                        false);
         
@@ -500,7 +503,7 @@ namespace MAlice {
         strVal >> val;
         
         if (outValue)
-            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromMAliceType(MAliceTypeNumber), val);
+            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), val);
         
         return true;
     }
@@ -517,7 +520,7 @@ namespace MAlice {
         
         for (auto it = parameterList.begin(); it != parameterList.end(); ++it) {
             ParameterEntity *entity = *it;
-            llvm::Value *parameterValue = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(entity->getType()), 0, entity->getIdentifier().c_str());
+            llvm::Value *parameterValue = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(entity->getType()), 0, entity->getIdentifier().c_str());
             entity->setLLVMValue(parameterValue);
             
             ctx->addEntityInScope(entity->getIdentifier(), entity);
@@ -568,16 +571,16 @@ namespace MAlice {
         }
         
         // Create the llvm::Function for the procedure and add it to the llvm::Module.
-        std::vector<Type*> parameterTypes;
+        std::vector<llvm::Type*> parameterTypes;
         std::vector<ParameterEntity*> parameterEntities = procedureEntity->getParameterListTypes();
         
         for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
             ParameterEntity *entity = *it;
-            parameterTypes.push_back(Utilities::getLLVMTypeFromMAliceType(entity->getType()));
+            parameterTypes.push_back(Utilities::getLLVMTypeFromType(entity->getType()));
         }
         
-        ArrayRef<Type*> parameterArrayRefs = makeArrayRef(parameterTypes);
-        FunctionType *procedureType = FunctionType::get(Type::getVoidTy(getGlobalContext()),
+        ArrayRef<llvm::Type*> parameterArrayRefs = makeArrayRef(parameterTypes);
+        FunctionType *procedureType = FunctionType::get(llvm::Type::getVoidTy(getGlobalContext()),
                                                         parameterArrayRefs,
                                                         false);
         
@@ -611,10 +614,10 @@ namespace MAlice {
 
     bool visitPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        std::vector<Type*> parameterTypes;
-        parameterTypes.push_back(Type::getInt8PtrTy(getGlobalContext()));
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
         
-        FunctionType *printfFunctionType = FunctionType::get(Type::getInt32Ty(getGlobalContext()),
+        FunctionType *printfFunctionType = FunctionType::get(llvm::Type::getInt32Ty(getGlobalContext()),
                                                              parameterTypes,
                                                              true);
         
@@ -623,7 +626,7 @@ namespace MAlice {
         llvm::Value *printVal = NULL;
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &printVal, ctx);
         
-        MAliceType type;
+        Type type;
         Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
                                              &type,
                                              false,
@@ -724,7 +727,7 @@ namespace MAlice {
         
         GlobalVariableEntity *variable = new GlobalVariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
         llvm::Value *value = new GlobalVariable(*(ctx->getModule()),
-                                                Utilities::getLLVMTypeFromMAliceType(variable->getType()),
+                                                Utilities::getLLVMTypeFromType(variable->getType()),
                                                 false,
                                                 GlobalValue::InternalLinkage,
                                                 NULL,
@@ -751,7 +754,7 @@ namespace MAlice {
         VariableEntity *variable = new VariableEntity(identifier,
                                                       Utilities::getNodeLineNumber(identifierNode),
                                                       Utilities::getTypeFromTypeString(typeString));
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromMAliceType(variable->getType()),
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(variable->getType()),
                                                                0,
                                                                identifier.c_str());
         variable->setLLVMValue(value);

@@ -1,6 +1,5 @@
 #include "Validation.h"
 
-#include "ArrayEntity.h"
 #include "ASTWalker.h"
 #include "CompilerContext.h"
 #include "ErrorReporter.h"
@@ -46,7 +45,7 @@ namespace MAlice {
         }
         
         // Check that the child of this node is a number, and it has a child
-        return checkExpression(Utilities::getChildNodeAtIndex(node, 0), true, walker, ctx, MAliceTypeNumber);
+        return checkExpression(Utilities::getChildNodeAtIndex(node, 0), true, walker, ctx, Type(PrimitiveTypeNumber));
     }
     
     bool Validation::validateDecrementStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -57,7 +56,7 @@ namespace MAlice {
         }
         
         // Check that the child of this node is a number, and it has a child
-        return checkExpression(Utilities::getChildNodeAtIndex(node,0), true, walker, ctx, MAliceTypeNumber);
+        return checkExpression(Utilities::getChildNodeAtIndex(node,0), true, walker, ctx, Type(PrimitiveTypeNumber));
     }
 
     bool Validation::validateIfStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -74,7 +73,7 @@ namespace MAlice {
             ANTLR3_UINT32 nodeType = Utilities::getNodeType(childNode);
             
             if (nodeType == EXPRESSION) {
-                if (!checkExpression(childNode, walker, ctx, MAliceTypeBoolean))
+                if (!checkExpression(childNode, walker, ctx, Type(PrimitiveTypeBoolean)))
                     return false;
             } else if (i == 0) {
                 ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("if statement"));
@@ -94,27 +93,33 @@ namespace MAlice {
             ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("input Statement"));
             return false;
         }
-        MAliceType t = MAliceTypeNone;
+        Type t;
         
         if (!Utilities::getTypeFromExpressionNode(node, &t, true, walker, ctx, NULL))
             return false;
-        
-        switch(t)
-        {
-        case MAliceTypeLetter:
-        case MAliceTypeNumber:
-            return true;
-        default:
-            {
-                Range *r = NULL;
-                std::string text = Utilities::getNodeTextIncludingChildren(node, ctx, &r);
-                Error *error = ErrorFactory::createSemanticError("Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.");
-                error->setLineNumber(Utilities::getNodeLineNumber(node));
-                error->setLineNumber(Utilities::getNodeLineNumber(node));
-                error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
-            }
+
+        if (t.isArray()) {
+            Range *r = NULL;
+            std::string text = Utilities::getNodeTextIncludingChildren(node, ctx, &r);
+            Error *error = ErrorFactory::createSemanticError("Cannot input directly to an array.");
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidLValueError(node, ctx));
+            
+            return false;
         }
-        return walker->validateChildren(node, ctx);
+        
+        PrimitiveType primitiveType = t.getPrimitiveType();
+        
+        if (primitiveType != PrimitiveTypeLetter && primitiveType != PrimitiveTypeNumber) {
+            Range *r = NULL;
+            std::string text = Utilities::getNodeTextIncludingChildren(node, ctx, &r);
+            Error *error = ErrorFactory::createSemanticError("Input can only stream to a Letter or a Number variable.  '" + text + "' is neither.");
+            error->setLineNumber(Utilities::getNodeLineNumber(node));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
+        }
+
+        return true;
     }
     
     bool Validation::validatePrintStatementNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
@@ -142,7 +147,7 @@ namespace MAlice {
         if (nodeType != EXPRESSION)
             return false;
         
-        if (!checkExpression(exprNode, walker, ctx, MAliceTypeBoolean))
+        if (!checkExpression(exprNode, walker, ctx, Type(PrimitiveTypeBoolean)))
             return false;
         
         ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, 1);
@@ -180,12 +185,15 @@ namespace MAlice {
         type = Utilities::getNodeText(typeNode);
         
         ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
-        if (!checkExpression(exprNode, false, walker, ctx, MAliceTypeNumber))
+        if (!checkExpression(exprNode, false, walker, ctx, Type(PrimitiveTypeNumber)))
             return false;
         
         std::string typeString = Utilities::getNodeText(typeNode);
-        ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
-        ctx->addEntityInScope(identifier, arrayEntity);
+        Type arrayType = Utilities::getTypeFromTypeString(typeString);
+        arrayType.setIsArray(true);
+        
+        VariableEntity *variableEntity = new VariableEntity(identifier, Utilities::getNodeLineNumber(node), arrayType);
+        ctx->addEntityInScope(identifier, variableEntity);
         
         return true;
     }
@@ -218,7 +226,7 @@ namespace MAlice {
         // get node index 1, if its a parameter node, get params...
         std::string returnString = Utilities::getNodeText(returnNode);
         
-        MAliceType returnType = Utilities::getTypeFromTypeString(returnString);
+        Type returnType = Utilities::getTypeFromTypeString(returnString);
         
         FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>(), returnType);
         ctx->addEntityInScope(identifier, functionEntity);
@@ -273,7 +281,7 @@ namespace MAlice {
         if (!checkSymbolForInvocationIsValidOrOutputError(node, walker, ctx))
             return false;
         
-        if (Utilities::getReturnTypeForInvocation(node, walker, ctx) != MAliceTypeNone && !ctx->withinExpression()) {
+        if (!Utilities::getReturnTypeForInvocation(node, walker, ctx).isVoid() && !ctx->withinExpression()) {
             FunctionProcedureEntity *funcProcEntity = Utilities::getFunctionProcedureEntityForInvocationNode(node, walker, ctx);
             std::string identifier = funcProcEntity->getIdentifier();
             
@@ -361,7 +369,7 @@ namespace MAlice {
             
             checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx);
             
-            MAliceType type = Utilities::getTypeFromTypeString(std::string(Utilities::getNodeText(typeNode)));
+            Type type = Utilities::getTypeFromTypeString(std::string(Utilities::getNodeText(typeNode)));
             
             // See if a third node exists - if so this is a variable assignment node that we want to visit
             
