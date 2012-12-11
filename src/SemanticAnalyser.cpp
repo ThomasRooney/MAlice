@@ -41,8 +41,6 @@ namespace MAlice {
 
     bool SemanticAnalyser::generateIR(llvm::Module **IRModule)
     {
-        return true;
-        
         ASTWalker treeWalker = ASTWalker();
 
         if (!treeWalker.generateIRFromTree(m_tree, m_compilerContext))

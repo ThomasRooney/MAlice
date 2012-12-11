@@ -17,7 +17,7 @@ namespace MAlice {
         if (!m_module)
             return "";
         
-//        llvm::raw_string_ostream outputStream(output);
+        llvm::raw_string_ostream outputStream(output);
         m_module->dump();
         
         return output;
