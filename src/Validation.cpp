@@ -139,44 +139,55 @@ namespace MAlice {
         }
         //  the expression on node 1 must return a a boolean
         ASTNode exprNode = Utilities::getChildNodeAtIndex(node,0);
-        switch(Utilities::getNodeType(exprNode))
-        {
-            case EXPRESSION:
-                return checkExpression(exprNode, walker, ctx, MAliceTypeBoolean);
-            default:
-                return false;
-        }        
-        return walker->validateChildren(node, ctx);
+        ANTLR3_UINT32 nodeType = Utilities::getNodeType(exprNode);
+        
+        if (nodeType != EXPRESSION)
+            return false;
+        
+        if (!checkExpression(exprNode, walker, ctx, MAliceTypeBoolean))
+            return false;
+        
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, 1);
+        if (!bodyNode) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("while loop"));
+            return false;
+        }
+        
+        return walker->validateNode(bodyNode, ctx);
     }
     
     bool Validation::validateArrayDeclarationNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         
-        if (identifierNode != NULL) {
-            std::string identifier(Utilities::getNodeText(identifierNode));
-            std::string type;
-            if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
-                return false;
-            
-            // Number of children should be two
-            int numChildren = Utilities::getNumberOfChildNodes(identifierNode);
-            
-            if (numChildren != 2)
-                ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Malformed Array Invocation Node"));
-            
-            // array of what?
-            ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
-            if (typeNode != NULL)
-                type = Utilities::getNodeText(typeNode);
-            // length is a number
-            ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
-            checkExpression(exprNode,false,walker,ctx,MAliceTypeNumber);
-            
-            std::string typeString = Utilities::getNodeText(typeNode);
-            ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
-            ctx->addEntityInScope(identifier, arrayEntity);
+        if (identifierNode == NULL)
+            return false;
+        
+        std::string identifier(Utilities::getNodeText(identifierNode));
+        std::string type;
+        if (!checkSymbolNotInCurrentScopeOrOutputError(identifier, identifierNode, ctx))
+            return false;
+        
+        if (Utilities::getNumberOfChildNodes(identifierNode) != 2) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("array declaration"));
+            return false;
         }
+    
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
+        if (typeNode == NULL) {
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidASTError("array declaration"));
+            return false;
+        }
+        
+        type = Utilities::getNodeText(typeNode);
+        
+        ASTNode exprNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
+        if (!checkExpression(exprNode, false, walker, ctx, MAliceTypeNumber))
+            return false;
+        
+        std::string typeString = Utilities::getNodeText(typeNode);
+        ArrayEntity *arrayEntity = new ArrayEntity(identifier, Utilities::getNodeLineNumber(node), Utilities::getTypeFromTypeString(typeString), 1);
+        ctx->addEntityInScope(identifier, arrayEntity);
         
         return true;
     }
