@@ -31,8 +31,6 @@ namespace MAlice {
     {
         ctx->enterScope();
         
-        Validation::checkReturnValueForAllExecutionPaths(node, walker, ctx); // Generates warning
-        
         bool result = walker->validateChildren(node, ctx);
         
         ctx->exitScope();
@@ -233,6 +231,11 @@ namespace MAlice {
         }
         
         // Walk through the children
+        // Get Body node, check that it has all return paths correctly
+        
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
+        Validation::checkReturnValueForAllExecutionPaths(bodyNode, walker, ctx); // Generates warning
+
         bool result = walker->validateChildren(node, ctx);
         
         ctx->popFunctionProcedureEntity();
