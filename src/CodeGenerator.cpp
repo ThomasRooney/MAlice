@@ -1,7 +1,10 @@
 
 #include "CodeGenerator.h"
 
+#include <cstdio>
 #include <sstream>
+#include <fstream>
+#include "Utilities.h"
 #include "llvm/Support/raw_ostream.h"
 
 namespace MAlice {
@@ -11,16 +14,52 @@ namespace MAlice {
         m_module = module;
     }
     
-    std::string CodeGenerator::generateCode()
+    bool CodeGenerator::generateCode(std::string outputPath)
     {
         std::string output;
         if (!m_module)
             return "";
         
+        // Print the LLVM output into a string
         llvm::raw_string_ostream outputStream(output);
-        m_module->dump();
+        m_module->print(outputStream, NULL);
         
-        return output;
+        std::string llvmIROutputFile = llvmIROutputPath(outputPath);
+        std::string assemblyOutputFile = assemblyOutputPath(outputPath);
+        
+        std::ofstream llvmIROutputStream(llvmIROutputFile);
+        llvmIROutputStream << output;
+        
+        // Run LLVM on the output
+        std::string llcCall = "/opt/local/bin/llc-mp-3.0 " + llvmIROutputFile;
+        std::cerr << llcCall << std::endl;
+        
+        system((char*)llcCall.c_str());
+        
+        std::string clangCall = "clang -v " + assemblyOutputFile;
+        std::cerr << clangCall << std::endl;
+        system((char*)clangCall.c_str());
+        
+        // Clean up temporary files.
+        cleanUp(outputPath);
+        
+        return true;
+    }
+    
+    void CodeGenerator::cleanUp(std::string outputPath)
+    {
+        std::string llvmPath = llvmIROutputPath(outputPath);
+        remove((char*)llvmPath.c_str());
+    }
+    
+    std::string CodeGenerator::llvmIROutputPath(std::string path)
+    {
+        return Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path) + ".ll";
+    }
+    
+    std::string CodeGenerator::assemblyOutputPath(std::string path)
+    {
+        return Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path) + ".s";
     }
     
 }

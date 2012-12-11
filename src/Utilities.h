@@ -55,6 +55,9 @@ namespace MAlice {
         static std::string getOperatorStringFromOperatorNode(ASTNode node);
         static std::string getTypeListFromTypes(std::vector<Type> types);
         
+        static std::string getParentDirectoryForPath(std::string path);
+        static std::string getBaseFilenameFromPath(std::string path);
+        
         template <typename T>
         static std::string numberToString(T number) {
             std::ostringstream stream;

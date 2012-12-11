@@ -25,19 +25,9 @@ namespace MAlice {
     {
         ctx->enterScope();
         
-        Function *function = NULL;
-        BasicBlock *insertBlock = ctx->getIRBuilder()->GetInsertBlock();
-        if (insertBlock)
-            function = insertBlock->getParent();
-        
-        BasicBlock *enterBlock = BasicBlock::Create(getGlobalContext(), "_opened", function);
-        ctx->getIRBuilder()->SetInsertPoint(enterBlock);
-                                                    
         bool result = walker->visitChildren(node, NULL, ctx);
 
         ctx->exitScope();
-        BasicBlock *exitBlock = BasicBlock::Create(getGlobalContext(), "_closed", function);
-        ctx->getIRBuilder()->SetInsertPoint(exitBlock);
         
         return result;
     }
@@ -595,7 +585,7 @@ namespace MAlice {
                                                         false);
         
         Function *procedure = Function::Create(procedureType,
-                                               Function::InternalLinkage,
+                                               Function::ExternalLinkage,
                                                LLVMIdentifier.c_str(),
                                                ctx->getModule());
         
@@ -739,12 +729,16 @@ namespace MAlice {
         std::string typeString = Utilities::getNodeText(typeNode);
         
         GlobalVariableEntity *variable = new GlobalVariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
-        llvm::Value *value = new GlobalVariable(*(ctx->getModule()),
-                                                Utilities::getLLVMTypeFromType(variable->getType()),
-                                                false,
-                                                GlobalValue::InternalLinkage,
-                                                NULL,
-                                                Twine(identifier.c_str()));
+        llvm::GlobalVariable *value = new GlobalVariable(*(ctx->getModule()),
+                                                         llvm::PointerType::get(Utilities::getLLVMTypeFromType(variable->getType()), 0),
+                                                         false,
+                                                         GlobalValue::InternalLinkage,
+                                                         NULL,
+                                                         Twine(identifier.c_str()));
+        
+        ConstantPointerNull* constNullPtr = ConstantPointerNull::get(llvm::Type::getInt64PtrTy(getGlobalContext()));
+        value->setInitializer(constNullPtr);
+        
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
         

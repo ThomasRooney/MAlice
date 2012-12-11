@@ -17,6 +17,14 @@
 #include "VisitorCallbacks.h"
 #include "Types.h"
 
+#ifdef WIN32
+#else
+
+#include <libgen.h>
+
+#endif
+
+
 
 namespace MAlice {
     
@@ -1079,6 +1087,26 @@ namespace MAlice {
                 break;
         }
         return const_cast<llvm::Type *>(rType);
+    }
+    
+    std::string Utilities::getParentDirectoryForPath(std::string path)
+    {
+        return dirname((char*)path.c_str());
+    }
+    
+    std::string Utilities::getBaseFilenameFromPath(std::string path)
+    {
+        if (path.size() == 0)
+            return path;
+        
+        size_t relativePathStart = path.find_last_of("/", path.size());
+        if (relativePathStart > path.size())
+            relativePathStart = 0;
+        
+        if (path[relativePathStart] == '/')
+            relativePathStart++;
+        
+        return path.substr(relativePathStart, path.find_last_of(".") - relativePathStart);
     }
 
 }; // namespace MAlice

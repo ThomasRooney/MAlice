@@ -2,6 +2,7 @@
 #define _MALICECOMPILERFRONTEND
 
 #include <iostream>
+#include "llvm/Module.h"
 
 namespace MAlice {
     
@@ -18,6 +19,8 @@ namespace MAlice {
         void printHelp();
         std::string getPathFromCommandLineArguments();
         void printErrorReport();
+        
+        std::string llvmOutputPath(std::string path);
     public:
         CompilerFrontEnd(int argc, char **argv);
         ~CompilerFrontEnd();

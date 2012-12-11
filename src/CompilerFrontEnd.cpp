@@ -1,6 +1,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <cstdio>
 
 #include "CompilerFrontEnd.h"
 #include "Optimizer.h"
@@ -11,6 +12,8 @@
 #include "CodeGenerator.h"
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
+
+#include "llvm/Support/raw_os_ostream.h"
 
 #ifdef _WIN32
 #ifndef _LLVM_HEADER_
@@ -23,9 +26,9 @@ typedef unsigned long int uint64_t;
 #include <io.h>
 #define getcwd _getcwd
 #define access _access
-
 #else
 #include <unistd.h>
+#include <libgen.h>
 #endif
 
 using namespace std;
@@ -113,16 +116,13 @@ namespace MAlice {
                return EXIT_FAILURE;
             }
             
-            // Do optimisation and output code
-            
             //Optimizer optimizationPass(module);
             //optimizationPass.constantFoldingPass();
-
-            CodeGenerator codeGenerator(module);
-            std::string output = codeGenerator.generateCode();
             
-            // Output the code to stdout for the time being
-            std::cout << output;
+            std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
+            
+            CodeGenerator generator(module);
+            generator.generateCode(outputPath);
         }
         
         printErrorReport();
@@ -226,6 +226,14 @@ namespace MAlice {
                 " found.\n";
             }
         }
+    }
+    
+    std::string CompilerFrontEnd::llvmOutputPath(std::string path)
+    {
+        std::string parent = Utilities::getParentDirectoryForPath(path);
+        std::string baseFilename = Utilities::getBaseFilenameFromPath(path);
+        
+        return parent + "/" + baseFilename + ".ll";
     }
     
 };
