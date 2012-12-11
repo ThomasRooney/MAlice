@@ -458,15 +458,6 @@ namespace MAlice {
         return listString;
     }
     
-    void Utilities::printSymbolTableEntries(SymbolTable *symbolTable)
-    {
-        std::vector<std::string> identifiers = symbolTable->getAllIdentifiers();
-        
-        for (std::vector<std::string>::iterator it = identifiers.begin(); it != identifiers.end(); ++it) {
-            std::cout << *it << ": " << symbolTable->get(*it) << "\n";
-        }
-    }
-    
     std::vector<ParameterEntity*> Utilities::getParameterTypesFromParamsNode(ASTNode paramsNode)
     {
         std::vector<ParameterEntity*> parameterTypes;
