@@ -154,7 +154,12 @@ namespace MAlice {
 
     bool visitDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        llvm::Value *lhsValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
+        
+        ctx->getIRBuilder()->CreateSub(lhsValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        
+        return true;
     }
 
     bool visitDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -341,8 +346,13 @@ namespace MAlice {
 
     bool visitIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
-    }    
+        llvm::Value *lhsValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
+        
+        ctx->getIRBuilder()->CreateAdd(lhsValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        
+        return true;
+    }
 
     bool visitInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
