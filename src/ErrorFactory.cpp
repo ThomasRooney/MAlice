@@ -98,7 +98,7 @@ namespace MAlice {
         unsigned int arrowUnderlineLength = (unsigned int)Utilities::getOperatorStringFromOperatorNode(operatorNode).size() - 1;
         
         error->setLineNumber(Utilities::getNodeLineNumber(operandNode));
-        error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(lineNumber, columnIndex, columnIndex + arrowUnderlineLength)));
+        error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(lineNumber, columnIndex, columnIndex + arrowUnderlineLength)));
         error->setUnderlineRanges(Utilities::rangeToSingletonList(errorRange));
         
         return error;

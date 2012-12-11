@@ -288,8 +288,8 @@ namespace MAlice {
         if (outRange) {
             std::string endTokenString = (char*)endToken->input->substr(endToken->input, endToken->start, endToken->stop)->chars;
             
-            *outRange = Utilities::createRange(startToken->line, startToken->charPosition,
-                                               endToken->line, endToken->charPosition + (unsigned int)endTokenString.size() - 1);
+            *outRange = Range::create(startToken->line, startToken->charPosition,
+                                      endToken->line, endToken->charPosition + (unsigned int)endTokenString.size() - 1);
         }
         
         return (char*)startToken->input->substr(startToken->input, startToken->start, endToken->stop)->chars;
@@ -350,21 +350,6 @@ namespace MAlice {
         std::list<Range*> singleton = std::list<Range*>();
         singleton.push_back(r);
         return singleton;
-    }
-    
-    Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn)
-    {
-        return createRange(startLine, startColumn, startLine, startColumn);
-    }
-    
-    Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn, unsigned int endColumn)
-    {
-        return createRange(startLine, startColumn, startLine, endColumn);
-    }
-    
-    Range *Utilities::createRange(unsigned int startLine, unsigned int startColumn, unsigned int endLine, unsigned int endColumn)
-    {
-        return new Range(ErrorPosition(startLine, startColumn), ErrorPosition(endLine, endColumn));
     }
     
     std::string Utilities::stripLeadingAndTrailingCharacters(std::string input, char character)
@@ -626,7 +611,7 @@ namespace MAlice {
                     // Array has no children, hence this is an error!
                     Error *error = ErrorFactory::createSemanticError("Cannot refer to array '" + std::string(Utilities::getNodeText(node)) + "' directly.");
                     error->setLineNumber(Utilities::getNodeLineNumber(node));
-                    error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+                    error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
                     error->setAdditionalInformation("To fix, specify an array element.");
                     ctx->getErrorReporter()->reportError(error);
                 }
@@ -980,8 +965,8 @@ namespace MAlice {
             error->setUnderlineRanges(underlineRanges);
             
             unsigned int operatorStringLength = (unsigned int)Utilities::getOperatorStringFromOperatorNode(node).size();
-            Range *arrowRange = Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node),
-                                                       Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node) + operatorStringLength - 1);
+            Range *arrowRange = Range::create(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node),
+                                              Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node) + operatorStringLength - 1);
             
             error->setArrowRanges(Utilities::rangeToSingletonList(arrowRange));
             
@@ -1061,7 +1046,7 @@ namespace MAlice {
         if (!lookupVEntity) {
             Error *error = ErrorFactory::createSemanticError("Identifier '" + identifier + "' does not have a type.");
             error->setLineNumber(Utilities::getNodeLineNumber(node));
-            error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+            error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
             ctx->getErrorReporter()->reportError(error);
             
             return false;

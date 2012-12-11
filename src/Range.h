@@ -15,6 +15,10 @@ namespace MAlice {
     public:
         Range(ErrorPosition startPosition, ErrorPosition endPosition);
         
+        static Range *create(unsigned int startLine, unsigned int startColumn);
+        static Range *create(unsigned int startLine, unsigned int startColumn, unsigned int endColumn);
+        static Range *create(unsigned int startLine, unsigned int startColumn, unsigned int endLine, unsigned int endColumn);
+        
         ErrorPosition getStartPosition();
         ErrorPosition getEndPosition();
     };

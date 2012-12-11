@@ -361,7 +361,7 @@ namespace MAlice {
                 error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
                 
                 error->setArrowRanges(Utilities::rangeToSingletonList(
-                                                                      Utilities::createRange(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))
+                                                                      Range::create(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))
                                                                       ));
                 
                 ctx->getErrorReporter()->reportError(error);

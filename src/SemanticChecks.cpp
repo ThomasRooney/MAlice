@@ -27,7 +27,7 @@ namespace MAlice {
             
             Error *error = ErrorFactory::createSemanticError(errorMessage);
             error->setLineNumber(Utilities::getNodeLineNumber(node));
-            error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
+            error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(node), Utilities::getNodeColumnIndex(node))));
             error->setAdditionalInformation(additionalInformation.str());
             
             ctx->getErrorReporter()->reportError(error);
@@ -132,7 +132,7 @@ namespace MAlice {
         if (!ctx->isSymbolInScope(identifier, &entity)) {
             Error *error = ErrorFactory::createSemanticError("Cannot find declaration for invocation of function or procedure '" + identifier + "'.");
             error->setLineNumber(Utilities::getNodeLineNumber(identifierNode));
-            error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))));
+            error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(identifierNode), Utilities::getNodeColumnIndex(identifierNode))));
             
             ctx->getErrorReporter()->reportError(error);
             
@@ -329,7 +329,7 @@ namespace MAlice {
         if (!ctx->isSymbolInScope(lvalueIdentifier, &symbolTableEntity)) {
             Error *error = ErrorFactory::createSemanticError("Cannot find variable declaration for '" + lvalueIdentifier + "'.");
             error->setLineNumber(Utilities::getNodeLineNumber(lvalueNode));
-            error->setUnderlineRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
+            error->setUnderlineRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
             
             ctx->getErrorReporter()->reportError(error);
             
@@ -344,7 +344,7 @@ namespace MAlice {
             if (entity->getType().isArray() && !isLValueArray) {
                 Error *error = ErrorFactory::createSemanticError("Trying to assign to array '" + lvalueIdentifier + "' directly is invalid.");
                 error->setLineNumber(Utilities::getNodeLineNumber(lvalueNode));
-                error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
+                error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(lvalueNode), Utilities::getNodeColumnIndex(lvalueNode))));
                 error->setAdditionalInformation("To fix, assign to one of its elements.");
                 
                 ctx->getErrorReporter()->reportError(error);
@@ -441,7 +441,7 @@ namespace MAlice {
             {
                 Error *error = ErrorFactory::createSemanticError("Expression: '" + Utilities::getNodeTextIncludingChildren(childNode, ctx, NULL) + "' is not a valid print statement.");
                 error->setLineNumber(Utilities::getNodeLineNumber(printStatementNode));
-                error->setArrowRanges(Utilities::rangeToSingletonList(Utilities::createRange(Utilities::getNodeLineNumber(printStatementNode), Utilities::getNodeColumnIndex(printStatementNode))));
+                error->setArrowRanges(Utilities::rangeToSingletonList(Range::create(Utilities::getNodeLineNumber(printStatementNode), Utilities::getNodeColumnIndex(printStatementNode))));
                 
                 // Deepest child Node
                 ctx->getErrorReporter()->reportError(error);

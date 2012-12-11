@@ -42,7 +42,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
 
             MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage);
             error->setLineNumber(token->line);
-            error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Utilities::createRange(token->line, token->charPosition)));
+            error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Range::create(token->line, token->charPosition)));
             
             parserErrorReporter->reportError(error);
         }
@@ -61,7 +61,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
                 error->setLineNumber(token->line);
                 
                 if (token->charPosition != UINT_MAX) {
-                    MAlice::Range *range = MAlice::Utilities::createRange(token->line, token->charPosition);
+                    MAlice::Range *range = MAlice::Range::create(token->line, token->charPosition);
                     error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(range));
                 }
                     
@@ -85,7 +85,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
                 string identifier = (char*)token->getText(token)->chars;
                 MAlice::Error *error = MAlice::ErrorFactory::createSyntacticError(errorMessage = "Unexpected token '" + identifier + "'.");
                 error->setLineNumber(token->line);
-                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Utilities::createRange(token->line, token->charPosition)));
+                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Range::create(token->line, token->charPosition)));
                 
                 parserErrorReporter->reportError(error);
             }
@@ -112,7 +112,7 @@ void handleParserError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR
             
             if (token) {
                 error->setLineNumber(token->line);
-                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Utilities::createRange(token->line, token->charPosition)));
+                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Range::create(token->line, token->charPosition)));
             }
             
             parserErrorReporter->reportError(error);
@@ -142,7 +142,7 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
                 
                 error->setErrorMessage("Unexpected token '" + identifier + "'.");
                 error->setLineNumber(token->line);
-                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Utilities::createRange(token->line, token->charPosition)));
+                error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(MAlice::Range::create(token->line, token->charPosition)));
             } else
                 error->setErrorMessage("Unrecognised token");
             
@@ -159,7 +159,7 @@ void handleLexerError(struct ANTLR3_BASE_RECOGNIZER_struct * recognizer, pANTLR3
             MAlice::Error *error = MAlice::ErrorFactory::createLexicalError("Unrecognised or missing token.");
             error->setLineNumber(exception->line);
             error->setArrowRanges(MAlice::Utilities::rangeToSingletonList(
-                (MAlice::Utilities::createRange(exception->line, exception->charPositionInLine))));
+                (MAlice::Range::create(exception->line, exception->charPositionInLine))));
             
             parserErrorReporter->reportError(error);
         }

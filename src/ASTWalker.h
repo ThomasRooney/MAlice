@@ -31,6 +31,7 @@ namespace MAlice {
 
         MAliceVisitFunction getNodeVisitFunction(ASTNode node);
         MAliceValidationFunction getNodeValidationFunction(ASTNode node);
+        
     }; // class ASTWalker
 
 }; // namespace MAlice
