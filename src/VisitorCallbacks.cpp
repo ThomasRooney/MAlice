@@ -293,7 +293,7 @@ namespace MAlice {
         }
 
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateLoad(value, identifier.c_str());
+            *outValue = value;
         
         return true;
     }
@@ -645,19 +645,23 @@ namespace MAlice {
         std::string identifier = Utilities::getNodeText(identifierNode);
         
         Entity *entity = NULL;
-        ctx->isSymbolInScope(identifier, &entity);
+        if (!ctx->isSymbolInScope(identifier, &entity))
+            return false;
         
         std::vector<llvm::Value*> arguments;
+
         
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(identifierNode); ++i) {
             llvm::Value *value = NULL;
             walker->visitNode(Utilities::getChildNodeAtIndex(identifierNode, i), &value, ctx);
-            
             arguments.push_back(value);
         }
         
         FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
-        ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), arguments);
+        
+        llvm::ArrayRef<llvm::Value*> a(&arguments[0], arguments.size());
+        
+        ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), a);
         
         return true;
     }
