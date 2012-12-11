@@ -64,6 +64,8 @@ namespace MAlice {
         IdentifierDispenser *m_identifierDispenser;
         std::unordered_map<unsigned int, llvm::Value*> m_printfFormatStringMap;
         
+        void initialiseCompilerContext();
+        
     public:
         CompilerContext(std::string input);
         ~CompilerContext();

@@ -24,7 +24,6 @@ namespace MAlice {
         m_inputStream = NULL;
         m_tokenStream = NULL;
         
-        m_symbolTables.push_back(new SymbolTable());
         t_symbolTable = new SymbolTable();
         m_errorReporter = NULL;
         configureKeywords();
@@ -37,6 +36,8 @@ namespace MAlice {
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
         m_module = new llvm::Module("root module", llvm::getGlobalContext());
         m_identifierDispenser = new IdentifierDispenser();
+        
+        initialiseCompilerContext();
     }
     
     CompilerContext::~CompilerContext()
@@ -82,6 +83,11 @@ namespace MAlice {
             delete m_identifierDispenser, m_identifierDispenser = NULL;
     }
 
+    void CompilerContext::initialiseCompilerContext()
+    {
+        m_symbolTables.push_back(new SymbolTable());
+    }
+    
     bool CompilerContext::lockTemporarySymbolTable()
     {
         #ifdef _WIN32
@@ -330,6 +336,9 @@ namespace MAlice {
         }
         
         m_symbolTables.clear();
+        
+        // Re-initialise the default values again.
+        initialiseCompilerContext();
         
         // The entities for the function procedure scope stack are cleaned up in the symbol tables.
         while(!m_functionProcedureScopeStack.empty()) {
