@@ -717,12 +717,12 @@ namespace MAlice {
                 }
                 
                 std::string identifier = Utilities::getNodeText(identifierNode);
-                
+                bool byReference = false;
                 MAliceEntityType entityType = MAliceEntityTypeUndefined;
-                if (!getTypeFromExpressionIdentifierNode(identifierNode, NULL, &entityType, walker, ctx, NULL))
+                if (!getTypeFromExpressionIdentifierNode(identifierNode, NULL, &entityType, walker, ctx, &byReference ))
                     return false;
                 
-                if (entityType != MAliceEntityTypeArray) {
+                if (entityType != MAliceEntityTypeArray && entityType != MAliceEntityTypeParameter && !byReference) {
                     Range *identifierRange = NULL;
                     Utilities::getNodeTextIncludingChildren(node, ctx, &identifierRange);
                     
@@ -737,27 +737,38 @@ namespace MAlice {
                 
                 Entity *entity = NULL;
                 ctx->isSymbolInScope(identifier, &entity);
+                if (entityType == MAliceEntityTypeArray)
+                {
+                    ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
+                    if (!arrayEntity) {
+                        ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Could not get valid entity from symbol table for array '" + identifier + "'."));
+                        return false;
+                    }
                 
-                ArrayEntity *arrayEntity = dynamic_cast<ArrayEntity*>(entity);
-                if (!arrayEntity) {
-                    ctx->getErrorReporter()->reportError(ErrorFactory::createInternalError("Could not get valid entity from symbol table for array '" + identifier + "'."));
-                    return false;
+                    MAliceType subscriptType = MAliceTypeNone;
+                    ASTNode subscriptExpressionNode = Utilities::getChildNodeAtIndex(node, 1);
+                    if (!getTypeFromExpressionNode(subscriptExpressionNode, &subscriptType, false, walker, ctx, NULL))
+                        return false;
+                
+                    if (subscriptType != MAliceTypeNumber) {
+                        ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(subscriptExpressionNode, MAliceTypeNumber, subscriptType, ctx));
+                        return false;
+                    }
+                
+                
+                    if (outType)
+                        *outType = arrayEntity->getType();
                 }
-                
-                MAliceType subscriptType = MAliceTypeNone;
-                ASTNode subscriptExpressionNode = Utilities::getChildNodeAtIndex(node, 1);
-                if (!getTypeFromExpressionNode(subscriptExpressionNode, &subscriptType, false, walker, ctx, NULL))
-                    return false;
-                
-                if (subscriptType != MAliceTypeNumber) {
-                    ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(subscriptExpressionNode, MAliceTypeNumber, subscriptType, ctx));
-                    return false;
+                else if (entityType == MAliceEntityTypeParameter && byReference)
+                {
+                    auto entityType = dynamic_cast<ParameterEntity*>(entity)->getType();
+                    if (entityType != MAliceTypeNumber) {
+                        ctx->getErrorReporter()->reportError(ErrorFactory::createCannotMatchTypesError(node, MAliceTypeNumber, entityType, ctx));
+                        return false;
+                    }
+                    if (outType)
+                        *outType = entityType;
                 }
-                
-                
-                if (outType)
-                    *outType = arrayEntity->getType();
-                
                 return true;
             }
                 break;
@@ -1043,14 +1054,15 @@ namespace MAlice {
         if (outType)
         {
             *outType = lookupVEntity->getType();
-            if (passedByReference)
-            {
-                auto entityType = Utilities::getTypeOfEntity(lookupVEntity);
-                if (entityType == MAliceEntityTypeParameter)
-                    *passedByReference = dynamic_cast<ParameterEntity*>(lookupVEntity)->isPassedByReference();
-                else if (entityType == MAliceEntityTypeArray)
-                    *passedByReference = true;
-            }
+        }
+
+        if (passedByReference)
+        {
+            auto entityType = Utilities::getTypeOfEntity(lookupVEntity);
+            if (entityType == MAliceEntityTypeParameter)
+                *passedByReference = dynamic_cast<ParameterEntity*>(lookupVEntity)->isPassedByReference();
+            else if (entityType == MAliceEntityTypeArray)
+               *passedByReference = true;
         }
         
         if (outEntityType)
