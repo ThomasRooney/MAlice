@@ -771,8 +771,9 @@ namespace MAlice {
                 }
                 
                 
+                // Pass back the *primitive* type, i.e. without the fact we're an array.
                 if (outType)
-                    *outType = arrayEntity->getType();
+                    *outType = Type(arrayEntity->getType().getPrimitiveType());
                 
                 return true;
             }
