@@ -100,11 +100,13 @@ namespace MAlice {
 
         if (t.isArray()) {
             Range *r = NULL;
-            std::string text = Utilities::getNodeTextIncludingChildren(node, ctx, &r);
+            
+            ASTNode invalidLValueNode = Utilities::getFirstNonImaginaryChildNode(node);
+            std::string text = Utilities::getNodeTextIncludingChildren(invalidLValueNode, ctx, &r);
             Error *error = ErrorFactory::createSemanticError("Cannot input directly to an array.");
             error->setLineNumber(Utilities::getNodeLineNumber(node));
             error->setUnderlineRanges(Utilities::rangeToSingletonList(r));
-            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidLValueError(node, ctx));
+            ctx->getErrorReporter()->reportError(ErrorFactory::createInvalidLValueError(invalidLValueNode, ctx));
             
             return false;
         }
