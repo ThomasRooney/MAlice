@@ -657,15 +657,18 @@ namespace MAlice {
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(identifierNode); ++i) {
             llvm::Value *value = NULL;
             walker->visitNode(Utilities::getChildNodeAtIndex(identifierNode, i), &value, ctx);
-            arguments.push_back(value);
+            // Load the value into an argument
+            llvm::Value *arg = ctx->getIRBuilder()->CreateLoad(value);
+            arguments.push_back(arg);
         }
         
         FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
         
         llvm::ArrayRef<llvm::Value*> a(&arguments[0], arguments.size());
         
-        ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), a);
-        
+        llvm::Value * v = ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), a, "calltmp");
+        if (outValue)
+            *outValue = v;
         return true;
     }
 
