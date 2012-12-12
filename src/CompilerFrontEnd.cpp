@@ -37,9 +37,9 @@ namespace MAlice {
     
     typedef enum {
         CompilerFlagsNone = 0,
-        CompilerFlagsPrintHelp,
-        CompilerFlagsPrintAST,
-        CompilerFlagsDebugInformation
+        CompilerFlagsPrintHelp = 1,
+        CompilerFlagsPrintAST = 2,
+        CompilerFlagsDebugInformation = 4,
     } CompilerFlags;
   
     CompilerFrontEnd::CompilerFrontEnd(int argc, char **argv)
@@ -65,7 +65,7 @@ namespace MAlice {
     {
         unsigned int compilerFlags = CompilerFlagsNone;
         
-        if (hasFlagsInCommandLineArguments()) {
+        while (hasFlagsInCommandLineArguments()) {
             compilerFlags = getEnabledFlags();
             
             if (compilerFlags == CompilerFlagsNone) {
