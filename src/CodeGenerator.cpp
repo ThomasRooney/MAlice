@@ -23,6 +23,8 @@ namespace MAlice {
         // Print the LLVM output into a string
         llvm::raw_string_ostream outputStream(output);
         m_module->print(outputStream, NULL);
+
+        std::cout << output;
         
         std::string llvmIROutputFile = llvmIROutputPath(outputPath);
         std::string assemblyOutputFile = assemblyOutputPath(outputPath);
@@ -33,7 +35,7 @@ namespace MAlice {
         // Run LLVM on the output
         std::string llcCall = "/opt/local/bin/llc-mp-3.0 " + llvmIROutputFile;
         std::cerr << llcCall << std::endl;
-        
+            
         system((char*)llcCall.c_str());
         
         std::string clangCall = "clang -v " + assemblyOutputFile;

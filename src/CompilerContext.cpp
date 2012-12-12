@@ -57,13 +57,6 @@ namespace MAlice {
             m_functionProcedureScopeStack.pop();
         }
         
-        while (!m_insertionPoints.empty()) {
-            llvm::IRBuilderBase::InsertPoint *point = m_insertionPoints.top();
-            delete point, point = NULL;
-            
-            m_insertionPoints.pop();
-        }
-        
         if (m_lexer)
             delete m_lexer, m_lexer = NULL;
         
@@ -345,51 +338,6 @@ namespace MAlice {
             m_functionProcedureScopeStack.pop();
         }
     }
-
-    void CompilerContext::pushCurrentInsertionPoint()
-    {
-        llvm::IRBuilderBase::InsertPoint currentPoint = getIRBuilder()->saveIP();
-        if (!currentPoint.getBlock())
-            return;
-        
-        llvm::IRBuilderBase::InsertPoint *point = new llvm::IRBuilderBase::InsertPoint(currentPoint.getBlock(), currentPoint.getPoint());
-        
-        m_insertionPoints.push(point);
-    }
-    
-    llvm::IRBuilderBase::InsertPoint *CompilerContext::popInsertionPoint()
-    {
-        if (m_insertionPoints.empty())
-            return NULL;
-        
-        llvm::IRBuilderBase::InsertPoint *currentPoint = m_insertionPoints.top();
-        delete currentPoint, currentPoint = NULL;
-        
-        m_insertionPoints.pop();
-        
-        return currentPoint;
-    }
-    
-    void CompilerContext::saveInsertPoint(llvm::BasicBlock *block)
-    {
-        pushCurrentInsertionPoint();
-        getIRBuilder()->SetInsertPoint(block);
-    }
-    
-    void CompilerContext::restoreInsertPoint()
-    {
-        llvm::IRBuilderBase::InsertPoint *insertPoint = popInsertionPoint();
-        if (insertPoint)
-            getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
-    }
-    
-    llvm::BasicBlock *CompilerContext::getCurrentBlock()
-    {
-        if (m_insertionPoints.empty())
-            return NULL;
-        
-        return m_insertionPoints.top()->getBlock();
-    }
     
     IdentifierDispenser *CompilerContext::getIdentifierDispenser()
     {
@@ -401,10 +349,10 @@ namespace MAlice {
         m_identifierDispenser = dispenser;
     }
     
-    llvm::Value *CompilerContext::printfFormatStringForExpressionType(Type type)
+    llvm::Value *CompilerContext::ioFormatStringForExpressionType(Type type)
     {
-        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find(type.getPrimitiveType());
-        if (element != m_printfFormatStringMap.end())
+        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_ioFormatStringMap.find(type.getPrimitiveType());
+        if (element != m_ioFormatStringMap.end())
             return element->second;
         
         llvm::Value *value = NULL;
@@ -412,23 +360,23 @@ namespace MAlice {
         switch(type.getPrimitiveType())
         {
             case PrimitiveTypeSentence:
-                value = getIRBuilder()->CreateGlobalStringPtr("%s", "__printf_string_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%s", "__io_string_format");
                 break;
             case PrimitiveTypeNumber:
-                value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__printf_number_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__io_number_format");
                 break;
             case PrimitiveTypeBoolean:
-                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_bool_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__io_bool_format");
                 break;
             case PrimitiveTypeLetter:
-                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_char_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__io_char_format");
                 break;
             default:
                 return NULL;
                 break;
         }
         
-        m_printfFormatStringMap.insert(std::make_pair(type.getPrimitiveType(), value));
+        m_ioFormatStringMap.insert(std::make_pair(type.getPrimitiveType(), value));
         
         return value;
     }
