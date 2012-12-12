@@ -42,10 +42,10 @@ namespace MAlice {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
-        ASTNode numElementsNode = Utilities::getChildNodeAtIndex(node, 1);
-        
-        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 2);
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
         std::string typeString = Utilities::getNodeText(typeNode);
+        
+        ASTNode numElementsNode = Utilities::getChildNodeAtIndex(identifierNode, 1);
         
         Type arrayType = Utilities::getTypeFromTypeString(typeString);
         arrayType.setIsArray(true);
