@@ -715,7 +715,7 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) == 1) {
-            // This does nothing!
+            // The unary + operator does nothing!
             return true;
         }
         
