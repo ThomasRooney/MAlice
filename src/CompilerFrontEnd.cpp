@@ -13,6 +13,8 @@
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
 
+
+#include "llvm/Module.h"
 #include "llvm/Support/raw_os_ostream.h"
 
 #ifdef _WIN32
@@ -87,7 +89,9 @@ namespace MAlice {
         
         std::stringstream input;
         input << inputStream.rdbuf();
-        CompilerContext *compilerContext;
+        CompilerContext *compilerContext = NULL;
+        CodeGenerator *generator = NULL;
+
         if ((compilerFlags & CompilerFlagsDebugInformation) != 0)
         {
             compilerContext = new CompilerContext(input.str(), Utilities::getBaseFilenameFromPath(path), Utilities::getParentDirectoryForPath(path));
@@ -122,28 +126,35 @@ namespace MAlice {
         compilerContext->clearSemanticInformation();
         llvm::Module *module = NULL;
 
-        
-        if (!semanticAnalyser->generateIR(&module)) {
-            std::cerr << "Failure";
-            return EXIT_FAILURE;
-        }
-        
         // Do optimisation and output code
         
         Optimizer optimizer();
 
         //optimizationPass.constantFoldingPass();
+
+        if (!semanticAnalyser->generateIR(&module)) {
+            return EXIT_FAILURE;
+        }
         
         std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
         
-        CodeGenerator generator(module);
-        generator.generateCode(path, outputPath);
+        if ((compilerFlags & CompilerFlagsDebugInformation) != 0) {
+            generator = new CodeGenerator(module, compilerContext->getDGBuilder());
+        }
+        else {
+            generator = new CodeGenerator(module);
+        }
+
+        generator->generateCode(path, outputPath);
 
         if (semanticAnalyser) {
             delete semanticAnalyser;
             semanticAnalyser = NULL;
         }
-        
+        if (generator) {
+            delete generator;
+            generator = NULL;
+        }
         delete syntacticAnalyser;
         delete compilerContext;
         

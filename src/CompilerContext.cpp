@@ -28,10 +28,14 @@ namespace MAlice {
     
     CompilerContext::CompilerContext(std::string input, std::string sourceFile, std::string dirFile)
     {
-        m_DebugBuilder = new llvm::DIBuilder(*m_module);
-        m_DebugBuilder->createCompileUnit(llvm::dwarf::DW_LANG_lo_user + SHA_MALICE, sourceFile, dirFile, "MAliceATRCompiler", false, "", 1);
-        m_dbgScope = std::vector<llvm::MDNode*>();
         initialiseCompilerContext(input);
+        m_DebugBuilder = new llvm::DIBuilder(*m_module);
+        sourceFile += ".alice";
+
+        m_DebugBuilder->createCompileUnit(llvm::dwarf::DW_LANG_lo_user + SHA_MALICE,
+                                          sourceFile, dirFile, "MAliceATRCompiler", false, "", 1);
+
+        m_dbfile = m_DebugBuilder->createFile(sourceFile, dirFile);
     }
 
     CompilerContext::~CompilerContext()
@@ -92,7 +96,7 @@ namespace MAlice {
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
         m_module = new llvm::Module("root module", llvm::getGlobalContext());
         m_identifierDispenser = new IdentifierDispenser();
-
+        m_dbgScope = std::vector<llvm::MDNode*>();
         m_symbolTables.push_back(new SymbolTable());
     }
     
@@ -213,7 +217,7 @@ namespace MAlice {
 
     llvm::MDNode* CompilerContext::getCurrentDBScope()
     {
-        return m_dbgScope.back();
+        return m_dbgScope.empty()?NULL:m_dbgScope.back();
     }
     
     ErrorReporter *CompilerContext::getErrorReporter()
@@ -384,7 +388,7 @@ namespace MAlice {
 
     llvm::DIFile *CompilerContext::getDIFile()
     {
-        return m_dbfile;
+        return &m_dbfile;
     }
     
     IdentifierDispenser *CompilerContext::getIdentifierDispenser()

@@ -2,7 +2,6 @@
 #define _MALICECOMPILERFRONTEND
 
 #include <iostream>
-#include "llvm/Module.h"
 
 namespace MAlice {
     

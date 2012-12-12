@@ -1,11 +1,17 @@
 
 #include "CodeGenerator.h"
-
 #include <cstdio>
 #include <sstream>
 #include <fstream>
+
 #include "Utilities.h"
 #include "llvm/Support/raw_ostream.h"
+
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
 
 namespace MAlice {
     
@@ -68,6 +74,7 @@ namespace MAlice {
         // Clean up temporary files.
         remove((char*)llvmIROutputPath.c_str());
         remove((char*)assemblyOutputPath.c_str());
+
         
         return true;
     }
