@@ -65,7 +65,7 @@ namespace MAlice {
     {
         unsigned int compilerFlags = CompilerFlagsNone;
         
-        if (hasFlagsInCommandLineArguments()) {
+        while (hasFlagsInCommandLineArguments()) {
             compilerFlags = getEnabledFlags();
             
             if (compilerFlags == CompilerFlagsNone) {
