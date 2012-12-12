@@ -728,11 +728,12 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        // Create a lexical lock node to declare DWARF debug information scope
-        ctx->getDGBuilder()->createLexicalBlock(llvm::DIDescriptor(),
-                                                *ctx->getDIFile(),
-                                                Utilities::getNodeLineNumber(node),
-                                                Utilities::getNodeColumnIndex(node));
+        if (ctx->getDGBuilder())
+            // Create a lexical lock node to declare DWARF debug information scope
+            ctx->getDGBuilder()->createLexicalBlock(llvm::DIDescriptor(),
+                                                    *ctx->getDIFile(),
+                                                    Utilities::getNodeLineNumber(node),
+                                                    Utilities::getNodeColumnIndex(node));
 
 
         return walker->generateCodeForChildren(node, NULL, ctx);
@@ -828,14 +829,16 @@ namespace MAlice {
                                                                identifier.c_str());
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
+
         // Add debug info
-        ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
-                                                llvm::DIDescriptor(), // TODO: Scope
-                                                identifier,
-                                                *ctx->getDIFile(),
-                                                Utilities::getNodeLineNumber(node),
-                                                llvm::DIType(),
-                                                true);
+        if (ctx->getDGBuilder())
+            ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
+                                                    llvm::DIDescriptor(), // TODO: Scope
+                                                    identifier,
+                                                    *ctx->getDIFile(),
+                                                    Utilities::getNodeLineNumber(node),
+                                                    llvm::DIType(),
+                                                    true);
                                                 
         
         if (valueNode) {

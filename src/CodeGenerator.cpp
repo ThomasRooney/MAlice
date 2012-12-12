@@ -12,18 +12,20 @@ namespace MAlice {
     CodeGenerator::CodeGenerator(llvm::Module *module)
     {
         m_module = module;
+        m_dbinfo = NULL;
     }
 
     CodeGenerator::CodeGenerator(llvm::Module *module, llvm::DIBuilder *dbinfo)
     {
+        m_module = module;
         m_dbinfo = dbinfo;
-        CodeGenerator::CodeGenerator(module);
     }
 
     bool CodeGenerator::generateCode(std::string outputPath)
     {
         // Finalise the debug info
-        m_dbinfo->finalize();
+        if (m_dbinfo)
+            m_dbinfo->finalize();
 
         std::string output;
         if (!m_module)
