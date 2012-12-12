@@ -567,7 +567,34 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->generateCodeForChildren(node, NULL, ctx);
+        llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        llvm::Value *leftParamValue = NULL;
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        
+        llvm::BasicBlock *rightAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_right");
+        llvm::BasicBlock *andSkipBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_skip");
+        
+        // Create the conditional branch instruction to implement left-strictness.
+        ctx->getIRBuilder()->CreateCondBr(leftParamValue, rightAndBlock, andSkipBlock);
+        
+        // Generate code for the right operand to the && operation
+        llvm::Value *rightParamValue = NULL;
+        ctx->getIRBuilder()->SetInsertPoint(rightAndBlock);
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        
+        // LLVM IR requires that each block is terminated by a branch or return instruction
+        ctx->getIRBuilder()->CreateBr(andSkipBlock);
+        
+        // Add the new blocks to the function
+        function->getBasicBlockList().push_back(rightAndBlock);
+        function->getBasicBlockList().push_back(andSkipBlock);
+        
+        ctx->getIRBuilder()->SetInsertPoint(andSkipBlock);
+        
+        if (outValue)
+            *outValue = llvm::ConstantInt::get(llvm::Type::getInt64Ty(getGlobalContext()), 0);
+        
+        return true;
     }
     
     bool CodeGeneration::generateCodeForLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)

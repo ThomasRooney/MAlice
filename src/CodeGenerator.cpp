@@ -37,6 +37,8 @@ namespace MAlice {
         llvm::raw_string_ostream outputStream(output);
         m_module->print(outputStream, NULL);
         
+        std::cout << output;
+        
         std::cout << "Done.";
 
         std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
