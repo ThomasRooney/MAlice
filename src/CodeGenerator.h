@@ -12,14 +12,16 @@ namespace MAlice {
     private:
         llvm::Module *m_module;
         llvm::DIBuilder *m_dbinfo;
-        void cleanUp(std::string outputPath);
-        std::string llvmIROutputPath(std::string path);
-        std::string assemblyOutputPath(std::string path);
+        std::string getLlvmIROutputPath(std::string inputPath);
+        std::string getAssemblyOutputPath(std::string inputPath);
+        
+        bool runLlc(std::string inputPath, std::string outputPath);
+        bool runClang(std::string assemblyInputPath, std::string outputPath);
     public:
         CodeGenerator(llvm::Module *module);
         CodeGenerator(llvm::Module *module, llvm::DIBuilder *dbinfo);
         
-        bool generateCode(std::string outputPath);
+        bool generateCode(std::string inputPath, std::string outputPath);
     };
     
 }

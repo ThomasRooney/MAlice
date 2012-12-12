@@ -21,7 +21,7 @@ namespace MAlice {
         m_dbinfo = dbinfo;
     }
 
-    bool CodeGenerator::generateCode(std::string outputPath)
+    bool CodeGenerator::generateCode(std::string inputPath, std::string outputPath)
     {
         // Finalise the debug info
         if (m_dbinfo)
@@ -31,48 +31,75 @@ namespace MAlice {
         if (!m_module)
             return "";
         
+        std::cout << "\n\nGenerating LLVM IR... ";
+        
         // Print the LLVM output into a string
         llvm::raw_string_ostream outputStream(output);
         m_module->print(outputStream, NULL);
+        
+        std::cout << "Done.";
 
-        std::cout << output;
+        std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
+        std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
         
-        std::string llvmIROutputFile = llvmIROutputPath(outputPath);
-        std::string assemblyOutputFile = assemblyOutputPath(outputPath);
-        
-        std::ofstream llvmIROutputStream(llvmIROutputFile);
+        std::ofstream llvmIROutputStream(llvmIROutputPath);
         llvmIROutputStream << output;
         
         // Run LLVM on the output
-        std::string llcCall = "/opt/local/bin/llc-mp-3.0 " + llvmIROutputFile;
-        std::cerr << llcCall << std::endl;
-            
-        system((char*)llcCall.c_str());
+        std::cout << "\nRunning llc on LLVM IR... ";
+        if (!runLlc(llvmIROutputPath, assemblyOutputPath)) {
+            std::cerr << "\n\nFailed to create assembly with llc.";
+            return false;
+        }
+        std::cout << " Done.";
         
-        std::string clangCall = "clang -v " + assemblyOutputFile;
-        std::cerr << clangCall << std::endl;
-        system((char*)clangCall.c_str());
+        // Run clang to generate the executable
+        std::cout << "\nRunning clang to generate executable... ";
+        if (!runClang(assemblyOutputPath, outputPath)) {
+            std::cerr << "\n\nFailed to create executable with clang.";
+            return false;
+        }
+        std::cout << "Done.";
+        
+        std::cout << "\n\nExecutable generated at '" << outputPath << "'.";
         
         // Clean up temporary files.
-        cleanUp(outputPath);
+        remove((char*)llvmIROutputPath.c_str());
+        remove((char*)assemblyOutputPath.c_str());
         
         return true;
     }
     
-    void CodeGenerator::cleanUp(std::string outputPath)
+    std::string CodeGenerator::getLlvmIROutputPath(std::string inputPath)
     {
-        std::string llvmPath = llvmIROutputPath(outputPath);
-        remove((char*)llvmPath.c_str());
+        return Utilities::getParentDirectoryForPath(inputPath) + "/" + Utilities::getBaseFilenameFromPath(inputPath) + ".ll";
     }
     
-    std::string CodeGenerator::llvmIROutputPath(std::string path)
+    std::string CodeGenerator::getAssemblyOutputPath(std::string inputPath)
     {
-        return Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path) + ".ll";
+        return Utilities::getParentDirectoryForPath(inputPath) + "/" + Utilities::getBaseFilenameFromPath(inputPath) + ".s";
     }
     
-    std::string CodeGenerator::assemblyOutputPath(std::string path)
+    bool CodeGenerator::runLlc(std::string inputPath, std::string outputPath)
     {
-        return Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path) + ".s";
+        std::string llcCall = "llc " + inputPath + " -o " + outputPath + " 2>&1";
+
+        FILE *llcDescriptor = popen((char*)llcCall.c_str(), "r");
+        if (pclose(llcDescriptor) != EXIT_SUCCESS)
+            return false;
+        
+        return true;
+    }
+    
+    bool CodeGenerator::runClang(std::string assemblyInputPath, std::string outputPath)
+    {
+        std::string clangCall = "clang " + assemblyInputPath + " -o " + outputPath + " 2>&1";
+        
+        FILE *clangDescriptor = popen((char*)clangCall.c_str(), "r");
+        if (pclose(clangDescriptor) != EXIT_SUCCESS)
+            return false;
+        
+        return true;
     }
     
 }
