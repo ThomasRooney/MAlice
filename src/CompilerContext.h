@@ -23,7 +23,7 @@
 
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
-
+#include "llvm/Analysis/DebugInfo.h"
 
 #include "Types.h"
 
@@ -58,7 +58,7 @@ namespace MAlice {
         llvm::Module *m_module;
         // For debugging information
         llvm::DIBuilder* m_DebugBuilder;
-        llvm::DIFile* m_dbfile;
+        llvm::DIFile m_dbfile;
         std::vector<llvm::MDNode*> m_dbgScope;
         
         

@@ -54,7 +54,7 @@ namespace MAlice {
         system((char*)clangCall.c_str());
         
         // Clean up temporary files.
-        cleanUp(outputPath);
+            cleanUp(outputPath);
         
         return true;
     }

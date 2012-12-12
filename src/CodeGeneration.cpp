@@ -837,10 +837,7 @@ namespace MAlice {
     {
         if (ctx->getDGBuilder())
             // Create a lexical lock node to declare DWARF debug information scope
-            ctx->getDGBuilder()->createLexicalBlock(llvm::DIDescriptor(),
-                                                    *ctx->getDIFile(),
-                                                    Utilities::getNodeLineNumber(node),
-                                                    Utilities::getNodeColumnIndex(node));
+            ctx->enterDebugScope(node);
 
 
         return walker->generateCodeForChildren(node, NULL, ctx);
@@ -923,14 +920,12 @@ namespace MAlice {
         // Add debug info
         if (ctx->getDGBuilder())
         {
-            llvm::DIVariable debugVar = ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
-                                                    llvm::DIDescriptor(ctx->getCurrentDBScope()),
-                                                    identifier,
+            llvm::DIGlobalVariable debugVar = ctx->getDGBuilder()->createGlobalVariable(identifier,
                                                     *ctx->getDIFile(),
                                                     Utilities::getNodeLineNumber(node),
                                                     llvm::DIType(), // TODO: Btter type information so it can be displayed in gdb
-                                                    true);
-            ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+                                                    false,
+                                                    value);
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope()));
