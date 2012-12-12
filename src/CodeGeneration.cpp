@@ -676,8 +676,7 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) == 1) {
-            // TODO: Implement absolute value transform.
-            
+            // This does nothing!
             return true;
         }
         
