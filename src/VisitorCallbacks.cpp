@@ -42,7 +42,9 @@ namespace MAlice {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
-        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 0);
+        ASTNode numElementsNode = Utilities::getChildNodeAtIndex(node, 1);
+        
+        ASTNode typeNode = Utilities::getChildNodeAtIndex(identifierNode, 2);
         std::string typeString = Utilities::getNodeText(typeNode);
         
         Type arrayType = Utilities::getTypeFromTypeString(typeString);
@@ -50,7 +52,10 @@ namespace MAlice {
         VariableEntity *arrayEntity = new VariableEntity(identifier, Utilities::getNodeLineNumber(node), arrayType);
         ctx->addEntityInScope(identifier, arrayEntity);
         
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()));
+        llvm::Value *numElementsValue = NULL;
+        walker->visitNode(numElementsNode, &numElementsValue, ctx);
+        
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()), numElementsValue);
         arrayEntity->setLLVMValue(value);
         
         return true;
