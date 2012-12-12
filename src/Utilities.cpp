@@ -13,7 +13,6 @@
 #include "VariableEntity.h"
 #include "ProcedureEntity.h"
 #include "FunctionEntity.h"
-#include "VisitorCallbacks.h"
 #include "Types.h"
 
 #ifdef _WIN32

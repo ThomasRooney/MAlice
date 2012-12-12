@@ -11,7 +11,7 @@
 #include "MAliceParser.h"
 #include "SymbolTable.h"
 #include "Utilities.h"
-#include "VisitorCallbacks.h"
+#include "CodeGeneration.h"
 
 namespace MAlice {
 

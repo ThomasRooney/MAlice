@@ -3,7 +3,7 @@
 #include <list>
 #include <typeinfo>
 
-#include "VisitorCallbacks.h"
+#include "CodeGeneration.h"
 #include "Entity.h"
 #include "ErrorFactory.h"
 #include "FunctionEntity.h"
