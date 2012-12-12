@@ -13,6 +13,8 @@
 #include "SemanticAnalyser.h"
 #include "Utilities.h"
 
+
+#include "llvm/Module.h"
 #include "llvm/Support/raw_os_ostream.h"
 
 #ifdef _WIN32
