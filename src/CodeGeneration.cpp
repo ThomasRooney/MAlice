@@ -21,7 +21,7 @@ using namespace llvm;
 
 namespace MAlice {
 
-    bool generateCodeForArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
         
@@ -32,12 +32,12 @@ namespace MAlice {
         return result;
     }
 
-    bool generateCodeForArithmeticExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForArithmeticExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForArrayDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForArrayDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
@@ -61,12 +61,12 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForArraySubscriptNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForArraySubscriptNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *lvalueValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lvalueValue, ctx);
@@ -80,7 +80,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForBitwiseAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForBitwiseAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -90,7 +90,7 @@ namespace MAlice {
                                                  ctx);
     }
     
-    bool generateCodeForBitwiseOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForBitwiseOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -100,7 +100,7 @@ namespace MAlice {
                                                  ctx);
     }
     
-    bool generateCodeForBitwiseXorExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForBitwiseXorExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -110,7 +110,7 @@ namespace MAlice {
                                                  ctx);
     }
 
-    bool generateCodeForBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
         
@@ -121,17 +121,17 @@ namespace MAlice {
         return result;
     }
     
-    bool generateCodeForByReferenceParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForByReferenceParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
     
-    bool generateCodeForByValueParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForByValueParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForCharacterLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::string strVal = Utilities::getNodeText(node);
         uint64_t val = strVal[1]; // [0] = "'", [1] = LITERAL, [2] = "'"
@@ -142,12 +142,12 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForDeclarationsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForDeclarationsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *lhsValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
@@ -157,12 +157,12 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
     
-    bool generateCodeForEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -172,7 +172,7 @@ namespace MAlice {
                                                  ctx);
     }
 
-    bool generateCodeForExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         bool result;
         ctx->beginExpression();
@@ -186,7 +186,7 @@ namespace MAlice {
         return result;
     }
 
-    bool generateCodeForFunctionDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForFunctionDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         // We've already validated that there is an identifier node here, so this won't be NULL.
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
@@ -254,7 +254,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -264,7 +264,7 @@ namespace MAlice {
                                                  ctx);
     }
     
-    bool generateCodeForGreaterThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForGreaterThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -274,7 +274,7 @@ namespace MAlice {
                                                  ctx);
     }
     
-    bool generateCodeForIdentifierNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForIdentifierNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::string identifier = Utilities::getNodeText(node);
         
@@ -303,7 +303,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         Function *function = NULL;
         BasicBlock *insertBlock = ctx->getIRBuilder()->GetInsertBlock();
@@ -341,7 +341,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *lhsValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
@@ -351,7 +351,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::vector<llvm::Type*> parameterTypes;
         parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
@@ -384,7 +384,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                                  outValue,
@@ -394,7 +394,7 @@ namespace MAlice {
                                                  ctx);
     }
     
-    bool generateCodeForLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForLessThanOrEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                        outValue,
@@ -404,7 +404,7 @@ namespace MAlice {
                                        ctx);
     }
     
-    bool generateCodeForBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *leftParamValue = NULL;
         llvm::Value *rightParamValue = NULL;
@@ -420,7 +420,7 @@ namespace MAlice {
         return true;
     }
     
-    bool generateCodeForBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *leftParamValue = NULL;
         llvm::Value *rightParamValue = NULL;
@@ -436,7 +436,7 @@ namespace MAlice {
         return true;
     }
     
-    bool generateCodeForUnaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, const llvm::Twine&), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForUnaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, const llvm::Twine&), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *paramValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &paramValue, ctx);
@@ -449,7 +449,7 @@ namespace MAlice {
         return true;
     }
     
-    bool generateCodeForUnaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForUnaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *paramValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &paramValue, ctx);
@@ -462,17 +462,17 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForLetterTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForLetterTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
     
-    bool generateCodeForLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForUnaryOperatorNode(node,
                                       outValue,
@@ -482,12 +482,12 @@ namespace MAlice {
                                       ctx);
     }
 
-    bool generateCodeForLogicalOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForLogicalOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
     
-    bool generateCodeForMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) == 1)
             return generateCodeForUnaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateNeg, "negtmp", walker, ctx);
@@ -495,7 +495,7 @@ namespace MAlice {
         return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSub, "subtmp", walker, ctx);
     }
     
-    bool generateCodeForModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node, outValue,
                                        &llvm::IRBuilder<>::CreateSRem,
@@ -504,7 +504,7 @@ namespace MAlice {
                                        ctx);
     }
     
-    bool generateCodeForMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                        outValue,
@@ -514,7 +514,7 @@ namespace MAlice {
                                        ctx);
     }
     
-    bool generateCodeForNotEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForNotEqualExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return generateCodeForBinaryOperatorNode(node,
                                        outValue,
@@ -524,12 +524,12 @@ namespace MAlice {
                                        ctx);
     }
 
-    bool generateCodeForNullStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForNullStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return true;
     }
 
-    bool generateCodeForNumberLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForNumberLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::stringstream strVal;
         strVal.str(Utilities::getNodeText(node));   
@@ -543,12 +543,12 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForNumberTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForNumberTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForParamsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForParamsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
         std::vector<ParameterEntity*> parameterList = Utilities::getParameterTypesFromParamsNode(node);
@@ -566,7 +566,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForPlusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (Utilities::getNumberOfChildNodes(node) == 1) {
             // TODO: Implement absolute value transform.
@@ -577,7 +577,7 @@ namespace MAlice {
         return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSub, "addtmp", walker, ctx);
     }
 
-    bool generateCodeForProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
@@ -647,7 +647,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::vector<llvm::Type*> parameterTypes;
         parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
@@ -677,7 +677,7 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForProcFuncInvocationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
@@ -707,12 +707,12 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForReturnStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForReturnStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *returnValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &returnValue, ctx);
@@ -722,17 +722,17 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForSentenceTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForSentenceTypeNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForStatementListNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForStatementListNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForStringLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForStringLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         std::string strVal = Utilities::getNodeText(node);
         strVal = Utilities::stripLeadingAndTrailingCharacters(strVal, '"');
@@ -743,12 +743,12 @@ namespace MAlice {
         return true;
     }
 
-    bool generateCodeForTildeExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForTildeExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
 
-    bool generateCodeForVariableDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForVariableDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         if (!ctx->getCurrentFunctionProcedureEntity())
             return generateCodeForVariableDeclarationNodeAsGlobalVariable(node, outValue, walker, ctx);
@@ -756,7 +756,7 @@ namespace MAlice {
         return generateCodeForVariableDeclarationNodeAsLocalVariable(node, outValue, walker, ctx);
     }
     
-    bool generateCodeForVariableDeclarationNodeAsGlobalVariable(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForVariableDeclarationNodeAsGlobalVariable(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
@@ -784,7 +784,7 @@ namespace MAlice {
         return true;
     }
     
-    bool generateCodeForVariableDeclarationNodeAsLocalVariable(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForVariableDeclarationNodeAsLocalVariable(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
@@ -815,7 +815,7 @@ namespace MAlice {
         return true;
     }
     
-    bool generateCodeForWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         return true;
         
@@ -839,7 +839,7 @@ namespace MAlice {
         return true;
     }
     
-    llvm::Value *getLLVMValueFromLValueNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    llvm::Value *CodeGeneration::getLLVMValueFromLValueNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
         ANTLR3_UINT32 type = Utilities::getNodeType(node);
         
