@@ -10,6 +10,9 @@
 
 #include "llvm/BasicBlock.h"
 #include "llvm/Support/Dwarf.h"
+#include "llvm/Analysis/DIBuilder.h"
+#include "llvm/Analysis/DebugInfo.h"
+#include "Utilities.h"
 
 using namespace std;
 
@@ -85,7 +88,7 @@ namespace MAlice {
         #else
            pthread_mutex_init (&temporarySymbolTableLock, NULL);;
         #endif
-        
+           //m_initBlock = new llvm::BasicBlock(llvm::getGlobalContext(), "
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
         m_module = new llvm::Module("root module", llvm::getGlobalContext());
         m_identifierDispenser = new IdentifierDispenser();
@@ -163,11 +166,34 @@ namespace MAlice {
         return entity != NULL;
     }
 
+    void CompilerContext::enterDebugScope(ASTNode node)
+    {
+         if (m_DebugBuilder)
+         {
+             llvm::DIDescriptor newscope = m_DebugBuilder->createLexicalBlock(
+                 this->getCurrentDBScope() == NULL?
+                 llvm::DIDescriptor() :
+                 llvm::DIDescriptor(this->getCurrentDBScope()),
+                 *this->getDIFile(),
+                 Utilities::getNodeLineNumber(node),
+                 Utilities::getNodeColumnIndex(node));
+                 m_dbgScope.push_back(newscope);
+
+         }
+    }
+
     void CompilerContext::enterScope()
     {
         m_symbolTables.push_back(new SymbolTable());
     }
     
+    void CompilerContext::exitDebugScope(ASTNode node)
+    {
+        if (m_DebugBuilder)
+        {
+            m_dbgScope.pop_back();
+        }
+    }
     void CompilerContext::exitScope()
     {
         if (m_symbolTables.empty()) {
@@ -183,6 +209,11 @@ namespace MAlice {
         delete lastSymbolTable;
         
         m_symbolTables.pop_back();
+    }
+
+    llvm::MDNode* CompilerContext::getCurrentDBScope()
+    {
+        return m_dbgScope.back();
     }
     
     ErrorReporter *CompilerContext::getErrorReporter()

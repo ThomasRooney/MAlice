@@ -60,7 +60,7 @@ namespace MAlice {
         llvm::DIBuilder* m_DebugBuilder;
         llvm::DIFile* m_dbfile;
         std::vector<llvm::MDNode*> m_dbgScope;
-
+        
         
         IdentifierDispenser *m_identifierDispenser;
         std::unordered_map<unsigned int, llvm::Value*> m_ioFormatStringMap;
@@ -79,7 +79,10 @@ namespace MAlice {
         bool isSymbolInScope(std::string identifier, Entity **outEntity);
         bool isSymbolInCurrentScope(std::string identifier, Entity **outEntity);
         bool isKeyword(std::string string);
-    
+
+        void enterDebugScope(ASTNode);    
+        void exitDebugScope(ASTNode);    
+        llvm::MDNode* getCurrentDBScope();
         void enterScope();
         void exitScope();
 
@@ -118,3 +121,4 @@ namespace MAlice {
 }; // namespace MAlice
 
 #endif /* #ifndef _MALICECOMPILERCONTEXT */
+

@@ -26,10 +26,12 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
+        ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
 
         ctx->exitScope();
+        ctx->exitDebugScope(node);
         
         return result;
     }
@@ -57,6 +59,16 @@ namespace MAlice {
         llvm::Value *numElementsValue = NULL;
         walker->generateCodeForNode(numElementsNode, &numElementsValue, ctx);
         
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+        // TODO: Generate variable declaration debug information
+
         llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()), numElementsValue);
         arrayEntity->setLLVMValue(value);
         
@@ -77,6 +89,15 @@ namespace MAlice {
         
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         if (outValue) {
             llvm::Value *pointerValue = ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), indexValue);
             *outValue = ctx->getIRBuilder()->CreateLoad(pointerValue);
@@ -93,6 +114,15 @@ namespace MAlice {
         llvm::Value *assignmentValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
         
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         if (outValue)
             *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
         
@@ -132,10 +162,12 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
+        ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
         
         ctx->exitScope();
+        ctx->exitDebugScope(node);
         
         return result;
     }
@@ -170,6 +202,15 @@ namespace MAlice {
     {
         llvm::Value *lhsValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
         
         ctx->getIRBuilder()->CreateSub(lhsValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
         
@@ -313,6 +354,16 @@ namespace MAlice {
             
             return true;
         }
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         
         llvm::Value *loadInst = ctx->getIRBuilder()->CreateLoad(value);
 
@@ -342,6 +393,15 @@ namespace MAlice {
                 BasicBlock *thenBlock = BasicBlock::Create(getGlobalContext(), "then", function);
                 BasicBlock *elseBlock = BasicBlock::Create(getGlobalContext(), "else", function);
                 
+                // Change debug line number
+                if (ctx->getDGBuilder())
+                {
+                    ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                                        Utilities::getNodeColumnIndex(node),
+                                                                                        ctx->getCurrentDBScope()));
+                }                                       
+
+
                 ctx->getIRBuilder()->CreateCondBr(condValue, thenBlock, elseBlock);
                 
                 ctx->getIRBuilder()->SetInsertPoint(thenBlock);
@@ -365,6 +425,15 @@ namespace MAlice {
         llvm::Value *lhsValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
         
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         ctx->getIRBuilder()->CreateAdd(lhsValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
         
         return true;
@@ -372,6 +441,16 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         std::vector<llvm::Type*> parameterTypes;
         parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
         
@@ -569,6 +648,16 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForParamsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
         std::vector<ParameterEntity*> parameterList = Utilities::getParameterTypesFromParamsNode(node);
         
@@ -576,7 +665,6 @@ namespace MAlice {
             ParameterEntity *entity = *it;
             llvm::Value *parameterValue = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(entity->getType()), 0, entity->getIdentifier().c_str());
             entity->setLLVMValue(parameterValue);
-            
             ctx->addEntityInScope(entity->getIdentifier(), entity);
         }
         
@@ -690,6 +778,14 @@ namespace MAlice {
         
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
         // Create the printf() call.
         ctx->getIRBuilder()->CreateCall2(printfFunction, formatStringValue, printVal);
         
@@ -719,10 +815,21 @@ namespace MAlice {
         FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
         
         llvm::ArrayRef<llvm::Value*> a(&arguments[0], arguments.size());
-        
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
         llvm::Value * v = ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), a, "calltmp");
         if (outValue)
             *outValue = v;
+
+
+
         return true;
     }
 
@@ -743,9 +850,17 @@ namespace MAlice {
     {
         llvm::Value *returnValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &returnValue, ctx);
-        
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }
+
         ctx->getIRBuilder()->CreateRet(returnValue);
-        
+
         return true;
     }
 
@@ -805,6 +920,23 @@ namespace MAlice {
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
         
+        // Add debug info
+        if (ctx->getDGBuilder())
+        {
+            llvm::DIVariable debugVar = ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
+                                                    llvm::DIDescriptor(ctx->getCurrentDBScope()),
+                                                    identifier,
+                                                    *ctx->getDIFile(),
+                                                    Utilities::getNodeLineNumber(node),
+                                                    llvm::DIType(), // TODO: Btter type information so it can be displayed in gdb
+                                                    true);
+            ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
+
         if (outValue)
             *outValue = value;
         
@@ -824,6 +956,12 @@ namespace MAlice {
         VariableEntity *variable = new VariableEntity(identifier,
                                                       Utilities::getNodeLineNumber(identifierNode),
                                                       Utilities::getTypeFromTypeString(typeString));
+        if (ctx->getDGBuilder())
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+
+
         llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(variable->getType()),
                                                                0,
                                                                identifier.c_str());
@@ -832,14 +970,20 @@ namespace MAlice {
 
         // Add debug info
         if (ctx->getDGBuilder())
-            ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
-                                                    llvm::DIDescriptor(), // TODO: Scope
+        {
+            llvm::DIVariable debugVar = ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
+                                                    llvm::DIDescriptor(ctx->getCurrentDBScope()),
                                                     identifier,
                                                     *ctx->getDIFile(),
                                                     Utilities::getNodeLineNumber(node),
-                                                    llvm::DIType(),
+                                                    llvm::DIType(), // TODO: Btter type information so it can be displayed in gdb
                                                     true);
-                                                
+            ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+
+        }                                       
         
         if (valueNode) {
             llvm::Value *assignmentValue = NULL;
@@ -871,7 +1015,17 @@ namespace MAlice {
         BasicBlock *afterLoopBodyBlock = BasicBlock::Create(getGlobalContext(), "afterloop", parentFunction);
         
         ctx->getIRBuilder()->SetInsertPoint(loopHeaderBlock);
+
+        // Change debug line number
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                             Utilities::getNodeColumnIndex(node),
+                                                                             ctx->getCurrentDBScope()));
+        }                                       
+
         ctx->getIRBuilder()->CreateCondBr(conditionValue, loopBody, afterLoopBodyBlock);
+
         ctx->getIRBuilder()->SetInsertPoint(afterLoopBodyBlock);
 
         return true;

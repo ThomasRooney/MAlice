@@ -38,7 +38,8 @@ namespace MAlice {
     typedef enum {
         CompilerFlagsNone = 0,
         CompilerFlagsPrintHelp,
-        CompilerFlagsPrintAST
+        CompilerFlagsPrintAST,
+        CompilerFlagsDebugInformation
     } CompilerFlags;
   
     CompilerFrontEnd::CompilerFrontEnd(int argc, char **argv)
@@ -86,8 +87,14 @@ namespace MAlice {
         
         std::stringstream input;
         input << inputStream.rdbuf();
-        
-        CompilerContext *compilerContext = new CompilerContext(input.str());
+        CompilerContext *compilerContext;
+        if ((compilerFlags & CompilerFlagsDebugInformation) != 0)
+        {
+            compilerContext = new CompilerContext(input.str(), Utilities::getBaseFilenameFromPath(path), Utilities::getParentDirectoryForPath(path));
+        }
+        else{
+            compilerContext = new CompilerContext(input.str());
+        }
         setParserErrorReporter(m_errorReporter);
         compilerContext->setErrorReporter(m_errorReporter); 
         
@@ -111,9 +118,10 @@ namespace MAlice {
             compilerContext->clearSemanticInformation();
             llvm::Module *module = NULL;
 
+            
             if (!semanticAnalyser->generateIR(&module)) {
                 std::cerr << "Failure";
-               return EXIT_FAILURE;
+                return EXIT_FAILURE;
             }
             
             // Do optimisation and output code
@@ -166,6 +174,9 @@ namespace MAlice {
                 retFlags |= CompilerFlagsPrintAST;
             if (*c == 'h')
                 retFlags |= CompilerFlagsPrintHelp;
+            if (*c == 'd')
+                retFlags |= CompilerFlagsDebugInformation;
+
         }
         
         return retFlags;
