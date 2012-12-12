@@ -423,7 +423,7 @@ namespace MAlice {
                 value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__io_number_format");
                 break;
             case PrimitiveTypeBoolean:
-                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__io_bool_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%d", "__io_bool_format");
                 break;
             case PrimitiveTypeLetter:
                 value = getIRBuilder()->CreateGlobalStringPtr("%c", "__io_char_format");
@@ -438,4 +438,56 @@ namespace MAlice {
         return value;
     }
 
+    llvm::Function *CompilerContext::prettyPrintBoolFunction()
+    {
+        std::vector<llvm::Type*> parameterList;
+        parameterList.push_back(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)));
+        
+        std::string functionName = "MAlice_PrettyPrintBool";
+        llvm::Function *prettyPrintFunction = getModule()->getFunction(functionName);
+        if (prettyPrintFunction)
+            return prettyPrintFunction;
+        
+        llvm::FunctionType *functionType = llvm::FunctionType::get(llvm::Type::getVoidTy(llvm::getGlobalContext()),
+                                                                   parameterList,
+                                                                   false);
+        
+        prettyPrintFunction = llvm::Function::Create(functionType,
+                                                     llvm::Function::InternalLinkage,
+                                                     functionName,
+                                                     getModule());
+        
+        auto argList = prettyPrintFunction->arg_begin();
+        llvm::Value *boolArg = argList++;
+        
+        llvm::BasicBlock *bodyBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "entry", prettyPrintFunction);
+        llvm::BasicBlock *oldInsertPoint = getIRBuilder()->GetInsertBlock();
+        
+        llvm::IRBuilder<> *builder = getIRBuilder();
+        builder->SetInsertPoint(bodyBlock);
+        
+        llvm::BasicBlock *trueBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "true");
+        llvm::BasicBlock *falseBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "false");
+        llvm::BasicBlock *endBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "after");
+        
+        builder->CreateCondBr(boolArg, trueBlock, falseBlock);
+        prettyPrintFunction->getBasicBlockList().push_back(trueBlock);
+        builder->SetInsertPoint(trueBlock);
+        builder->CreateCall(Utilities::getPrintfFunction(getModule()), builder->CreateGlobalStringPtr("true"));
+        builder->CreateBr(endBlock);
+        
+        prettyPrintFunction->getBasicBlockList().push_back(falseBlock);
+        builder->SetInsertPoint(falseBlock);
+        builder->CreateCall(Utilities::getPrintfFunction(getModule()), builder->CreateGlobalStringPtr("false"));
+        builder->CreateBr(endBlock);
+        
+        prettyPrintFunction->getBasicBlockList().push_back(endBlock);
+        builder->SetInsertPoint(endBlock);
+        
+        getIRBuilder()->CreateRetVoid();
+        getIRBuilder()->SetInsertPoint(oldInsertPoint);
+        
+        return prettyPrintFunction;
+    }
+    
 }; // namespace MAlice

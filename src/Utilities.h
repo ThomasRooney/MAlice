@@ -86,6 +86,7 @@ namespace MAlice {
         static bool getTypeFromExpressionIdentifierNode(ASTNode node, Type *outType, MAliceEntityType *outEntityType, ASTWalker *walker, CompilerContext *ctx, bool *passedByReference);
         
         static llvm::Type *getLLVMTypeFromType(Type type);
+        static llvm::Function *getPrintfFunction(llvm::Module *module);
     };
     
 }; // namespace MAlice

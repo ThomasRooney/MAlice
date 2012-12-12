@@ -116,6 +116,8 @@ namespace MAlice {
         
         llvm::Value *ioFormatStringForExpressionType(Type type);
         
+        llvm::Function *prettyPrintBoolFunction();
+        
     }; // class CompilerContext
     
 }; // namespace MAlice

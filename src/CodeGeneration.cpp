@@ -568,6 +568,12 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        
+        llvm::BasicBlock *leftAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_left", function);
+        ctx->getIRBuilder()->CreateBr(leftAndBlock);
+        
+        ctx->getIRBuilder()->SetInsertPoint(leftAndBlock);
+        
         llvm::Value *leftParamValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
         
@@ -591,8 +597,14 @@ namespace MAlice {
         
         ctx->getIRBuilder()->SetInsertPoint(andSkipBlock);
         
+        llvm::PHINode *phiNode = ctx->getIRBuilder()->CreatePHI(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)), 2,
+                                                                "andtmp");
+        
+        phiNode->addIncoming(leftParamValue, leftAndBlock);
+        phiNode->addIncoming(rightParamValue, rightAndBlock);
+        
         if (outValue)
-            *outValue = llvm::ConstantInt::get(llvm::Type::getInt64Ty(getGlobalContext()), 0);
+            *outValue = phiNode;
         
         return true;
     }
@@ -781,15 +793,8 @@ namespace MAlice {
     }
 
     bool CodeGeneration::generateCodeForPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
-    {
-        std::vector<llvm::Type*> parameterTypes;
-        parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
-        
-        FunctionType *printfFunctionType = FunctionType::get(llvm::Type::getInt32Ty(getGlobalContext()),
-                                                             parameterTypes,
-                                                             true);
-        
-        Function *printfFunction = cast<Function>(ctx->getModule()->getOrInsertFunction("printf", printfFunctionType));
+    {        
+        Function *printfFunction = Utilities::getPrintfFunction(ctx->getModule());
         
         Type type;
         Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
@@ -801,6 +806,11 @@ namespace MAlice {
         
         llvm::Value *printVal = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &printVal, ctx);
+        
+        if (type.getPrimitiveType() == PrimitiveTypeBoolean) {
+            ctx->getIRBuilder()->CreateCall(ctx->prettyPrintBoolFunction(), printVal);
+            return true;
+        }
         
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         
@@ -1089,4 +1099,5 @@ namespace MAlice {
         
         return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
     }
+    
 };

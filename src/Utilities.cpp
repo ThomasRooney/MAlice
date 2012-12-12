@@ -1121,6 +1121,16 @@ namespace MAlice {
         return path.substr(relativePathStart, path.find_last_of(".") - relativePathStart);
     }
 
-
+    llvm::Function *Utilities::getPrintfFunction(llvm::Module *module)
+    {
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt8PtrTy(llvm::getGlobalContext()));
+        
+        llvm::FunctionType *printfFunctionType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()),
+                                                             parameterTypes,
+                                                             true);
+        
+        return llvm::cast<llvm::Function>(module->getOrInsertFunction("printf", printfFunctionType));
+    }
 
 }; // namespace MAlice
