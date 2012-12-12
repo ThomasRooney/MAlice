@@ -13,9 +13,18 @@ namespace MAlice {
     {
         m_module = module;
     }
-    
+
+    CodeGenerator::CodeGenerator(llvm::Module *module, llvm::DIBuilder *dbinfo)
+    {
+        m_dbinfo = dbinfo;
+        CodeGenerator::CodeGenerator(module);
+    }
+
     bool CodeGenerator::generateCode(std::string outputPath)
     {
+        // Finalise the debug info
+        m_dbinfo->finalize();
+
         std::string output;
         if (!m_module)
             return "";

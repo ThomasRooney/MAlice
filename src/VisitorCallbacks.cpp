@@ -15,6 +15,8 @@
 #include "Utilities.h"
 #include "Validation.h"
 #include "llvm/Value.h"
+#include "llvm/Support/Dwarf.h"
+#include "llvm/Analysis/DebugInfo.h"
 
 namespace llvm{}
 using namespace llvm;
@@ -51,7 +53,7 @@ namespace MAlice {
         arrayType.setIsArray(true);
         VariableEntity *arrayEntity = new VariableEntity(identifier, Utilities::getNodeLineNumber(node), arrayType);
         ctx->addEntityInScope(identifier, arrayEntity);
-        
+
         llvm::Value *numElementsValue = NULL;
         walker->visitNode(numElementsNode, &numElementsValue, ctx);
         
@@ -709,6 +711,12 @@ namespace MAlice {
 
     bool visitProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        // Create a lexical lock node to declare DWARF debug information scope
+        ctx->getDGBuilder()->createLexicalBlock(llvm::DIDescriptor(),
+                                                *ctx->getDIFile(),
+                                                Utilities::getNodeLineNumber(node),
+                                                Utilities::getNodeColumnIndex(node));
+
         return walker->visitChildren(node, NULL, ctx);
     }
 
@@ -802,6 +810,15 @@ namespace MAlice {
                                                                identifier.c_str());
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
+        // Add debug info
+        ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
+                                                llvm::DIDescriptor(), // TODO: Scope
+                                                identifier,
+                                                *ctx->getDIFile(),
+                                                Utilities::getNodeLineNumber(node),
+                                                llvm::DIType(),
+                                                true);
+                                                
         
         if (valueNode) {
             llvm::Value *assignmentValue = NULL;

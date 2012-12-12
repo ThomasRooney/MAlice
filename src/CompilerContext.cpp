@@ -9,37 +9,28 @@
 #include "IdentifierDispenser.h"
 
 #include "llvm/BasicBlock.h"
+#include "llvm/Support/Dwarf.h"
 
 using namespace std;
+
+#define SHA_MALICE 1179
 
 namespace MAlice {
     
     CompilerContext::CompilerContext(std::string input)
-    {
-        m_input = input;
-        withinExpressionTree = false;
-        // Set the ANTLR structure defaults
-        m_lexer = NULL;
-        m_parser = NULL;
-        m_inputStream = NULL;
-        m_tokenStream = NULL;
-        
-        t_symbolTable = new SymbolTable();
-        m_errorReporter = NULL;
-        configureKeywords();
-        #ifdef _WIN32
-           temporarySymbolTableLock = CreateMutex(0, FALSE, 0);
-        #else
-           pthread_mutex_init (&temporarySymbolTableLock, NULL);;
-        #endif
-        
-        m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
-        m_module = new llvm::Module("root module", llvm::getGlobalContext());
-        m_identifierDispenser = new IdentifierDispenser();
-        
-        initialiseCompilerContext();
+    {        
+        m_DebugBuilder = NULL;
+        initialiseCompilerContext(input);
     }
     
+    CompilerContext::CompilerContext(std::string input, std::string sourceFile, std::string dirFile)
+    {
+        m_DebugBuilder = new llvm::DIBuilder(*m_module);
+        m_DebugBuilder->createCompileUnit(llvm::dwarf::DW_LANG_lo_user + SHA_MALICE, sourceFile, dirFile, "MAliceATRCompiler", false, "", 1);
+        m_dbgScope = std::vector<llvm::MDNode*>();
+        initialiseCompilerContext(input);
+    }
+
     CompilerContext::~CompilerContext()
     {
         for (list<SymbolTable*>::iterator it = m_symbolTables.begin(); it != m_symbolTables.end(); ++it)
@@ -76,8 +67,29 @@ namespace MAlice {
             delete m_identifierDispenser, m_identifierDispenser = NULL;
     }
 
-    void CompilerContext::initialiseCompilerContext()
+    void CompilerContext::initialiseCompilerContext(std::string input)
     {
+        m_input = input;
+        withinExpressionTree = false;
+        // Set the ANTLR structure defaults
+        m_lexer = NULL;
+        m_parser = NULL;
+        m_inputStream = NULL;
+        m_tokenStream = NULL;
+        
+        t_symbolTable = new SymbolTable();
+        m_errorReporter = NULL;
+        configureKeywords();
+        #ifdef _WIN32
+           temporarySymbolTableLock = CreateMutex(0, FALSE, 0);
+        #else
+           pthread_mutex_init (&temporarySymbolTableLock, NULL);;
+        #endif
+        
+        m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
+        m_module = new llvm::Module("root module", llvm::getGlobalContext());
+        m_identifierDispenser = new IdentifierDispenser();
+
         m_symbolTables.push_back(new SymbolTable());
     }
     
@@ -330,13 +342,18 @@ namespace MAlice {
         
         m_symbolTables.clear();
         
-        // Re-initialise the default values again.
-        initialiseCompilerContext();
+        // Push back another global scope symboltable
+        m_symbolTables.push_back(new SymbolTable());
         
         // The entities for the function procedure scope stack are cleaned up in the symbol tables.
         while(!m_functionProcedureScopeStack.empty()) {
             m_functionProcedureScopeStack.pop();
         }
+    }
+
+    llvm::DIFile *CompilerContext::getDIFile()
+    {
+        return m_dbfile;
     }
     
     IdentifierDispenser *CompilerContext::getIdentifierDispenser()
@@ -347,6 +364,11 @@ namespace MAlice {
     void CompilerContext::setIdentifierDispenser(IdentifierDispenser *dispenser)
     {
         m_identifierDispenser = dispenser;
+    }
+
+    llvm::DIBuilder* CompilerContext::getDGBuilder()
+    {
+        return m_DebugBuilder;
     }
     
     llvm::Value *CompilerContext::ioFormatStringForExpressionType(Type type)

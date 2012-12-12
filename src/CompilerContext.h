@@ -24,7 +24,7 @@
 #include "MAliceLexer.h"
 #include "MAliceParser.h"
 
-#include "llvm/Support/IRBuilder.h"
+
 #include "Types.h"
 
 namespace MAlice {
@@ -56,14 +56,20 @@ namespace MAlice {
         // For code generation
         llvm::IRBuilder<> *m_irBuilder;
         llvm::Module *m_module;
+        // For debugging information
+        llvm::DIBuilder* m_DebugBuilder;
+        llvm::DIFile* m_dbfile;
+        std::vector<llvm::MDNode*> m_dbgScope;
+
         
         IdentifierDispenser *m_identifierDispenser;
         std::unordered_map<unsigned int, llvm::Value*> m_ioFormatStringMap;
         
-        void initialiseCompilerContext();
+        void initialiseCompilerContext(std::string srcInput);
         
     public:
         CompilerContext(std::string input);
+        CompilerContext(std::string input, std::string sourceFile, std::string dirFile); // With debug information (extension)
         ~CompilerContext();
         bool         lockTemporarySymbolTable();
         void         clearSemanticInformation();
@@ -99,6 +105,8 @@ namespace MAlice {
         
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
+        llvm::DIBuilder *getDGBuilder();
+        llvm::DIFile *getDIFile();
         
         IdentifierDispenser *getIdentifierDispenser();
         void setIdentifierDispenser(IdentifierDispenser *dispenser);

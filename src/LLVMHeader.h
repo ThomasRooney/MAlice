@@ -10,6 +10,7 @@
 #include "llvm/Module.h"
 #include "llvm/LLVMContext.h"
 //#include "llvm/Constant.h"
+#include "llvm/Analysis/DIBuilder.h"
 #include "llvm/Support/IRBuilder.h"
 
 #endif
