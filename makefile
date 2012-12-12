@@ -14,7 +14,7 @@ GRAMMAR_OUT_DIR = grammar/output
 SRC_DIR = src
 
 # For LLVM - adapted from http://stackoverflow.com/a/8440972
-LLVM_MODULES = core
+LLVM_MODULES = core analysis
 LLVM_CPPFLAGS = `llvm-config-3.0 --cppflags` 
 LLVM_LDFLAGS = `llvm-config-3.0 --ldflags`
 LLVM_LIBS = `llvm-config-3.0 --libs $(LLVM_MODULES)`
