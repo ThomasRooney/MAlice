@@ -107,43 +107,39 @@ namespace MAlice {
         
         SemanticAnalyser *semanticAnalyser = NULL;
         
-        if (syntacticAnalyser->parseInput(path, &tree)) {
-            if ((compilerFlags & CompilerFlagsPrintAST) != 0)
-                Utilities::printTree(tree);
-            
-            semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-            if (!semanticAnalyser->validateAST()) {
-                // Exit before generation if there are serious errors
-                return EXIT_FAILURE;
-            }
-            // Reset Compiler Context after validation, TODO: Generate once.
-            compilerContext->clearSemanticInformation();
-            llvm::Module *module = NULL;
-
-            
-            if (!semanticAnalyser->generateIR(&module)) {
-                std::cerr << "Failure";
-                return EXIT_FAILURE;
-            }
-            
-            // Do optimisation and output code
-            
-            Optimizer optimizer();
-
-            //optimizationPass.constantFoldingPass();
-            
-            std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
-
-            if ((compilerFlags & CompilerFlagsDebugInformation) != 0) {
-                generator = new CodeGenerator(module, compilerContext->getDGBuilder());
-            }
-            else {
-                generator = new CodeGenerator(module);
-            }
-            generator->generateCode(outputPath);
+        if (!syntacticAnalyser->parseInput(path, &tree)) {
+            printErrorReport();
+            return EXIT_FAILURE;
         }
+    
+        if ((compilerFlags & CompilerFlagsPrintAST) != 0)
+            Utilities::printTree(tree);
         
-        printErrorReport();
+        semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
+        if (!semanticAnalyser->validateAST()) {
+            // Exit before generation if there are serious errors
+            return EXIT_FAILURE;
+        }
+        // Reset Compiler Context after validation, TODO: Generate once.
+        compilerContext->clearSemanticInformation();
+        llvm::Module *module = NULL;
+        
+        // Do optimisation and output code
+        
+        Optimizer optimizer();
+
+        //optimizationPass.constantFoldingPass();
+        
+        std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
+        
+        if ((compilerFlags & CompilerFlagsDebugInformation) != 0) {
+            generator = new CodeGenerator(module, compilerContext->getDGBuilder());
+        }
+        else {
+            generator = new CodeGenerator(module);
+        }
+
+        generator->generateCode(path, outputPath);
 
         if (semanticAnalyser) {
             delete semanticAnalyser;
