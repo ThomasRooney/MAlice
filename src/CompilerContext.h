@@ -58,7 +58,7 @@ namespace MAlice {
         llvm::Module *m_module;
         
         IdentifierDispenser *m_identifierDispenser;
-        std::unordered_map<unsigned int, llvm::Value*> m_printfFormatStringMap;
+        std::unordered_map<unsigned int, llvm::Value*> m_ioFormatStringMap;
         
         void initialiseCompilerContext();
         
@@ -103,7 +103,7 @@ namespace MAlice {
         IdentifierDispenser *getIdentifierDispenser();
         void setIdentifierDispenser(IdentifierDispenser *dispenser);
         
-        llvm::Value *printfFormatStringForExpressionType(Type type);
+        llvm::Value *ioFormatStringForExpressionType(Type type);
         
     }; // class CompilerContext
     

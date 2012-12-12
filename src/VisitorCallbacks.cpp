@@ -346,7 +346,32 @@ namespace MAlice {
 
     bool visitInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->visitChildren(node, NULL, ctx);
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
+        
+        FunctionType *scanfFunctionType = FunctionType::get(llvm::Type::getInt32Ty(getGlobalContext()),
+                                                            parameterTypes,
+                                                            true);
+        
+        Function *scanfFunction = cast<Function>(ctx->getModule()->getOrInsertFunction("scanf", scanfFunctionType));
+        
+        llvm::Value *inputVal = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &inputVal, ctx);
+        
+        Type type;
+        Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
+                                             &type,
+                                             false,
+                                             walker,
+                                             ctx,
+                                             NULL);
+        
+        llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
+        
+        // Create the scanf() call.
+        ctx->getIRBuilder()->CreateCall2(scanfFunction, formatStringValue, inputVal);
+        
+        return true;
     }
 
     bool visitLessThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -634,7 +659,7 @@ namespace MAlice {
                                              ctx,
                                              NULL);
         
-        llvm::Value *formatStringValue = ctx->printfFormatStringForExpressionType(type);
+        llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         
         // Create the printf() call.
         ctx->getIRBuilder()->CreateCall2(printfFunction, formatStringValue, printVal);

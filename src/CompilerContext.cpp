@@ -349,10 +349,10 @@ namespace MAlice {
         m_identifierDispenser = dispenser;
     }
     
-    llvm::Value *CompilerContext::printfFormatStringForExpressionType(Type type)
+    llvm::Value *CompilerContext::ioFormatStringForExpressionType(Type type)
     {
-        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_printfFormatStringMap.find(type.getPrimitiveType());
-        if (element != m_printfFormatStringMap.end())
+        std::unordered_map<unsigned int, llvm::Value*>::iterator element = m_ioFormatStringMap.find(type.getPrimitiveType());
+        if (element != m_ioFormatStringMap.end())
             return element->second;
         
         llvm::Value *value = NULL;
@@ -360,23 +360,23 @@ namespace MAlice {
         switch(type.getPrimitiveType())
         {
             case PrimitiveTypeSentence:
-                value = getIRBuilder()->CreateGlobalStringPtr("%s", "__printf_string_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%s", "__io_string_format");
                 break;
             case PrimitiveTypeNumber:
-                value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__printf_number_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__io_number_format");
                 break;
             case PrimitiveTypeBoolean:
-                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_bool_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__io_bool_format");
                 break;
             case PrimitiveTypeLetter:
-                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__printf_char_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%c", "__io_char_format");
                 break;
             default:
                 return NULL;
                 break;
         }
         
-        m_printfFormatStringMap.insert(std::make_pair(type.getPrimitiveType(), value));
+        m_ioFormatStringMap.insert(std::make_pair(type.getPrimitiveType(), value));
         
         return value;
     }
