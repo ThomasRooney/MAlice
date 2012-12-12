@@ -399,13 +399,13 @@ namespace MAlice {
             switch(nodeType)
             {
                 case EXPRESSION:
-                    if (!walker->visitNode(childNode, NULL, ctx))
+                    if (!walker->validateNode(childNode, ctx))
                         result = false;
                     break;
                 case STATEMENTLIST:
                     ctx->enterScope();
                     
-                    walker->visitNode(childNode, NULL, ctx);
+                    walker->validateNode(childNode, ctx);
                     
                     ctx->exitScope();
                     break;
