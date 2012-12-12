@@ -50,16 +50,12 @@ namespace MAlice {
         SymbolTable* t_symbolTable;
         
         std::stack<FunctionProcedureEntity*> m_functionProcedureScopeStack;
-        std::stack<llvm::IRBuilderBase::InsertPoint*> m_insertionPoints;
         
         std::string getLineOfInput(unsigned int lineNumber);
         
         // For code generation
         llvm::IRBuilder<> *m_irBuilder;
         llvm::Module *m_module;
-        
-        void pushCurrentInsertionPoint();
-        llvm::IRBuilderBase::InsertPoint *popInsertionPoint();
         
         IdentifierDispenser *m_identifierDispenser;
         std::unordered_map<unsigned int, llvm::Value*> m_printfFormatStringMap;
@@ -103,10 +99,6 @@ namespace MAlice {
         
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
-        
-        void saveInsertPoint(llvm::BasicBlock *block);
-        void restoreInsertPoint();
-        llvm::BasicBlock *getCurrentBlock();
         
         IdentifierDispenser *getIdentifierDispenser();
         void setIdentifierDispenser(IdentifierDispenser *dispenser);

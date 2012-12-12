@@ -57,13 +57,6 @@ namespace MAlice {
             m_functionProcedureScopeStack.pop();
         }
         
-        while (!m_insertionPoints.empty()) {
-            llvm::IRBuilderBase::InsertPoint *point = m_insertionPoints.top();
-            delete point, point = NULL;
-            
-            m_insertionPoints.pop();
-        }
-        
         if (m_lexer)
             delete m_lexer, m_lexer = NULL;
         
@@ -344,51 +337,6 @@ namespace MAlice {
         while(!m_functionProcedureScopeStack.empty()) {
             m_functionProcedureScopeStack.pop();
         }
-    }
-
-    void CompilerContext::pushCurrentInsertionPoint()
-    {
-        llvm::IRBuilderBase::InsertPoint currentPoint = getIRBuilder()->saveIP();
-        if (!currentPoint.getBlock())
-            return;
-        
-        llvm::IRBuilderBase::InsertPoint *point = new llvm::IRBuilderBase::InsertPoint(currentPoint.getBlock(), currentPoint.getPoint());
-        
-        m_insertionPoints.push(point);
-    }
-    
-    llvm::IRBuilderBase::InsertPoint *CompilerContext::popInsertionPoint()
-    {
-        if (m_insertionPoints.empty())
-            return NULL;
-        
-        llvm::IRBuilderBase::InsertPoint *currentPoint = m_insertionPoints.top();
-        delete currentPoint, currentPoint = NULL;
-        
-        m_insertionPoints.pop();
-        
-        return currentPoint;
-    }
-    
-    void CompilerContext::saveInsertPoint(llvm::BasicBlock *block)
-    {
-        pushCurrentInsertionPoint();
-        getIRBuilder()->SetInsertPoint(block);
-    }
-    
-    void CompilerContext::restoreInsertPoint()
-    {
-        llvm::IRBuilderBase::InsertPoint *insertPoint = popInsertionPoint();
-        if (insertPoint)
-            getIRBuilder()->SetInsertPoint(insertPoint->getBlock());
-    }
-    
-    llvm::BasicBlock *CompilerContext::getCurrentBlock()
-    {
-        if (m_insertionPoints.empty())
-            return NULL;
-        
-        return m_insertionPoints.top()->getBlock();
     }
     
     IdentifierDispenser *CompilerContext::getIdentifierDispenser()
