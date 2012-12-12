@@ -16,7 +16,7 @@
 namespace MAlice {
 
 ASTWalker :: ASTWalker () {
-    constructVisitDictionary();
+    constructCodeGenerationDictionary();
 }
     
 ASTWalker :: ~ASTWalker() {
@@ -24,63 +24,14 @@ ASTWalker :: ~ASTWalker() {
 
 
 // Initialise the static function dictionaries
-std::unordered_map<unsigned int, MAliceVisitFunction> ASTWalker::visitDictionary = std::unordered_map<unsigned int, MAliceVisitFunction>();
+std::unordered_map<unsigned int, MAliceCodeGenerationFunction> ASTWalker::codeGenerationDictionary = std::unordered_map<unsigned int, MAliceCodeGenerationFunction>();
 std::unordered_map<unsigned int, MAliceValidationFunction> ASTWalker::validationDictionary = std::unordered_map<unsigned int, MAliceValidationFunction>();
 
-void ASTWalker :: constructVisitDictionary() {
+void ASTWalker :: constructCodeGenerationDictionary() {
     static bool doOnce = false;
     if (!doOnce) {
         doOnce = true;
-        ASTWalker::visitDictionary.insert(std::make_pair(ARRAY, &visitArrayDeclarationNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(ARRAYSUBSCRIPT, &visitArraySubscriptNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(ASSIGNMENTSTATEMENT, &visitAssignmentStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BANG, &visitLogicalNotExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BITWISEAND, &visitBitwiseAndExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BITWISEOR, &visitBitwiseOrExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BITWISEXOR, &visitBitwiseXorExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BLOCK, &visitArbitraryBlockNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BODY, &visitBodyNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BYREFERENCE, &visitByReferenceParameterNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(BYVALUE, &visitByValueParameterNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(CHARACTER_LITERAL, &visitCharacterLiteralNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(DECLS, &visitDeclarationsNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(DECREMENTSTATEMENT, &visitDecrementStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(DIVIDE, &visitDivideExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(EQUALS, &visitEqualsExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(EXPRESSION, &visitExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(FULL_STOP, &visitNullStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(FUNCDEFINITION, &visitFunctionDeclarationNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(GREATERTHAN, &visitGreaterThanExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(GREATERTHANEQUAL, &visitGreaterThanOrEqualExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(IDENTIFIER, &visitIdentifierNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(IFSTATEMENT, &visitIfStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(INCREMENTSTATEMENT, &visitIncrementStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(INPUTSTATEMENT, &visitInputStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(INVOCATION, &visitProcFuncInvocationNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(LESSTHAN, &visitLessThanExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(LESSTHANEQUAL, &visitLessThanOrEqualExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(LETTER_TYPE, &visitLetterTypeNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(LOGICALAND, &visitLogicalAndExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(LOGICALOR, &visitLogicalOrExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(MINUS, &visitMinusExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(MODULO, &visitModuloExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(MULTIPLY, &visitMultiplyExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(NOTEQUAL, &visitNotEqualExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(NUMBER_LITERAL, &visitNumberLiteralNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(NUMBER_TYPE, &visitNumberTypeNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(PARAMS, &visitParamsNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(PLUS, &visitPlusExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(PRINTSTATEMENT, &visitPrintStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(PROCDEFINITION, &visitProcedureDeclarationNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(PROGRAM, &visitProgramNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(RETURNSTATEMENT, &visitReturnStatementNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(SENTENCE_TYPE, &visitSentenceTypeNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(STATEMENTLIST, &visitStatementListNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(STRING_LITERAL, &visitStringLiteralNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(TILDE, &visitLogicalNotExpressionNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(VARDECLARATION, &visitVariableDeclarationNode));
-        ASTWalker::visitDictionary.insert(std::make_pair(WHILESTATEMENT, &visitWhileStatementNode));
-   
+        
         ASTWalker::validationDictionary.insert(std::make_pair(ARRAY, &Validation::validateArrayDeclarationNode));
         ASTWalker::validationDictionary.insert(std::make_pair(ASSIGNMENTSTATEMENT, &Validation::validateAssignmentStatementNode));
         ASTWalker::validationDictionary.insert(std::make_pair(BODY, &Validation::validateBodyNode));
@@ -98,7 +49,56 @@ void ASTWalker :: constructVisitDictionary() {
         ASTWalker::validationDictionary.insert(std::make_pair(VARDECLARATION, &Validation::validateVariableDeclarationNode));
         ASTWalker::validationDictionary.insert(std::make_pair(WHILESTATEMENT, &Validation::validateWhileStatementNode));
         ASTWalker::validationDictionary.insert(std::make_pair(PARAMS, &Validation::validateParamsNode));
-   
+        
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(ARRAY, &generateCodeForArrayDeclarationNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(ARRAYSUBSCRIPT, &generateCodeForArraySubscriptNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(ASSIGNMENTSTATEMENT, &generateCodeForAssignmentStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BANG, &generateCodeForLogicalNotExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BITWISEAND, &generateCodeForBitwiseAndExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BITWISEOR, &generateCodeForBitwiseOrExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BITWISEXOR, &generateCodeForBitwiseXorExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BLOCK, &generateCodeForArbitraryBlockNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BODY, &generateCodeForBodyNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BYREFERENCE, &generateCodeForByReferenceParameterNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(BYVALUE, &generateCodeForByValueParameterNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(CHARACTER_LITERAL, &generateCodeForCharacterLiteralNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(DECLS, &generateCodeForDeclarationsNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(DECREMENTSTATEMENT, &generateCodeForDecrementStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(DIVIDE, &generateCodeForDivideExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(EQUALS, &generateCodeForEqualsExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(EXPRESSION, &generateCodeForExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(FULL_STOP, &generateCodeForNullStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(FUNCDEFINITION, &generateCodeForFunctionDeclarationNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(GREATERTHAN, &generateCodeForGreaterThanExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(GREATERTHANEQUAL, &generateCodeForGreaterThanOrEqualExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(IDENTIFIER, &generateCodeForIdentifierNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(IFSTATEMENT, &generateCodeForIfStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(INCREMENTSTATEMENT, &generateCodeForIncrementStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(INPUTSTATEMENT, &generateCodeForInputStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(INVOCATION, &generateCodeForProcFuncInvocationNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(LESSTHAN, &generateCodeForLessThanExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(LESSTHANEQUAL, &generateCodeForLessThanOrEqualExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(LETTER_TYPE, &generateCodeForLetterTypeNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(LOGICALAND, &generateCodeForLogicalAndExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(LOGICALOR, &generateCodeForLogicalOrExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(MINUS, &generateCodeForMinusExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(MODULO, &generateCodeForModuloExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(MULTIPLY, &generateCodeForMultiplyExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(NOTEQUAL, &generateCodeForNotEqualExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(NUMBER_LITERAL, &generateCodeForNumberLiteralNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(NUMBER_TYPE, &generateCodeForNumberTypeNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(PARAMS, &generateCodeForParamsNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(PLUS, &generateCodeForPlusExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(PRINTSTATEMENT, &generateCodeForPrintStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(PROCDEFINITION, &generateCodeForProcedureDeclarationNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(PROGRAM, &generateCodeForProgramNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(RETURNSTATEMENT, &generateCodeForReturnStatementNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(SENTENCE_TYPE, &generateCodeForSentenceTypeNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(STATEMENTLIST, &generateCodeForStatementListNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(STRING_LITERAL, &generateCodeForStringLiteralNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(TILDE, &generateCodeForLogicalNotExpressionNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(VARDECLARATION, &generateCodeForVariableDeclarationNode));
+        ASTWalker::codeGenerationDictionary.insert(std::make_pair(WHILESTATEMENT, &generateCodeForWhileStatementNode));
    
     }
 }
@@ -110,12 +110,12 @@ bool ASTWalker::validateTree(pANTLR3_BASE_TREE root, CompilerContext *ctx)
 
 bool ASTWalker::generateIRFromTree(pANTLR3_BASE_TREE root, CompilerContext *ctx)
 {
-    return visitNode(root, NULL, ctx);
+    return generateCodeForNode(root, NULL, ctx);
 }
 
-bool ASTWalker::visitNode(ASTNode node, llvm::Value **outValue, CompilerContext *ctx)
+bool ASTWalker::generateCodeForNode(ASTNode node, llvm::Value **outValue, CompilerContext *ctx)
 {
-    MAliceVisitFunction f = getNodeVisitFunction(node);
+    MAliceCodeGenerationFunction f = getNodeCodeGenerationFunction(node);
 
     return f(node, outValue, this, ctx);
 }
@@ -133,7 +133,7 @@ bool ASTWalker::validateNode(ASTNode node, CompilerContext *ctx)
     }
 }
     
-bool ASTWalker::visitChildren(ASTNode node, std::vector<llvm::Value*> *outValueList, CompilerContext *ctx)
+bool ASTWalker::generateCodeForChildren(ASTNode node, std::vector<llvm::Value*> *outValueList, CompilerContext *ctx)
 {
     unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
     bool result = true;
@@ -142,7 +142,7 @@ bool ASTWalker::visitChildren(ASTNode node, std::vector<llvm::Value*> *outValueL
     
     for (unsigned int i = 0; i < numChildren; ++i) {
         llvm::Value *value;
-        if (!visitNode(Utilities::getChildNodeAtIndex(node, i), &value, ctx))
+        if (!generateCodeForNode(Utilities::getChildNodeAtIndex(node, i), &value, ctx))
             result = false;
         
         valueList.push_back(value);
@@ -167,13 +167,13 @@ bool ASTWalker::validateChildren(ASTNode node, CompilerContext *ctx)
     return result;
 }
 
-MAliceVisitFunction ASTWalker::getNodeVisitFunction(ASTNode node)
+MAliceCodeGenerationFunction ASTWalker::getNodeCodeGenerationFunction(ASTNode node)
 {
-    MAliceVisitFunction f = NULL;
+    MAliceCodeGenerationFunction f = NULL;
     
     try {
-        auto f = (visitDictionary.find(Utilities::getNodeType(node)));
-        if (f == visitDictionary.end())
+        auto f = (codeGenerationDictionary.find(Utilities::getNodeType(node)));
+        if (f == codeGenerationDictionary.end())
             return NULL;
         else
             return *f->second;
