@@ -116,7 +116,10 @@ namespace MAlice {
                return EXIT_FAILURE;
             }
             
-            //Optimizer optimizationPass(module);
+            // Do optimisation and output code
+            
+            Optimizer optimizer();
+
             //optimizationPass.constantFoldingPass();
             
             std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
