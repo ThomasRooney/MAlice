@@ -36,8 +36,6 @@ namespace MAlice {
                                           sourceFile, dirFile, "MAliceATRCompiler", false, "", 1);
 
         m_dbfile = m_DebugBuilder->createFile(sourceFile, dirFile);
-
-        m_dbgScope = std::vector<llvm::MDNode*>();
     }
 
     CompilerContext::~CompilerContext()
@@ -98,7 +96,7 @@ namespace MAlice {
         m_irBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
         m_module = new llvm::Module("root module", llvm::getGlobalContext());
         m_identifierDispenser = new IdentifierDispenser();
-
+        m_dbgScope = std::vector<llvm::MDNode*>();
         m_symbolTables.push_back(new SymbolTable());
     }
     

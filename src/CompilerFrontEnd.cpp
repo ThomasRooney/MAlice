@@ -123,12 +123,16 @@ namespace MAlice {
         // Reset Compiler Context after validation, TODO: Generate once.
         compilerContext->clearSemanticInformation();
         llvm::Module *module = NULL;
-        
+
         // Do optimisation and output code
         
         Optimizer optimizer();
 
         //optimizationPass.constantFoldingPass();
+
+        if (!semanticAnalyser->generateIR(&module)) {
+            return EXIT_FAILURE;
+        }
         
         std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
         
