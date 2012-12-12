@@ -12,6 +12,7 @@ namespace MAlice {
         std::unordered_map<std::string, unsigned int> m_functionNameMap;
     public:
         std::string identifierForFunctionWithName(std::string functionName);
+        std::string identifierForEntryPointFunction();
     };
     
 } // namespace MAlice

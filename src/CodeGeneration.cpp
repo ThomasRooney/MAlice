@@ -730,7 +730,7 @@ namespace MAlice {
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
         std::string LLVMIdentifier;
         if (!ctx->getCurrentFunctionProcedureEntity() && identifier == "hatta")
-            LLVMIdentifier = "main";
+            LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForEntryPointFunction();
         else
             LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
         

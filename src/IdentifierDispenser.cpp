@@ -20,10 +20,17 @@ namespace MAlice {
         if (index == 0)
             return functionName;
         
-        std::stringstream stringStream(functionName);
+        // Prefix with underscores to denote a user-defined function. Helps to prevent collisions with our own
+        // functions and the @main entry point function.
+        std::stringstream stringStream("_" + functionName);
         stringStream << index;
         
         return stringStream.str();
+    }
+    
+    std::string IdentifierDispenser::identifierForEntryPointFunction()
+    {
+        return "main";
     }
     
 } // namespace MAlice
