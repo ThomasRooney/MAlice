@@ -26,24 +26,24 @@ namespace MAlice {
 
         std::cout << output;
         
-//        std::string llvmIROutputFile = llvmIROutputPath(outputPath);
-//        std::string assemblyOutputFile = assemblyOutputPath(outputPath);
-//        
-//        std::ofstream llvmIROutputStream(llvmIROutputFile);
-//        llvmIROutputStream << output;
-//        
-//        // Run LLVM on the output
-//        std::string llcCall = "/opt/local/bin/llc-mp-3.0 " + llvmIROutputFile;
-//        std::cerr << llcCall << std::endl;
-//            
-//        system((char*)llcCall.c_str());
-//        
-//        std::string clangCall = "clang -v " + assemblyOutputFile;
-//        std::cerr << clangCall << std::endl;
-//        system((char*)clangCall.c_str());
-//        
-//        // Clean up temporary files.
-//        cleanUp(outputPath);
+        std::string llvmIROutputFile = llvmIROutputPath(outputPath);
+        std::string assemblyOutputFile = assemblyOutputPath(outputPath);
+        
+        std::ofstream llvmIROutputStream(llvmIROutputFile);
+        llvmIROutputStream << output;
+        
+        // Run LLVM on the output
+        std::string llcCall = "/opt/local/bin/llc-mp-3.0 " + llvmIROutputFile;
+        std::cerr << llcCall << std::endl;
+            
+        system((char*)llcCall.c_str());
+        
+        std::string clangCall = "clang -v " + assemblyOutputFile;
+        std::cerr << clangCall << std::endl;
+        system((char*)clangCall.c_str());
+        
+        // Clean up temporary files.
+        cleanUp(outputPath);
         
         return true;
     }

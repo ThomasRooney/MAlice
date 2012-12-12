@@ -648,9 +648,6 @@ namespace MAlice {
         
         Function *printfFunction = cast<Function>(ctx->getModule()->getOrInsertFunction("printf", printfFunctionType));
         
-        llvm::Value *printVal = NULL;
-        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &printVal, ctx);
-        
         Type type;
         Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
                                              &type,
@@ -658,6 +655,9 @@ namespace MAlice {
                                              walker,
                                              ctx,
                                              NULL);
+        
+        llvm::Value *printVal = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &printVal, ctx);
         
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         
