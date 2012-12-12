@@ -289,9 +289,11 @@ namespace MAlice {
             
             return true;
         }
+        
+        llvm::Value *loadInst = ctx->getIRBuilder()->CreateLoad(value);
 
         if (outValue)
-            *outValue = value;
+            *outValue = loadInst;
         
         return true;
     }
@@ -357,6 +359,9 @@ namespace MAlice {
         
         llvm::Value *inputVal = NULL;
         walker->visitNode(Utilities::getChildNodeAtIndex(node, 0), &inputVal, ctx);
+
+        // We have to be clever here, as we need a *pointer* to use with scanf().
+        llvm::Value *value = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0), walker, ctx);
         
         Type type;
         Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
@@ -369,7 +374,7 @@ namespace MAlice {
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         
         // Create the scanf() call.
-        ctx->getIRBuilder()->CreateCall2(scanfFunction, formatStringValue, inputVal);
+        ctx->getIRBuilder()->CreateCall2(scanfFunction, formatStringValue, value);
         
         return true;
     }
@@ -827,5 +832,43 @@ namespace MAlice {
         ctx->getIRBuilder()->SetInsertPoint(afterLoopBodyBlock);
 
         return true;
+    }
+    
+    llvm::Value *getLLVMValueFromLValueNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ANTLR3_UINT32 type = Utilities::getNodeType(node);
+        
+        if (type != IDENTIFIER && type != ARRAYSUBSCRIPT)
+            return NULL;
+        
+        // An l-value for an expression can only be an identifier
+        if (type == IDENTIFIER) {
+            Entity *entity = NULL;
+            ctx->isSymbolInScope(Utilities::getNodeText(node), &entity);
+            
+            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+            if (!variableEntity)
+                return NULL;
+            
+            return variableEntity->getLLVMValue();
+        }
+        
+        llvm::Value *elementValue = NULL;
+        walker->visitNode(Utilities::getChildNodeAtIndex(node, 1), &elementValue, ctx);
+        
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        if (!identifierNode)
+            return NULL;
+        
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        Entity *entity = NULL;
+        ctx->isSymbolInScope(Utilities::getNodeText(node), &entity);
+        
+        VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+        if (!variableEntity)
+            return NULL;
+        
+        return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
     }
 };
