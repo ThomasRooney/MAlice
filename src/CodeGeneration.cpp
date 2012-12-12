@@ -63,7 +63,24 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForArraySubscriptNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->generateCodeForChildren(node, NULL, ctx);
+        ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
+        std::string identifier = Utilities::getNodeText(identifierNode);
+        
+        ASTNode indexNode = Utilities::getChildNodeAtIndex(node, 1);
+        llvm::Value *indexValue = NULL;
+        walker->generateCodeForNode(indexNode, &indexValue, ctx);
+        
+        Entity *entity = NULL;
+        ctx->isSymbolInScope(identifier, &entity);
+        
+        VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+        
+        if (outValue) {
+            llvm::Value *pointerValue = ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), indexValue);
+            *outValue = ctx->getIRBuilder()->CreateLoad(pointerValue);
+        }
+        
+        return true;
     }
 
     bool CodeGeneration::generateCodeForAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -868,7 +885,7 @@ namespace MAlice {
         std::string identifier = Utilities::getNodeText(identifierNode);
         
         Entity *entity = NULL;
-        ctx->isSymbolInScope(Utilities::getNodeText(node), &entity);
+        ctx->isSymbolInScope(Utilities::getNodeText(identifierNode), &entity);
         
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         if (!variableEntity)
