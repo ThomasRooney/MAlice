@@ -724,7 +724,8 @@ namespace MAlice {
 
     bool visitStringLiteralNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        std::string strVal = Utilities::getNodeText(node);   
+        std::string strVal = Utilities::getNodeText(node);
+        strVal = Utilities::stripLeadingAndTrailingCharacters(strVal, '"');
 
         if (outValue)
             *outValue = ctx->getIRBuilder()->CreateGlobalStringPtr(strVal.c_str(), "string");
