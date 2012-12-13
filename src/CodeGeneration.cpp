@@ -961,7 +961,12 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForTildeExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->generateCodeForChildren(node, NULL, ctx);
+        return generateCodeForUnaryOperatorNode(node,
+                                                outValue,
+                                                &llvm::IRBuilder<>::CreateNot,
+                                                "nottmp",
+                                                walker,
+                                                ctx);
     }
 
     bool CodeGeneration::generateCodeForVariableDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
