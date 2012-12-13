@@ -136,7 +136,7 @@ namespace MAlice {
             return EXIT_FAILURE;
         }
         
-        std::string outputPath = Utilities::getParentDirectoryForPath(path) + "/" + Utilities::getBaseFilenameFromPath(path);
+        std::string outputPath = Utilities::getParentDirectoryForPath(path) + DELIM + Utilities::getBaseFilenameFromPath(path);
         
         if ((compilerFlags & CompilerFlagsDebugInformation) != 0) {
             generator = new CodeGenerator(module, compilerContext->getDGBuilder());

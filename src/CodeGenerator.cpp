@@ -68,8 +68,8 @@ namespace MAlice {
             PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
         }
 
-        std::string llvmIROutputPath = getLlvmIROutputPath(outputPath);
-        std::string assemblyOutputPath = getAssemblyOutputPath(outputPath);
+        std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
+        std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
 
         llvm::raw_string_ostream outputStream(output);
         std::cout << "Writing IR to: " << llvmIROutputPath << std::endl;
@@ -77,7 +77,6 @@ namespace MAlice {
 
         std::string ErrorInfo;
         llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
-            
 
         PM.add(llvm::createPrintModulePass(&out.os()));
         
@@ -119,12 +118,12 @@ namespace MAlice {
         return true;
     }
     
-    std::string CodeGenerator::getLlvmIROutputPath(std::string inputPath)
+    std::string CodeGenerator::getLlvmIROutputPath(const std::string inputPath)
     {
         return Utilities::getParentDirectoryForPath(inputPath) + DELIM + Utilities::getBaseFilenameFromPath(inputPath) + ".ll";
     }
     
-    std::string CodeGenerator::getAssemblyOutputPath(std::string inputPath)
+    std::string CodeGenerator::getAssemblyOutputPath(const std::string inputPath)
     {
         return Utilities::getParentDirectoryForPath(inputPath) + DELIM + Utilities::getBaseFilenameFromPath(inputPath) + ".s";
     }
