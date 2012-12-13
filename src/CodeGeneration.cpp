@@ -568,40 +568,40 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForLogicalAndExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
-        
+        llvm::IRBuilder<> *builder = ctx->getIRBuilder();
+
         llvm::BasicBlock *leftAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_left", function);
-        ctx->getIRBuilder()->CreateBr(leftAndBlock);
+        builder->CreateBr(leftAndBlock);
+        builder->SetInsertPoint(leftAndBlock);
         
-        ctx->getIRBuilder()->SetInsertPoint(leftAndBlock);
-        
-        llvm::Value *leftParamValue = NULL;
-        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        llvm::Value *leftExpressionValue = NULL;
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftExpressionValue, ctx);
         
         llvm::BasicBlock *rightAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_right");
-        llvm::BasicBlock *andSkipBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_skip");
+        llvm::BasicBlock *afterAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_after");
         
         // Create the conditional branch instruction to implement left-strictness.
-        ctx->getIRBuilder()->CreateCondBr(leftParamValue, rightAndBlock, andSkipBlock);
+        builder->CreateCondBr(leftExpressionValue, rightAndBlock, afterAndBlock);
         
-        // Generate code for the right operand to the && operation
-        llvm::Value *rightParamValue = NULL;
-        ctx->getIRBuilder()->SetInsertPoint(rightAndBlock);
-        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        // Generate code for the right expression to the && operation
+        llvm::Value *rightExpressionValue = NULL;
+        builder->SetInsertPoint(rightAndBlock);
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightExpressionValue, ctx);
         
         // LLVM IR requires that each block is terminated by a branch or return instruction
-        ctx->getIRBuilder()->CreateBr(andSkipBlock);
+        builder->CreateBr(afterAndBlock);
         
         // Add the new blocks to the function
         function->getBasicBlockList().push_back(rightAndBlock);
-        function->getBasicBlockList().push_back(andSkipBlock);
+        function->getBasicBlockList().push_back(afterAndBlock);
         
-        ctx->getIRBuilder()->SetInsertPoint(andSkipBlock);
+        builder->SetInsertPoint(afterAndBlock);
         
         llvm::PHINode *phiNode = ctx->getIRBuilder()->CreatePHI(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)), 2,
                                                                 "andtmp");
         
-        phiNode->addIncoming(leftParamValue, leftAndBlock);
-        phiNode->addIncoming(rightParamValue, rightAndBlock);
+        phiNode->addIncoming(leftExpressionValue, leftAndBlock);
+        phiNode->addIncoming(rightExpressionValue, rightAndBlock);
         
         if (outValue)
             *outValue = phiNode;
@@ -621,7 +621,46 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForLogicalOrExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->generateCodeForChildren(node, NULL, ctx);
+        llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        
+        llvm::BasicBlock *leftOrBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "or_left", function);
+        llvm::BasicBlock *rightOrBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "or_right");
+        llvm::BasicBlock *afterOrBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "or_after");
+
+        llvm::IRBuilder<> *builder = ctx->getIRBuilder();
+        builder->CreateBr(leftOrBlock);
+        builder->SetInsertPoint(leftOrBlock);
+        
+        llvm::Value *leftExpressionValue = NULL;
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftExpressionValue, ctx);
+        
+        // Create the conditional branch which means we skip the right expression evaluation if the left expression evaluates to true.
+        builder->CreateCondBr(leftExpressionValue, afterOrBlock, rightOrBlock);
+        
+        // Generate code for the right expression
+        llvm::Value *rightExpressionValue = NULL;
+        builder->SetInsertPoint(rightOrBlock);
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightExpressionValue, ctx);
+        
+        // LLVM IR requires that each block is terminated by a branch or return instruction
+        builder->CreateBr(afterOrBlock);
+        
+        // Add the blocks to the function
+        function->getBasicBlockList().push_back(rightOrBlock);
+        function->getBasicBlockList().push_back(afterOrBlock);
+        
+        builder->SetInsertPoint(afterOrBlock);
+        
+        llvm::PHINode *phiNode = ctx->getIRBuilder()->CreatePHI(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)), 2,
+                                                                "ortmp");
+        
+        phiNode->addIncoming(leftExpressionValue, leftOrBlock);
+        phiNode->addIncoming(rightExpressionValue, rightOrBlock);
+        
+        if (outValue)
+            *outValue = phiNode;
+        
+        return true;
     }
     
     bool CodeGeneration::generateCodeForMinusExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
