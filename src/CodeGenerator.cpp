@@ -70,7 +70,7 @@ namespace MAlice {
         std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
         std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
 
-
+	std::cout << <<"IR: " llvmIROutputPath << std::endl() << "asm: " <<assemblyOutputPath << std::endl();
 
         llvm::raw_string_ostream outputStream(output);
         std::string ErrorInfo;
@@ -81,7 +81,7 @@ namespace MAlice {
         
         PM.run(*m_module);
         
-
+	
         std::cout << outputStream.str();
         std::cout << "Done.";
 
@@ -107,8 +107,8 @@ namespace MAlice {
         std::cout << "\n\nExecutable generated at '" << outputPath << "'.";
         
         // Clean up temporary files.
-        remove((char*)llvmIROutputPath.c_str());
-        remove((char*)assemblyOutputPath.c_str());
+//        remove((char*)llvmIROutputPath.c_str());
+//        remove((char*)assemblyOutputPath.c_str());
 
         
         return true;
