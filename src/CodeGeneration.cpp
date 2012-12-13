@@ -108,9 +108,7 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForAssignmentStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        llvm::Value *lvalueValue = NULL;
-        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lvalueValue, ctx);
-        
+        llvm::Value *lvalueValue = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0), walker, ctx);
         llvm::Value *assignmentValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
         
@@ -378,47 +376,50 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        Function *function = NULL;
-        BasicBlock *insertBlock = ctx->getIRBuilder()->GetInsertBlock();
-        if (insertBlock)
-            function = insertBlock->getParent();
-        
+        Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        llvm::IRBuilder<> *builder = ctx->getIRBuilder();
+        llvm::BasicBlock *afterBlock = llvm::BasicBlock::Create(getGlobalContext(), "after");
+
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
             ASTNode node1 = Utilities::getChildNodeAtIndex(node, i);
+            
             if (Utilities::getNodeType(node1) == EXPRESSION) {
                 llvm::Value *condValue = NULL;
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &condValue, ctx);
                 
-                ASTNode node2 = Utilities::getChildNodeAtIndex(node, i + 1);
-                // We have looked at another node.
-                i++;
+                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then");
+                llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(getGlobalContext(), "else");
                 
-                BasicBlock *thenBlock = BasicBlock::Create(getGlobalContext(), "then", function);
-                BasicBlock *elseBlock = BasicBlock::Create(getGlobalContext(), "else", function);
+                builder->CreateCondBr(condValue, thenBlock, elseBlock);
                 
                 // Change debug line number
                 if (ctx->getDGBuilder())
                 {
-                    ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
-                                                                                        Utilities::getNodeColumnIndex(node),
-                                                                                        ctx->getCurrentDBScope()));
-                }                                       
-
-
-                ctx->getIRBuilder()->CreateCondBr(condValue, thenBlock, elseBlock);
+                    builder->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                         Utilities::getNodeColumnIndex(node),
+                                                                         ctx->getCurrentDBScope()));
+                }
                 
-                ctx->getIRBuilder()->SetInsertPoint(thenBlock);
-                walker->generateCodeForNode(node2, NULL, ctx);
+                // Generate code for the
+                function->getBasicBlockList().push_back(thenBlock);
+                builder->SetInsertPoint(thenBlock);
+                walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i+1), NULL, ctx);
+                builder->CreateBr(afterBlock);
                 
-                ctx->getIRBuilder()->SetInsertPoint(elseBlock);
+                // Insert the 'else' block
+                function->getBasicBlockList().push_back(elseBlock);
+                builder->SetInsertPoint(elseBlock);
+                
+                // We have looked at the 'then' node too.
+                i++;
             }
-            else {
+            else
                 walker->generateCodeForNode(node1, NULL, ctx);
-                
-                BasicBlock *afterBlock = BasicBlock::Create(getGlobalContext(), "after", function);
-                ctx->getIRBuilder()->SetInsertPoint(afterBlock);
-            }
         }
+        
+        builder->CreateBr(afterBlock);
+        function->getBasicBlockList().push_back(afterBlock);
+        builder->SetInsertPoint(afterBlock);
         
         return true;
     }
@@ -1114,6 +1115,9 @@ namespace MAlice {
     
     llvm::Value *CodeGeneration::getLLVMValueFromLValueNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
     {
+        if (Utilities::getNodeType(node) == EXPRESSION)
+            node = Utilities::getChildNodeAtIndex(node, 0);
+        
         ANTLR3_UINT32 type = Utilities::getNodeType(node);
         
         if (type != IDENTIFIER && type != ARRAYSUBSCRIPT)
