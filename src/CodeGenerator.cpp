@@ -6,6 +6,12 @@
 
 #include "Utilities.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/PassManager.h"
+#include "llvm/Analysis/Passes.h"
+#include "llvm/Analysis/Verifier.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Assembly/PrintModulePass.h"
+#include "llvm/Support/ToolOutputFile.h"
 
 #ifdef _WIN32
 #define popen _popen
@@ -32,24 +38,53 @@ namespace MAlice {
         // Finalise the debug info
         if (m_dbinfo)
             m_dbinfo->finalize();
-
         std::string output;
         if (!m_module)
             return "";
         
         std::cout << "\n\nGenerating LLVM IR... ";
         
-        // Print the LLVM output into a string
-        llvm::raw_string_ostream outputStream(output);
-        m_module->print(outputStream, NULL);
-        
-        std::cout << output;
-        
-        std::cout << "Done.";
+        // Create the function pass manager
+        llvm::PassManager PM = llvm::PassManager();
+/*        PM.add(llvm::createCFGSimplificationPass()); // Clean up code
+        PM.add(llvm::createBasicAliasAnalysisPass()); 
+        PM.add(llvm::createInstructionCombiningPass());
+        PM.add(llvm::createPromoteMemoryToRegisterPass()); // Promote memory to registers where necessary
+        PM.add(llvm::createScalarReplAggregatesPass()); // clean up allcas
+        PM.add(llvm::createCFGSimplificationPass()); // Clean up again
+        PM.add(llvm::createConstantPropagationPass()); // Constant Folding
+        PM.add(llvm::createLICMPass()); // Loop Invariant optimization
+        PM.add(llvm::createLoopDeletionPass()); // Dead loop deletion
+        PM.add(llvm::createLoopUnrollPass()); // Unroll small loops
+        PM.add(llvm::createSCCPPass()); // Constant propagation with different algorithm
+        PM.add(llvm::createCFGSimplificationPass()); // Clean up..
+        PM.add(llvm::createInstructionCombiningPass());
+        PM.add(llvm::createDeadStoreEliminationPass()); // Delete dead stores
+        PM.add(llvm::createAggressiveDCEPass()); // Delete dead instructions 
+        PM.add(llvm::createCFGSimplificationPass());*/
+
+        PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
+        PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
+
 
         std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
         std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
+
+
+
+        llvm::raw_string_ostream outputStream(output);
+        std::string ErrorInfo;
+        llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
+
+
+        PM.add(llvm::createPrintModulePass(&out.os()));
         
+        PM.run(*m_module);
+        
+
+        std::cout << outputStream.str();
+        std::cout << "Done.";
+
         std::ofstream llvmIROutputStream(llvmIROutputPath);
         llvmIROutputStream << output;
         
@@ -81,12 +116,12 @@ namespace MAlice {
     
     std::string CodeGenerator::getLlvmIROutputPath(std::string inputPath)
     {
-        return Utilities::getParentDirectoryForPath(inputPath) + "/" + Utilities::getBaseFilenameFromPath(inputPath) + ".ll";
+        return Utilities::getParentDirectoryForPath(inputPath) + DELIM + Utilities::getBaseFilenameFromPath(inputPath) + ".ll";
     }
     
     std::string CodeGenerator::getAssemblyOutputPath(std::string inputPath)
     {
-        return Utilities::getParentDirectoryForPath(inputPath) + "/" + Utilities::getBaseFilenameFromPath(inputPath) + ".s";
+        return Utilities::getParentDirectoryForPath(inputPath) + DELIM + Utilities::getBaseFilenameFromPath(inputPath) + ".s";
     }
     
     bool CodeGenerator::runLlc(std::string inputPath, std::string outputPath)
