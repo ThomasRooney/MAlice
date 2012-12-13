@@ -420,7 +420,7 @@ namespace MAlice {
                 value = getIRBuilder()->CreateGlobalStringPtr("%s", "__io_string_format");
                 break;
             case PrimitiveTypeNumber:
-                value = getIRBuilder()->CreateGlobalStringPtr("%llu", "__io_number_format");
+                value = getIRBuilder()->CreateGlobalStringPtr("%lld", "__io_number_format");
                 break;
             case PrimitiveTypeBoolean:
                 value = getIRBuilder()->CreateGlobalStringPtr("%d", "__io_bool_format");

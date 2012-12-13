@@ -614,6 +614,9 @@ namespace MAlice {
     
     bool CodeGeneration::generateCodeForLogicalNotExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        llvm::Value *expressionValue = NULL;
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &expressionValue, ctx);
+        
         return generateCodeForUnaryOperatorNode(node,
                                       outValue,
                                       &llvm::IRBuilder<>::CreateNot,
