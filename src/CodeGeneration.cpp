@@ -426,8 +426,7 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        llvm::Value *lhsValue = NULL;
-        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
+        llvm::Value *lhsValue = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0), walker, ctx);
         
         // Change debug line number
         if (ctx->getDGBuilder())
