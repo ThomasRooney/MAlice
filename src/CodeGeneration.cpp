@@ -200,8 +200,9 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForDecrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        llvm::Value *lhsValue = NULL;
-        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &lhsValue, ctx);
+        llvm::Value *lhsValue = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0),
+                                                           walker,
+                                                           ctx);
 
         // Change debug line number
         if (ctx->getDGBuilder())
@@ -212,7 +213,9 @@ namespace MAlice {
         }                                       
 
         
-        ctx->getIRBuilder()->CreateSub(lhsValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        llvm::Value *loadValue = ctx->getIRBuilder()->CreateLoad(lhsValue);
+        llvm::Value *subValue = ctx->getIRBuilder()->CreateSub(loadValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        ctx->getIRBuilder()->CreateStore(subValue, lhsValue);
         
         return true;
     }
@@ -851,8 +854,6 @@ namespace MAlice {
             return true;
         }
         
-        llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
-        
         // Change debug line number
         if (ctx->getDGBuilder())
         {
@@ -861,6 +862,7 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
         }                                       
 
+        llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         // Create the printf() call.
         ctx->getIRBuilder()->CreateCall2(printfFunction, formatStringValue, printVal);
         
@@ -952,7 +954,7 @@ namespace MAlice {
         strVal = Utilities::stripLeadingAndTrailingCharacters(strVal, '"');
 
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateGlobalStringPtr(strVal.c_str(), "string");
+            *outValue = ctx->getIRBuilder()->CreateGlobalStringPtr(Utilities::stringWithASCIIControlCodes(strVal.c_str()));
         
         return true;
     }
@@ -1069,22 +1071,35 @@ namespace MAlice {
     
     bool CodeGeneration::generateCodeForWhileStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return true;
-        
-        BasicBlock *currentBlock = ctx->getIRBuilder()->GetInsertBlock();
-        Function *parentFunction = currentBlock->getParent();
+        llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        llvm::IRBuilder<> *builder = ctx->getIRBuilder();
         
         llvm::Value *conditionValue = NULL;
         if (!walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &conditionValue, ctx))
             return false;
         
-        BasicBlock *loopHeaderBlock = ctx->getIRBuilder()->GetInsertBlock();
-        BasicBlock *loopBody = BasicBlock::Create(getGlobalContext(), "loop", parentFunction);
-        ctx->getIRBuilder()->SetInsertPoint(loopBody);
+        llvm::BasicBlock *loopHeader = llvm::BasicBlock::Create(getGlobalContext(), "loopheader", function);
+        builder->CreateBr(loopHeader);
         
-        BasicBlock *afterLoopBodyBlock = BasicBlock::Create(getGlobalContext(), "afterloop", parentFunction);
+        llvm::BasicBlock *loopBody = llvm::BasicBlock::Create(getGlobalContext(), "loopbody");
+        llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(getGlobalContext(), "afterloop");
         
-        ctx->getIRBuilder()->SetInsertPoint(loopHeaderBlock);
+        llvm::Value *exitConditionValue = NULL;
+        builder->SetInsertPoint(loopHeader);
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &exitConditionValue, ctx);
+        
+        // Exit the loop if the exit condition is satisfied
+        builder->CreateCondBr(exitConditionValue, afterLoopBlock, loopBody);
+        
+        // Generate code for the loop body
+        function->getBasicBlockList().push_back(loopBody);
+        builder->SetInsertPoint(loopBody);
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), NULL, ctx);
+        builder->CreateBr(loopHeader);
+        
+        function->getBasicBlockList().push_back(afterLoopBlock);
+        
+        builder->SetInsertPoint(afterLoopBlock);
 
         // Change debug line number
         if (ctx->getDGBuilder())
@@ -1092,11 +1107,7 @@ namespace MAlice {
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope()));
-        }                                       
-
-        ctx->getIRBuilder()->CreateCondBr(conditionValue, loopBody, afterLoopBodyBlock);
-
-        ctx->getIRBuilder()->SetInsertPoint(afterLoopBodyBlock);
+        }
 
         return true;
     }

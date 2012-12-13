@@ -152,7 +152,7 @@ return_statement
 	
 while_loop
 	:	EVENTUALLY expression BECAUSE statement_list ENOUGHTIMES
-		-> ^(WHILESTATEMENT expression ^(BODY statement_list))
+		-> ^(WHILESTATEMENT expression ^(BLOCK statement_list))
 	;
 	
 if_block

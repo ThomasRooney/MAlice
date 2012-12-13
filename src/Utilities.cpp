@@ -1132,5 +1132,22 @@ namespace MAlice {
         
         return llvm::cast<llvm::Function>(module->getOrInsertFunction("printf", printfFunctionType));
     }
+    
+    std::string Utilities::stringWithASCIIControlCodes(std::string str)
+    {
+        replaceOccurrencesOfString(str, "\\n", 0x0a);
+        replaceOccurrencesOfString(str, "\\t", 0x9);
+        
+        return str;
+    }
+    
+    void Utilities::replaceOccurrencesOfString(std::string& str, std::string toFind, char replacement)
+    {
+        size_t pos = 0;
+        
+        while((pos = str.find(toFind, pos)) != std::string::npos) {
+            str.replace(pos, toFind.length(), std::string(1, replacement));
+        }
+    }
 
 }; // namespace MAlice
