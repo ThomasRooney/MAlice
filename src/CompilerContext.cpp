@@ -7,11 +7,8 @@
 #include "SymbolTable.h"
 #include "FunctionProcedureEntity.h"
 #include "IdentifierDispenser.h"
+#include "LLVMHeader.h"
 
-#include "llvm/BasicBlock.h"
-#include "llvm/Support/Dwarf.h"
-#include "llvm/Analysis/DIBuilder.h"
-#include "llvm/Analysis/DebugInfo.h"
 #include "Utilities.h"
 
 using namespace std;
