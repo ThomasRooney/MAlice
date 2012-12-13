@@ -1107,19 +1107,20 @@ namespace MAlice {
         return dirname((char*)path.c_str());
     }
     
-    std::string Utilities::getBaseFilenameFromPath(std::string path)
+    std::string Utilities::getBaseFilenameFromPath(const std::string path)
     {
-        if (path.size() == 0)
-            return path;
+        std::string out(path);
+        if (out.size() == 0)
+            return out;
         
-        size_t relativePathStart = path.find_last_of(DELIM, path.size());
-        if (relativePathStart > path.size())
+        size_t relativePathStart = out.find_last_of(DELIM, out.size());
+        if (relativePathStart > out.size())
             relativePathStart = 0;
         
-        if (path[relativePathStart] == DELIM)
+        if (out[relativePathStart] == DELIM)
             relativePathStart++;
         
-        return path.substr(relativePathStart, path.find_last_of(".") - relativePathStart);
+        return out.substr(relativePathStart, out.find_last_of(".") - relativePathStart);
     }
 
     llvm::Function *Utilities::getPrintfFunction(llvm::Module *module)

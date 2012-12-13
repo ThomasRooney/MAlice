@@ -38,6 +38,7 @@ namespace MAlice {
         // Finalise the debug info
         if (m_dbinfo)
             m_dbinfo->finalize();
+        
         std::string output;
         if (!m_module)
             return "";
@@ -62,28 +63,32 @@ namespace MAlice {
         PM.add(llvm::createDeadStoreEliminationPass()); // Delete dead stores
         PM.add(llvm::createAggressiveDCEPass()); // Delete dead instructions 
         PM.add(llvm::createCFGSimplificationPass());*/
+        if (m_dbinfo) {
+            PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
+            PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
+        }
 
-        PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
-        PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
-
-
-        std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
-        std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
-
-
+        std::string llvmIROutputPath = getLlvmIROutputPath(outputPath);
+        std::string assemblyOutputPath = getAssemblyOutputPath(outputPath);
 
         llvm::raw_string_ostream outputStream(output);
+        std::cout << "Writing IR to: " << llvmIROutputPath << std::endl;
+        std::cout << "Writing ASM to: " << assemblyOutputPath << std::endl;
+
         std::string ErrorInfo;
         llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
-
+            
 
         PM.add(llvm::createPrintModulePass(&out.os()));
         
         PM.run(*m_module);
         
+	
 
-        std::cout << outputStream.str();
+
         std::cout << "Done.";
+
+        out.keep();
 
         std::ofstream llvmIROutputStream(llvmIROutputPath);
         llvmIROutputStream << output;
