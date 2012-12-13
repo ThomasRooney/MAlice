@@ -89,9 +89,6 @@ namespace MAlice {
 
         out.keep();
 
-        std::ofstream llvmIROutputStream(llvmIROutputPath);
-        llvmIROutputStream << output;
-        
         // Run LLVM on the output
         std::cout << "\nRunning llc on LLVM IR... ";
         if (!runLlc(llvmIROutputPath, assemblyOutputPath)) {
@@ -111,8 +108,8 @@ namespace MAlice {
         std::cout << "\n\nExecutable generated at '" << outputPath << "'.";
         
         // Clean up temporary files.
-        remove((char*)llvmIROutputPath.c_str());
-        remove((char*)assemblyOutputPath.c_str());
+//        remove((char*)llvmIROutputPath.c_str());
+//        remove((char*)assemblyOutputPath.c_str());
 
         
         return true;
