@@ -63,13 +63,13 @@ namespace MAlice {
         PM.add(llvm::createDeadStoreEliminationPass()); // Delete dead stores
         PM.add(llvm::createAggressiveDCEPass()); // Delete dead instructions 
         PM.add(llvm::createCFGSimplificationPass());*/
+        if (m_dbinfo) {
+            PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
+            PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
+        }
 
-        PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
-        PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
-
-
-        std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
-        std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
+        std::string llvmIROutputPath = getLlvmIROutputPath(outputPath);
+        std::string assemblyOutputPath = getAssemblyOutputPath(outputPath);
 
         llvm::raw_string_ostream outputStream(output);
         std::cout << "Writing IR to: " << llvmIROutputPath << std::endl;
@@ -112,8 +112,8 @@ namespace MAlice {
         std::cout << "\n\nExecutable generated at '" << outputPath << "'.";
         
         // Clean up temporary files.
-//        remove((char*)llvmIROutputPath.c_str());
-//        remove((char*)assemblyOutputPath.c_str());
+        remove((char*)llvmIROutputPath.c_str());
+        remove((char*)assemblyOutputPath.c_str());
 
         
         return true;
