@@ -1135,6 +1135,42 @@ namespace MAlice {
         return llvm::cast<llvm::Function>(module->getOrInsertFunction("printf", printfFunctionType));
     }
     
+    llvm::Function *Utilities::getScanfFunction(llvm::Module *module)
+    {
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt8PtrTy(llvm::getGlobalContext()));
+        
+        llvm::FunctionType *scanfFunctionType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()),
+                                                                        parameterTypes,
+                                                                        true);
+        
+        return llvm::cast<llvm::Function>(module->getOrInsertFunction("scanf", scanfFunctionType));
+    }
+    
+    llvm::Function *Utilities::getCallocFunction(llvm::Module *module)
+    {
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt64Ty(llvm::getGlobalContext()));
+        
+        llvm::FunctionType *callocFunctionType = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(llvm::getGlobalContext()),
+                                                                         parameterTypes,
+                                                                         false);
+        
+        return llvm::cast<llvm::Function>(module->getOrInsertFunction("calloc", callocFunctionType));
+    }
+    
+    llvm::Function *Utilities::getFreeFunction(llvm::Module *module)
+    {
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt64Ty(llvm::getGlobalContext()));
+        
+        llvm::FunctionType *freeFunctionType = llvm::FunctionType::get(llvm::Type::getVoidTy(llvm::getGlobalContext()),
+                                                                       parameterTypes,
+                                                                       false);
+        
+        return llvm::cast<llvm::Function>(module->getOrInsertFunction("free", freeFunctionType));
+    }
+    
     std::string Utilities::stringWithASCIIControlCodes(std::string str)
     {
         replaceOccurrencesOfString(str, "\\n", 0x0a);

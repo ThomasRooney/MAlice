@@ -351,7 +351,7 @@ namespace MAlice {
         
         if (Utilities::getTypeOfEntity(entity) == MAliceEntityTypeGlobalVariable) {
             if (outValue)
-                *outValue = value;
+                *outValue = ctx->getIRBuilder()->CreateLoad(value);
             
             return true;
         }
@@ -444,24 +444,13 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForInputStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-
         // Change debug line number
         if (ctx->getDGBuilder())
         {
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope()));
-        }                                       
-
-
-        std::vector<llvm::Type*> parameterTypes;
-        parameterTypes.push_back(llvm::Type::getInt8PtrTy(getGlobalContext()));
-        
-        FunctionType *scanfFunctionType = FunctionType::get(llvm::Type::getInt32Ty(getGlobalContext()),
-                                                            parameterTypes,
-                                                            true);
-        
-        Function *scanfFunction = cast<Function>(ctx->getModule()->getOrInsertFunction("scanf", scanfFunctionType));
+        }
         
         llvm::Value *inputVal = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &inputVal, ctx);
@@ -477,10 +466,15 @@ namespace MAlice {
                                              ctx,
                                              NULL);
         
+        if (type == Type(PrimitiveTypeSentence)) {
+            llvm::Value *callValue = ctx->getIRBuilder()->CreateCall(Utilities::getCallocFunction(ctx->getModule()), llvm::ConstantInt::get(llvm::Type::getInt64Ty(llvm::getGlobalContext()), 1024));
+            ctx->getIRBuilder()->CreateStore(callValue, value);
+        }
+        
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         
         // Create the scanf() call.
-        ctx->getIRBuilder()->CreateCall2(scanfFunction, formatStringValue, value);
+        ctx->getIRBuilder()->CreateCall2(Utilities::getScanfFunction(ctx->getModule()), formatStringValue, value);
         
         return true;
     }
@@ -989,15 +983,27 @@ namespace MAlice {
         std::string typeString = Utilities::getNodeText(typeNode);
         
         GlobalVariableEntity *variable = new GlobalVariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
+        
+        llvm::Type *type = Utilities::getLLVMTypeFromType(variable->getType());
+        llvm::Constant *initialiserValue = llvm::ConstantInt::get(type, 0);
+        ASTNode valueNode = Utilities::getChildNodeAtIndex(node, 2);
+        
+        if (valueNode) {
+            llvm::Value *value = NULL;
+            walker->generateCodeForNode(valueNode, &value, ctx);
+            
+            llvm::Constant *constant = llvm::cast<llvm::Constant>(value);
+            
+            if (constant)
+                initialiserValue = constant;
+        }
+        
         llvm::GlobalVariable *value = new GlobalVariable(*(ctx->getModule()),
-                                                         llvm::PointerType::get(Utilities::getLLVMTypeFromType(variable->getType()), 0),
+                                                         type,
                                                          false,
                                                          GlobalValue::InternalLinkage,
-                                                         NULL,
+                                                         initialiserValue,
                                                          Twine(identifier.c_str()));
-        
-        ConstantPointerNull* constNullPtr = ConstantPointerNull::get(llvm::Type::getInt64PtrTy(getGlobalContext()));
-        value->setInitializer(constNullPtr);
         
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
@@ -1018,8 +1024,8 @@ namespace MAlice {
 
 
         if (outValue)
-            *outValue = value;
-        
+            *outValue = ctx->getIRBuilder()->CreateLoad(value);
+            
         return true;
     }
     
