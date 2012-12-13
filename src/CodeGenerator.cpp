@@ -38,6 +38,7 @@ namespace MAlice {
         // Finalise the debug info
         if (m_dbinfo)
             m_dbinfo->finalize();
+        
         std::string output;
         if (!m_module)
             return "";
@@ -70,9 +71,10 @@ namespace MAlice {
         std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
         std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
 
-	std::cout << <<"IR: " llvmIROutputPath << std::endl() << "asm: " <<assemblyOutputPath << std::endl();
-
         llvm::raw_string_ostream outputStream(output);
+        std::cout << "Writing IR to: " << llvmIROutputPath << std::endl;
+        std::cout << "Writing ASM to: " << assemblyOutputPath << std::endl;
+
         std::string ErrorInfo;
         llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
 
@@ -82,8 +84,11 @@ namespace MAlice {
         PM.run(*m_module);
         
 	
-        std::cout << outputStream.str();
+
+
         std::cout << "Done.";
+
+        out.keep();
 
         std::ofstream llvmIROutputStream(llvmIROutputPath);
         llvmIROutputStream << output;
