@@ -15,30 +15,6 @@
 #include "FunctionEntity.h"
 #include "Types.h"
 
-#ifdef _WIN32
-static char *dirname(char *path) {
-    char *s1 = strrchr(path, '/');
-    char *s2 = strrchr(path, '\\');
-
-    if (s1 && s1 >= s2) {
-        *s1 = '\0';
-    } else if (s2) {
-        *s2 = '\0';
-    } else {
-        *path = '\0';
-    }
-
-    return path;
-}
-
-#else
-
-#include <libgen.h>
-
-#endif
-
-
-
 namespace MAlice {
     
     unsigned int Utilities::getNodeLineNumber(ASTNode node)
@@ -1104,7 +1080,21 @@ namespace MAlice {
     
     std::string Utilities::getParentDirectoryForPath(std::string path)
     {
-        return dirname((char*)path.c_str());
+        char pP [255];
+        strcpy(pP, path.c_str());
+        char *s1 = strrchr(pP, '/');
+        char *s2 = strrchr(pP, '\\');
+
+        if (s1 && s1 >= s2) {
+            *s1 = '\0';
+        } else if (s2) {
+            *s2 = '\0';
+        } else {
+            *pP = '\0';
+        }
+
+        return pP;
+
     }
     
     std::string Utilities::getBaseFilenameFromPath(const std::string path)
