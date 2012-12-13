@@ -9,6 +9,12 @@
 #include "Types.h"
 #include "Type.h"
 
+#ifdef _WIN32
+#define DELIM '\\'
+#else
+#define DELIM '/'
+#endif
+
 namespace MAlice {
     
     class Entity;

@@ -30,6 +30,7 @@ static char *dirname(char *path) {
 
     return path;
 }
+
 #else
 
 #include <libgen.h>
@@ -1111,11 +1112,11 @@ namespace MAlice {
         if (path.size() == 0)
             return path;
         
-        size_t relativePathStart = path.find_last_of("/", path.size());
+        size_t relativePathStart = path.find_last_of(DELIM, path.size());
         if (relativePathStart > path.size())
             relativePathStart = 0;
         
-        if (path[relativePathStart] == '/')
+        if (path[relativePathStart] == DELIM)
             relativePathStart++;
         
         return path.substr(relativePathStart, path.find_last_of(".") - relativePathStart);
