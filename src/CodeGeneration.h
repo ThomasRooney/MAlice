@@ -85,6 +85,9 @@ namespace MAlice {
         
         llvm::Value *getLLVMValueFromLValueNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx);
         llvm::Function *prettyPrintBoolFunction();
+        
+        void createAllocasForArguments(CompilerContext *ctx);
+        bool hasReturnInstruction(llvm::BasicBlock *block);
     }
 }
 

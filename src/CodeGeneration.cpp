@@ -157,15 +157,7 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        ctx->enterScope();
-        ctx->enterDebugScope(node);
-        
-        bool result = walker->generateCodeForChildren(node, NULL, ctx);
-        
-        ctx->exitScope();
-        ctx->exitDebugScope(node);
-        
-        return result;
+        return walker->generateCodeForChildren(node, NULL, ctx);
     }
     
     bool CodeGeneration::generateCodeForByReferenceParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -266,6 +258,7 @@ namespace MAlice {
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
         
+        
         // Populate the function arguments.
         if (hasParams) {
             if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
@@ -291,13 +284,26 @@ namespace MAlice {
                                               identifier.c_str(),
                                               ctx->getModule());
         
+        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
+            llvm::Value *arg = it;
+            arg->setName("x");
+        }
+        
         functionEntity->setLLVMFunction(function);
         
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
+        
+        ctx->enterScope();
+        ctx->enterDebugScope(bodyNode);
+        
+        createAllocasForArguments(ctx);
     
         // Walk through the children
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
+        
+        ctx->exitDebugScope(bodyNode);
+        ctx->exitScope();
         
         ctx->popFunctionProcedureEntity();
         
@@ -346,13 +352,6 @@ namespace MAlice {
         
         VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
         llvm::Value *value = variableEntity->getLLVMValue();
-        
-        if (Utilities::getTypeOfEntity(entity) == MAliceEntityTypeGlobalVariable) {
-            if (outValue)
-                *outValue = ctx->getIRBuilder()->CreateLoad(value);
-            
-            return true;
-        }
 
         // Change debug line number
         if (ctx->getDGBuilder())
@@ -362,8 +361,6 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
         }                                       
 
-
-        
         llvm::Value *loadInst = ctx->getIRBuilder()->CreateLoad(value);
 
         if (outValue)
@@ -377,6 +374,9 @@ namespace MAlice {
         Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
         llvm::IRBuilder<> *builder = ctx->getIRBuilder();
         llvm::BasicBlock *afterBlock = llvm::BasicBlock::Create(getGlobalContext(), "after");
+        llvm::BasicBlock *lastBlock = NULL;
+        
+        bool usesAfterBlock = false;
 
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
             ASTNode node1 = Utilities::getChildNodeAtIndex(node, i);
@@ -402,11 +402,18 @@ namespace MAlice {
                 function->getBasicBlockList().push_back(thenBlock);
                 builder->SetInsertPoint(thenBlock);
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i+1), NULL, ctx);
-                builder->CreateBr(afterBlock);
+                
+                if (!hasReturnInstruction(thenBlock)) {
+                    builder->CreateBr(afterBlock);
+                    usesAfterBlock = true;
+                }
                 
                 // Insert the 'else' block
                 function->getBasicBlockList().push_back(elseBlock);
                 builder->SetInsertPoint(elseBlock);
+                
+                // We will want to check whether this block contains a return statement if it is the last block.
+                lastBlock = elseBlock;
                 
                 // We have looked at the 'then' node too.
                 i++;
@@ -415,8 +422,11 @@ namespace MAlice {
                 walker->generateCodeForNode(node1, NULL, ctx);
         }
         
-        builder->CreateBr(afterBlock);
-        function->getBasicBlockList().push_back(afterBlock);
+        if (lastBlock && !hasReturnInstruction(lastBlock))
+            builder->CreateBr(afterBlock);
+        
+        if (usesAfterBlock)
+            function->getBasicBlockList().push_back(afterBlock);
         builder->SetInsertPoint(afterBlock);
         
         return true;
@@ -724,7 +734,6 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForParamsNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-
         // Change debug line number
         if (ctx->getDGBuilder())
         {
@@ -733,14 +742,11 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
         }                                       
 
-
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
         std::vector<ParameterEntity*> parameterList = Utilities::getParameterTypesFromParamsNode(node);
         
         for (auto it = parameterList.begin(); it != parameterList.end(); ++it) {
             ParameterEntity *entity = *it;
-            llvm::Value *parameterValue = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(entity->getType()), 0, entity->getIdentifier().c_str());
-            entity->setLLVMValue(parameterValue);
             ctx->addEntityInScope(entity->getIdentifier(), entity);
         }
         
@@ -879,14 +885,11 @@ namespace MAlice {
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(identifierNode); ++i) {
             llvm::Value *value = NULL;
             walker->generateCodeForNode(Utilities::getChildNodeAtIndex(identifierNode, i), &value, ctx);
-            // Load the value into an argument
-            llvm::Value *arg = ctx->getIRBuilder()->CreateLoad(value);
-            arguments.push_back(arg);
+            arguments.push_back(value);
         }
         
         FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
-        
-        llvm::ArrayRef<llvm::Value*> a(&arguments[0], arguments.size());
+        llvm::ArrayRef<llvm::Value*> llvmArguments = llvm::makeArrayRef(arguments);
 
         // Change debug line number
         if (ctx->getDGBuilder())
@@ -896,11 +899,13 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
         }                                       
 
-        llvm::Value * v = ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), a, "calltmp");
-        if (outValue)
-            *outValue = v;
-
-
+        if (Utilities::getTypeOfEntity(funcProcEntity) == MAliceEntityTypeFunction) {
+            llvm::Value * v = ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), llvmArguments, "calltmp");
+            if (outValue)
+                *outValue = v;
+        } else {
+            ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), llvmArguments);
+        }
 
         return true;
     }
@@ -1046,9 +1051,7 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
 
 
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(variable->getType()),
-                                                               0,
-                                                               identifier.c_str());
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(variable->getType()), NULL, identifier.c_str());
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
 
@@ -1163,6 +1166,38 @@ namespace MAlice {
             return NULL;
         
         return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
+    }
+    
+    void CodeGeneration::createAllocasForArguments(CompilerContext *ctx)
+    {
+        llvm::IRBuilder<> *builder = ctx->getIRBuilder();
+        
+        FunctionProcedureEntity *funcProcEntity = ctx->getCurrentFunctionProcedureEntity();
+        llvm::Function *function = funcProcEntity->getLLVMFunction();
+        
+        unsigned int i = 0;
+        
+        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
+            llvm::Value *alloca = builder->CreateAlloca(llvm::Type::getInt64Ty(llvm::getGlobalContext()));
+            builder->CreateStore(it, alloca);
+            
+            ParameterEntity *parameterEntity = funcProcEntity->getParameterListTypes().at(i);
+            parameterEntity->setLLVMValue(alloca);
+            
+            ++i;
+        }
+    }
+    
+    bool CodeGeneration::hasReturnInstruction(llvm::BasicBlock *block)
+    {
+        for (auto it = block->begin(); it != block->end(); ++it) {
+            Instruction *instruction = it;
+            
+            if (llvm::cast<llvm::ReturnInst>(instruction))
+                return true;
+        }
+        
+        return false;
     }
     
 };
