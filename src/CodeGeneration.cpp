@@ -762,9 +762,11 @@ namespace MAlice {
         
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
         
+        if (ctx->getCurrentFunctionProcedureEntity())
+            ctx->saveInsertPoint();
+        
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
-        ctx->saveInsertPoint();
         
         if (hasParams) {
             if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
