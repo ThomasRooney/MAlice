@@ -272,6 +272,7 @@ namespace MAlice {
                                                             Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode)));
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
+        ctx->saveInsertPoint();
         
         if (hasParams) {
             if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
@@ -284,6 +285,7 @@ namespace MAlice {
         ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
         
+        ctx->restoreInsertPoint();
         ctx->popFunctionProcedureEntity();
         
         if (!result) {
@@ -762,6 +764,7 @@ namespace MAlice {
         
         ctx->addEntityInScope(identifier, procedureEntity);
         ctx->pushFunctionProcedureEntity(procedureEntity);
+        ctx->saveInsertPoint();
         
         if (hasParams) {
             if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
@@ -777,6 +780,7 @@ namespace MAlice {
         // LLVM requires all functions to return a value
         ctx->getIRBuilder()->CreateRetVoid();
         
+        ctx->restoreInsertPoint();
         ctx->popFunctionProcedureEntity();
         
         if (!result) {

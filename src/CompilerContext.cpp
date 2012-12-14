@@ -487,4 +487,20 @@ namespace MAlice {
         return prettyPrintFunction;
     }
     
+    void CompilerContext::saveInsertPoint()
+    {
+        m_insertPointStack.push(getIRBuilder()->GetInsertBlock());
+    }
+    
+    void CompilerContext::restoreInsertPoint()
+    {
+        if (m_insertPointStack.empty())
+            return;
+        
+        llvm::BasicBlock *insertPoint = m_insertPointStack.top();
+        m_insertPointStack.pop();
+        
+        getIRBuilder()->SetInsertPoint(insertPoint);
+    }
+
 }; // namespace MAlice

@@ -49,6 +49,7 @@ namespace MAlice {
         SymbolTable* t_symbolTable;
         
         std::stack<FunctionProcedureEntity*> m_functionProcedureScopeStack;
+        std::stack<llvm::BasicBlock*> m_insertPointStack;
         
         std::string getLineOfInput(unsigned int lineNumber);
         
@@ -105,6 +106,9 @@ namespace MAlice {
         void pushFunctionProcedureEntity(FunctionProcedureEntity *entity);
         void popFunctionProcedureEntity();
         
+        void saveInsertPoint();
+        void restoreInsertPoint();
+        
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
         llvm::DIBuilder *getDGBuilder();
@@ -114,7 +118,6 @@ namespace MAlice {
         void setIdentifierDispenser(IdentifierDispenser *dispenser);
         
         llvm::Value *ioFormatStringForExpressionType(Type type);
-        
         llvm::Function *prettyPrintBoolFunction();
         
     }; // class CompilerContext

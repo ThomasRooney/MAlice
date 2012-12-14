@@ -7,6 +7,7 @@ namespace MAlice {
     {
         m_parameterListTypes = parameterListTypes;
         m_LLVMFunction = NULL;
+        m_contextStructType = NULL;
     }
     
     void FunctionProcedureEntity::setParameterListTypes(std::vector<ParameterEntity*> types)
@@ -27,6 +28,16 @@ namespace MAlice {
     void FunctionProcedureEntity::setLLVMFunction(llvm::Function *function)
     {
         m_LLVMFunction = function;
+    }
+    
+    llvm::StructType *FunctionProcedureEntity::getContextStructType()
+    {
+        return m_contextStructType;
+    }
+    
+    void FunctionProcedureEntity::setContextStructType(llvm::StructType *contextStructType)
+    {
+        m_contextStructType = contextStructType;
     }
     
 }; // namespace MAlice
