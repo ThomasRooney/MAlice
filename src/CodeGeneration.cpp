@@ -1131,10 +1131,10 @@ namespace MAlice {
         unsigned int i = 0;
         
         for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
-            llvm::Value *alloca = builder->CreateAlloca(llvm::Type::getInt64Ty(llvm::getGlobalContext()));
-            builder->CreateStore(it, alloca);
-            
             ParameterEntity *parameterEntity = funcProcEntity->getParameterListTypes().at(i);
+            
+            llvm::Value *alloca = builder->CreateAlloca(Utilities::getLLVMTypeFromType(parameterEntity->getType()));
+            builder->CreateStore(it, alloca);
             parameterEntity->setLLVMValue(alloca);
             
             ++i;
@@ -1146,7 +1146,7 @@ namespace MAlice {
         for (auto it = block->begin(); it != block->end(); ++it) {
             Instruction *instruction = it;
             
-            if (llvm::cast<llvm::ReturnInst>(instruction))
+            if (llvm::dyn_cast<llvm::ReturnInst>(instruction))
                 return true;
         }
         
