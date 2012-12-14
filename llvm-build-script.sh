@@ -1,5 +1,5 @@
 
-LLVM_VERSION=3.0
+LLVM_VERSION=3.1
 
 if [ ! -d dependencies ] ; then
   mkdir dependencies
@@ -28,7 +28,7 @@ if [ ! -d llvm ] ; then
 
   cd build
   ../llvm-$LLVM_VERSION.src/configure --enable-optimized --disable-assertions
-  make -j
+  make
   cd ..
   mkdir llvm
   mv build/Release/* llvm

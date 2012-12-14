@@ -872,7 +872,9 @@ namespace MAlice {
         if (ctx->getDGBuilder())
             // Create a lexical lock node to declare DWARF debug information scope
             ctx->enterDebugScope(node);
-
+        
+        BasicBlock *progRootBlock = BasicBlock::Create(getGlobalContext(), "progRoot");
+        ctx->getIRBuilder()->SetInsertPoint(progRootBlock);
 
         return walker->generateCodeForChildren(node, NULL, ctx);
     }
