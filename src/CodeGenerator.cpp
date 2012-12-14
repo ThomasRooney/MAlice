@@ -102,7 +102,7 @@ namespace MAlice {
         // Run clang to generate the executable
         std::cout << "\nRunning clang to generate executable... ";
         if (!runClang(assemblyOutputPath, outputPath)) {
-            std::cerr << "\n\nFailed to create executable with clang.";
+            std::cerr << "\n\nFailed to create executable with clang." << std::endl;
             return false;
         }
         std::cout << "Done.";
