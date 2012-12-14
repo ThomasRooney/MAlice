@@ -33,7 +33,7 @@ namespace MAlice {
         m_dbinfo = dbinfo;
     }
 
-    bool CodeGenerator::generateCode(std::string inputPath, std::string outputPath)
+    bool CodeGenerator::generateCode(std::string inputPath, std::string outputPath, bool optimisationsOn)
     {
         // Finalise the debug info
         if (m_dbinfo)
@@ -47,22 +47,24 @@ namespace MAlice {
         
         // Create the function pass manager
         llvm::PassManager PM = llvm::PassManager();
-/*        PM.add(llvm::createCFGSimplificationPass()); // Clean up code
-        PM.add(llvm::createBasicAliasAnalysisPass()); 
-        PM.add(llvm::createInstructionCombiningPass());
-        PM.add(llvm::createPromoteMemoryToRegisterPass()); // Promote memory to registers where necessary
-        PM.add(llvm::createScalarReplAggregatesPass()); // clean up allcas
-        PM.add(llvm::createCFGSimplificationPass()); // Clean up again
-        PM.add(llvm::createConstantPropagationPass()); // Constant Folding
-        PM.add(llvm::createLICMPass()); // Loop Invariant optimization
-        PM.add(llvm::createLoopDeletionPass()); // Dead loop deletion
-        PM.add(llvm::createLoopUnrollPass()); // Unroll small loops
-        PM.add(llvm::createSCCPPass()); // Constant propagation with different algorithm
-        PM.add(llvm::createCFGSimplificationPass()); // Clean up..
-        PM.add(llvm::createInstructionCombiningPass());
-        PM.add(llvm::createDeadStoreEliminationPass()); // Delete dead stores
-        PM.add(llvm::createAggressiveDCEPass()); // Delete dead instructions 
-        PM.add(llvm::createCFGSimplificationPass());*/
+        if (optimisationsOn) {
+            PM.add(llvm::createCFGSimplificationPass()); // Clean up code
+            PM.add(llvm::createBasicAliasAnalysisPass()); 
+            PM.add(llvm::createInstructionCombiningPass());
+            PM.add(llvm::createPromoteMemoryToRegisterPass()); // Promote memory to registers where necessary
+            PM.add(llvm::createScalarReplAggregatesPass()); // clean up allcas
+            PM.add(llvm::createCFGSimplificationPass()); // Clean up again
+            PM.add(llvm::createConstantPropagationPass()); // Constant Folding
+            PM.add(llvm::createLICMPass()); // Loop Invariant optimization
+            PM.add(llvm::createLoopDeletionPass()); // Dead loop deletion
+            PM.add(llvm::createLoopUnrollPass()); // Unroll small loops
+            PM.add(llvm::createSCCPPass()); // Constant propagation with different algorithm
+            PM.add(llvm::createCFGSimplificationPass()); // Clean up..
+            PM.add(llvm::createInstructionCombiningPass());
+            PM.add(llvm::createDeadStoreEliminationPass()); // Delete dead stores
+            PM.add(llvm::createAggressiveDCEPass()); // Delete dead instructions 
+            PM.add(llvm::createCFGSimplificationPass());
+        }
         if (m_dbinfo) {
             PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
             PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
@@ -138,7 +140,7 @@ namespace MAlice {
     
     bool CodeGenerator::runClang(std::string assemblyInputPath, std::string outputPath)
     {
-        std::string clangCall = "clang " + assemblyInputPath + " -o " + outputPath + " 2>&1";
+        std::string clangCall = "clang -g " + assemblyInputPath + " -o " + outputPath + " 2>&1";
         
         FILE *clangDescriptor = popen((char*)clangCall.c_str(), "r");
         if (pclose(clangDescriptor) != EXIT_SUCCESS)

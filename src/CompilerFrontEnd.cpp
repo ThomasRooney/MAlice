@@ -42,6 +42,7 @@ namespace MAlice {
         CompilerFlagsPrintHelp = 1,
         CompilerFlagsPrintAST = 2,
         CompilerFlagsDebugInformation = 4,
+        CompilerFlagsOptimisation = 8,
     } CompilerFlags;
   
     CompilerFrontEnd::CompilerFrontEnd(int argc, char **argv)
@@ -144,8 +145,7 @@ namespace MAlice {
         else {
             generator = new CodeGenerator(module);
         }
-
-        generator->generateCode(path, outputPath);
+        generator->generateCode(path, outputPath, ((compilerFlags & CompilerFlagsDebugInformation) != 0) );
 
         if (semanticAnalyser) {
             delete semanticAnalyser;
@@ -188,6 +188,9 @@ namespace MAlice {
                 retFlags |= CompilerFlagsPrintHelp;
             if (*c == 'd')
                 retFlags |= CompilerFlagsDebugInformation;
+            if (*c == 'o')
+                retFlags |= CompilerFlagsOptimisation;
+
 
         }
         

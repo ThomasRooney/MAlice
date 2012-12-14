@@ -23,4 +23,8 @@
 
 \section{Extensions}
 
+For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
+
+The end result of this extension is that a compiled alice file can be debugged in gdb. Breakpoints can be set in the .alice code 
+
 \end{document}

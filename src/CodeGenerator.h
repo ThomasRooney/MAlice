@@ -21,7 +21,7 @@ namespace MAlice {
         CodeGenerator(llvm::Module *module);
         CodeGenerator(llvm::Module *module, llvm::DIBuilder *dbinfo);
         
-        bool generateCode(std::string inputPath, std::string outputPath);
+        bool generateCode(std::string inputPath, std::string outputPath, bool optimisationsOn);
     };
     
 }

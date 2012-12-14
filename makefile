@@ -19,7 +19,7 @@ LLVM_LIB_CHECK = $(LLVM_LIB_DIR)/libLLVMCore.a
 
 
 # For LLVM - adapted from http://stackoverflow.com/a/8440972
-LLVM_MODULES = core analysis
+LLVM_MODULES = all
 LLVM_CPPFLAGS = `$(LLVM_CONFIG) --cppflags` 
 LLVM_LDFLAGS = `$(LLVM_CONFIG) --ldflags`
 LLVM_LIBS = `$(LLVM_CONFIG) --libs $(LLVM_MODULES)`
