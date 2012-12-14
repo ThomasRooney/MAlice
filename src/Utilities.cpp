@@ -1080,6 +1080,8 @@ namespace MAlice {
     
     std::string Utilities::getParentDirectoryForPath(std::string path)
     {
+        if (path.find(DELIM) == std::string::npos)
+            return std::string(".");
         char pP [255];
         strcpy(pP, path.c_str());
         char *s1 = strrchr(pP, '/');
