@@ -140,7 +140,7 @@ namespace MAlice {
     
     bool CodeGenerator::runClang(std::string assemblyInputPath, std::string outputPath)
     {
-        std::string clangCall = "clang -g " + assemblyInputPath + " -o " + outputPath + " 2>&1";
+        std::string clangCall = "clang " + assemblyInputPath + " -o " + outputPath + " 2>&1";
         
         FILE *clangDescriptor = popen((char*)clangCall.c_str(), "r");
         if (pclose(clangDescriptor) != EXIT_SUCCESS)

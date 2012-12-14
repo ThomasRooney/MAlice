@@ -1,5 +1,5 @@
 
-LLVM_VERSION=3.1
+LLVM_VERSION=3.0
 
 if [ ! -d dependencies ] ; then
   mkdir dependencies
