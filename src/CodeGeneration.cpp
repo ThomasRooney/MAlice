@@ -1180,7 +1180,7 @@ namespace MAlice {
             LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
         
         Function *function = Function::Create(functionType,
-                                              Function::InternalLinkage,
+                                              Function::ExternalLinkage,
                                               LLVMIdentifier,
                                               ctx->getModule());
         
