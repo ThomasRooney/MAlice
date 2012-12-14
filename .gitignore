@@ -43,3 +43,6 @@ grammar/output/*.txt
 
 #ignore the autotest results
 autotest_output.txt
+
+#ignore the built llvm files
+dependencies/llvm
