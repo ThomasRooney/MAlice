@@ -147,6 +147,8 @@ namespace MAlice {
 
         out.keep();
         outAsm.keep();
+        // Flush the file so that clang can access it.
+        ASOS.flush();
 
         // Run LLVM on the output
         // std::cout << "\nRunning llc on LLVM IR... ";
