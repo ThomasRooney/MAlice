@@ -3,8 +3,13 @@
 #include <cstdio>
 #include <sstream>
 #include <fstream>
-
 #include "Utilities.h"
+
+#ifdef _WIN32
+#undef min
+#undef max
+#endif
+
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/PassManager.h"
 #include "llvm/Analysis/Passes.h"
@@ -12,6 +17,11 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Assembly/PrintModulePass.h"
 #include "llvm/Support/ToolOutputFile.h"
+#include "llvm/ADT/Triple.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Target/TargetData.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Support/TargetRegistry.h"
 
 #ifdef _WIN32
 #define popen _popen
@@ -81,12 +91,35 @@ namespace MAlice {
         llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
 
         PM.add(llvm::createPrintModulePass(&out.os()));
+
+        // Generate bitcode for the current target
+
+        llvm::Triple TheTriple(m_module->getTargetTriple());
+        TheTriple.setTriple(llvm::sys::getHostTriple());
+        std::string Err;
+        const llvm::Target *TheTarget = llvm::TargetRegistry::lookupTarget(TheTriple.getTriple(), Err);
+
+        if (TheTarget == 0) {
+            std::cerr << "Fatal Error generating bitcode" << std::endl;
+            PM.run(*m_module);
+            return false;
+        }
+
+          std::auto_ptr<llvm::TargetMachine>
+            target(TheTarget->createTargetMachine(TheTriple.getTriple(),
+                                                  "", "",
+                                                  llvm::Reloc::Default, llvm::CodeModel::Default));
+
+        llvm::TargetMachine &Target = *target.get();
+
+        // Create target
+        if (const llvm::TargetData *TD = Target.getTargetData())
+            PM.add(new llvm::TargetData(*TD));
+        else
+            PM.add(new llvm::TargetData(m_module));
         
         PM.run(*m_module);
         
-	
-
-
         std::cout << ".....Done." << std::endl;
 
         out.keep();
@@ -150,3 +183,4 @@ namespace MAlice {
     }
     
 }
+
