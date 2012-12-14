@@ -157,7 +157,22 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForBodyNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->generateCodeForChildren(node, NULL, ctx);
+        llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        
+        BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
+        ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
+        
+        ctx->enterScope();
+        ctx->enterDebugScope(node);
+        
+        createAllocasForArguments(ctx);
+        
+        bool result = walker->generateCodeForChildren(node, NULL, ctx);
+        
+        ctx->exitDebugScope(node);
+        ctx->exitScope();
+        
+        return result;
     }
     
     bool CodeGeneration::generateCodeForByReferenceParameterNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -250,60 +265,24 @@ namespace MAlice {
         if (Utilities::getNodeType(nodeI1) == PARAMS)
             hasParams = true;
         ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
-        Type returnType = Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode));
         
-        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
-        
-        FunctionEntity *functionEntity = new FunctionEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>(), returnType);
+        FunctionEntity *functionEntity = new FunctionEntity(identifier,
+                                                            Utilities::getNodeLineNumber(identifierNode),
+                                                            std::vector<ParameterEntity*>(),
+                                                            Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode)));
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
         
-        
-        // Populate the function arguments.
         if (hasParams) {
             if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
                 return false;
         }
         
-        // Create the llvm::Function and insert it into the module
-        std::vector<ParameterEntity*> parameterEntities = functionEntity->getParameterListTypes();
-        std::vector<llvm::Type*> parameterTypes;
-        for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
-            ParameterEntity *entity = *it;
-            llvm::Type *llvmType = Utilities::getLLVMTypeFromType(entity->getType());
-            
-            parameterTypes.push_back(llvmType);
-        }
-        
-        FunctionType *functionType = FunctionType::get(Utilities::getLLVMTypeFromType(functionEntity->getReturnType()),
-                                                       parameterTypes,
-                                                       false);
-        
-        Function *function = Function::Create(functionType,
-                                              Function::InternalLinkage,
-                                              identifier.c_str(),
-                                              ctx->getModule());
-        
-        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
-            llvm::Value *arg = it;
-            arg->setName("x");
-        }
-        
+        llvm::Function *function = createFunctionForEntity(functionEntity, ctx);
         functionEntity->setLLVMFunction(function);
-        
-        BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
-        ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
-        
-        ctx->enterScope();
-        ctx->enterDebugScope(bodyNode);
-        
-        createAllocasForArguments(ctx);
     
-        // Walk through the children
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
-        
-        ctx->exitDebugScope(bodyNode);
-        ctx->exitScope();
         
         ctx->popFunctionProcedureEntity();
         
@@ -770,67 +749,41 @@ namespace MAlice {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
-        ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
-        std::string LLVMIdentifier;
-        if (!ctx->getCurrentFunctionProcedureEntity() && identifier == "hatta")
-            LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForEntryPointFunction();
-        else
-            LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
-        
-        ctx->addEntityInScope(identifier, procedureEntity);
-        ctx->pushFunctionProcedureEntity(procedureEntity);
-        
         bool hasParams = false;
         
         // get node index 1, if its a parameter node, get params...
         ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
         if (Utilities::getNodeType(nodeI1) == PARAMS)
             hasParams = true;
-        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
+        
+        bool isEntryPointProcedure = !ctx->getCurrentFunctionProcedureEntity() && identifier == "hatta";
+        
+        ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
+        
+        ctx->addEntityInScope(identifier, procedureEntity);
+        ctx->pushFunctionProcedureEntity(procedureEntity);
         
         if (hasParams) {
             if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
                 return false;
         }
         
-        // Create the llvm::Function for the procedure and add it to the llvm::Module.
-        std::vector<llvm::Type*> parameterTypes;
-        std::vector<ParameterEntity*> parameterEntities = procedureEntity->getParameterListTypes();
+        llvm::Function *function = createFunctionForEntity(procedureEntity, ctx, isEntryPointProcedure);
+        procedureEntity->setLLVMFunction(function);
         
-        for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
-            ParameterEntity *entity = *it;
-            parameterTypes.push_back(Utilities::getLLVMTypeFromType(entity->getType()));
-        }
-        
-        ArrayRef<llvm::Type*> parameterArrayRefs = makeArrayRef(parameterTypes);
-        FunctionType *procedureType = FunctionType::get(llvm::Type::getVoidTy(getGlobalContext()),
-                                                        parameterArrayRefs,
-                                                        false);
-        
-        Function *procedure = Function::Create(procedureType,
-                                               Function::ExternalLinkage,
-                                               LLVMIdentifier.c_str(),
-                                               ctx->getModule());
-        
-        procedureEntity->setLLVMFunction(procedure);
-        
-        BasicBlock *block = BasicBlock::Create(getGlobalContext(), "entry", procedure);
-        ctx->getIRBuilder()->SetInsertPoint(block);
-        
+        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
-        if (!result) {
-            // Remove the procedure from the Module it's a part of.
-            procedure->removeFromParent();
-            return false;
-        }
+        
+        // LLVM requires all functions to return a value
+        ctx->getIRBuilder()->CreateRetVoid();
         
         ctx->popFunctionProcedureEntity();
         
-        // Create the return value for the function, which will exit the scope for the function.
-        ctx->getIRBuilder()->CreateRetVoid();
-        
-        if (outValue)
-            *outValue = procedure;
+        if (!result) {
+            // Remove the function from the module it's a part of.
+            function->removeFromParent();
+            return false;
+        }
         
         return true;
     }
@@ -1198,6 +1151,46 @@ namespace MAlice {
         }
         
         return false;
+    }
+    
+    llvm::Function *CodeGeneration::createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint)
+    {
+        // Create the llvm::Function and insert it into the module
+        std::vector<ParameterEntity*> parameterEntities = funcProcEntity->getParameterListTypes();
+        std::vector<llvm::Type*> parameterTypes;
+        for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
+            ParameterEntity *entity = *it;
+            llvm::Type *llvmType = Utilities::getLLVMTypeFromType(entity->getType());
+            
+            parameterTypes.push_back(llvmType);
+        }
+        
+        llvm::Type *returnType = llvm::Type::getVoidTy(llvm::getGlobalContext());
+        if (Utilities::getTypeOfEntity(funcProcEntity) == MAliceEntityTypeFunction) {
+            FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
+            returnType = Utilities::getLLVMTypeFromType(functionEntity->getReturnType());
+        }
+        
+        FunctionType *functionType = FunctionType::get(returnType, parameterTypes, false);
+        std::string identifier = funcProcEntity->getIdentifier();
+        std::string LLVMIdentifier;
+        if (isEntryPoint)
+            LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForEntryPointFunction();
+        else
+            LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
+        
+        Function *function = Function::Create(functionType,
+                                              Function::InternalLinkage,
+                                              LLVMIdentifier,
+                                              ctx->getModule());
+        
+        // Set the arg names in the LLVM function
+        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
+            llvm::Value *arg = it;
+            arg->setName("x");
+        }
+        
+        return function;
     }
     
 };

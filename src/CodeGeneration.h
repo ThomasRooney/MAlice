@@ -88,6 +88,8 @@ namespace MAlice {
         
         void createAllocasForArguments(CompilerContext *ctx);
         bool hasReturnInstruction(llvm::BasicBlock *block);
+        
+        llvm::Function *createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint = false);
     }
 }
 
