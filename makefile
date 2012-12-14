@@ -12,12 +12,16 @@ OBJECTS = ${CPP_FILES:.cpp=.o}
 OBJ_DIR = obj
 GRAMMAR_OUT_DIR = grammar/output
 SRC_DIR = src
+LLVM_BIN_DIR = dependencies/llvm/bin
+LLVM_LIB_DIR = dependencies/llvm/lib
+LLVM_CONFIG = $(LLVM_BIN_DIR)/llvm-config
+
 
 # For LLVM - adapted from http://stackoverflow.com/a/8440972
 LLVM_MODULES = core analysis
-LLVM_CPPFLAGS = `llvm-config-3.0 --cppflags` 
-LLVM_LDFLAGS = `llvm-config-3.0 --ldflags`
-LLVM_LIBS = `llvm-config-3.0 --libs $(LLVM_MODULES)`
+LLVM_CPPFLAGS = `$(LLVM_CONFIG) --cppflags` 
+LLVM_LDFLAGS = `$(LLVM_CONFIG) --ldflags`
+LLVM_LIBS = `$(LLVM_CONFIG) --libs $(LLVM_MODULES)`
 
 all:  compile
 

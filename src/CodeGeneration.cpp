@@ -14,9 +14,7 @@
 #include "VariableEntity.h"
 #include "Utilities.h"
 #include "Validation.h"
-#include "llvm/Value.h"
-#include "llvm/Support/Dwarf.h"
-#include "llvm/Analysis/DebugInfo.h"
+#include "LLVMHeader.h"
 
 namespace llvm{}
 using namespace llvm;

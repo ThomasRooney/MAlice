@@ -43,7 +43,7 @@ namespace MAlice {
         if (!m_module)
             return "";
         
-        std::cout << "\n\nGenerating LLVM IR... ";
+        std::cout << "\n\nGenerating LLVM IR... " << std::endl;
         
         // Create the function pass manager
         llvm::PassManager PM = llvm::PassManager();
@@ -85,14 +85,14 @@ namespace MAlice {
 	
 
 
-        std::cout << "Done.";
+        std::cout << ".....Done." << std::endl;
 
         out.keep();
 
         // Run LLVM on the output
         std::cout << "\nRunning llc on LLVM IR... ";
         if (!runLlc(llvmIROutputPath, assemblyOutputPath)) {
-            std::cerr << "\n\nFailed to create assembly with llc.";
+            std::cerr << "Failed to create assembly with llc." << std::endl;
             return false;
         }
         std::cout << " Done.";
@@ -105,7 +105,7 @@ namespace MAlice {
         }
         std::cout << "Done.";
         
-        std::cout << "\n\nExecutable generated at '" << outputPath << "'.";
+        std::cout << "\n\nExecutable generated at '" << outputPath << "'." << std::endl;
         
         // Clean up temporary files.
 //        remove((char*)llvmIROutputPath.c_str());
@@ -127,7 +127,7 @@ namespace MAlice {
     
     bool CodeGenerator::runLlc(std::string inputPath, std::string outputPath)
     {
-        std::string llcCall = "llc " + inputPath + " -o " + outputPath + " 2>&1";
+        std::string llcCall = "dependencies/llvm/bin/llc " + inputPath + " -o " + outputPath + " 2>&1";
 
         FILE *llcDescriptor = popen((char*)llcCall.c_str(), "r");
         if (pclose(llcDescriptor) != EXIT_SUCCESS)
@@ -138,7 +138,7 @@ namespace MAlice {
     
     bool CodeGenerator::runClang(std::string assemblyInputPath, std::string outputPath)
     {
-        std::string clangCall = "clang " + assemblyInputPath + " -o " + outputPath + " 2>&1";
+        std::string clangCall = "dependencies/llvm/bin/clang " + assemblyInputPath + " -o " + outputPath + " 2>&1";
         
         FILE *clangDescriptor = popen((char*)clangCall.c_str(), "r");
         if (pclose(clangDescriptor) != EXIT_SUCCESS)
