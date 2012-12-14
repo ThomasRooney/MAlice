@@ -17,11 +17,16 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Assembly/PrintModulePass.h"
 #include "llvm/Support/ToolOutputFile.h"
+#include "llvm/Support/ManagedStatic.h"
+#include "llvm/Support/PluginLoader.h"
+#include "llvm/Support/FormattedStream.h"
+
 #include "llvm/ADT/Triple.h"
 #include "llvm/Support/Host.h"
 #include "llvm/Target/TargetData.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/TargetSelect.h"
 
 #ifdef _WIN32
 #define popen _popen
@@ -94,16 +99,25 @@ namespace MAlice {
 
         // Generate bitcode for the current target
 
+        llvm::InitializeAllTargets();
+        llvm::InitializeAllTargetMCs();
+        llvm::InitializeAllAsmPrinters();
+        llvm::InitializeAllAsmParsers();
+
         llvm::Triple TheTriple(m_module->getTargetTriple());
         TheTriple.setTriple(llvm::sys::getHostTriple());
         std::string Err;
         const llvm::Target *TheTarget = llvm::TargetRegistry::lookupTarget(TheTriple.getTriple(), Err);
 
         if (TheTarget == 0) {
-            std::cerr << "Fatal Error generating bitcode" << std::endl;
+            std::cerr << "Fatal Error generating bitcode: " << Err << std::endl;
             PM.run(*m_module);
             return false;
         }
+
+        std::string AsmErrorInfo;
+        llvm::tool_output_file
+          outAsm(assemblyOutputPath.c_str(), AsmErrorInfo, llvm::raw_fd_ostream::F_Binary); 
 
           std::auto_ptr<llvm::TargetMachine>
             target(TheTarget->createTargetMachine(TheTriple.getTriple(),
@@ -118,24 +132,34 @@ namespace MAlice {
         else
             PM.add(new llvm::TargetData(m_module));
         
+        Target.setAsmVerbosityDefault(true);
+
+        llvm::formatted_raw_ostream ASOS(outAsm.os());
+        if (Target.addPassesToEmitFile(PM, ASOS, llvm::TargetMachine::CGFT_AssemblyFile, llvm::CodeGenOpt::Aggressive)){
+            std::cerr << "Fatal Error, cannot add passes to generate " << assemblyOutputPath << std::endl;
+            return false;
+        }
+
+
         PM.run(*m_module);
         
         std::cout << ".....Done." << std::endl;
 
         out.keep();
+        outAsm.keep();
 
         // Run LLVM on the output
-        std::cout << "\nRunning llc on LLVM IR... ";
-        if (!runLlc(llvmIROutputPath, assemblyOutputPath)) {
-            std::cerr << "Failed to create assembly with llc." << std::endl;
-            return false;
-        }
-        std::cout << " Done.";
+        // std::cout << "\nRunning llc on LLVM IR... ";
+        // if (!runLlc(llvmIROutputPath, assemblyOutputPath)) {
+        //     std::cerr << "Failed to create assembly with llc." << std::endl;
+        //     return false;
+        // }
+        // std::cout << " Done.";
         
         // Run clang to generate the executable
         std::cout << "\nRunning clang to generate executable... ";
         if (!runClang(assemblyOutputPath, outputPath)) {
-            std::cerr << "\n\nFailed to create executable with clang." << std::endl;
+            std::cerr << "\nFailed to create executable with clang." << std::endl;
             return false;
         }
         std::cout << "Done.";

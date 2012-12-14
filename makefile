@@ -1,5 +1,5 @@
 CC=g++
-CCFLAGS = -std=c++0x -O3
+CCFLAGS = -std=c++0x -g
 
 ANTLR_SEARCH_PATHS=-I grammar/antlr/include -I grammar/antlr/libantlr3c
 LEXER_SEARCH_PATH=-I grammar/output
