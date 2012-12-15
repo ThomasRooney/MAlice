@@ -49,6 +49,8 @@ namespace MAlice {
         }
         m_symbolTables.clear();
         
+        m_stringTable->removeAllEntries();
+        
         // The entities for the function procedure scope stack are cleaned up in the symbol tables.
         while(!m_functionProcedureScopeStack.empty()) {
             m_functionProcedureScopeStack.pop();
@@ -59,15 +61,24 @@ namespace MAlice {
         
         if (m_parser)
             delete m_parser, m_parser = NULL;
+        if (m_stringTable)
+            delete m_stringTable, m_stringTable = NULL;
         
         if (m_inputStream)
             delete m_inputStream, m_inputStream = NULL;
+
+        if (m_tokenStream)
+            delete m_tokenStream, m_tokenStream = NULL;
+
         
         if (m_tokenStream)
             delete m_tokenStream, m_tokenStream = NULL;
         
         if (m_irBuilder)
             delete m_irBuilder, m_irBuilder = NULL;
+
+        if (t_symbolTable)
+            delete t_symbolTable, t_symbolTable = NULL;
         
         if (m_identifierDispenser)
             delete m_identifierDispenser, m_identifierDispenser = NULL;
