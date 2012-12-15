@@ -56,7 +56,6 @@ namespace MAlice {
         m_dbinfo = dbinfo;
         CodeGenerator::instance = this;
     }
-    
 
     CodeGenerator * CodeGenerator::instance = 0;
 

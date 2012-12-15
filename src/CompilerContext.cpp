@@ -199,17 +199,20 @@ namespace MAlice {
 
     void CompilerContext::enterDebugScope(ASTNode node)
     {
-         if (m_DebugBuilder)
-         {
-             llvm::DIDescriptor newscope = m_DebugBuilder->createLexicalBlock(
-                 this->getCurrentDBScope() == NULL?
-                 llvm::DIDescriptor() :
-                 llvm::DIDescriptor(this->getCurrentDBScope()),
-                 *this->getDIFile(),
-                 Utilities::getNodeLineNumber(node),
-                 Utilities::getNodeColumnIndex(node));
-                 m_dbgScope.push_back(newscope);
-
+        if (m_DebugBuilder)
+        {
+            llvm::DIDescriptor newscope = m_DebugBuilder->createLexicalBlock(
+                this->getCurrentDBScope() == NULL?
+                llvm::DIDescriptor() :
+                llvm::DIDescriptor(this->getCurrentDBScope()),
+                *this->getDIFile(),
+                Utilities::getNodeLineNumber(node),
+                Utilities::getNodeColumnIndex(node));
+            llvm::DIDescriptor D
+                = m_DebugBuilder->createLexicalBlockFile(newscope,
+                                                  *this->getDIFile());
+                m_dbgScope.push_back(D);
+          
          }
     }
 
