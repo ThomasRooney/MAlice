@@ -233,6 +233,11 @@ namespace MAlice {
         cout << "\n\nFlags:";
         cout << "\n" << "  -h    Print this help message";
         cout << "\n" << "  -t    Print parsed AST tree";
+        cout << "\n" << "  -o    Output Optimized version";
+        cout << "\n" << "  -d    Output DWARF debug information.";
+        cout << "\n" << "        -  This causes gdb to work";
+        cout << "\n" << "           correctly with the compiled ";
+        cout << "\n" << "           file.";
         cout << endl;
     }
     
