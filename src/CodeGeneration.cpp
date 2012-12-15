@@ -266,10 +266,14 @@ namespace MAlice {
             hasParams = true;
         ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
         
+        bool isNested = (ctx->getCurrentFunctionProcedureEntity() != NULL);
+        
         FunctionEntity *functionEntity = new FunctionEntity(identifier,
                                                             Utilities::getNodeLineNumber(identifierNode),
                                                             std::vector<ParameterEntity*>(),
                                                             Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode)));
+        functionEntity->setIsNestedFunction(isNested);
+        
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
         ctx->saveInsertPoint();
@@ -758,9 +762,13 @@ namespace MAlice {
         if (Utilities::getNodeType(nodeI1) == PARAMS)
             hasParams = true;
         
-        bool isEntryPointProcedure = !ctx->getCurrentFunctionProcedureEntity() && identifier == "hatta";
+        bool isNested = ctx->getCurrentFunctionProcedureEntity();
+        bool isEntryPointProcedure = isNested && identifier == "hatta";
         
-        ProcedureEntity *procedureEntity = new ProcedureEntity(identifier, Utilities::getNodeLineNumber(identifierNode), std::vector<ParameterEntity*>());
+        ProcedureEntity *procedureEntity = new ProcedureEntity(identifier,
+                                                               Utilities::getNodeLineNumber(identifierNode),
+                                                               std::vector<ParameterEntity*>());
+        procedureEntity->setIsNestedFunction(isNested);
         
         if (ctx->getCurrentFunctionProcedureEntity())
             ctx->saveInsertPoint();

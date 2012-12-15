@@ -19,6 +19,16 @@ namespace MAlice {
     {
         return m_parameterListTypes;
     }
+    
+    bool FunctionProcedureEntity::getIsNestedFunction()
+    {
+        return m_isNestedFunction;
+    }
+    
+    void FunctionProcedureEntity::setIsNestedFunction(bool isNested)
+    {
+        m_isNestedFunction = isNested;
+    }
 
     llvm::Function *FunctionProcedureEntity::getLLVMFunction()
     {
