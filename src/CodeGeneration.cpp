@@ -1256,11 +1256,18 @@ namespace MAlice {
                                               LLVMIdentifier,
                                               ctx->getModule());
         
+        auto argIt = function->arg_begin();
+        if (structType) {
+            llvm::Value *arg = argIt;
+            arg->setName("s");
+            ++argIt;
+        }
+        
         // Set the arg names in the LLVM function
-//        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
-//            llvm::Value *arg = it;
-//            arg->setName("x");
-//        }
+        for (; argIt != function->arg_end(); ++argIt) {
+            llvm::Value *arg = argIt;
+            arg->setName("x");
+        }
         
         return function;
     }
