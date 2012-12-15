@@ -1227,7 +1227,7 @@ namespace MAlice {
         std::vector<llvm::Type*> parameterTypes;
         
         if (structType) {
-            parameterTypes.push_back(structType);
+            parameterTypes.push_back(llvm::PointerType::get(structType, 0));
         }
         
         for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
