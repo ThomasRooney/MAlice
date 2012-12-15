@@ -273,7 +273,9 @@ namespace MAlice {
         functionEntity->setIsNestedFunction(isNested);
         addInfoForNestedFunctionOrProcedureToEntity(functionEntity, ctx);
         
-        return generateCodeForFunctionProcedureNode(paramsNode,
+
+        return generateCodeForFunctionProcedureNode(identifierNode,
+                                                    paramsNode,
                                                     Utilities::getChildNodeAtIndex(node, paramsNode? 3 : 2),
                                                     functionEntity,
                                                     outValue,
@@ -744,13 +746,15 @@ namespace MAlice {
                                                                Utilities::getNodeLineNumber(identifierNode),
                                                                std::vector<ParameterEntity*>());
         procedureEntity->setIsNestedFunction(isNested);
-        
-        return generateCodeForFunctionProcedureNode(paramsNode,
+
+        return generateCodeForFunctionProcedureNode(identifierNode,
+                                                    paramsNode,
                                                     Utilities::getChildNodeAtIndex(node, paramsNode? 2 : 1),
                                                     procedureEntity,
                                                     outValue,
                                                     walker,
                                                     ctx);
+
     }
 
     bool CodeGeneration::generateCodeForPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -1304,9 +1308,10 @@ namespace MAlice {
         funcProcEntity->setCapturedVariables(capturedVariables);
     }
     
-    bool CodeGeneration::generateCodeForFunctionProcedureNode(ASTNode paramsNode, ASTNode bodyNode, FunctionProcedureEntity *funcProcEntity, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    bool CodeGeneration::generateCodeForFunctionProcedureNode( ASTNode identifierNode, ASTNode paramsNode, ASTNode bodyNode, FunctionProcedureEntity *funcProcEntity, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        bool isEntryProcedure = !funcProcEntity->getIsNestedFunction() && funcProcEntity->getIdentifier() == "hatta";
+        std::string funcName = funcProcEntity->getIdentifier();
+        bool isEntryProcedure = !funcProcEntity->getIsNestedFunction() && funcName == "hatta";
         addInfoForNestedFunctionOrProcedureToEntity(funcProcEntity, ctx);
         
         // Enter the scope for code generation of the function
@@ -1320,6 +1325,17 @@ namespace MAlice {
         llvm::Function *function = createFunctionForEntity(funcProcEntity, ctx, isEntryProcedure);
         funcProcEntity->setLLVMFunction(function);
         
+        if (ctx->getDGBuilder())
+        {
+            llvm::DIFile dbFile = *ctx->getDIFile();
+            llvm::DIArray paramArray; // TODO: Populate parameters..
+            ctx->getDGBuilder()->createFunction(llvm::DIDescriptor(dbFile), funcName, isEntryProcedure?"main":funcName, dbFile,
+                                Utilities::getNodeLineNumber(identifierNode), llvm::DIType(),
+                                true, true,
+                                0, false,
+                                function, 0, 0);
+        }
+
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
         
         if (dynamic_cast<ProcedureEntity*>(funcProcEntity)) {
