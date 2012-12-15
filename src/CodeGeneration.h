@@ -89,12 +89,14 @@ namespace MAlice {
         void createAllocasForArguments(CompilerContext *ctx);
         bool hasReturnInstruction(llvm::BasicBlock *block);
         
-        llvm::Function *createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint = false, llvm::StructType *structType = 0);
+        llvm::Function *createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint = false);
         void extractElementsFromNestedFunctionStruct(CompilerContext *ctx);
         void storeElementsIntoNestedFunctionStruct(CompilerContext *ctx);
         
         void handleNestedFunctionBeforeInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx);
         void handleNestedFunctionAfterInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx);
+        
+        void addInfoForNestedFunctionOrProcedure(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx);
     }
 }
 
