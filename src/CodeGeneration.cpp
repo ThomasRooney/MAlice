@@ -904,11 +904,31 @@ namespace MAlice {
     {
         std::string strVal = Utilities::getNodeText(node);
         strVal = Utilities::stripLeadingAndTrailingCharacters(strVal, '"');
-
+        strVal = Utilities::stringWithASCIIControlCodes(strVal.c_str());
+        
         llvm::Value *value = ctx->getStringTable()->cachedStringConstant(strVal);
         
         if (!value) {
-            value = ctx->getIRBuilder()->CreateGlobalStringPtr(Utilities::stringWithASCIIControlCodes(strVal.c_str()));
+            // Global variables have to be created slightly differently...
+            if (!ctx->getCurrentFunctionProcedureEntity()) {
+                llvm::Constant *stringConstant = llvm::ConstantArray::get(llvm::getGlobalContext(), strVal);
+                llvm::GlobalVariable *stringGlobal = new GlobalVariable(*(ctx->getModule()),
+                                                                        stringConstant->getType(),
+                                                                        true,
+                                                                        GlobalVariable::PrivateLinkage,
+                                                                        stringConstant,
+                                                                        "str");
+                
+                std::vector<llvm::Constant*> constants;
+                llvm::ConstantInt *zeroIndex = llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0);
+                constants.push_back(zeroIndex);
+                constants.push_back(zeroIndex);
+
+                value = ConstantExpr::getInBoundsGetElementPtr(stringGlobal, constants);
+            }
+            else
+                value = ctx->getIRBuilder()->CreateGlobalStringPtr(Utilities::stringWithASCIIControlCodes(strVal.c_str()));
+            
             ctx->getStringTable()->cacheStringConstant(strVal, value);
         }
         
@@ -943,7 +963,7 @@ namespace MAlice {
         
         ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
         std::string typeString = Utilities::getNodeText(typeNode);
-        
+                
         GlobalVariableEntity *variable = new GlobalVariableEntity(identifier, Utilities::getNodeLineNumber(identifierNode), Utilities::getTypeFromTypeString(typeString));
         
         llvm::Type *type = Utilities::getLLVMTypeFromType(variable->getType());

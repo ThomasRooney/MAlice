@@ -119,6 +119,9 @@ namespace MAlice {
         llvm::raw_string_ostream outputStream(output);
         std::cout << "Writing IR to: " << llvmIROutputPath << std::endl;
         std::cout << "Writing ASM to: " << assemblyOutputPath << std::endl;
+        
+        m_module->print(outputStream, NULL);
+        std::cout << output;
 
         std::string ErrorInfo;
         llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
