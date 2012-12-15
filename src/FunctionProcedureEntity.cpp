@@ -50,4 +50,14 @@ namespace MAlice {
         m_contextStructType = contextStructType;
     }
     
+    std::vector<std::string> FunctionProcedureEntity::getCapturedVariables()
+    {
+        return m_capturedVariables;
+    }
+    
+    void FunctionProcedureEntity::setCapturedVariables(std::vector<std::string> variables)
+    {
+        m_capturedVariables = variables;
+    }
+    
 }; // namespace MAlice

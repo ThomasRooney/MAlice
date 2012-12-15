@@ -31,6 +31,7 @@ namespace MAlice {
     class FunctionProcedureEntity;
     class IdentifierDispenser;
     class Type;
+    class VariableEntity;
     
     class CompilerContext{
     private:
@@ -79,7 +80,7 @@ namespace MAlice {
         bool isSymbolInScope(std::string identifier, Entity **outEntity);
         bool isSymbolInCurrentScope(std::string identifier, Entity **outEntity);
         bool isKeyword(std::string string);
-        std::vector<Entity*> variableEntitiesInCurrentScope();
+        std::vector<VariableEntity*> variableEntitiesInCurrentScope();
 
         void enterDebugScope(ASTNode);
         void exitDebugScope(ASTNode);    
