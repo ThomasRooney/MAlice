@@ -170,8 +170,6 @@ namespace MAlice {
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
         
-        storeElementsIntoNestedFunctionStruct(ctx);
-        
         ctx->exitDebugScope(node);
         ctx->exitScope();
         
@@ -416,8 +414,9 @@ namespace MAlice {
         
         if (usesAfterBlock)
             function->getBasicBlockList().push_back(afterBlock);
+            
         builder->SetInsertPoint(afterBlock);
-        
+    
         return true;
     }
 
@@ -792,6 +791,8 @@ namespace MAlice {
         ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
         
+        storeElementsIntoNestedFunctionStruct(ctx);
+        
         // LLVM requires all functions to return a value
         ctx->getIRBuilder()->CreateRetVoid();
         
@@ -858,6 +859,7 @@ namespace MAlice {
         
         if (funcProcEntity->getIsNestedFunction()) {
             llvm::StructType *structType = funcProcEntity->getContextStructType();
+            
             structAlloc = ctx->getIRBuilder()->CreateAlloca(structType);
             
             arguments.push_back(structAlloc);
@@ -919,6 +921,7 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
         }
 
+        storeElementsIntoNestedFunctionStruct(ctx);
         ctx->getIRBuilder()->CreateRet(returnValue);
 
         return true;
@@ -1351,7 +1354,7 @@ namespace MAlice {
             capturedVariables.push_back(variableEntity->getIdentifier());
         }
         
-        llvm::StructType *contextStructType = llvm::StructType::create(llvm::getGlobalContext(), structTypes, "struct_type");
+        llvm::StructType *contextStructType = llvm::StructType::create(llvm::getGlobalContext(), structTypes, "struct_type." + funcProcEntity->getIdentifier());
         funcProcEntity->setContextStructType(contextStructType);
         funcProcEntity->setCapturedVariables(capturedVariables);
     }
