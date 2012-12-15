@@ -14,6 +14,7 @@ namespace MAlice {
     class FunctionProcedureEntity : public Entity {
     private:
         std::vector<ParameterEntity*> m_parameterListTypes;
+        bool m_isNestedFunction;
         llvm::Function *m_LLVMFunction;
         llvm::StructType *m_contextStructType;
         
@@ -25,6 +26,9 @@ namespace MAlice {
         
         void setParameterListTypes(std::vector<ParameterEntity*> types);
         std::vector<ParameterEntity*> getParameterListTypes();
+        
+        bool getIsNestedFunction();
+        void setIsNestedFunction(bool isNested);
     
         llvm::Function *getLLVMFunction();
         void setLLVMFunction(llvm::Function *function);
