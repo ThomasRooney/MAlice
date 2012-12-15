@@ -177,9 +177,9 @@ namespace MAlice {
             SymbolTable *table = *it;
             
             for (auto identifierIt = allIdentifiers.begin(); identifierIt != allIdentifiers.end(); ++identifierIt) {
-                if (std::find(entityTable.begin(), entityTable.end(), *identifierIt) == entityTable.end()) {
-                    std::string identifier = *identifierIt;
-                    
+                std::string identifier = *identifierIt;
+                
+                if (entityTable.find(identifier) == entityTable.end()) {
                     Entity *entity = table->get(identifier);
                     
                     entityTable.insert(std::pair<std::string, Entity*>(identifier, entity));
