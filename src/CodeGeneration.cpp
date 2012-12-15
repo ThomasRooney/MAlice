@@ -408,7 +408,9 @@ namespace MAlice {
         }                                       
 
 
-        ctx->getIRBuilder()->CreateAdd(lhsValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        llvm::Value *loadedValue = ctx->getIRBuilder()->CreateLoad(lhsValue);
+        llvm::Value *incrementedValue = ctx->getIRBuilder()->CreateAdd(loadedValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        ctx->getIRBuilder()->CreateStore(incrementedValue, lhsValue);
         
         return true;
     }
