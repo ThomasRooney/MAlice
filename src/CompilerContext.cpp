@@ -215,6 +215,23 @@ namespace MAlice {
         m_symbolTables.push_back(new SymbolTable());
     }
     
+    void CompilerContext::enterFunctionProcedureScope(FunctionProcedureEntity *funcProcEntity)
+    {
+        if (getCurrentFunctionProcedureEntity())
+            saveInsertPoint();
+        
+        addEntityInScope(funcProcEntity->getIdentifier(), funcProcEntity);
+        pushFunctionProcedureEntity(funcProcEntity);
+        enterScope();
+    }
+    
+    void CompilerContext::exitFunctionProcedureScope()
+    {
+        exitScope();
+        restoreInsertPoint();
+        popFunctionProcedureEntity();
+    }
+    
     void CompilerContext::exitDebugScope(ASTNode node)
     {
         if (m_DebugBuilder)

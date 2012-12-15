@@ -162,16 +162,14 @@ namespace MAlice {
         BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
         
-        ctx->enterScope();
-        ctx->enterDebugScope(node);
-        
         createAllocasForArguments(ctx);
         extractElementsFromNestedFunctionStruct(ctx);
+        
+        ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
         
         ctx->exitDebugScope(node);
-        ctx->exitScope();
         
         return result;
     }
@@ -259,13 +257,12 @@ namespace MAlice {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
-        bool hasParams = false;
-        
         // get node index 1, if its a parameter node, get params...
         ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
+        ASTNode paramsNode = NULL;
         if (Utilities::getNodeType(nodeI1) == PARAMS)
-            hasParams = true;
-        ASTNode returnNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
+            paramsNode = nodeI1;
+        ASTNode returnNode = Utilities::getChildNodeAtIndex(node, paramsNode? 2 : 1);
         
         bool isNested = (ctx->getCurrentFunctionProcedureEntity() != NULL);
         
@@ -276,34 +273,12 @@ namespace MAlice {
         functionEntity->setIsNestedFunction(isNested);
         addInfoForNestedFunctionOrProcedureToEntity(functionEntity, ctx);
         
-        ctx->addEntityInScope(identifier, functionEntity);
-        ctx->pushFunctionProcedureEntity(functionEntity);
-        ctx->saveInsertPoint();
-        
-        if (hasParams) {
-            if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
-                return false;
-        }
-        
-        llvm::Function *function = createFunctionForEntity(functionEntity, ctx);
-        functionEntity->setLLVMFunction(function);
-    
-        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?3:2);
-        bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
-        
-        ctx->restoreInsertPoint();
-        ctx->popFunctionProcedureEntity();
-        
-        if (!result) {
-            // Remove the function from the module it's a part of.
-            function->removeFromParent();
-            return false;
-        }
-        
-        if (outValue)
-            *outValue = function;
-        
-        return true;
+        return generateCodeForFunctionProcedureNode(paramsNode,
+                                                    Utilities::getChildNodeAtIndex(node, paramsNode? 3 : 2),
+                                                    functionEntity,
+                                                    outValue,
+                                                    walker,
+                                                    ctx);
     }
 
     bool CodeGeneration::generateCodeForGreaterThanExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -758,54 +733,24 @@ namespace MAlice {
         ASTNode identifierNode = Utilities::getChildNodeAtIndex(node, 0);
         std::string identifier = Utilities::getNodeText(identifierNode);
         
-        bool hasParams = false;
-        
         // get node index 1, if its a parameter node, get params...
         ASTNode nodeI1 = Utilities::getChildNodeAtIndex(node, 1);
+        ASTNode paramsNode = NULL;
         if (Utilities::getNodeType(nodeI1) == PARAMS)
-            hasParams = true;
+            paramsNode = nodeI1;
         
-        bool isNested = ctx->getCurrentFunctionProcedureEntity();
-        bool isEntryPointProcedure = !isNested && identifier == "hatta";
-        
+        bool isNested = (ctx->getCurrentFunctionProcedureEntity() != NULL);
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier,
                                                                Utilities::getNodeLineNumber(identifierNode),
                                                                std::vector<ParameterEntity*>());
         procedureEntity->setIsNestedFunction(isNested);
-        addInfoForNestedFunctionOrProcedureToEntity(procedureEntity, ctx);
         
-        if (ctx->getCurrentFunctionProcedureEntity())
-            ctx->saveInsertPoint();
-        
-        ctx->addEntityInScope(identifier, procedureEntity);
-        ctx->pushFunctionProcedureEntity(procedureEntity);
-        
-        if (hasParams) {
-            if (!walker->generateCodeForNode(nodeI1, NULL, ctx))
-                return false;
-        }
-        
-        llvm::Function *function = createFunctionForEntity(procedureEntity, ctx, isEntryPointProcedure);
-        procedureEntity->setLLVMFunction(function);
-        
-        ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
-        bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
-        
-        storeElementsIntoNestedFunctionStruct(ctx);
-        
-        // LLVM requires all functions to return a value
-        ctx->getIRBuilder()->CreateRetVoid();
-        
-        ctx->restoreInsertPoint();
-        ctx->popFunctionProcedureEntity();
-        
-        if (!result) {
-            // Remove the function from the module it's a part of.
-            function->removeFromParent();
-            return false;
-        }
-        
-        return true;
+        return generateCodeForFunctionProcedureNode(paramsNode,
+                                                    Utilities::getChildNodeAtIndex(node, paramsNode? 2 : 1),
+                                                    procedureEntity,
+                                                    outValue,
+                                                    walker,
+                                                    ctx);
     }
 
     bool CodeGeneration::generateCodeForPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -1357,5 +1302,45 @@ namespace MAlice {
         llvm::StructType *contextStructType = llvm::StructType::create(llvm::getGlobalContext(), structTypes, "struct_type." + funcProcEntity->getIdentifier());
         funcProcEntity->setContextStructType(contextStructType);
         funcProcEntity->setCapturedVariables(capturedVariables);
+    }
+    
+    bool CodeGeneration::generateCodeForFunctionProcedureNode(ASTNode paramsNode, ASTNode bodyNode, FunctionProcedureEntity *funcProcEntity, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
+        bool isEntryProcedure = !funcProcEntity->getIsNestedFunction() && funcProcEntity->getIdentifier() == "hatta";
+        addInfoForNestedFunctionOrProcedureToEntity(funcProcEntity, ctx);
+        
+        // Enter the scope for code generation of the function
+        ctx->enterFunctionProcedureScope(funcProcEntity);
+        
+        if (paramsNode) {
+            if (!walker->generateCodeForNode(paramsNode, NULL, ctx))
+                return false;
+        }
+        
+        llvm::Function *function = createFunctionForEntity(funcProcEntity, ctx, isEntryProcedure);
+        funcProcEntity->setLLVMFunction(function);
+        
+        bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
+        
+        if (dynamic_cast<ProcedureEntity*>(funcProcEntity)) {
+            storeElementsIntoNestedFunctionStruct(ctx);
+            
+            // LLVM requires all functions to return a value
+            ctx->getIRBuilder()->CreateRetVoid();
+        }
+        
+        // Exit the scope again
+        ctx->exitFunctionProcedureScope();
+        
+        if (!result) {
+            // Remove the function from the module it's a part of.
+            function->removeFromParent();
+            return false;
+        }
+        
+        if (outValue)
+            *outValue = function;
+
+        return true;
     }
 };

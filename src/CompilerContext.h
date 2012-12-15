@@ -87,6 +87,8 @@ namespace MAlice {
         llvm::MDNode* getCurrentDBScope();
         void enterScope();
         void exitScope();
+        void enterFunctionProcedureScope(FunctionProcedureEntity *funcProcEntity);
+        void exitFunctionProcedureScope();
 
         void beginExpression();
         bool withinExpression();

@@ -64,8 +64,13 @@ namespace MAlice {
     {
             std::cerr << "Fatal Error. " << (m_dbinfo?"":" Try running with the -d option to get more information.") << std::endl;
             std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
+        
+        // TODO: remove signal handlers
+        
             m_module->dump();
             std::cout << std::endl;
+        
+        exit(1);
     }
 
     bool CodeGenerator::generateCode(std::string inputPath, std::string outputPath, bool optimisationsOn)
@@ -173,7 +178,7 @@ namespace MAlice {
         } catch (...) {
             std::cerr << "Fatal Error. Try running with the -d option to get more information." << std::endl;
             std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
-            m_module->dump();
+//            m_module->dump();
             return false;
         }
         std::cout << ".....Done." << std::endl;
