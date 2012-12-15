@@ -15,6 +15,7 @@
 #include "Utilities.h"
 #include "Validation.h"
 #include "LLVMHeader.h"
+#include "StringTable.h"
 
 namespace llvm{}
 using namespace llvm;
@@ -887,8 +888,15 @@ namespace MAlice {
         std::string strVal = Utilities::getNodeText(node);
         strVal = Utilities::stripLeadingAndTrailingCharacters(strVal, '"');
 
+        llvm::Value *value = ctx->getStringTable()->cachedStringConstant(strVal);
+        
+        if (!value) {
+            value = ctx->getIRBuilder()->CreateGlobalStringPtr(Utilities::stringWithASCIIControlCodes(strVal.c_str()));
+            ctx->getStringTable()->cacheStringConstant(strVal, value);
+        }
+        
         if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateGlobalStringPtr(Utilities::stringWithASCIIControlCodes(strVal.c_str()));
+            *outValue = value;
         
         return true;
     }

@@ -32,6 +32,7 @@ namespace MAlice {
     class IdentifierDispenser;
     class Type;
     class VariableEntity;
+    class StringTable;
     
     class CompilerContext{
     private:
@@ -65,6 +66,8 @@ namespace MAlice {
         
         IdentifierDispenser *m_identifierDispenser;
         std::unordered_map<unsigned int, llvm::Value*> m_ioFormatStringMap;
+        
+        StringTable *m_stringTable;
         
         void initialiseCompilerContext(std::string srcInput);
         
@@ -123,6 +126,8 @@ namespace MAlice {
         
         llvm::Value *ioFormatStringForExpressionType(Type type);
         llvm::Function *prettyPrintBoolFunction();
+        
+        StringTable *getStringTable();
         
     }; // class CompilerContext
     
