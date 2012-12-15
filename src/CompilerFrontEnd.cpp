@@ -145,7 +145,7 @@ namespace MAlice {
         else {
             generator = new CodeGenerator(module);
         }
-        generator->generateCode(path, outputPath, ((compilerFlags & CompilerFlagsDebugInformation) != 0) );
+        generator->generateCode(path, outputPath, ((compilerFlags & CompilerFlagsOptimisation) != 0) );
 
         if (semanticAnalyser) {
             delete semanticAnalyser;

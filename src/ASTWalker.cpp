@@ -115,6 +115,14 @@ bool ASTWalker::generateIRFromTree(pANTLR3_BASE_TREE root, CompilerContext *ctx)
 
 bool ASTWalker::generateCodeForNode(ASTNode node, llvm::Value **outValue, CompilerContext *ctx)
 {
+
+    if (ctx->getDGBuilder())
+    {
+        ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+                                                                         Utilities::getNodeColumnIndex(node),
+                                                                         ctx->getCurrentDBScope()));
+    }
+
     MAliceCodeGenerationFunction f = getNodeCodeGenerationFunction(node);
 
     return f(node, outValue, this, ctx);
@@ -137,7 +145,7 @@ bool ASTWalker::generateCodeForChildren(ASTNode node, std::vector<llvm::Value*> 
 {
     unsigned int numChildren = Utilities::getNumberOfChildNodes(node);
     bool result = true;
-    
+   
     std::vector<llvm::Value*> valueList;
     
     for (unsigned int i = 0; i < numChildren; ++i) {

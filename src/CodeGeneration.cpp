@@ -344,23 +344,23 @@ namespace MAlice {
 
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
             ASTNode node1 = Utilities::getChildNodeAtIndex(node, i);
-            
+            // Change debug line number
+            if (ctx->getDGBuilder())
+            {
+                builder->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node1),
+                                                                     Utilities::getNodeColumnIndex(node1),
+                                                                     ctx->getCurrentDBScope()));
+            }
             if (Utilities::getNodeType(node1) == EXPRESSION) {
                 llvm::Value *condValue = NULL;
-                walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &condValue, ctx);
+
+                walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i), &condValue, ctx);
                 
                 llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then");
                 llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(getGlobalContext(), "else");
                 
-                builder->CreateCondBr(condValue, thenBlock, elseBlock);
                 
-                // Change debug line number
-                if (ctx->getDGBuilder())
-                {
-                    builder->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
-                                                                         Utilities::getNodeColumnIndex(node),
-                                                                         ctx->getCurrentDBScope()));
-                }
+                builder->CreateCondBr(condValue, thenBlock, elseBlock);
                 
                 // Generate code for the
                 function->getBasicBlockList().push_back(thenBlock);
@@ -378,12 +378,9 @@ namespace MAlice {
                 
                 // We will want to check whether this block contains a return statement if it is the last block.
                 lastBlock = elseBlock;
-                
-                // We have looked at the 'then' node too.
-                i++;
             }
             else
-                walker->generateCodeForNode(node1, NULL, ctx);
+                continue;
         }
         
         if (lastBlock && !hasReturnInstruction(lastBlock))
@@ -1001,9 +998,10 @@ namespace MAlice {
                                                     identifier,
                                                     *ctx->getDIFile(),
                                                     Utilities::getNodeLineNumber(node),
-                                                    llvm::DIType(), // TODO: Btter type information so it can be displayed in gdb
+                                                    llvm::DIType(), // TODO: Better type information so it can be displayed in gdb
                                                     true);
-            ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+            llvm::Instruction *Call = ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+            Call->setDebugLoc(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),Utilities::getNodeColumnIndex(identifierNode), ctx->getCurrentDBScope()));
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope()));

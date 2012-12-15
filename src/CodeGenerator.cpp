@@ -105,8 +105,12 @@ namespace MAlice {
             PM.add(llvm::createCFGSimplificationPass());
         }
         if (m_dbinfo) {
-            PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
-            PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
+            std::cout << "Dumping module.." << std::endl;
+            std::cout << "Optimisations: " << optimisationsOn << std::endl;
+            m_module->dump();
+
+            //PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
+            //PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
         }
 
         std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
