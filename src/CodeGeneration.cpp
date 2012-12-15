@@ -766,7 +766,7 @@ namespace MAlice {
             hasParams = true;
         
         bool isNested = ctx->getCurrentFunctionProcedureEntity();
-        bool isEntryPointProcedure = isNested && identifier == "hatta";
+        bool isEntryPointProcedure = !isNested && identifier == "hatta";
         
         ProcedureEntity *procedureEntity = new ProcedureEntity(identifier,
                                                                Utilities::getNodeLineNumber(identifierNode),

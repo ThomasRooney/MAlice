@@ -33,15 +33,6 @@
 #define pclose _pclose
 #endif
 
-#define _31PACKAGE "3.1"
-
-#if PACKAGE_VERSION == _31PACKAGE
-#define DEFAULT_TARGET llvm::sys::getDefaultTargetTriple
-#else
-#define DEFAULT_TARGET llvm::sys::getHostTriple
-#endif
-
-
 
 namespace MAlice {
     
@@ -114,7 +105,7 @@ namespace MAlice {
         llvm::InitializeAllAsmParsers();
 
         llvm::Triple TheTriple(m_module->getTargetTriple());
-        TheTriple.setTriple(DEFAULT_TARGET());
+        TheTriple.setTriple(llvm::sys::getHostTriple());
         std::string Err;
         const llvm::Target *TheTarget = llvm::TargetRegistry::lookupTarget(TheTriple.getTriple(), Err);
 
