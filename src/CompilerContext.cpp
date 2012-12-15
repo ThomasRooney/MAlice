@@ -166,6 +166,30 @@ namespace MAlice {
         
         return entity != NULL;
     }
+    
+    std::vector<Entity*> CompilerContext::variableEntitiesInCurrentScope()
+    {
+        std::unordered_map<std::string, Entity*> entityTable;
+        std::vector<Entity*> entities;
+        
+        for (auto it = m_symbolTables.rbegin(); it != m_symbolTables.rend(); ++it) {
+            std::vector<std::string> allIdentifiers = (*it)->getAllIdentifiers();
+            SymbolTable *table = *it;
+            
+            for (auto identifierIt = allIdentifiers.begin(); identifierIt != allIdentifiers.end(); ++identifierIt) {
+                if (std::find(entityTable.begin(), entityTable.end(), *identifierIt) == entityTable.end()) {
+                    std::string identifier = *identifierIt;
+                    
+                    Entity *entity = table->get(identifier);
+                    
+                    entityTable.insert(std::pair<std::string, Entity*>(identifier, entity));
+                    entities.push_back(entity);
+                }
+            }
+        }
+        
+        return entities;
+    }
 
     void CompilerContext::enterDebugScope(ASTNode node)
     {
