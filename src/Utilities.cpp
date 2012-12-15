@@ -1179,5 +1179,14 @@ namespace MAlice {
             str.replace(pos, toFind.length(), std::string(1, replacement));
         }
     }
+    
+    std::vector<llvm::Value*> Utilities::llvmStructElementGEPIndexes(unsigned int elementIndex)
+    {
+        std::vector<llvm::Value*> indexes;
+        indexes.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0));
+        indexes.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), elementIndex));
+        
+        return indexes;
+    }
 
 }; // namespace MAlice

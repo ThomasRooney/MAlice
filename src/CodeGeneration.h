@@ -90,6 +90,8 @@ namespace MAlice {
         bool hasReturnInstruction(llvm::BasicBlock *block);
         
         llvm::Function *createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint = false, llvm::StructType *structType = 0);
+        void extractElementsFromNestedFunctionStruct(CompilerContext *ctx);
+        void storeElementsIntoNestedFunctionStruct(CompilerContext *ctx);
     }
 }
 

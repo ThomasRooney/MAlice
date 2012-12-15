@@ -166,8 +166,11 @@ namespace MAlice {
         ctx->enterDebugScope(node);
         
         createAllocasForArguments(ctx);
+        extractElementsFromNestedFunctionStruct(ctx);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
+        
+        storeElementsIntoNestedFunctionStruct(ctx);
         
         ctx->exitDebugScope(node);
         ctx->exitScope();
@@ -902,11 +905,7 @@ namespace MAlice {
                 
                 VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
                 if (variableEntity) {
-                    std::vector<llvm::Value*> indexList;
-                    indexList.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0));
-                    indexList.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), i));
-                    
-                    llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, indexList);
+                    llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
                     ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
                 }
                 
@@ -920,6 +919,24 @@ namespace MAlice {
                 *outValue = v;
         } else {
             ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), llvmArguments);
+        }
+        
+        if (funcProcEntity->getIsNestedFunction()) {
+            unsigned int i = 0;
+            std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
+            
+            for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
+                Entity *entity = NULL;
+                ctx->isSymbolInScope(*it, &entity);
+                
+                VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+                if (variableEntity) {
+                    llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
+                    ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(structValue), variableEntity->getLLVMValue());
+                }
+                
+                ++i;
+            }
         }
 
         return true;
@@ -1272,4 +1289,52 @@ namespace MAlice {
         return function;
     }
     
+    void CodeGeneration::extractElementsFromNestedFunctionStruct(CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = ctx->getCurrentFunctionProcedureEntity();
+        if (!funcProcEntity->getIsNestedFunction())
+            return;
+        
+        llvm::StructType *structType = funcProcEntity->getContextStructType();
+        std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
+        
+        llvm::Function *function = funcProcEntity->getLLVMFunction();
+        llvm::Value *firstArg = function->arg_begin();
+        
+        unsigned int i = 0;
+        for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
+            llvm::Value *localVariable = ctx->getIRBuilder()->CreateAlloca(structType->getElementType(i), 0, *it);
+            llvm::Value *structValue = ctx->getIRBuilder()->CreateGEP(firstArg, Utilities::llvmStructElementGEPIndexes(i));
+            llvm::Value *loadValue = ctx->getIRBuilder()->CreateLoad(structValue);
+            ctx->getIRBuilder()->CreateStore(loadValue, localVariable);
+            
+            ++i;
+        }
+    }
+    
+    void CodeGeneration::storeElementsIntoNestedFunctionStruct(CompilerContext *ctx)
+    {
+        FunctionProcedureEntity *funcProcEntity = ctx->getCurrentFunctionProcedureEntity();
+        if (!funcProcEntity->getIsNestedFunction())
+            return;
+        
+        std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
+        
+        llvm::Function *function = funcProcEntity->getLLVMFunction();
+        llvm::Value *firstArg = function->arg_begin();
+        
+        unsigned int i = 0;
+        for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
+            Entity *entity = NULL;
+            ctx->isSymbolInScope(*it, &entity);
+            
+            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+            if (variableEntity) {
+                llvm::Value *structValue = ctx->getIRBuilder()->CreateGEP(firstArg, Utilities::llvmStructElementGEPIndexes(i));
+                ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
+            }
+            
+            ++i;
+        }
+    }
 };

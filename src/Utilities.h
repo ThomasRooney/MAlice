@@ -98,6 +98,8 @@ namespace MAlice {
         
         static std::string stringWithASCIIControlCodes(std::string str);
         static void replaceOccurrencesOfString(std::string& str, std::string toFind, char replacement);
+        
+        static std::vector<llvm::Value*> llvmStructElementGEPIndexes(unsigned int elementIndex);
     };
     
 }; // namespace MAlice
