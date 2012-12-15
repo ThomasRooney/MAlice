@@ -79,8 +79,9 @@ namespace MAlice {
         bool isSymbolInScope(std::string identifier, Entity **outEntity);
         bool isSymbolInCurrentScope(std::string identifier, Entity **outEntity);
         bool isKeyword(std::string string);
+        std::vector<Entity*> variableEntitiesInCurrentScope();
 
-        void enterDebugScope(ASTNode);    
+        void enterDebugScope(ASTNode);
         void exitDebugScope(ASTNode);    
         llvm::MDNode* getCurrentDBScope();
         void enterScope();

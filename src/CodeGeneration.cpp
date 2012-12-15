@@ -273,6 +273,9 @@ namespace MAlice {
                                                             std::vector<ParameterEntity*>(),
                                                             Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode)));
         functionEntity->setIsNestedFunction(isNested);
+        if (isNested) {
+            llvm::StructType *contextStructType = llvm::StructType::create(llvm::getGlobalContext());
+        }
         
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
