@@ -96,7 +96,7 @@ namespace MAlice {
         void handleNestedFunctionBeforeInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx);
         void handleNestedFunctionAfterInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx);
         
-        void addInfoForNestedFunctionOrProcedure(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx);
+        void addInfoForNestedFunctionOrProcedureToEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx);
     }
 }
 

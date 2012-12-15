@@ -276,6 +276,7 @@ namespace MAlice {
                                                             std::vector<ParameterEntity*>(),
                                                             Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode)));
         functionEntity->setIsNestedFunction(isNested);
+        addInfoForNestedFunctionOrProcedureToEntity(functionEntity, ctx);
         
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
@@ -772,7 +773,7 @@ namespace MAlice {
                                                                Utilities::getNodeLineNumber(identifierNode),
                                                                std::vector<ParameterEntity*>());
         procedureEntity->setIsNestedFunction(isNested);
-        addInfoForNestedFunctionOrProcedure(procedureEntity, ctx);
+        addInfoForNestedFunctionOrProcedureToEntity(procedureEntity, ctx);
         
         if (ctx->getCurrentFunctionProcedureEntity())
             ctx->saveInsertPoint();
@@ -1334,7 +1335,7 @@ namespace MAlice {
         }
     }
     
-    void CodeGeneration::addInfoForNestedFunctionOrProcedure(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx)
+    void CodeGeneration::addInfoForNestedFunctionOrProcedureToEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx)
     {
         if (!funcProcEntity->getIsNestedFunction())
             return;
