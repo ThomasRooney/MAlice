@@ -17,6 +17,7 @@ namespace MAlice {
         bool m_isNestedFunction;
         llvm::Function *m_LLVMFunction;
         llvm::StructType *m_contextStructType;
+        std::vector<std::string> m_capturedVariables;
         
     public:
         FunctionProcedureEntity(std::string identifier, unsigned int lineNumber, std::vector<ParameterEntity*> parameterListTypes);
@@ -35,6 +36,9 @@ namespace MAlice {
         
         llvm::StructType *getContextStructType();
         void setContextStructType(llvm::StructType *contextStructType);
+        
+        std::vector<std::string> getCapturedVariables();
+        void setCapturedVariables(std::vector<std::string> variables);
     };
     
 };

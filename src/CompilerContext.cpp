@@ -167,10 +167,10 @@ namespace MAlice {
         return entity != NULL;
     }
     
-    std::vector<Entity*> CompilerContext::variableEntitiesInCurrentScope()
+    std::vector<VariableEntity*> CompilerContext::variableEntitiesInCurrentScope()
     {
-        std::unordered_map<std::string, Entity*> entityTable;
-        std::vector<Entity*> entities;
+        std::unordered_map<std::string, VariableEntity*> entityTable;
+        std::vector<VariableEntity*> entities;
         
         for (auto it = m_symbolTables.rbegin(); it != m_symbolTables.rend(); ++it) {
             std::vector<std::string> allIdentifiers = (*it)->getAllIdentifiers();
@@ -181,9 +181,12 @@ namespace MAlice {
                 
                 if (entityTable.find(identifier) == entityTable.end()) {
                     Entity *entity = table->get(identifier);
+                    VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
                     
-                    entityTable.insert(std::pair<std::string, Entity*>(identifier, entity));
-                    entities.push_back(entity);
+                    if (variableEntity) {
+                        entityTable.insert(std::pair<std::string, VariableEntity*>(identifier, variableEntity));
+                        entities.push_back(variableEntity);
+                    }
                 }
             }
         }

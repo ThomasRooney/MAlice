@@ -273,9 +273,6 @@ namespace MAlice {
                                                             std::vector<ParameterEntity*>(),
                                                             Utilities::getTypeFromTypeString(Utilities::getNodeText(returnNode)));
         functionEntity->setIsNestedFunction(isNested);
-        if (isNested) {
-            llvm::StructType *contextStructType = llvm::StructType::create(llvm::getGlobalContext());
-        }
         
         ctx->addEntityInScope(identifier, functionEntity);
         ctx->pushFunctionProcedureEntity(functionEntity);
@@ -772,6 +769,24 @@ namespace MAlice {
                                                                Utilities::getNodeLineNumber(identifierNode),
                                                                std::vector<ParameterEntity*>());
         procedureEntity->setIsNestedFunction(isNested);
+        llvm::StructType *contextStructType = NULL;
+        
+        if (isNested) {
+            std::vector<VariableEntity*> variableEntities = ctx->variableEntitiesInCurrentScope();
+            std::vector<llvm::Type*> structTypes;
+            std::vector<std::string> capturedVariables;
+            
+            for (auto it = variableEntities.begin(); it != variableEntities.end(); ++it) {
+                VariableEntity *variableEntity = *it;
+                
+                structTypes.push_back(Utilities::getLLVMTypeFromType(variableEntity->getType()));
+                capturedVariables.push_back(variableEntity->getIdentifier());
+            }
+            
+            contextStructType = llvm::StructType::create(llvm::getGlobalContext(), structTypes, "struct_type");
+            procedureEntity->setContextStructType(contextStructType);
+            procedureEntity->setCapturedVariables(capturedVariables);
+        }
         
         if (ctx->getCurrentFunctionProcedureEntity())
             ctx->saveInsertPoint();
@@ -784,7 +799,7 @@ namespace MAlice {
                 return false;
         }
         
-        llvm::Function *function = createFunctionForEntity(procedureEntity, ctx, isEntryPointProcedure);
+        llvm::Function *function = createFunctionForEntity(procedureEntity, ctx, isEntryPointProcedure, contextStructType);
         procedureEntity->setLLVMFunction(function);
         
         ASTNode bodyNode = Utilities::getChildNodeAtIndex(node, hasParams?2:1);
@@ -849,8 +864,17 @@ namespace MAlice {
         if (!ctx->isSymbolInScope(identifier, &entity))
             return false;
         
+        FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
+        
         std::vector<llvm::Value*> arguments;
-
+        llvm::Value *structAlloc = NULL;
+        
+        if (funcProcEntity->getIsNestedFunction()) {
+            llvm::StructType *structType = funcProcEntity->getContextStructType();
+            structAlloc = ctx->getIRBuilder()->CreateAlloca(structType);
+            
+            arguments.push_back(structAlloc);
+        }
         
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(identifierNode); ++i) {
             llvm::Value *value = NULL;
@@ -858,7 +882,6 @@ namespace MAlice {
             arguments.push_back(value);
         }
         
-        FunctionProcedureEntity *funcProcEntity = dynamic_cast<FunctionProcedureEntity*>(entity);
         llvm::ArrayRef<llvm::Value*> llvmArguments = llvm::makeArrayRef(arguments);
 
         // Change debug line number
@@ -867,7 +890,29 @@ namespace MAlice {
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope()));
-        }                                       
+        }
+        
+        if (funcProcEntity->getIsNestedFunction()) {
+            unsigned int i = 0;
+            std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
+            
+            for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
+                Entity *entity = NULL;
+                ctx->isSymbolInScope(*it, &entity);
+                
+                VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+                if (variableEntity) {
+                    std::vector<llvm::Value*> indexList;
+                    indexList.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0));
+                    indexList.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), i));
+                    
+                    llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, indexList);
+                    ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
+                }
+                
+                ++i;
+            }
+        }
 
         if (Utilities::getTypeOfEntity(funcProcEntity) == MAliceEntityTypeFunction) {
             llvm::Value * v = ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), llvmArguments, "calltmp");
@@ -1148,8 +1193,11 @@ namespace MAlice {
         llvm::Function *function = funcProcEntity->getLLVMFunction();
         
         unsigned int i = 0;
+        auto it = function->arg_begin();
+        if (funcProcEntity->getIsNestedFunction())
+            it++;
         
-        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
+        for (; it != function->arg_end(); ++it) {
             ParameterEntity *parameterEntity = funcProcEntity->getParameterListTypes().at(i);
             
             llvm::Value *alloca = builder->CreateAlloca(Utilities::getLLVMTypeFromType(parameterEntity->getType()));
@@ -1172,11 +1220,16 @@ namespace MAlice {
         return false;
     }
     
-    llvm::Function *CodeGeneration::createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint)
+    llvm::Function *CodeGeneration::createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint, llvm::StructType *structType)
     {
         // Create the llvm::Function and insert it into the module
         std::vector<ParameterEntity*> parameterEntities = funcProcEntity->getParameterListTypes();
         std::vector<llvm::Type*> parameterTypes;
+        
+        if (structType) {
+            parameterTypes.push_back(llvm::PointerType::get(structType, 0));
+        }
+        
         for (auto it = parameterEntities.begin(); it != parameterEntities.end(); ++it) {
             ParameterEntity *entity = *it;
             llvm::Type *llvmType = Utilities::getLLVMTypeFromType(entity->getType());
@@ -1203,9 +1256,16 @@ namespace MAlice {
                                               LLVMIdentifier,
                                               ctx->getModule());
         
+        auto argIt = function->arg_begin();
+        if (structType) {
+            llvm::Value *arg = argIt;
+            arg->setName("s");
+            ++argIt;
+        }
+        
         // Set the arg names in the LLVM function
-        for (auto it = function->arg_begin(); it != function->arg_end(); ++it) {
-            llvm::Value *arg = it;
+        for (; argIt != function->arg_end(); ++argIt) {
+            llvm::Value *arg = argIt;
             arg->setName("x");
         }
         
