@@ -895,23 +895,7 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
         }
         
-        if (funcProcEntity->getIsNestedFunction()) {
-            unsigned int i = 0;
-            std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
-            
-            for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
-                Entity *entity = NULL;
-                ctx->isSymbolInScope(*it, &entity);
-                
-                VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
-                if (variableEntity) {
-                    llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
-                    ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
-                }
-                
-                ++i;
-            }
-        }
+        handleNestedFunctionBeforeInvocation(funcProcEntity, structAlloc, ctx);
 
         if (Utilities::getTypeOfEntity(funcProcEntity) == MAliceEntityTypeFunction) {
             llvm::Value * v = ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), llvmArguments, "calltmp");
@@ -921,23 +905,7 @@ namespace MAlice {
             ctx->getIRBuilder()->CreateCall(funcProcEntity->getLLVMFunction(), llvmArguments);
         }
         
-        if (funcProcEntity->getIsNestedFunction()) {
-            unsigned int i = 0;
-            std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
-            
-            for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
-                Entity *entity = NULL;
-                ctx->isSymbolInScope(*it, &entity);
-                
-                VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
-                if (variableEntity) {
-                    llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
-                    ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(structValue), variableEntity->getLLVMValue());
-                }
-                
-                ++i;
-            }
-        }
+        handleNestedFunctionAfterInvocation(funcProcEntity, structAlloc, ctx);
 
         return true;
     }
@@ -1332,6 +1300,50 @@ namespace MAlice {
             if (variableEntity) {
                 llvm::Value *structValue = ctx->getIRBuilder()->CreateGEP(firstArg, Utilities::llvmStructElementGEPIndexes(i));
                 ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
+            }
+            
+            ++i;
+        }
+    }
+    
+    void CodeGeneration::handleNestedFunctionBeforeInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx)
+    {
+        if (!funcProcEntity->getIsNestedFunction())
+            return;
+        
+        unsigned int i = 0;
+        std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
+        
+        for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
+            Entity *entity = NULL;
+            ctx->isSymbolInScope(*it, &entity);
+            
+            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+            if (variableEntity) {
+                llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
+                ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
+            }
+            
+            ++i;
+        }
+    }
+    
+    void CodeGeneration::handleNestedFunctionAfterInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx)
+    {
+        if (!funcProcEntity->getIsNestedFunction())
+            return;
+        
+        unsigned int i = 0;
+        std::vector<std::string> capturedIdentifiers = funcProcEntity->getCapturedVariables();
+        
+        for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
+            Entity *entity = NULL;
+            ctx->isSymbolInScope(*it, &entity);
+            
+            VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+            if (variableEntity) {
+                llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
+                ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(structValue), variableEntity->getLLVMValue());
             }
             
             ++i;

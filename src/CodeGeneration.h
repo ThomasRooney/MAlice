@@ -92,6 +92,9 @@ namespace MAlice {
         llvm::Function *createFunctionForEntity(FunctionProcedureEntity *funcProcEntity, CompilerContext *ctx, bool isEntryPoint = false, llvm::StructType *structType = 0);
         void extractElementsFromNestedFunctionStruct(CompilerContext *ctx);
         void storeElementsIntoNestedFunctionStruct(CompilerContext *ctx);
+        
+        void handleNestedFunctionBeforeInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx);
+        void handleNestedFunctionAfterInvocation(FunctionProcedureEntity *funcProcEntity, llvm::Value *structAlloc, CompilerContext *ctx);
     }
 }
 
