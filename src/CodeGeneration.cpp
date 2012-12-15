@@ -224,7 +224,7 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        return walker->generateCodeForChildren(node, NULL, ctx);
+        return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSDiv, "divtmp", walker, ctx);
     }
     
     bool CodeGeneration::generateCodeForEqualsExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -485,6 +485,22 @@ namespace MAlice {
         return true;
     }
     
+    bool CodeGeneration::generateCodeForBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
+    {
+        llvm::Value *leftParamValue = NULL;
+        llvm::Value *rightParamValue = NULL;
+        
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftParamValue, ctx);
+        walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightParamValue, ctx);
+        
+        llvm::Value *storedValue = (ctx->getIRBuilder()->*llvmFunction)(leftParamValue, rightParamValue, twine, false);
+        
+        if (outValue)
+            *outValue = storedValue;
+        
+        return true;
+    }
+    
     bool CodeGeneration::generateCodeForBinaryOperatorNode(ASTNode node, llvm::Value **outValue, llvm::Value *(llvm::IRBuilder<>::*llvmFunction)(llvm::Value*, llvm::Value*, const llvm::Twine&, bool, bool), const llvm::Twine& twine, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *leftParamValue = NULL;
@@ -724,7 +740,7 @@ namespace MAlice {
             return true;
         }
         
-        return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSub, "addtmp", walker, ctx);
+        return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateAdd, "addtmp", walker, ctx);
     }
 
     bool CodeGeneration::generateCodeForProcedureDeclarationNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
