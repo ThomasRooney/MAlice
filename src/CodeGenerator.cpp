@@ -28,24 +28,43 @@
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/TargetSelect.h"
 
+#include "signal.h"
+
 #ifdef _WIN32
 #define popen _popen
 #define pclose _pclose
 #endif
 
 
+
+
 namespace MAlice {
     
+
+    
+
     CodeGenerator::CodeGenerator(llvm::Module *module)
     {
         m_module = module;
         m_dbinfo = NULL;
+        CodeGenerator::instance = this;
     }
 
     CodeGenerator::CodeGenerator(llvm::Module *module, llvm::DIBuilder *dbinfo)
     {
         m_module = module;
         m_dbinfo = dbinfo;
+        CodeGenerator::instance = this;
+    }
+
+    CodeGenerator * CodeGenerator::instance = 0;
+
+    void CodeGenerator::clean_exit_handler(int sign_num)
+    {
+            std::cerr << "Fatal Error. " << (m_dbinfo?"":" Try running with the -d option to get more information.") << std::endl;
+            std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
+            m_module->dump();
+            std::cout << std::endl;
     }
 
     bool CodeGenerator::generateCode(std::string inputPath, std::string outputPath, bool optimisationsOn)
@@ -133,16 +152,29 @@ namespace MAlice {
             PM.add(new llvm::TargetData(m_module));
         
         Target.setAsmVerbosityDefault(true);
+        
+        llvm::CodeGenOpt::Level optLevel = optimisationsOn?llvm::CodeGenOpt::Aggressive:llvm::CodeGenOpt::None;
 
         llvm::formatted_raw_ostream ASOS(outAsm.os());
-        if (Target.addPassesToEmitFile(PM, ASOS, llvm::TargetMachine::CGFT_AssemblyFile, llvm::CodeGenOpt::Aggressive)){
+        if (Target.addPassesToEmitFile(PM, ASOS, llvm::TargetMachine::CGFT_AssemblyFile, optLevel)){
             std::cerr << "Fatal Error, cannot add passes to generate " << assemblyOutputPath << std::endl;
             return false;
         }
+        try {
+            signal(SIGINT, CodeGenerator::clean_exit_on_sig);
+            signal(SIGABRT, CodeGenerator::clean_exit_on_sig);
+            signal(SIGILL, CodeGenerator::clean_exit_on_sig);
+            signal(SIGFPE, CodeGenerator::clean_exit_on_sig);
+            signal(SIGSEGV, CodeGenerator::clean_exit_on_sig);
+            signal(SIGTERM, CodeGenerator::clean_exit_on_sig);
 
-
-        PM.run(*m_module);
-        
+            PM.run(*m_module);
+        } catch (...) {
+            std::cerr << "Fatal Error. Try running with the -d option to get more information." << std::endl;
+            std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
+            m_module->dump();
+            return false;
+        }
         std::cout << ".....Done." << std::endl;
 
         out.keep();
