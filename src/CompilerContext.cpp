@@ -8,7 +8,7 @@
 #include "FunctionProcedureEntity.h"
 #include "IdentifierDispenser.h"
 #include "LLVMHeader.h"
-
+#include "StringTable.h"
 #include "Utilities.h"
 
 using namespace std;
@@ -20,12 +20,14 @@ namespace MAlice {
     CompilerContext::CompilerContext(std::string input)
     {        
         m_DebugBuilder = NULL;
+        
         initialiseCompilerContext(input);
     }
     
     CompilerContext::CompilerContext(std::string input, std::string sourceFile, std::string dirFile)
     {
         initialiseCompilerContext(input);
+        
         m_DebugBuilder = new llvm::DIBuilder(*m_module);
         sourceFile += ".alice";
 
@@ -82,6 +84,7 @@ namespace MAlice {
         m_tokenStream = NULL;
         
         t_symbolTable = new SymbolTable();
+        m_stringTable = new StringTable();
         m_errorReporter = NULL;
         configureKeywords();
         #ifdef _WIN32
@@ -419,6 +422,7 @@ namespace MAlice {
             }
         }
         
+        m_stringTable->removeAllEntries();
         m_symbolTables.clear();
         
         // Push back another global scope symboltable
@@ -549,5 +553,9 @@ namespace MAlice {
         
         getIRBuilder()->SetInsertPoint(insertPoint);
     }
-
+    
+    StringTable *CompilerContext::getStringTable()
+    {
+        return m_stringTable;
+    }
 }; // namespace MAlice
