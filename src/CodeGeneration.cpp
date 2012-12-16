@@ -54,11 +54,34 @@ namespace MAlice {
         arrayType.setIsArray(true);
         VariableEntity *arrayEntity = new VariableEntity(identifier, Utilities::getNodeLineNumber(node), arrayType);
         ctx->addEntityInScope(identifier, arrayEntity);
-
-        llvm::Value *numElementsValue = NULL;
-        walker->generateCodeForNode(numElementsNode, &numElementsValue, ctx);
         
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()), numElementsValue);
+        llvm::Value *value = NULL;
+        
+        if (!ctx->getCurrentFunctionProcedureEntity()) {
+            int64_t numElements = Utilities::extractValueFromExpressionNode(numElementsNode, walker, ctx);
+            std::vector<Constant*> initialiser;
+            Type primitiveType(arrayType.getPrimitiveType());
+            
+            for (int64_t i = 0; i < numElements; ++i) {
+                initialiser.push_back(Utilities::llvmDefaultValueForType(primitiveType));
+            }
+            
+            llvm::ArrayType *llvmArrayType = llvm::ArrayType::get(Utilities::getLLVMTypeFromType(primitiveType), numElements);
+            
+            value = new llvm::GlobalVariable(*(ctx->getModule()),
+                                             llvmArrayType,
+                                             true,
+                                             GlobalVariable::PrivateLinkage,
+                                             llvm::ConstantArray::get(llvmArrayType, initialiser),
+                                             "");
+        }
+        else {
+            llvm::Value *numElementsValue = NULL;
+            walker->generateCodeForNode(numElementsNode, &numElementsValue, ctx);
+            
+            Type primitiveType = Type(arrayEntity->getType().getPrimitiveType());
+            value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(primitiveType), numElementsValue);
+        }
 
         arrayEntity->setLLVMValue(value);
         
@@ -297,12 +320,13 @@ namespace MAlice {
           /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope())); */
-        }                                       
-
-        llvm::Value *loadInst = ctx->getIRBuilder()->CreateLoad(value);
+        }
+        
+        if (!variableEntity->getType().isArray())
+            value = ctx->getIRBuilder()->CreateLoad(value);
 
         if (outValue)
-            *outValue = loadInst;
+            *outValue = value;
         
         return true;
     }
@@ -1064,7 +1088,6 @@ namespace MAlice {
         if (!variableEntity)
             return NULL;
         
-    
         return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
     }
     
