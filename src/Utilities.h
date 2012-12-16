@@ -101,6 +101,9 @@ namespace MAlice {
         static void replaceOccurrencesOfString(std::string& str, std::string toFind, char replacement);
         
         static std::vector<llvm::Value*> llvmStructElementGEPIndexes(unsigned int elementIndex);
+        
+        static int64_t extractValueFromExpressionNode(ASTNode expressionNode, ASTWalker *walker, CompilerContext *ctx);
+        static llvm::Constant *llvmDefaultValueForType(Type type);
     };
     
 }; // namespace MAlice

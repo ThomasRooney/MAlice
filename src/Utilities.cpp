@@ -1233,5 +1233,98 @@ namespace MAlice {
         }
         return ctx->getDGBuilder()->createBasicType(BTName.c_str(), Size, Align, Encoding);
     }
+    
+    int64_t Utilities::extractValueFromExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ANTLR3_UINT32 nodeType = getNodeType(node);
+        
+        switch (nodeType)
+        {
+            case PLUS:
+                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), walker, ctx) +
+                       extractValueFromExpressionNode(getChildNodeAtIndex(node, 1), walker, ctx);
+                break;
+                
+            case MINUS:
+                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), walker, ctx) -
+                       extractValueFromExpressionNode(getChildNodeAtIndex(node, 1), walker, ctx);
+                break;
+                
+            case EXPRESSION:
+                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), walker, ctx);
+                break;
+                
+            case NUMBER_LITERAL:
+            {
+                std::stringstream strVal;
+                strVal.str(Utilities::getNodeText(node));
+                
+                int64_t val;
+                strVal >> val;
+                
+                return val;
+            }
+                break;
+                
+            case IDENTIFIER:
+            {
+                Entity *entity = NULL;
+                if (!ctx->isSymbolInScope(getNodeText(node), &entity))
+                    return 0;
+                
+                VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
+                if (!variableEntity)
+                    return 0;
+                
+                llvm::Value *value = variableEntity->getLLVMValue();
+                if (!value)
+                    return 0;
+                
+                llvm::GlobalVariable *globalVariable = llvm::dyn_cast<llvm::GlobalVariable>(value);
+                if (!globalVariable)
+                    return 0;
+                
+                llvm::Constant *constant = globalVariable->getInitializer();
+                if (!constant)
+                    return 0;
+                
+                llvm::ConstantInt *constantInt = llvm::dyn_cast<llvm::ConstantInt>(constant);
+                if (!constantInt)
+                    return 0;
+                
+                return constantInt->getSExtValue();
+            }
+                break;
+                
+            default:
+                return 0;
+        }
+    }
+    
+    llvm::Constant *Utilities::llvmDefaultValueForType(Type type)
+    {
+        if (type.isArray())
+            return llvm::ConstantPointerNull::get(llvm::PointerType::get(getLLVMTypeFromType(Type(type.getPrimitiveType())), 0));
+        
+        llvm::Type *llvmType = getLLVMTypeFromType(type);
+        
+        switch (type.getPrimitiveType())
+        {
+            case PrimitiveTypeNumber:
+                return llvm::ConstantInt::get(llvmType, 0);
+                break;
+            case PrimitiveTypeLetter:
+                return llvm::ConstantInt::get(llvmType, 'a');
+                break;
+            case PrimitiveTypeBoolean:
+                return llvm::ConstantInt::getFalse(llvm::getGlobalContext());
+                break;
+            case PrimitiveTypeSentence:
+                return llvm::ConstantPointerNull::get(llvm::PointerType::get(llvmType, 0));
+                break;
+            case PrimitiveTypeNone:
+                return NULL;
+        }
+    }
 
 }; // namespace MAlice
