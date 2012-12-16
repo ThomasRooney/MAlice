@@ -1230,9 +1230,14 @@ namespace MAlice {
         }
         
         // Set the arg names in the LLVM function
+        unsigned int i = 0;
         for (; argIt != function->arg_end(); ++argIt) {
+            ParameterEntity *entity = parameterEntities.at(i);
+            
             llvm::Value *arg = argIt;
-            arg->setName("x");
+            arg->setName(entity->getIdentifier());
+            
+            ++i;
         }
         
         return function;
