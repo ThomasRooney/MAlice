@@ -58,7 +58,20 @@ namespace MAlice {
         llvm::Value *numElementsValue = NULL;
         walker->generateCodeForNode(numElementsNode, &numElementsValue, ctx);
         
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()), numElementsValue);
+        llvm::Value *value = NULL;
+        
+        if (!ctx->getCurrentFunctionProcedureEntity()) {
+            value = new llvm::GlobalVariable(*(ctx->getModule()),
+                                             Utilities::getLLVMTypeFromType(arrayType),
+                                             true,
+                                             GlobalVariable::PrivateLinkage,
+                                             NULL,
+                                             "");
+        }
+        else {
+            Type primitiveType = Type(arrayEntity->getType().getPrimitiveType());
+            value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(primitiveType), numElementsValue);
+        }
 
         arrayEntity->setLLVMValue(value);
         
@@ -297,12 +310,13 @@ namespace MAlice {
           /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
                                                                              ctx->getCurrentDBScope())); */
-        }                                       
-
-        llvm::Value *loadInst = ctx->getIRBuilder()->CreateLoad(value);
+        }
+        
+        if (!variableEntity->getType().isArray())
+            value = ctx->getIRBuilder()->CreateLoad(value);
 
         if (outValue)
-            *outValue = loadInst;
+            *outValue = value;
         
         return true;
     }
@@ -1064,7 +1078,6 @@ namespace MAlice {
         if (!variableEntity)
             return NULL;
         
-    
         return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
     }
     
