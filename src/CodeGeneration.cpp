@@ -61,9 +61,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/                                       
 
         // TODO: Generate variable declaration debug information
@@ -91,9 +91,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
 
 
@@ -114,9 +114,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
 
 
@@ -210,9 +210,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
 
         
@@ -321,9 +321,9 @@ namespace MAlice {
         // Change debug line number
         if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); */
         }                                       
 
         llvm::Value *loadInst = ctx->getIRBuilder()->CreateLoad(value);
@@ -350,7 +350,7 @@ namespace MAlice {
             {
                 builder->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node1),
                                                                      Utilities::getNodeColumnIndex(node1),
-                                                                     ctx->getCurrentDBScope()));
+                                                                     ctx->getCurrentDBScope())); 
             }*/
             if (Utilities::getNodeType(node1) == EXPRESSION) {
                 llvm::Value *condValue = NULL;
@@ -402,9 +402,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
 
 
@@ -420,9 +420,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
         
         llvm::Value *inputVal = NULL;
@@ -718,9 +718,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
 
         FunctionProcedureEntity *entity = ctx->getCurrentFunctionProcedureEntity();
@@ -796,9 +796,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
 
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
@@ -841,9 +841,9 @@ namespace MAlice {
         // Change debug line number
         /*if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
         }*/
         
         handleNestedFunctionBeforeInvocation(funcProcEntity, structAlloc, ctx);
@@ -877,9 +877,9 @@ namespace MAlice {
         // Change debug line number
         if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); */
         }
 
         storeElementsIntoNestedFunctionStruct(ctx);
@@ -997,9 +997,9 @@ namespace MAlice {
                                                     Utilities::getDILLVMType(variable->getType(), type, ctx),
                                                     false,
                                                     value);
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+            /*ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); */
         }                                       
 
 
@@ -1021,10 +1021,12 @@ namespace MAlice {
         VariableEntity *variable = new VariableEntity(identifier,
                                                       Utilities::getNodeLineNumber(identifierNode),
                                                       Utilities::getTypeFromTypeString(typeString));
+        /*
         if (ctx->getDGBuilder())
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); 
+        */
 
 
         llvm::Type *type = Utilities::getLLVMTypeFromType(variable->getType());
@@ -1043,10 +1045,10 @@ namespace MAlice {
                                                     Utilities::getDILLVMType(variable->getType(), type, ctx),
                                                     true);
             llvm::Instruction *Call = ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
-            Call->setDebugLoc(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),Utilities::getNodeColumnIndex(identifierNode), ctx->getCurrentDBScope()));
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+            Call->setDebugLoc(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),Utilities::getNodeColumnIndex(identifierNode), ctx->getCurrentDBScope())); 
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); */
 
         }                                       
         
@@ -1097,9 +1099,9 @@ namespace MAlice {
         // Change debug line number
         if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
                                                                              Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); */
         }
 
         return true;
@@ -1357,9 +1359,9 @@ namespace MAlice {
     {
         if (ctx->getDGBuilder())
         {
-            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),
+          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),
                                                                              Utilities::getNodeColumnIndex(identifierNode),
-                                                                             ctx->getCurrentDBScope()));
+                                                                             ctx->getCurrentDBScope())); */
         } 
         std::string funcName = funcProcEntity->getIdentifier();
         bool isEntryProcedure = !funcProcEntity->getIsNestedFunction() && funcName == "hatta";
