@@ -1168,7 +1168,12 @@ namespace MAlice {
             
             llvm::Value *alloca = builder->CreateAlloca(Utilities::getLLVMTypeFromType(parameterEntity->getType()));
             builder->CreateStore(it, alloca);
-            parameterEntity->setLLVMValue(alloca);
+            
+            llvm::Value *paramValue = alloca;
+            if (parameterEntity->getByReference())
+                paramValue = builder->CreateLoad(alloca);
+            
+            parameterEntity->setLLVMValue(paramValue);
             
             ++i;
         }
