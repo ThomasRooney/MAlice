@@ -6,6 +6,7 @@ namespace MAlice {
     
     ParameterEntity :: ParameterEntity (std::string identifier, int lineNumber, Type type) : VariableEntity(identifier, lineNumber, type)
     {
+        m_byReference = false;
     }
     
     ParameterEntity* ParameterEntity :: clone () {
