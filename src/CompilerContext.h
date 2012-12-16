@@ -60,6 +60,7 @@ namespace MAlice {
         llvm::Module *m_module;
         // For debugging information
         llvm::DIBuilder* m_DebugBuilder;
+        llvm::MDNode *m_dbGlobalScope;
         llvm::DIFile m_dbfile;
         std::vector<llvm::MDNode*> m_dbgScope;
         
@@ -119,6 +120,7 @@ namespace MAlice {
         
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
+
         llvm::DIBuilder *getDGBuilder();
         void setCurrentDBScope(llvm::MDNode *s);
         llvm::DIFile *getDIFile();

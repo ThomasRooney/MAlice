@@ -32,9 +32,11 @@ namespace MAlice {
         sourceFile += ".alice";
 
         m_DebugBuilder->createCompileUnit(llvm::dwarf::DW_LANG_lo_user + SHA_MALICE,
-                                          sourceFile, dirFile, "MAliceATRCompiler", false, "", 1);
+                                                  sourceFile, dirFile, "MAliceATRCompiler", false, "", 1);
 
+        m_dbGlobalScope = const_cast<llvm::MDNode*>(m_DebugBuilder->getCU());
         m_dbfile = m_DebugBuilder->createFile(sourceFile, dirFile);
+        m_dbgScope.push_back( m_dbGlobalScope  );
     }
 
     CompilerContext::~CompilerContext()

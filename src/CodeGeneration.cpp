@@ -863,7 +863,8 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        
+        // Must set debug insert point here to 1:1
+        ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(1,1,ctx->getCurrentDBScope()));
         BasicBlock *progRootBlock = BasicBlock::Create(getGlobalContext(), "progRoot");
         ctx->getIRBuilder()->SetInsertPoint(progRootBlock);
 
