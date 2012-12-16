@@ -21,6 +21,8 @@
 
 \section{Design Choices}
 
+For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the C 'target which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the C++ target was less complete.
+
 \section{Extensions}
 
 For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
