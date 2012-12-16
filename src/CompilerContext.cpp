@@ -36,7 +36,7 @@ namespace MAlice {
 
         m_dbGlobalScope = const_cast<llvm::MDNode*>(m_DebugBuilder->getCU());
         m_dbfile = m_DebugBuilder->createFile(sourceFile, dirFile);
-        m_dbgScope.push_back( m_dbGlobalScope  );
+        m_dbgScope.push_back( m_dbfile  );
     }
 
     CompilerContext::~CompilerContext()
