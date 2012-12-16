@@ -369,9 +369,12 @@ namespace MAlice {
                 
                 // We will want to check whether this block contains a return statement if it is the last block.
                 lastBlock = elseBlock;
+                
+                // We've looked at the next node too
+                ++i;
             }
             else
-                continue;
+                walker->generateCodeForNode(node1, NULL, ctx);
         }
         
         if (lastBlock && !hasReturnInstruction(lastBlock))
