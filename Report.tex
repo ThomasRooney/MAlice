@@ -19,9 +19,13 @@
 
 \section{Our Compiler}
 
+One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII caret character to 'point' to the locations of such syntactic errors as missing tokens, and the tilde character to 'underline' larger expressions, such as operands to a mathematical operator.
+
 \section{Design Choices}
 
 For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the C 'target which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the C++ target was less complete.
+
+One disadvantage of using ANTLR was that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers.
 
 \section{Extensions}
 
