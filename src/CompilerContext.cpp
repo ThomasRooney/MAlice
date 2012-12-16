@@ -227,6 +227,16 @@ namespace MAlice {
          }
     }
 
+    void CompilerContext::setCurrentDBScope(llvm::MDNode *s)
+    {
+        if (m_DebugBuilder) {
+            if (!m_dbgScope.empty())
+                m_dbgScope.pop_back();
+            m_dbgScope.push_back(s);
+        }
+    }
+
+
     void CompilerContext::enterScope()
     {
         m_symbolTables.push_back(new SymbolTable());

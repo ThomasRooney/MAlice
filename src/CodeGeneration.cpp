@@ -1378,11 +1378,14 @@ namespace MAlice {
         {
             llvm::DIFile dbFile = *ctx->getDIFile();
             llvm::DIArray paramArray; // TODO: Populate parameters..
-            ctx->getDGBuilder()->createFunction(llvm::DIDescriptor(dbFile), funcName, isEntryProcedure?"main":funcName, dbFile,
+            llvm::DISubprogram SP = ctx->getDGBuilder()->createFunction(llvm::DIDescriptor(dbFile), funcName, isEntryProcedure?"main":funcName, dbFile,
                                 Utilities::getNodeLineNumber(identifierNode), llvm::DIType(),
                                 true, true,
                                 0, false,
                                 function, 0, 0);
+            llvm::MDNode * SPN = SP;
+            ctx->setCurrentDBScope(SPN);
+
         }
 
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);

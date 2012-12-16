@@ -119,6 +119,7 @@ namespace MAlice {
         llvm::IRBuilder<> *getIRBuilder();
         llvm::Module *getModule();
         llvm::DIBuilder *getDGBuilder();
+        void setCurrentDBScope(llvm::MDNode *s);
         llvm::DIFile *getDIFile();
         
         IdentifierDispenser *getIdentifierDispenser();
