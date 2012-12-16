@@ -233,7 +233,7 @@ namespace MAlice {
         if (m_DebugBuilder)
         {
                 m_dbgScope.push_back(node);
-         }
+        }
     }
     void CompilerContext::setCurrentDBScope(llvm::MDNode *s)
     {
@@ -293,7 +293,7 @@ namespace MAlice {
 
     llvm::MDNode* CompilerContext::getCurrentDBScope()
     {
-        return m_dbgScope.empty()?NULL:m_dbgScope.back();
+        return m_dbgScope.empty()?m_dbfile:m_dbgScope.back();
     }
     
     ErrorReporter *CompilerContext::getErrorReporter()

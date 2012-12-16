@@ -25,12 +25,12 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
-        // ctx->enterDebugScope(node);
+        ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
 
         ctx->exitScope();
-        // ctx->exitDebugScope(node);
+        ctx->exitDebugScope();
         
         return result;
     }
@@ -139,11 +139,11 @@ namespace MAlice {
         createAllocasForArguments(ctx);
         extractElementsFromNestedFunctionStruct(ctx);
         
-        // ctx->enterDebugScope(node);
+        ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
         
-        // ctx->exitDebugScope(node);
+        ctx->exitDebugScope();
         
         return result;
     }
@@ -1300,16 +1300,22 @@ namespace MAlice {
         
         if (ctx->getDGBuilder())
         {
+            unsigned lineNo = Utilities::getNodeLineNumber(identifierNode);
+            unsigned colNo = Utilities::getNodeColumnIndex(identifierNode);
             llvm::DIFile dbFile = *ctx->getDIFile();
             llvm::DIArray paramArray; // TODO: Populate parameters..
-            llvm::DISubprogram SP = ctx->getDGBuilder()->createFunction(llvm::DIDescriptor(ctx->getCurrentDBScope()), funcName, isEntryProcedure?"main":funcName, dbFile,
-                                Utilities::getNodeLineNumber(identifierNode), llvm::DIType(),
-                                true, true);
-            //,
-//                                0, false,
-  //                              function, 0, 0)
+            llvm::DISubprogram SP = ctx->getDGBuilder()->createFunction(dbFile, funcName, isEntryProcedure?"main":funcName, dbFile,
+                                lineNo, llvm::DIType(),
+                                true, true, false,
+                                function, 0, 0);
+
             llvm::MDNode * SPN = SP;
-            ctx->enterDebugScope(SPN);
+
+            llvm::DILexicalBlock lexB = ctx->getDGBuilder()->createLexicalBlock(SP, dbFile,
+                                         lineNo,
+                                         colNo);
+            llvm::DIDescriptor D = ctx->getDGBuilder()->createLexicalBlockFile(lexB, dbFile);
+            ctx->enterDebugScope(D);
 
         }
 
