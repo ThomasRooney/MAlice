@@ -49,7 +49,7 @@ namespace MAlice {
         MUTEX temporarySymbolTableLock;
         void configureKeywords();
         SymbolTable* t_symbolTable;
-        
+    
         std::stack<FunctionProcedureEntity*> m_functionProcedureScopeStack;
         std::stack<llvm::BasicBlock*> m_insertPointStack;
         
@@ -86,7 +86,8 @@ namespace MAlice {
         std::vector<VariableEntity*> variableEntitiesInCurrentScope();
 
         void enterDebugScope(ASTNode);
-        void exitDebugScope(ASTNode);    
+        void enterDebugScope(llvm::MDNode* node);
+        void exitDebugScope();    
         llvm::MDNode* getCurrentDBScope();
         void enterScope();
         void exitScope();

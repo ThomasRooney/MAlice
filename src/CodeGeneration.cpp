@@ -863,9 +863,6 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        if (ctx->getDGBuilder())
-            // Create a lexical lock node to declare DWARF debug information scope
-            ctx->enterDebugScope(node);
         
         BasicBlock *progRootBlock = BasicBlock::Create(getGlobalContext(), "progRoot");
         ctx->getIRBuilder()->SetInsertPoint(progRootBlock);
@@ -1359,11 +1356,18 @@ namespace MAlice {
     
     bool CodeGeneration::generateCodeForFunctionProcedureNode( ASTNode identifierNode, ASTNode paramsNode, ASTNode bodyNode, FunctionProcedureEntity *funcProcEntity, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        if (ctx->getDGBuilder())
+        {
+            ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),
+                                                                             Utilities::getNodeColumnIndex(identifierNode),
+                                                                             ctx->getCurrentDBScope()));
+        } 
         std::string funcName = funcProcEntity->getIdentifier();
         bool isEntryProcedure = !funcProcEntity->getIsNestedFunction() && funcName == "hatta";
         addInfoForNestedFunctionOrProcedureToEntity(funcProcEntity, ctx);
         
         // Enter the scope for code generation of the function
+
         ctx->enterFunctionProcedureScope(funcProcEntity);
         
         if (paramsNode) {
@@ -1384,7 +1388,7 @@ namespace MAlice {
                                 0, false,
                                 function, 0, 0);
             llvm::MDNode * SPN = SP;
-            ctx->setCurrentDBScope(SPN);
+            ctx->enterDebugScope(SPN);
 
         }
 
@@ -1399,7 +1403,9 @@ namespace MAlice {
         
         // Exit the scope again
         ctx->exitFunctionProcedureScope();
-        
+        if (ctx->getDGBuilder())
+            ctx->exitDebugScope();
+
         if (!result) {
             // Remove the function from the module it's a part of.
             function->removeFromParent();

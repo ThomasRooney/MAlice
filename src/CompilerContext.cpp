@@ -226,7 +226,13 @@ namespace MAlice {
           
          }
     }
-
+   void CompilerContext::enterDebugScope(llvm::MDNode* node)
+    {
+        if (m_DebugBuilder)
+        {
+                m_dbgScope.push_back(node);
+         }
+    }
     void CompilerContext::setCurrentDBScope(llvm::MDNode *s)
     {
         if (m_DebugBuilder) {
@@ -259,7 +265,7 @@ namespace MAlice {
         popFunctionProcedureEntity();
     }
     
-    void CompilerContext::exitDebugScope(ASTNode node)
+    void CompilerContext::exitDebugScope()
     {
         if (m_DebugBuilder)
         {
