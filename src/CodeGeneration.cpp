@@ -68,7 +68,9 @@ namespace MAlice {
 
         // TODO: Generate variable declaration debug information
 
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()), numElementsValue);
+        Type primitiveType(arrayEntity->getType().getPrimitiveType());
+        
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(primitiveType), numElementsValue);
         arrayEntity->setLLVMValue(value);
         
         return true;
@@ -1145,6 +1147,7 @@ namespace MAlice {
         if (!variableEntity)
             return NULL;
         
+    
         return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
     }
     
