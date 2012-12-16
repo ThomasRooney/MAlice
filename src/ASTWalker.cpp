@@ -118,8 +118,14 @@ bool ASTWalker::generateCodeForNode(ASTNode node, llvm::Value **outValue, Compil
 
     if (ctx->getDGBuilder())
     {
-        ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
-                                                                         Utilities::getNodeColumnIndex(node),
+        unsigned lineNum = Utilities::getNodeLineNumber(node);
+        unsigned colNum = Utilities::getNodeColumnIndex(node);
+        if (lineNum <= 0)
+            lineNum = 1;
+        if (colNum <= 0)
+            colNum = 1;
+        ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(lineNum,
+                                                                         colNum,
                                                                          ctx->getCurrentDBScope()));
     }
 
