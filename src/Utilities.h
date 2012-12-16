@@ -5,6 +5,7 @@
 #include <sstream>
 #include <unordered_map>
 
+#include "LLVMHeader.h"
 #include "Types.h"
 #include "Type.h"
 
@@ -59,7 +60,7 @@ namespace MAlice {
         static std::string stripLeadingAndTrailingCharacters(std::string input, char character);
         static std::string getOperatorStringFromOperatorNode(ASTNode node);
         static std::string getTypeListFromTypes(std::vector<Type> types);
-        
+        static llvm::DIType getDILLVMType(Type, llvm::Type* type, CompilerContext *ctx);
         static std::string getParentDirectoryForPath(std::string path);
         static std::string getBaseFilenameFromPath(std::string path);
         

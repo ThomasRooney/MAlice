@@ -25,12 +25,12 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ctx->enterScope();
-        ctx->enterDebugScope(node);
+        // ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
 
         ctx->exitScope();
-        ctx->exitDebugScope(node);
+        // ctx->exitDebugScope(node);
         
         return result;
     }
@@ -166,11 +166,11 @@ namespace MAlice {
         createAllocasForArguments(ctx);
         extractElementsFromNestedFunctionStruct(ctx);
         
-        ctx->enterDebugScope(node);
+        // ctx->enterDebugScope(node);
         
         bool result = walker->generateCodeForChildren(node, NULL, ctx);
         
-        ctx->exitDebugScope(node);
+        // ctx->exitDebugScope(node);
         
         return result;
     }
@@ -998,7 +998,7 @@ namespace MAlice {
             llvm::DIGlobalVariable debugVar = ctx->getDGBuilder()->createGlobalVariable(identifier,
                                                     *ctx->getDIFile(),
                                                     Utilities::getNodeLineNumber(node),
-                                                    llvm::DIType(), // TODO: Btter type information so it can be displayed in gdb
+                                                    Utilities::getDILLVMType(variable->getType(), type, ctx),
                                                     false,
                                                     value);
             ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
@@ -1020,7 +1020,6 @@ namespace MAlice {
         
         ASTNode typeNode = Utilities::getChildNodeAtIndex(node, 1);
         std::string typeString = Utilities::getNodeText(typeNode);
-        
         ASTNode valueNode = Utilities::getChildNodeAtIndex(node, 2);
         
         VariableEntity *variable = new VariableEntity(identifier,
@@ -1032,7 +1031,8 @@ namespace MAlice {
                                                                              ctx->getCurrentDBScope()));
 
 
-        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(variable->getType()), NULL, identifier.c_str());
+        llvm::Type *type = Utilities::getLLVMTypeFromType(variable->getType());
+        llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(type, NULL, identifier.c_str());
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
 
@@ -1044,7 +1044,7 @@ namespace MAlice {
                                                     identifier,
                                                     *ctx->getDIFile(),
                                                     Utilities::getNodeLineNumber(node),
-                                                    llvm::DIType(), // TODO: Better type information so it can be displayed in gdb
+                                                    Utilities::getDILLVMType(variable->getType(), type, ctx),
                                                     true);
             llvm::Instruction *Call = ctx->getDGBuilder()->insertDeclare(value, debugVar, ctx->getIRBuilder()->GetInsertBlock());
             Call->setDebugLoc(llvm::DebugLoc::get(Utilities::getNodeLineNumber(identifierNode),Utilities::getNodeColumnIndex(identifierNode), ctx->getCurrentDBScope()));

@@ -1195,4 +1195,41 @@ namespace MAlice {
         return indexes;
     }
 
+    llvm::DIType Utilities::getDILLVMType(MAlice::Type pt, llvm::Type* type, CompilerContext *ctx)
+    {
+        unsigned Encoding = 0;
+        uint64_t Size = 0;
+        uint64_t Align = 0;
+        std::string BTName;
+        switch(pt.getPrimitiveType())
+        {
+            case PrimitiveTypeNone:
+                return llvm::DIType();
+
+            case PrimitiveTypeNumber:
+                Encoding = llvm::dwarf::DW_ATE_signed;
+                BTName = std::string("number");
+                Size = 64; 
+                break;
+            case PrimitiveTypeLetter:
+                Encoding = llvm::dwarf::DW_ATE_signed_char;
+                BTName = std::string("letter");
+                Size = 64;
+                break;
+            case PrimitiveTypeSentence:
+                Encoding = llvm::dwarf::DW_ATE_signed_char;
+                BTName = std::string("sentence");
+                Size = 8;
+                break;
+            case PrimitiveTypeBoolean:
+                Encoding = llvm::dwarf::DW_ATE_boolean;
+                BTName = std::string("boolean");
+                Size = 1;
+                break;
+            default:
+                return llvm::DIType();
+        }
+        return ctx->getDGBuilder()->createBasicType(BTName.c_str(), Size, Align, Encoding);
+    }
+
 }; // namespace MAlice
