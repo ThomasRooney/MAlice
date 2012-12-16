@@ -1075,7 +1075,13 @@ namespace MAlice {
                 rType = llvm::Type::getVoidTy(llvm::getGlobalContext());
                 break;
         }
-        return const_cast<llvm::Type *>(rType);
+        
+        llvm::Type *nonConstType = const_cast<llvm::Type *>(rType);
+        
+        if (type.isArray())
+            nonConstType = llvm::PointerType::get(nonConstType, 0);
+        
+        return nonConstType;
     }
     
     std::string Utilities::getParentDirectoryForPath(std::string path)
