@@ -16,5 +16,15 @@ namespace MAlice {
     {
         return "parameter";
     }
+    
+    bool ParameterEntity::getByReference()
+    {
+        return m_byReference;
+    }
+    
+    void ParameterEntity::setByReference(bool byReference)
+    {
+        m_byReference = byReference;
+    }
 
-} 
+}

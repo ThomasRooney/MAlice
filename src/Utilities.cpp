@@ -474,6 +474,8 @@ namespace MAlice {
                 t.setIsArray(true);
             
             ParameterEntity *p = new ParameterEntity(identifier, lineNumber, t);
+            if (passedByReference)
+                p->setByReference(true);
             
             parameterTypes.push_back(p);
         }

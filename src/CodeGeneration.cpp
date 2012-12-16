@@ -59,6 +59,7 @@ namespace MAlice {
         walker->generateCodeForNode(numElementsNode, &numElementsValue, ctx);
         
         llvm::Value *value = ctx->getIRBuilder()->CreateAlloca(Utilities::getLLVMTypeFromType(arrayEntity->getType()), numElementsValue);
+
         arrayEntity->setLLVMValue(value);
         
         return true;
@@ -1063,6 +1064,7 @@ namespace MAlice {
         if (!variableEntity)
             return NULL;
         
+    
         return ctx->getIRBuilder()->CreateGEP(variableEntity->getLLVMValue(), elementValue);
     }
     
@@ -1083,7 +1085,12 @@ namespace MAlice {
             
             llvm::Value *alloca = builder->CreateAlloca(Utilities::getLLVMTypeFromType(parameterEntity->getType()));
             builder->CreateStore(it, alloca);
-            parameterEntity->setLLVMValue(alloca);
+            
+            llvm::Value *paramValue = alloca;
+            if (parameterEntity->getByReference())
+                paramValue = builder->CreateLoad(alloca);
+            
+            parameterEntity->setLLVMValue(paramValue);
             
             ++i;
         }
