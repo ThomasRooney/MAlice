@@ -61,14 +61,13 @@ namespace MAlice {
 
     void CodeGenerator::clean_exit_handler(int sign_num)
     {
-            std::cerr << "Fatal Error. " << (m_dbinfo?"":" Try running with the -d option to get more information.") << std::endl;
+        std::cerr << "Fatal Error in Code Generation. " << (m_dbinfo?"":" Try running with the -g option to get more information.") << std::endl;
+        if (m_dbinfo)
+        {
             std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
-        
-        // TODO: remove signal handlers
-        
             m_module->dump();
             std::cout << std::endl;
-        
+        }
         exit(1);
     }
 
@@ -104,21 +103,13 @@ namespace MAlice {
             PM.add(llvm::createAggressiveDCEPass()); // Delete dead instructions 
             PM.add(llvm::createCFGSimplificationPass());
         }
-        if (m_dbinfo) {
-            std::cout << "Dumping module.." << std::endl;
-            std::cout << "Optimisations: " << optimisationsOn << std::endl;
-            m_module->dump();
-
-            //PM.add(llvm::createDbgInfoPrinterPass()); // Create Debug Info
-            //PM.add(llvm::createModuleDebugInfoPrinterPass()); // Create Debug Info
-        }
 
         std::string llvmIROutputPath = getLlvmIROutputPath(inputPath);
         std::string assemblyOutputPath = getAssemblyOutputPath(inputPath);
 
         llvm::raw_string_ostream outputStream(output);
-        std::cout << "Writing IR to: " << llvmIROutputPath << std::endl;
-        std::cout << "Writing ASM to: " << assemblyOutputPath << std::endl;
+        std::cout << "    Writing IR to: " << llvmIROutputPath << std::endl;
+        std::cout << "    Writing ASM to: " << assemblyOutputPath << std::endl;
 
         std::string ErrorInfo;
         llvm::tool_output_file out(llvmIROutputPath.c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary); 
@@ -179,9 +170,13 @@ namespace MAlice {
 
             PM.run(*m_module);
         } catch (...) {
-            std::cerr << "Fatal Error. Try running with the -d option to get more information." << std::endl;
-            std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
-//            m_module->dump();
+            std::cerr << "Fatal Error in Code Generation. " << (m_dbinfo?"":" Try running with the -g option to get more information.") << std::endl;
+            if (m_dbinfo)
+            {
+                std::cerr << "Attempting to output a dump of the .ll file to stdout for debugging....." << std::endl;
+                m_module->dump();
+                std::cout << std::endl;
+            }
             return false;
         }
         std::cout << ".....Done." << std::endl;
