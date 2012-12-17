@@ -230,7 +230,7 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         int64_t constantVal = 0;
-        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+        if (ctx->getOptimisationsOn() && Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
             *outValue = Utilities::constantNumberValue(constantVal);
             return true;
         }
@@ -662,7 +662,7 @@ namespace MAlice {
         
         // Attempt to constant fold
         int64_t constantVal = 0;
-        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+        if (ctx->getOptimisationsOn() && Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
             *outValue = Utilities::constantNumberValue(constantVal);
             return true;
         }
@@ -674,7 +674,7 @@ namespace MAlice {
     {
         // Attempt to constant fold
         int64_t constantVal = 0;
-        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+        if (ctx->getOptimisationsOn() && Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
             *outValue = Utilities::constantNumberValue(constantVal);
             return true;
         }
@@ -690,7 +690,7 @@ namespace MAlice {
     {
         // Attempt to constant fold
         int64_t constantVal = 0;
-        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+        if (ctx->getOptimisationsOn() && Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
             *outValue = Utilities::constantNumberValue(constantVal);
             return true;
         }
@@ -761,7 +761,7 @@ namespace MAlice {
         
         // Attempt to constant fold
         int64_t constantVal = 0;
-        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+        if (ctx->getOptimisationsOn() && Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
             *outValue = Utilities::constantNumberValue(constantVal);
             return true;
         }
