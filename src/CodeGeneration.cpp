@@ -17,9 +17,6 @@
 #include "LLVMHeader.h"
 #include "StringTable.h"
 
-namespace llvm{}
-using namespace llvm;
-
 namespace MAlice {
 
     bool CodeGeneration::generateCodeForArbitraryBlockNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
@@ -59,7 +56,7 @@ namespace MAlice {
         
         if (!ctx->getCurrentFunctionProcedureEntity()) {
             int64_t numElements = Utilities::extractValueFromExpressionNode(numElementsNode, walker, ctx);
-            std::vector<Constant*> initialiser;
+            std::vector<llvm::Constant*> initialiser;
             Type primitiveType(arrayType.getPrimitiveType());
             
             for (int64_t i = 0; i < numElements; ++i) {
@@ -71,7 +68,7 @@ namespace MAlice {
             llvm::Value *globalVariable = new llvm::GlobalVariable(*(ctx->getModule()),
                                                                    llvmArrayType,
                                                                    false,
-                                                                   GlobalVariable::PrivateLinkage,
+                                                                   llvm::GlobalVariable::PrivateLinkage,
                                                                    llvm::ConstantArray::get(llvmArrayType, initialiser),
                                                                    "");
             
@@ -173,7 +170,7 @@ namespace MAlice {
     {
         llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
         
-        BasicBlock *bodyBlock = BasicBlock::Create(getGlobalContext(), "entry", function);
+        llvm::BasicBlock *bodyBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "entry", function);
         ctx->getIRBuilder()->SetInsertPoint(bodyBlock);
         
         createAllocasForArguments(ctx);
@@ -204,7 +201,7 @@ namespace MAlice {
         uint64_t val = strVal[1]; // [0] = "'", [1] = LITERAL, [2] = "'"
         
         if (outValue)
-            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeLetter)), val);
+            *outValue = llvm::ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeLetter)), val);
         
         return true;
     }
@@ -221,7 +218,7 @@ namespace MAlice {
                                                            ctx);
         
         llvm::Value *loadValue = ctx->getIRBuilder()->CreateLoad(lhsValue);
-        llvm::Value *subValue = ctx->getIRBuilder()->CreateSub(loadValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        llvm::Value *subValue = ctx->getIRBuilder()->CreateSub(loadValue, llvm::ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
         ctx->getIRBuilder()->CreateStore(subValue, lhsValue);
         
         return true;
@@ -341,9 +338,9 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForIfStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
+        llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
         llvm::IRBuilder<> *builder = ctx->getIRBuilder();
-        llvm::BasicBlock *afterBlock = llvm::BasicBlock::Create(getGlobalContext(), "after");
+        llvm::BasicBlock *afterBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "after");
         llvm::BasicBlock *lastBlock = NULL;
         
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
@@ -355,8 +352,8 @@ namespace MAlice {
                 
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i), &condValue, ctx);
                 
-                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then", function);
-                llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(getGlobalContext(), "else");
+                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "then", function);
+                llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "else");
                 llvm::BasicBlock *headerBlock = builder->GetInsertBlock();
                 
                 // Generate code for the block
@@ -409,7 +406,7 @@ namespace MAlice {
         llvm::Value *lhsValue = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0), walker, ctx);
 
         llvm::Value *loadedValue = ctx->getIRBuilder()->CreateLoad(lhsValue);
-        llvm::Value *incrementedValue = ctx->getIRBuilder()->CreateAdd(loadedValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
+        llvm::Value *incrementedValue = ctx->getIRBuilder()->CreateAdd(loadedValue, llvm::ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
         ctx->getIRBuilder()->CreateStore(incrementedValue, lhsValue);
         
         return true;
@@ -549,7 +546,7 @@ namespace MAlice {
         llvm::Function *function = ctx->getCurrentFunctionProcedureEntity()->getLLVMFunction();
         llvm::IRBuilder<> *builder = ctx->getIRBuilder();
 
-        llvm::BasicBlock *leftAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_left", function);
+        llvm::BasicBlock *leftAndBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "and_left", function);
         builder->CreateBr(leftAndBlock);
         builder->SetInsertPoint(leftAndBlock);
         
@@ -557,8 +554,8 @@ namespace MAlice {
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftExpressionValue, ctx);
         llvm::BasicBlock *leftExpressionExitBlock = builder->GetInsertBlock();
         
-        llvm::BasicBlock *rightAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_right");
-        llvm::BasicBlock *afterAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_after");
+        llvm::BasicBlock *rightAndBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "and_right");
+        llvm::BasicBlock *afterAndBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "and_after");
         
         // Create the conditional branch instruction to implement left-strictness.
         builder->CreateCondBr(leftExpressionValue, rightAndBlock, afterAndBlock);
@@ -700,7 +697,7 @@ namespace MAlice {
         strVal >> val;
         
         if (outValue)
-            *outValue = ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), val);
+            *outValue = llvm::ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), val);
         
         return true;
     }
@@ -764,7 +761,7 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForPrintStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {        
-        Function *printfFunction = Utilities::getPrintfFunction(ctx->getModule());
+        llvm::Function *printfFunction = Utilities::getPrintfFunction(ctx->getModule());
         
         Type type;
         Utilities::getTypeFromExpressionNode(Utilities::getChildNodeAtIndex(node, 0),
@@ -836,7 +833,7 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForProgramNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
-        BasicBlock *progRootBlock = BasicBlock::Create(getGlobalContext(), "progRoot");
+        llvm::BasicBlock *progRootBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "progRoot");
         ctx->getIRBuilder()->SetInsertPoint(progRootBlock);
 
         return walker->generateCodeForChildren(node, NULL, ctx);
@@ -876,19 +873,19 @@ namespace MAlice {
             // Global variables have to be created slightly differently...
             if (!ctx->getCurrentFunctionProcedureEntity()) {
                 llvm::Constant *stringConstant = llvm::ConstantArray::get(llvm::getGlobalContext(), strVal);
-                llvm::GlobalVariable *stringGlobal = new GlobalVariable(*(ctx->getModule()),
-                                                                        stringConstant->getType(),
-                                                                        true,
-                                                                        GlobalVariable::PrivateLinkage,
-                                                                        stringConstant,
-                                                                        "str");
+                llvm::GlobalVariable *stringGlobal = new llvm::GlobalVariable(*(ctx->getModule()),
+                                                                              stringConstant->getType(),
+                                                                              true,
+                                                                              llvm::GlobalVariable::PrivateLinkage,
+                                                                              stringConstant,
+                                                                              "str");
                 
                 std::vector<llvm::Constant*> constants;
                 llvm::ConstantInt *zeroIndex = llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0);
                 constants.push_back(zeroIndex);
                 constants.push_back(zeroIndex);
 
-                value = ConstantExpr::getInBoundsGetElementPtr(stringGlobal, constants);
+                value = llvm::ConstantExpr::getInBoundsGetElementPtr(stringGlobal, constants);
             }
             else
                 value = ctx->getIRBuilder()->CreateGlobalStringPtr(Utilities::stringWithASCIIControlCodes(strVal.c_str()));
@@ -944,12 +941,12 @@ namespace MAlice {
                 initialiserValue = constant;
         }
         
-        llvm::GlobalVariable *value = new GlobalVariable(*(ctx->getModule()),
-                                                         type,
-                                                         false,
-                                                         GlobalValue::InternalLinkage,
-                                                         initialiserValue,
-                                                         Twine(identifier.c_str()));
+        llvm::GlobalVariable *value = new llvm::GlobalVariable(*(ctx->getModule()),
+                                                               type,
+                                                               false,
+                                                               llvm::GlobalValue::InternalLinkage,
+                                                               initialiserValue,
+                                                               llvm::Twine(identifier.c_str()));
         
         variable->setLLVMValue(value);
         ctx->addEntityInScope(identifier, variable);
@@ -1030,11 +1027,11 @@ namespace MAlice {
         if (!walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &conditionValue, ctx))
             return false;
         
-        llvm::BasicBlock *loopHeader = llvm::BasicBlock::Create(getGlobalContext(), "loopheader", function);
+        llvm::BasicBlock *loopHeader = llvm::BasicBlock::Create(llvm::getGlobalContext(), "loopheader", function);
         builder->CreateBr(loopHeader);
         
-        llvm::BasicBlock *loopBody = llvm::BasicBlock::Create(getGlobalContext(), "loopbody");
-        llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(getGlobalContext(), "afterloop");
+        llvm::BasicBlock *loopBody = llvm::BasicBlock::Create(llvm::getGlobalContext(), "loopbody");
+        llvm::BasicBlock *afterLoopBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "afterloop");
         
         llvm::Value *exitConditionValue = NULL;
         builder->SetInsertPoint(loopHeader);
@@ -1141,7 +1138,7 @@ namespace MAlice {
     bool CodeGeneration::hasReturnInstruction(llvm::BasicBlock *block)
     {
         for (auto it = block->begin(); it != block->end(); ++it) {
-            Instruction *instruction = it;
+            llvm::Instruction *instruction = it;
             
             if (llvm::dyn_cast<llvm::ReturnInst>(instruction))
                 return true;
@@ -1174,7 +1171,7 @@ namespace MAlice {
             returnType = Utilities::getLLVMTypeFromType(functionEntity->getReturnType());
         }
         
-        FunctionType *functionType = FunctionType::get(returnType, parameterTypes, false);
+        llvm::FunctionType *functionType = llvm::FunctionType::get(returnType, parameterTypes, false);
         std::string identifier = funcProcEntity->getIdentifier();
         std::string LLVMIdentifier;
         if (isEntryPoint)
@@ -1182,10 +1179,10 @@ namespace MAlice {
         else
             LLVMIdentifier = ctx->getIdentifierDispenser()->identifierForFunctionWithName(identifier);
         
-        Function *function = Function::Create(functionType,
-                                              Function::ExternalLinkage,
-                                              LLVMIdentifier,
-                                              ctx->getModule());
+        llvm::Function *function = llvm::Function::Create(functionType,
+                                                          llvm::Function::ExternalLinkage,
+                                                          LLVMIdentifier,
+                                                          ctx->getModule());
         
         auto argIt = function->arg_begin();
         if (structType) {
