@@ -158,5 +158,5 @@ do
     add=$(echo "${mean} + ${AVERAGE[$i]}" |bc -l)
     mean=$(echo "${add} / 2" |bc -l)
 done
-echo 'Average Time of Our Compiler / Average Time of Reference Compiler: '${mean}
-echo 'Average Time of Our Compiler / Average Time of Reference Compiler: '${mean} >> $OUTPUT
+echo 'Average Time of Reference Compiler / Average Time of Our Compiler: '${mean}
+echo 'Average Time of Reference Compiler / Average Time of Our Compiler: '${mean} >> $OUTPUT
