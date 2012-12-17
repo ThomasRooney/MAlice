@@ -361,9 +361,9 @@ namespace MAlice {
                 
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i), &condValue, ctx);
                 
+                llvm::BasicBlock *headerBlock = builder->GetInsertBlock();
                 llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "then", function);
                 llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "else");
-                llvm::BasicBlock *headerBlock = builder->GetInsertBlock();
                 
                 // Generate code for the block
                 builder->SetInsertPoint(thenBlock);
@@ -380,8 +380,6 @@ namespace MAlice {
                 }
                 else
                     builder->CreateCondBr(condValue, thenBlock, afterBlock);
-                
-                function->getBasicBlockList().push_back(thenBlock);
                 
                 if (!lastIf) {
                     // Insert the 'else' block
@@ -1432,6 +1430,13 @@ namespace MAlice {
         }
 
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
+        
+        if (isEntryProcedure) {
+            // Insert an exit() call
+            llvm::Function *exitFunction = Utilities::getExitFunction(ctx->getModule());
+            ctx->getIRBuilder()->CreateCall(exitFunction, llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()),
+                                                                                 0));
+        }
         
         if (dynamic_cast<ProcedureEntity*>(funcProcEntity)) {
             storeElementsIntoNestedFunctionStruct(ctx);

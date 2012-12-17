@@ -96,6 +96,7 @@ namespace MAlice {
         static llvm::Function *getScanfFunction(llvm::Module *module);
         static llvm::Function *getCallocFunction(llvm::Module *module);
         static llvm::Function *getFreeFunction(llvm::Module *module);
+        static llvm::Function *getExitFunction(llvm::Module *module);
         
         static std::string stringWithASCIIControlCodes(std::string str);
         static void replaceOccurrencesOfString(std::string& str, std::string toFind, char replacement);

@@ -1171,6 +1171,18 @@ namespace MAlice {
         return llvm::cast<llvm::Function>(module->getOrInsertFunction("free", freeFunctionType));
     }
     
+    llvm::Function *Utilities::getExitFunction(llvm::Module *module)
+    {
+        std::vector<llvm::Type*> parameterTypes;
+        parameterTypes.push_back(llvm::Type::getInt32Ty(llvm::getGlobalContext()));
+        
+        llvm::FunctionType *exitFunctionType = llvm::FunctionType::get(llvm::Type::getVoidTy(llvm::getGlobalContext()),
+                                                                       parameterTypes,
+                                                                       false);
+        
+        return llvm::cast<llvm::Function>(module->getOrInsertFunction("exit", exitFunctionType));
+    }
+    
     std::string Utilities::stringWithASCIIControlCodes(std::string str)
     {
         replaceOccurrencesOfString(str, "\\n", 0x0a);
