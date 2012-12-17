@@ -39,11 +39,11 @@ operand `10' over operator &&.
 
 \begin{itemize}
 \item
-ANTLR Grammar: The parser and lexer are built using ANTLR, which means that one can modify the AST with only a change to the BNF. This makes modifying/extending the language or changing the internal AST produced simple.
+\textbf{ANTLR Grammar:} The parser and lexer are built using ANTLR, which means that one can modify the AST with only a change to the BNF. This makes modifying/extending the language or changing the internal AST produced simple.
 \item
-Visitor Pattern: The way that we validate and produce code is via a programmatic construct that is a well known design pattern, and thus easily understandable by other software engineers. We separate out the different nodes of our AST into methods meaning that changes made to the code can be localised to these particular leaves of the AST as opposed to having the chance of causing undefined behaviour. 
+\textbf{Visitor Pattern:} The way that we validate and produce code is via a programmatic construct that is a well known design pattern, and thus easily understandable by other software engineers. We separate out the different nodes of our AST into methods meaning that changes made to the code can be localised to these particular leaves of the AST as opposed to having the chance of causing undefined behaviour. 
 \item
-Cross Compilable: We both worked on different platforms during the project (Apple and Windows), and our main target system was Linux. This caused a considerable number of issues at the beginning, especially when including LLVM libraries. As such, our code contains many preprocessor directives to ensure that equivalent libraries are included for each system, as well as preprocessor macros being set and unset dependent on the system and required environment for the LLVM environment.
+\textbf{Cross Compilable:} We both worked on different platforms during the project (Apple and Windows), and our main target system was Linux. This caused a considerable number of issues at the beginning, especially when including LLVM libraries. As such, our code contains many preprocessor directives to ensure that equivalent libraries are included for each system, as well as preprocessor macros being set and unset dependent on the system and required environment for the LLVM environment.
 \end{itemize}
 
 \subsection{Criticisms}
@@ -116,7 +116,7 @@ However there are other more interesting directions that we could have gone in w
 \begin{itemize}
 \item Preprocessor
 \item Interpreter
-\item Language Extensions - object-orientation and dynamic memory allocation.
+\item \textbf{Language extensions:} Given the flexibility of ANTLR and the use of the visitor pattern in the validation and code generation stages, it would be very easy to extend the language, adding features such as object-orientation or other control flow statements like \texttt{switch} blocks.
 \item Disassembly
 \end{itemize}
 \end{document}
