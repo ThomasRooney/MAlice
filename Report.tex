@@ -28,6 +28,14 @@ operand `10' over operator &&.
              ~~ ^^  
 \end{verbatim}
 
+\subsection{Extensibility}
+
+- ANTLR grammar.
+- Visitor pattern.
+- Separation of validation and code generation stages. Some duplication though.
+- Performance issues: Building the symbol table twice. Reflection and RTTI (slow!).
+
+
 \subsection{Rigi}
 
 \subsection{Benchmarks}
@@ -71,6 +79,8 @@ $4 = 1
 
 \section{Design Choices}
 
+- Evaluation of using C++. Gives us more control and is more performant, but lower-level.
+;
 When we embarked on this project we both had the view that what we produced had to be as close as possible to what we would do, should we have to perform a similar task commercially but of greater complexity. As such, we built up a product around the idea of extensibility and ease of development. We tried to maximise the use of tools and have a simple, easily understandable design.
 
 For our initial lexing and parsing stages, we decided to use ANTLR. It is a well-established tool which has the advantage of a GUI for editing and debugging which makes the development process much smoother - being able to see the parsing stages and AST generation step-by-step was incredibly useful when things went wrong. ANTLR can generate code for multiple languages, and although we had decided to use C++ for our compiler, we used the backend which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the backend producing C++ code was less complete. 
@@ -85,10 +95,11 @@ One of the major disadvantages of this approach was the lack of reference materi
 
 An example of this is in the debug information for functions. Clang uses \texttt{llvm::DIType()} to denote an unknown or \texttt{void} return type for the function, and this works correctly, should the linkage and function names be the same. However, The moment they are different (debug name `hatta' and linkage name `main'), \texttt{!loc 0 0 0} is placed as a header of the function (in x86 Asm). This tries to set the debugger's current line number information to \texttt{[Null, Line 0, Col 0]}, an error that blocks compilation. We solved this problem by generating a \texttt{llvm::DISubroutineType} of \texttt{void}, with size/alignment/encoding \texttt{0} instead of the default \texttt{llvm::DIType()}. 
 
-\section{Extensions}
+\section{Beyond the Specification}
 
-
-
+- Interpreter.
+- Language extensions - object-orientation and dynamic memory allocation.
+- Disassembly to MAlice. 
 
 
 \end{document}
