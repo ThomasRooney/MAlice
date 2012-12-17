@@ -565,6 +565,7 @@ namespace MAlice {
         
         llvm::Value *leftExpressionValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftExpressionValue, ctx);
+        llvm::BasicBlock *leftExpressionExitBlock = builder->GetInsertBlock();
         
         llvm::BasicBlock *rightAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_right");
         llvm::BasicBlock *afterAndBlock = llvm::BasicBlock::Create(getGlobalContext(), "and_after");
@@ -576,6 +577,7 @@ namespace MAlice {
         llvm::Value *rightExpressionValue = NULL;
         builder->SetInsertPoint(rightAndBlock);
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightExpressionValue, ctx);
+        llvm::BasicBlock *rightExpressionExitBlock = builder->GetInsertBlock();
         
         // LLVM IR requires that each block is terminated by a branch or return instruction
         builder->CreateBr(afterAndBlock);
@@ -589,8 +591,8 @@ namespace MAlice {
         llvm::PHINode *phiNode = ctx->getIRBuilder()->CreatePHI(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)), 2,
                                                                 "andtmp");
         
-        phiNode->addIncoming(leftExpressionValue, leftAndBlock);
-        phiNode->addIncoming(rightExpressionValue, rightAndBlock);
+        phiNode->addIncoming(leftExpressionValue, leftExpressionExitBlock);
+        phiNode->addIncoming(rightExpressionValue, rightExpressionExitBlock);
         
         if (outValue)
             *outValue = phiNode;
@@ -625,6 +627,7 @@ namespace MAlice {
         
         llvm::Value *leftExpressionValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 0), &leftExpressionValue, ctx);
+        llvm::BasicBlock *leftExpressionExitBlock = builder->GetInsertBlock();
         
         // Create the conditional branch which means we skip the right expression evaluation if the left expression evaluates to true.
         builder->CreateCondBr(leftExpressionValue, afterOrBlock, rightOrBlock);
@@ -633,6 +636,7 @@ namespace MAlice {
         llvm::Value *rightExpressionValue = NULL;
         builder->SetInsertPoint(rightOrBlock);
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &rightExpressionValue, ctx);
+        llvm::BasicBlock *rightExpressionExitBlock = builder->GetInsertBlock();
         
         // LLVM IR requires that each block is terminated by a branch or return instruction
         builder->CreateBr(afterOrBlock);
@@ -646,8 +650,8 @@ namespace MAlice {
         llvm::PHINode *phiNode = ctx->getIRBuilder()->CreatePHI(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)), 2,
                                                                 "ortmp");
         
-        phiNode->addIncoming(leftExpressionValue, leftOrBlock);
-        phiNode->addIncoming(rightExpressionValue, rightOrBlock);
+        phiNode->addIncoming(leftExpressionExitBlock, leftOrBlock);
+        phiNode->addIncoming(rightExpressionExitBlock, rightOrBlock);
         
         if (outValue)
             *outValue = phiNode;
