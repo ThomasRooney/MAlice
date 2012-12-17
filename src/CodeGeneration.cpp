@@ -1146,6 +1146,19 @@ namespace MAlice {
                 paramValue = builder->CreateLoad(alloca);
             
             parameterEntity->setLLVMValue(paramValue);
+
+            if (ctx->getDGBuilder())
+            {
+                llvm::DIVariable debugVar = ctx->getDGBuilder()->createLocalVariable(llvm::dwarf::DW_TAG_auto_variable,
+                                        llvm::DIDescriptor(ctx->getCurrentDBScope()),
+                                        parameterEntity->getIdentifier(),
+                                        *ctx->getDIFile(),
+                                        NULL,
+                                        Utilities::getDILLVMType(parameterEntity->getType(), NULL, ctx),
+                                        true);
+                llvm::Instruction *Call = ctx->getDGBuilder()->insertDeclare(alloca, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+            }
+
             
             ++i;
         }
