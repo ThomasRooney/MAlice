@@ -19,7 +19,14 @@
 
 \section{Our Compiler}
 
-One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII caret character to `point' to the locations of such syntactic errors as missing tokens, and the tilde character to `underline' larger expressions, such as operands to a mathematical operator.
+One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII `$\wedge$' character to `point' to the locations of such syntactic errors as missing tokens, and the tilde character to `underline' larger expressions, such as operands to a mathematical operator. This can be seen in the following example:
+
+\begin{verbatim}
+Semantic error (Line 6): Cannot match type `number' with expected types `boolean' for
+operand `10' over operator &&.
+    x became 10 && 20.
+             ~~ ^^  
+\end{verbatim}
 
 \subsection{Rigi}
 
@@ -75,9 +82,11 @@ $4 = 1
 
 \section{Design Choices}
 
-For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the C 'target which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the C++ target was less complete.
+For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the backend which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the backend producing C++ code was less complete.
 
-One disadvantage of using ANTLR was that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers.
+One disadvantage of using ANTLR was that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers, and we had little or no control over this.
+
+Our compiler generates LLVM IR during the code generation phase. We decided to use the LLVM C++ libraries to aid us in this generation phase, where we build up a tree of constructs for the different statements in LLVM IR (instructions such as \texttt{load} and \texttt{store} and function and variable declarations). This helped for extending our project, for example where we add debugger information in our project extension.
 
 \section{Extensions}
 
