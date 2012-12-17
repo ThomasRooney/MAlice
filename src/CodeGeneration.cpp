@@ -355,61 +355,59 @@ namespace MAlice {
         llvm::BasicBlock *afterBlock = llvm::BasicBlock::Create(getGlobalContext(), "after");
         llvm::BasicBlock *lastBlock = NULL;
         
-        bool usesAfterBlock = false;
-
         for (unsigned int i = 0; i < Utilities::getNumberOfChildNodes(node); ++i) {
             ASTNode node1 = Utilities::getChildNodeAtIndex(node, i);
             if (Utilities::getNodeType(node1) == EXPRESSION) {
                 llvm::Value *condValue = NULL;
 
+                bool lastIf = i + 1 == Utilities::getNumberOfChildNodes(node) - 1;
+                
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i), &condValue, ctx);
                 
-                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then");
+                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then", function);
                 llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(getGlobalContext(), "else");
+                llvm::BasicBlock *headerBlock = builder->GetInsertBlock();
                 
-                
-                builder->CreateCondBr(condValue, thenBlock, elseBlock);
-                
-                // Generate code for the
-                function->getBasicBlockList().push_back(thenBlock);
+                // Generate code for the block
                 builder->SetInsertPoint(thenBlock);
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i+1), NULL, ctx);
                 
-                // We've looked at the next node too
-                ++i;
-                
-                // This is the last block we've looked at thus far
-                lastBlock = thenBlock;
-                
                 if (!hasReturnInstruction(thenBlock)) {
                     builder->CreateBr(afterBlock);
-                    usesAfterBlock = true;
                 }
+            
+                builder->SetInsertPoint(headerBlock);
                 
-                if (i != Utilities::getNumberOfChildNodes(node) - 1) {
+                if (!lastIf) {
+                    builder->CreateCondBr(condValue, thenBlock, elseBlock);
+                }
+                else
+                    builder->CreateCondBr(condValue, thenBlock, afterBlock);
+                
+                function->getBasicBlockList().push_back(thenBlock);
+                
+                if (!lastIf) {
                     // Insert the 'else' block
                     function->getBasicBlockList().push_back(elseBlock);
                     builder->SetInsertPoint(elseBlock);
                     
                     // We will want to check whether this block contains a return statement if it is the last block.
                     lastBlock = elseBlock;
-                }
+                } else
+                    lastBlock = thenBlock;
+                
+                // We've looked at the next node too
+                ++i;
             }
             else {
                 walker->generateCodeForNode(node1, NULL, ctx);
                 if (!hasReturnInstruction(lastBlock)) {
                     builder->CreateBr(afterBlock);
-                    usesAfterBlock = true;
                 }
             }
         }
         
-        if (lastBlock && !hasReturnInstruction(lastBlock))
-            builder->CreateBr(afterBlock);
-        
-        if (usesAfterBlock)
-            function->getBasicBlockList().push_back(afterBlock);
-            
+        function->getBasicBlockList().push_back(afterBlock);
         builder->SetInsertPoint(afterBlock);
     
         return true;
@@ -1412,6 +1410,14 @@ namespace MAlice {
             
             // LLVM requires all functions to return a value
             ctx->getIRBuilder()->CreateRetVoid();
+        }
+        else {
+            FunctionEntity *functionEntity = dynamic_cast<FunctionEntity*>(funcProcEntity);
+            
+            if (!hasReturnInstruction(ctx->getIRBuilder()->GetInsertBlock())) {
+                storeElementsIntoNestedFunctionStruct(ctx);
+                ctx->getIRBuilder()->CreateRet(Utilities::llvmDefaultValueForType(functionEntity->getReturnType()));
+            }
         }
         
         // Exit the scope again
