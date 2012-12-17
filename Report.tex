@@ -117,7 +117,6 @@ However there are other, also interesting, directions that we could have gone in
 \item Preprocessor
 \item Interpreter
 \item Language Extensions - object-orientation and dynamic memory allocation.
-\item Disassembly \\
-One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to Malice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler. Doing this inverse step would open up a transitivity in languages. Since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our Compiler into MAlice directly.
+\item Building a Disassembler - One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to Malice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler, which should mean that the inverse step is also similar. Doing this inverse step would open up a transitivity in languages. Since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our Compiler into MAlice directly.
 \end{itemize}
 \end{document}
