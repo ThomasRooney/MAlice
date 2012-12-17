@@ -114,11 +114,12 @@ An example of this is in the debug information for functions. Clang uses \texttt
 
 The purpose of this project is to learn as much as possible about the construction and internals of Compilers, and as such the more interesting directions for extending the project should be under via the overtone of educating oneself. We have covered one of these directions, looking at providing the information debuggers require give meaningful debugging information. 
 
-However there are other more interesting directions that we could have gone in were this project to be extended. These include
+However there are other, also interesting, directions that we could have gone in were this project to be extended. These include
 \begin{itemize}
 \item Preprocessor
 \item Interpreter
 \item Language Extensions - object-orientation and dynamic memory allocation.
-\item Disassembly
+\item Disassembly \\
+One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to Malice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler. Doing this inverse step would open up a transitivity in languages. Since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our Compiler into MAlice directly.
 \end{itemize}
 \end{document}
