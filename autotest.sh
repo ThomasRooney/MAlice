@@ -147,6 +147,14 @@ echo "-----Benchmarks-----" >> $OUTPUT
 echo ${TEST_INDEX}'  results..' >> $OUTPUT
 for (( i = 1; i <= $TEST_INDEX ; i++ ))
 do
-echo  "-----------------" >> $OUTPUT
-echo '|'${OUR_SPEED[$i]}'|'${REFERENCE_SPEED[$i]}'|' >> $OUTPUT
+result=$(echo "${REFERENCE_SPEED[$i]} / ${OUR_SPEED[$i]}" |bc -l)
+echo '|'${OUR_SPEED[$i]}'|'${REFERENCE_SPEED[$i]}'|'${result}'|' >> $OUTPUT
+AVERAGE[i]=$(echo "${result}")
 done
+
+mean=$(echo "${AVERAGE[1]}")
+for (( i = 1; i <= $TEST_INDEX ; i++ ))
+do
+    mean=$(echo '('$mean' + '${AVERAGE[i]}') / 2' | bc -l)
+done
+echo 'Average Speed Increase: '${mean}

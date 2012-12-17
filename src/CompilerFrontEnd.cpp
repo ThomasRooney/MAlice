@@ -119,7 +119,7 @@ namespace MAlice {
             Utilities::printTree(tree);
         
         semanticAnalyser = new SemanticAnalyser(tree, compilerContext);
-        if (!semanticAnalyser->validateAST()) {
+        if (!semanticAnalyser->validateAST() || m_errorReporter->getNumberOfReportedErrors() > 0) {
             // Exit before generation if there are serious errors
             return EXIT_FAILURE;
         }
