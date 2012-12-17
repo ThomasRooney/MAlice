@@ -22,7 +22,7 @@
 
 \subsection{Introduction}
 
-Introduction here
+This project has been an introduction to compiler writing, through from the very start to the end. We have built, what we believe, to be a good example of a simple compiler, and a useful reference for the libraries that we have used should we or other look over it in attempting to do something similar. In this report we briefly outline some of the design decisions we have faced as well as try to critically evaluate our compiler and extension.
 
 \subsection{Exceptions}
 
@@ -59,7 +59,7 @@ In building our compiler we also constructed an autotester. As part of this auto
 Average Time of Reference Compiler / Average Time of Our Compiler: 10.81822
 \end{verbatim}
 
-\subsection{Our Extension}
+\subsection{Our Extension - DWARF Debugging Information}
 
 For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
 
@@ -89,7 +89,6 @@ $3 = 1
 (gdb) print fib0
 $4 = 1
 \end{verbatim}
-
 
 \section{Design Choices}
 
