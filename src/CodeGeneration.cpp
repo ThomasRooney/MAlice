@@ -229,6 +229,12 @@ namespace MAlice {
 
     bool CodeGeneration::generateCodeForDivideExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        int64_t constantVal = 0;
+        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+            *outValue = Utilities::constantNumberValue(constantVal);
+            return true;
+        }
+        
         return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSDiv, "divtmp", walker, ctx);
     }
     
@@ -654,11 +660,25 @@ namespace MAlice {
         if (Utilities::getNumberOfChildNodes(node) == 1)
             return generateCodeForUnaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateNeg, "negtmp", walker, ctx);
         
+        // Attempt to constant fold
+        int64_t constantVal = 0;
+        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+            *outValue = Utilities::constantNumberValue(constantVal);
+            return true;
+        }
+        
         return generateCodeForBinaryOperatorNode(node, outValue, &llvm::IRBuilder<>::CreateSub, "subtmp", walker, ctx);
     }
     
     bool CodeGeneration::generateCodeForModuloExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        // Attempt to constant fold
+        int64_t constantVal = 0;
+        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+            *outValue = Utilities::constantNumberValue(constantVal);
+            return true;
+        }
+        
         return generateCodeForBinaryOperatorNode(node, outValue,
                                        &llvm::IRBuilder<>::CreateSRem,
                                        "modtmp",
@@ -668,6 +688,13 @@ namespace MAlice {
     
     bool CodeGeneration::generateCodeForMultiplyExpressionNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
+        // Attempt to constant fold
+        int64_t constantVal = 0;
+        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+            *outValue = Utilities::constantNumberValue(constantVal);
+            return true;
+        }
+        
         return generateCodeForBinaryOperatorNode(node,
                                        outValue,
                                        &llvm::IRBuilder<>::CreateMul,
@@ -729,6 +756,13 @@ namespace MAlice {
     {
         if (Utilities::getNumberOfChildNodes(node) == 1) {
             // The unary + operator does nothing!
+            return true;
+        }
+        
+        // Attempt to constant fold
+        int64_t constantVal = 0;
+        if (Utilities::constantFoldedValueFromExpressionNode(node, &constantVal, walker, ctx)) {
+            *outValue = Utilities::constantNumberValue(constantVal);
             return true;
         }
         

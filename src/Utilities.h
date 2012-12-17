@@ -103,9 +103,13 @@ namespace MAlice {
         static std::vector<llvm::Value*> llvmStructElementGEPIndexes(unsigned int elementIndex);
         
         static bool extractValueFromExpressionNode(ASTNode expressionNode, int64_t *outValue, ASTWalker *walker, CompilerContext *ctx);
+        static bool constantFoldedValueFromExpressionNode(ASTNode expressionNode, int64_t *outValue, ASTWalker *walker, CompilerContext *ctx);
+        static bool constantFoldedBinaryOperatorValuesFromNode(ASTNode node, int64_t *v1, int64_t *v2, ASTWalker *walker, CompilerContext *ctx);
         static llvm::Constant *llvmDefaultValueForType(Type type);
+        
+        static llvm::Value *constantNumberValue(int64_t val);
     };
-    
+
 }; // namespace MAlice
 
 #endif /* #ifndef _MALICEUTILITIES */

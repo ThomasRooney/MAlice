@@ -1291,18 +1291,6 @@ namespace MAlice {
             }
                 break;
                 
-            case CHARACTER_LITERAL:
-            {
-                std::string strVal = getNodeText(node);
-                int64_t val = strVal[1]; // The character is padded by single quotes
-                
-                if (outValue)
-                    *outValue = val;
-                
-                return true;
-            }
-                break;
-                
             case IDENTIFIER:
             {
                 Entity *entity = NULL;
@@ -1341,6 +1329,124 @@ namespace MAlice {
         }
     }
     
+    bool Utilities::constantFoldedValueFromExpressionNode(ASTNode node, int64_t *outValue, ASTWalker *walker, CompilerContext *ctx)
+    {
+        ANTLR3_UINT32 nodeType = getNodeType(node);
+        
+        switch (nodeType)
+        {
+            case PLUS:
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!constantFoldedBinaryOperatorValuesFromNode(node, &value1, &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = value1 + value2;
+                
+                return true;
+            }
+                break;
+                
+            case MINUS:
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!constantFoldedBinaryOperatorValuesFromNode(node, &value1, &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = value1 - value2;
+                
+                return true;
+            }
+                break;
+                
+            case DIVIDE:
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!constantFoldedBinaryOperatorValuesFromNode(node, &value1, &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = (floor)((double)value1 / (double)value2);
+                
+                return true;
+            }
+                break;
+                
+            case MULTIPLY:
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!constantFoldedBinaryOperatorValuesFromNode(node, &value1, &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = value1 * value2;
+                
+                return true;
+            }
+                break;
+                
+            case MODULO:
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!constantFoldedBinaryOperatorValuesFromNode(node, &value1, &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = value1 % value2;
+                
+                return true;
+            }
+                break;
+                
+            case EXPRESSION:
+                return constantFoldedValueFromExpressionNode(getChildNodeAtIndex(node, 0), outValue, walker, ctx);
+                break;
+                
+            case NUMBER_LITERAL:
+            {
+                std::stringstream strVal;
+                strVal.str(Utilities::getNodeText(node));
+                
+                int64_t val;
+                strVal >> val;
+                
+                if (outValue)
+                    *outValue = val;
+                
+                return true;
+            }
+                break;
+                
+            case CHARACTER_LITERAL:
+            {
+                std::string strVal = getNodeText(node);
+                int64_t val = strVal[1]; // The character is padded by single quotes
+                
+                if (outValue)
+                    *outValue = val;
+                
+                return true;
+            }
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+    
+    bool Utilities::constantFoldedBinaryOperatorValuesFromNode(ASTNode node, int64_t *v1, int64_t *v2, ASTWalker *walker, CompilerContext *ctx)
+    {
+        if (!constantFoldedValueFromExpressionNode(getChildNodeAtIndex(node, 0), v1, walker, ctx))
+            return false;
+        
+        if (!constantFoldedValueFromExpressionNode(getChildNodeAtIndex(node, 1), v2, walker, ctx))
+            return false;
+        
+        return true;
+    }
+    
     llvm::Constant *Utilities::llvmDefaultValueForType(Type type)
     {
         if (type.isArray())
@@ -1367,4 +1473,9 @@ namespace MAlice {
         }
     }
 
+    llvm::Value *Utilities::constantNumberValue(int64_t val)
+    {
+        return llvm::ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), val);
+    }
+    
 }; // namespace MAlice
