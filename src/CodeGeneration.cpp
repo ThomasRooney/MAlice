@@ -698,7 +698,7 @@ namespace MAlice {
     {
         return generateCodeForBinaryOperatorNode(node,
                                        outValue,
-                                       &llvm::IRBuilder<>::CreateICmpEQ,
+                                       &llvm::IRBuilder<>::CreateICmpNE,
                                        "netmp",
                                        walker,
                                        ctx);
