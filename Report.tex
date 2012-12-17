@@ -114,9 +114,7 @@ The purpose of this project is to learn as much as possible about the constructi
 
 However there are other, also interesting, directions that we could have gone in were this project to be extended. These include
 \begin{itemize}
-\item Preprocessor
-\item Interpreter
 \item \textbf{Language extensions:} Given the flexibility of ANTLR and the use of the visitor pattern in the validation and code generation stages, it would be very easy to extend the language, adding features such as object-orientation or other control flow statements like \texttt{switch} blocks.
-\item textbf{Building a Disassembler} - One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to Malice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler, which should mean that the inverse step is also possible, though it would be in no way simple. Doing this inverse step would open up a transitivity in languages; since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our Compiler into MAlice directly.
+\item \textbf{Building a Disassembler} - One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to Malice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler, which should mean that the inverse step is also possible, though it would be in no way simple. Doing this inverse step would open up a transitivity in languages; since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our Compiler into MAlice directly.
 \end{itemize}
 \end{document}
