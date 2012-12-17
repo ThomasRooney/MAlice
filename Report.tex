@@ -32,9 +32,9 @@ operand `10' over operator &&.
 
 \subsection{Benchmarks}
 
-In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in `autotest.h' - where it shows that we, on average, are over ten times faster than the reference compiler.
+In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in `autotest.h' - where it shows that we, on average, are over ten times faster than the reference compiler for all of the given examples.
 \begin{verbatim}
-Average Time of Reference Compiler / Average Time of Our Compiler: 10.81822110551374253968
+Average Time of Reference Compiler / Average Time of Our Compiler: 10.81822
 \end{verbatim}
 
 \subsection{Our Extension}
@@ -82,9 +82,21 @@ $4 = 1
 
 \section{Design Choices}
 
-For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the backend which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the backend producing C++ code was less complete.
+When we embarked on this project we both had the view that what we produced had to be as close as possible to what we would do, should we have to perform a similar task commerically but of greater complexity. As such, we built up a product around the idea of extensibility and ease of development. We tried to maximise the use of tools and a simple, easily understandable design.
 
-One disadvantage of using ANTLR was that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers, and we had little or no control over this.
+For our initial lexer and parsing stages, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes the development process much smoother - being able to see the parsing stages step by step was incredibly useful when things went wrong. ANTLR can generate code for multiple languages, and although we had decided to use C++ for our compiler, we used the backend which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the backend producing C++ code was less complete. 
+
+Disadvantages of using ANTLR include the fact that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers, and we had little or no control over this. Secondly the AST produced was very rigid, removing the possiblity of optimization via modification of the tree directly.
+
+The second major decision that we made was in the use of the LLVM C++ backend for our code generation. We made this decision on the fact that it seemed very well documented at the time, and this would make adding extra features onto the compiler a none-issue, as once we had LLVM classes setup correctly, it is simple to activate the other LLVM libraries that add extra features onto production compiler. 
+
+For example, in our final steps where we move code from LLVM classes into LLVM IR, we can retarget our compiler at any particular architecture that LLVM has support for. In fact, when we generate code, we pull the targetting information from the host system directly, and generate compilable code for that particular processor. If our compiler was run on, for example, an ARM processor, it wouldn't generate x86 assembler but ARM assembler - a massive advantage over focusing on a particular architecture.
+
+One of the major disadvantages of this approach was the lack of reference material in using the C++ backend. At times it seemed like everything was going well, but in fact bits of the backend hadn't been implemented yet. From our experience using the libaries directly, it seems like while the majority of it is very generic, there are sections of the code base that are very specific to those few projects that use LLVM directly, like clang. It seems like it was in places, hacked a bit so that Clang generates code correctly, but the moment you used a differing argument to one of the LLVM classes to Clangs, code is incorrectly generated.
+
+An example of this would be in the debug information for functions. Clang uses \texttt{llvm::DIType()} to denote an unknown or void return type for the function, and this works correctly, if the linkage and function names are the same. The moment they are different (`hatta' and `main'), \texttt{!loc 0 0 0} is placed as a header of the function (in x86 Asm). This tries to set the debugger's current line number information to [Null, Line 0, Col 0], an error that blocks compilation. This problem was solved by generating a \texttt{llvm::DISubroutineType} of `void', with size/alignment/encoding 0 instead of the default \texttt{llvm::DIType()}. 
+
+
 
 Our compiler generates LLVM IR during the code generation phase. We decided to use the LLVM C++ libraries to aid us in this generation phase, where we build up a tree of constructs for the different statements in LLVM IR (instructions such as \texttt{load} and \texttt{store} and function and variable declarations). This helped for extending our project, for example where we add debugger information in our project extension.
 
