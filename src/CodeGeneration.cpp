@@ -1326,19 +1326,20 @@ namespace MAlice {
             unsigned lineNo = Utilities::getNodeLineNumber(identifierNode);
             unsigned colNo = Utilities::getNodeColumnIndex(identifierNode);
             llvm::DIFile dbFile = *ctx->getDIFile();
-            llvm::DIArray paramArray; // TODO: Populate parameters..
+            llvm::DIArray paramArray = llvm::DIArray(0); // TODO: Populate parameters..
+            llvm::DIType subType = ctx->getDGBuilder()->createSubroutineType(dbFile, paramArray);
             llvm::DISubprogram SP = ctx->getDGBuilder()->createFunction(dbFile, funcName, isEntryProcedure?"main":funcName, dbFile,
-                                lineNo, llvm::DIType(),
+                                lineNo, subType,
                                 true, true, false,
                                 function, 0, 0);
 
             llvm::MDNode * SPN = SP;
 
-            llvm::DILexicalBlock lexB = ctx->getDGBuilder()->createLexicalBlock(SP, dbFile,
-                                         lineNo,
-                                         colNo);
-            llvm::DIDescriptor D = ctx->getDGBuilder()->createLexicalBlockFile(lexB, dbFile);
-            ctx->enterDebugScope(D);
+//            llvm::DILexicalBlock lexB = ctx->getDGBuilder()->createLexicalBlock(SP, dbFile,
+//                                         lineNo,
+//                                         colNo);
+//            llvm::DIDescriptor D = ctx->getDGBuilder()->createLexicalBlockFile(lexB, dbFile);
+            ctx->enterDebugScope(SPN);
 
         }
 
