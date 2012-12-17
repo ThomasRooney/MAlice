@@ -1,12 +1,18 @@
 #!/bin/bash
 
 
+## Benchmarking and Autotesting script
+## Thomas Rooney
+
 VALIDFILES=../malice_examples/valid/*.alice
 INVALIDFILES=../malice_examples/invalid/*.alice
 CUSTOMFILES=../malice_examples/custom/*.alice
 OUTPUT=autotest_output.txt
 CUSTOM=true
 RUNNABLE=true
+TEST_INDEX=0
+REFERENCE_SPEED[0]='0'
+OUR_SPEED[0]='0'
 
 echo "Sanity Check"
 echo "------------"
@@ -76,12 +82,19 @@ echo "Processing Valid File: $vF"
 echo "---------------------" >> $OUTPUT
 echo "Reference Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
+BEGIN=$(($(date +%s%N)/1000000))
 MAlice $vF >> $OUTPUT 2>&1
+END=$(($(date +%s%N)/1000000))
+REFERENCE_SPEED[$TEST_INDEX]=$(($END-$BEGIN))
 echo "---------------------" >> $OUTPUT
 echo "Student Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
+BEGIN=$(($(date +%s%N)/1000000))
 ./compile $vF >> $OUTPUT 2>&1
+END=$(($(date +%s%N)/1000000))
+OUR_SPEED[$TEST_INDEX]=$(($END-$BEGIN))
 echo "---------------------" >> $OUTPUT
+TEST_INDEX=$(($TEST_INDEX+1))
 done
 
 for vF in $INVALIDFILES
@@ -91,12 +104,19 @@ echo "Processing Invalid File: $vF"
 echo "---------------------" >> $OUTPUT
 echo "Reference Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
+BEGIN=$(($(date +%s%N)/1000000))
 MAlice $vF >> $OUTPUT 2>&1
+END=$(($(date +%s%N)/1000000))
+REFERENCE_SPEED[$TEST_INDEX]=$(($END-$BEGIN))
 echo "---------------------" >> $OUTPUT
 echo "Student Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
+BEGIN=$(($(date +%s%N)/1000000))
 ./compile $vF >> $OUTPUT 2>&1
+END=$(($(date +%s%N)/1000000))
+OUR_SPEED[$TEST_INDEX]=$(($END-$BEGIN))
 echo "---------------------" >> $OUTPUT
+TEST_INDEX=$(($TEST_INDEX+1))
 done
 
 if $CUSTOM ; then
@@ -107,11 +127,26 @@ echo "Processing Custom File: $vF"
 echo "---------------------" >> $OUTPUT
 echo "Reference Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
+BEGIN=$(($(date +%s%N)/1000000))
 MAlice $vF >> $OUTPUT 2>&1
+END=$(($(date +%s%N)/1000000))
+REFERENCE_SPEED[$TEST_INDEX]=$(($END-$BEGIN))
 echo "---------------------" >> $OUTPUT
 echo "Student Compiler Output:" >> $OUTPUT
 echo "---------------------" >> $OUTPUT
+BEGIN=$(($(date +%s%N)/1000000))
 ./compile $vF >> $OUTPUT 2>&1
+END=$(($(date +%s%N)/1000000))
+OUR_SPEED[$TEST_INDEX]=$(($END-$BEGIN))
 echo "---------------------" >> $OUTPUT
+TEST_INDEX=$(($TEST_INDEX+1))
 done
 fi
+
+echo "-----Benchmarks-----" >> $OUTPUT
+echo ${TEST_INDEX}'  results..' >> $OUTPUT
+for (( i = 1; i <= $TEST_INDEX ; i++ ))
+do
+echo  "-----------------" >> $OUTPUT
+echo '|'${OUR_SPEED[$i]}'|'${REFERENCE_SPEED[$i]}'|' >> $OUTPUT
+done

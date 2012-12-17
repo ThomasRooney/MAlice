@@ -31,6 +31,44 @@ One disadvantage of using ANTLR was that sometimes the lexer errors produced wer
 
 For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
 
-The end result of this extension is that a compiled alice file can be debugged in gdb. Breakpoints can be set in the .alice code 
+The end result of this extension is that a compiled alice file can be debugged in gdb. Breakpoints can be set in the .alice code, variables can be printed and code can be stepped through line by line. To activate, pass the \'-g\' flag to the compile executable.
+
+\begin{verbatim}
+(gdb) list
+1   
+2   The room fibonacci (number x) contained a number
+3   opened
+4     fib0 was a number of 0 and fib1 was a number of 1 and i was a number.
+5     i became 0.
+6     eventually (i >= x) because
+7       opened
+8         temp was a number and temp became fib0.
+9         fib0 became fib1.
+10        fib1 became temp + fib1.
+(gdb) break 5
+Breakpoint 1 at 0x40056c: file ../malice_examples/valid/fibonacciIterative.alice, line 5.
+(gdb) run
+Starting program: /vol/bitbucket/tr111/malice_examples/valid/fibonacciIterative 
+Which term in the Fibonacci sequence shall I compute?10
+
+Breakpoint 1, fibonacci ()
+    at ../malice_examples/valid/fibonacciIterative.alice:5
+5     i became 0.
+....
+(gdb) next
+8         temp was a number and temp became fib0.
+(gdb) next
+9         fib0 became fib1.
+(gdb) print fib0
+$2 = 0
+(gdb) print fib1
+$3 = 1
+(gdb) next
+10        fib1 became temp + fib1.
+(gdb) print fib0
+$4 = 1
+
+\end{verbatim}
+
 
 \end{document}
