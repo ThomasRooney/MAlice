@@ -19,15 +19,16 @@
 
 \section{Our Compiler}
 
-One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII caret character to 'point' to the locations of such syntactic errors as missing tokens, and the tilde character to 'underline' larger expressions, such as operands to a mathematical operator.
+One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII caret character to \'point\' to the locations of such syntactic errors as missing tokens, and the tilde character to \'underline\' larger expressions, such as operands to a mathematical operator.
 
-\section{Design Choices}
+\subsection{Benchmarks}
 
-For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the C 'target which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the C++ target was less complete.
+In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in \'autotest.h\'
+\begin{verbatim}
+Average Time of Our Compiler / Average Time of Reference Compiler: 10.81822110551374253968
+\end{verbatim}
 
-One disadvantage of using ANTLR was that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers.
-
-\section{Extensions}
+\subsection{Our Extension}
 
 For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
 
@@ -67,8 +68,19 @@ $3 = 1
 10        fib1 became temp + fib1.
 (gdb) print fib0
 $4 = 1
-
 \end{verbatim}
+
+
+\section{Design Choices}
+
+For our lexer and parser, we decided to use ANTLR. It is a well-established tool but also has the advantage of a GUI for editing and debugging which makes it a lot better than most other tools. Although we had decided to use C++ for our compiler, we used the C 'target which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the C++ target was less complete.
+
+One disadvantage of using ANTLR was that sometimes the lexer errors produced were not very informative, and were missing vital information such as line or column numbers.
+
+\section{Extensions}
+
+
+
 
 
 \end{document}
