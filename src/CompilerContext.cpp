@@ -111,6 +111,8 @@ namespace MAlice {
         m_identifierDispenser = new IdentifierDispenser();
         m_dbgScope = std::vector<llvm::MDNode*>();
         m_symbolTables.push_back(new SymbolTable());
+        
+        m_optimisationsOn = false;
     }
     
     bool CompilerContext::lockTemporarySymbolTable()
@@ -587,4 +589,15 @@ namespace MAlice {
     {
         return m_stringTable;
     }
+    
+    bool CompilerContext::getOptimisationsOn()
+    {
+        return m_optimisationsOn;
+    }
+    
+    void CompilerContext::setOptimisationsOn(bool optimisationsOn)
+    {
+        m_optimisationsOn = optimisationsOn;
+    }
+    
 }; // namespace MAlice

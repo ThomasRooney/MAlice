@@ -102,6 +102,7 @@ namespace MAlice {
         }
         setParserErrorReporter(m_errorReporter);
         compilerContext->setErrorReporter(m_errorReporter); 
+        compilerContext->setOptimisationsOn((compilerFlags & CompilerFlagsOptimisation) != 0);
         
         cout << "Analysing file '" + path + "'...\n\n";
         

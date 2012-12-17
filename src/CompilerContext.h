@@ -59,6 +59,7 @@ namespace MAlice {
         llvm::IRBuilder<> *m_irBuilder;
         llvm::Module *m_module;
         // For debugging information
+        bool m_optimisationsOn;
         llvm::DIBuilder* m_DebugBuilder;
         llvm::MDNode *m_dbGlobalScope;
         llvm::DIFile m_dbfile;
@@ -133,6 +134,9 @@ namespace MAlice {
         
         StringTable *getStringTable();
         
+        bool getOptimisationsOn();
+        void setOptimisationsOn(bool optimisationsOn);
+    
     }; // class CompilerContext
     
 }; // namespace MAlice
