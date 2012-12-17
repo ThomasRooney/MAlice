@@ -20,7 +20,7 @@
 
 \section {Introduction}
 
-This project has been an introduction to compiler writing, through from the very start to the end. We have built, what we believe, to be a good example of a simple compiler, and a useful reference for the libraries that we have used should we or other look over it in attempting to do something similar. In this report we briefly outline some of the design decisions we have faced as well as try to critically evaluate our compiler and extension.
+This project has been an introduction to compiler writing, through syntactic analysis to code generation. We believe we have built a good example of a simple compiler, and a useful reference for the libraries (particularly LLVM) that we have used, should we or others look over it in attempting to do something similar. In this report we briefly outline some of the design decisions we have made as well as try to critically evaluate our compiler and extension.
 
 \section{Analysis of our Compiler}
 
@@ -41,31 +41,30 @@ operand `10' over operator &&.
 \item
 \textbf{ANTLR Grammar:} The parser and lexer are built using ANTLR, which means that one can modify the AST with only a change to the BNF. This makes modifying/extending the language or changing the internal AST produced simple.
 \item
-\textbf{Visitor Pattern:} The way that we validate and produce code is via a programmatic construct that is a well known design pattern, and thus easily understandable by other software engineers. We separate out the different nodes of our AST into methods meaning that changes made to the code can be localised to these particular leaves of the AST as opposed to having the chance of causing undefined behaviour. 
+\textbf{Visitor Pattern:} The way that we validate and generate code is with the well-known visitor design pattern, and thus easily understandable by other software engineers. We have a separate function for each type of node in our AST, meaning that changes made to the BNF can be implemented via only changing the visitor functions the BNF is associated with.
 \item
-\textbf{Cross Compilable:} We both worked on different platforms during the project (Apple and Windows), and our main target system was Linux. This caused a considerable number of issues at the beginning, especially when including LLVM libraries. As such, our code contains many preprocessor directives to ensure that equivalent libraries are included for each system, as well as preprocessor macros being set and unset dependent on the system and required environment for the LLVM environment.
+\textbf{Cross Compilable:} We both worked on different platforms during the project (Mac OS X and Windows), and our main target system was Linux. This caused a considerable number of issues at the beginning, especially when including LLVM libraries. As such, our code contains many preprocessor directives to ensure that equivalent libraries are included for each system, as well as preprocessor macros being set and unset dependent on the system and required environment for the LLVM libraries.
 \end{itemize}
 
 \subsection{Criticisms}
 
-At the start of milestone 3 we started by integrating code generation into the same visitor functions as those used by validation. The advantage of this was that the code was generated in the same pass as validation. However it quickly became apparent that this was causing some problems. For example, the LLVM libraries functions were treated as a ``black box'' and could cause exceptions that we couldn't produce useful error messages for in cases of incorrect ANTLR AST. To fix this, we decided to ensure that the validation pass was completely separate to the Code generation pass, ensuring that error messages were as complete as possible.
+At the start of milestone 3 we started by implementing code generation in the same visitor functions as those used by validation. The advantage of this was that the code was generated in the same pass as validation. However it quickly became apparent that this was causing some problems. For example, the LLVM libraries functions were treated as a ``black box'' and could cause exceptions such as early termination which meant that we couldn't produce useful error messages. To fix this, we decided to ensure that the validation pass was completely separate to the code generation pass, ensuring that we had control over error messages during validation.
 
-This approach felt sub-optimal due to the fact that we were constructing internal compiler context information, such as scope and variable types, twice. To attune for this fact, we separated code into a set of utility functions, and polymorphism in internal entities, shared such that code was not duplicated.
+However, this two-pass approach felt sub-optimal due to the fact that we were constructing internal compiler context information, such as scope and variable types, twice. To counteract this, we separated code into a set of utility functions, sharing code to avoid duplication.
 
-We also encountered a few problems due to our choice of language. We used RTTI (Real Time Type Information) in our compiler for downcasting from our symbol table. This was implemented via \texttt{dynamic\_cast}, which looking online, is a slow operation. It also lowers rigidity when we check the type as the order in which a variable is dynamically casted matters when you have deep class hierarchy.
+We also encountered a few problems due to our choice of language. We used RTTI (Real Time Type Information) in our compiler for downcasting entity instances upon retrieval from a symbol table. This was implemented via \texttt{dynamic\_cast}, which after research we discovered is a slow operation. This was a useful construct in increasing the flexibility of our code, but we discovered that when checking a type, the order in which a variable is dynamically casted matters when you have deep class hierarchy.
 
 \subsection{Benchmarks}
 
-In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in `autotest.h' - where it shows that we, on average, are over ten times faster than the reference compiler for all of the given examples.
-\begin{verbatim}
-Average Time of Reference Compiler / Average Time of Our Compiler: 10.81822
-\end{verbatim}
+In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in \texttt{autotest.sh} - where it shows that our compiler is (on average) over ten times faster than the reference compiler for all of the given examples.
 
-\subsection{Our Extension - DWARF Debugging Information}
+\subsection{Our Extension: DWARF Debugging Information}
 
-For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
+For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled \texttt{.alice} files can be debugged using existing debuggers which support the DWARF debugging format. This includes both \texttt{gdb} and \texttt{lldb}.
 
-The end result of this extension is that a compiled alice file can be debugged in gdb. Breakpoints can be set in the .alice code, variables can be printed and code can be stepped through line by line. To include debugging information, pass the \texttt{-g} flag to the compile executable.
+The end result of this extension is that a compiled alice file can be debugged in a debugger such as \texttt{gdb}. Breakpoints can be set in the \texttt{.alice} code, variables and their values can be printed and code can be stepped through line-by-line. Debugging information can be included in a compiled Alice executable by passing the \texttt{-g} flag to our \texttt{compile} program.
+
+Here is an example of stepping through the iterative fibonacci example in \texttt{gdb}:
 
 \begin{verbatim}
 (gdb) break 5
@@ -77,7 +76,7 @@ Which term in the Fibonacci sequence shall I compute?10
 Breakpoint 1, fibonacci ()
     at ../malice_examples/valid/fibonacciIterative.alice:5
 5     i became 0.
-....
+  ...
 (gdb) next
 8         temp was a number and temp became fib0.
 (gdb) next
@@ -94,27 +93,31 @@ $4 = 1
 
 \section{Design Choices}
 
-When we embarked on this project we both had the view that what we produced had to be as close as possible to what we would do, should we have to perform a similar task commercially but of greater complexity. As such, we built up a product around the idea of extensibility and ease of development. We tried to maximise the use of tools and have a simple, easily understandable design.
+When we embarked on this project we both had the view that what we produced had to be as close as possible to what we would do, should we perform a similar task but with greater complexity. As such, we built up a program focused around the concepts of extensibility and ease of development. We tried to maximise the use of tools and have a simple, easily understandable design.
 
-We chose to use C++ as it would allow us to build a compiler that runs very fast, whilst having useful features such as object orientation and the powerful STL. However, choosing a low level-language for its speed benefits also meant we had to handle and debug errors on a lower level, such as segmentation faults. This sometimes slowed down our productivity and development.
+We chose to build our compiler in C++ as it would run very fast, whilst C++ includes useful features such as object orientation and the powerful STL. However, choosing a low level-language for its speed benefits also meant we had to handle and debug errors on a lower level, such as segmentation faults. This sometimes slowed down our productivity and development.
+
+\subsection{ANTLR}
 
 For our initial lexing and parsing stages, we decided to use ANTLR. It is a well-established tool which has the advantage of a GUI for editing and debugging which makes the development process much smoother. ANTLR can generate code for multiple languages, and although we had decided to use C++ for our compiler, we used the backend which generated a C lexer and parser from our BNF. We made this decision based on some preliminary research which suggested that the backend producing C++ code was less complete. 
 
-One of the disadvantages of using ANTLR is that sometimes the lexer errors produced were not very informative, and were missing information such as line or column numbers; we had little or no control over this. The ANTLR-produced AST was also difficult to modify, which made optimisation on the AST (our initial plan) difficult.
+One of the disadvantages of using ANTLR is that sometimes the lexer errors produced were not very informative, and were missing information such as line or column numbers; we had little or no control over this. The ANTLR-produced AST was also difficult to modify, which made optimisation on the ANTLR-generated AST (our initial plan) difficult.
 
-The second major decision that we made was in the use of the LLVM C++ backend for the code generation stage, where we use LLVM functions to generate a tree of constructs for the different statements in LLVM IR. We made this decision based on the fact that it seemed very well-documented at the time, and this would make adding extra features easier; once we had LLVM classes set up correctly, it is simple to link with other LLVM libraries that add extra features used by production compilers. For example, in our final steps where we move code from LLVM classes into LLVM IR, we can retarget our compiler at any particular architecture that LLVM has support for. In fact, when we generate code, we pull the targeting information from the host system directly, and generate compilable code for that particular processor architecture.
+\subsection{LLVM}
 
-One of the major disadvantages of this approach was the lack of reference material in using the C++ backend. At times it seemed like everything was going well, but in fact bits of the backend hadn't been implemented yet. From our experience of using the libraries directly, it seems like while the majority of them can be used in a range of different ways, there are sections of the codebase that seem to be implemented in a very specific manner for the few large-scale projects that use LLVM directly (like clang). Using some functionality for our purpose seemed to generate incorrect code in some places.
+The second major decision that we made was in the use of the LLVM C++ backend for the code generation stage, where we use LLVM functions to generate a tree of constructs for the different statements in the LLVM assembly language (IR). We made this decision based on the fact that it seemed very well-documented at the time, and this would make adding extra features easier; once we had LLVM classes set up correctly, it is simple to link with other LLVM libraries that add extra features used by production compilers. For example, in our final step where we translate code from LLVM classes into LLVM IR, we can target our compiler at any particular architecture that LLVM has support for. In fact, when we generate code, we pull the targeting information from the host system directly, and generate compilable code for that particular processor architecture.
 
-An example of this is in the debug information for functions. Clang uses \texttt{llvm::DIType()} to denote an unknown or \texttt{void} return type for the function, and this works correctly, should the linkage and function names be the same. However, The moment they are different (debug name `hatta' and linkage name `main'), \texttt{!loc 0 0 0} is placed as a header of the function (in x86 Asm). This tries to set the debugger's current line number information to \texttt{[Null, Line 0, Col 0]}, an error that blocks compilation. We solved this problem by generating a \texttt{llvm::DISubroutineType} of \texttt{void}, with size/alignment/encoding \texttt{0} instead of the default \texttt{llvm::DIType()}. 
+One of the major disadvantages of using LLVM was the lack of reference material in using the C++ backend. At times it seemed like everything was going well, but in fact bits of the backend hadn't been implemented yet. From our experience of using the libraries directly, it seems like while the majority of them can be used in a range of different ways, there are sections of the codebase that seem to be implemented in a very specific manner for the few large-scale projects that use LLVM directly (like clang). Using some functionality for our purpose seemed to generate incorrect code in some places.
+
+An example of this is in the debug information for functions. Clang uses \texttt{llvm::DIType()} to denote an unknown or \texttt{void} return type for the function, and this works correctly, should the linkage and function names be the same. However, the moment they are different (debug name \texttt{hatta} and linkage name \texttt{main}), \texttt{!loc 0 0 0} is placed as a header of the function (in x86 Asm). This tries to set the debugger's current line number information to \texttt{[Null, Line 0, Col 0]}, an error that blocks compilation. We solved this problem by generating a \texttt{llvm::DISubroutineType} of \texttt{void}, with size/alignment/encoding \texttt{0} instead of the default \texttt{llvm::DIType()}. 
 
 \section{Beyond the Specification}
 
-The purpose of this project is to learn as much as possible about the construction and internals of Compilers, and as such the more interesting directions for extending the project should be under via the overtone of educating oneself. We have covered one of these directions, looking at providing the information debuggers require give meaningful debugging information. 
+The purpose of this project is to learn as much as possible about the construction and internals of compilers, and as such the more interesting directions for extending the project should be under via the overtone of educating oneself. We have covered one of these directions, looking at providing the information debuggers require give meaningful debugging information. 
 
-However there are other, also interesting, directions that we could have gone in were this project to be extended. These include
+However there are other, also interesting, directions that we could have gone in were this project to be extended. These include:
 \begin{itemize}
 \item \textbf{Language extensions:} Given the flexibility of ANTLR and the use of the visitor pattern in the validation and code generation stages, it would be very easy to extend the language, adding features such as object-orientation or other control flow statements like \texttt{switch} blocks.
-\item \textbf{Building a Disassembler} - One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to Malice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler, which should mean that the inverse step is also possible, though it would be in no way simple. Doing this inverse step would open up a transitivity in languages; since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our Compiler into MAlice directly.
+\item \textbf{Building a Disassembler} - One of the more interesting areas for extending the compiler, in our opinion, would be trying to go backwards - from LLVM IR to MAlice. While there are considerable limitations in MAlice, it is a fairly simple map from the internal AST to LLVM Assembler, which should mean that the inverse step is also possible, though it would be in no way simple. Doing this inverse step would open up a transitivity in languages; since LLVM can be already be compiled and disassembled from C++ and C, this could mean we could translate our compiler into MAlice directly.
 \end{itemize}
 \end{document}
