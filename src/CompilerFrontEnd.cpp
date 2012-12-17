@@ -186,7 +186,7 @@ namespace MAlice {
                 retFlags |= CompilerFlagsPrintAST;
             if (*c == 'h')
                 retFlags |= CompilerFlagsPrintHelp;
-            if (*c == 'd')
+            if (*c == 'g')
                 retFlags |= CompilerFlagsDebugInformation;
             if (*c == 'o')
                 retFlags |= CompilerFlagsOptimisation;
@@ -234,7 +234,7 @@ namespace MAlice {
         cout << "\n" << "  -h    Print this help message";
         cout << "\n" << "  -t    Print parsed AST tree";
         cout << "\n" << "  -o    Output Optimized version";
-        cout << "\n" << "  -d    Output DWARF debug information.";
+        cout << "\n" << "  -g    Output DWARF debug symbols.";
         cout << "\n" << "        -  This causes gdb to work";
         cout << "\n" << "           correctly with the compiled ";
         cout << "\n" << "           file.";
