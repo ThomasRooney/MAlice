@@ -1206,10 +1206,25 @@ namespace MAlice {
         
         unsigned int i = 0;
         for (auto it = capturedIdentifiers.begin(); it != capturedIdentifiers.end(); ++it) {
-            llvm::Value *localVariable = ctx->getIRBuilder()->CreateAlloca(structType->getElementType(i), 0, *it);
+            std::string identifier = *it;
+            
+            llvm::Type *type = structType->getElementType(i);
+            llvm::Value *localVariable = ctx->getIRBuilder()->CreateAlloca(type, 0, identifier);
             llvm::Value *structValue = ctx->getIRBuilder()->CreateGEP(firstArg, Utilities::llvmStructElementGEPIndexes(i));
             llvm::Value *loadValue = ctx->getIRBuilder()->CreateLoad(structValue);
             ctx->getIRBuilder()->CreateStore(loadValue, localVariable);
+            
+            Entity *outerScopeEntity = NULL;
+            ctx->isSymbolInScope(identifier, &outerScopeEntity);
+            
+            VariableEntity *outerScopeVariableEntity = dynamic_cast<VariableEntity*>(outerScopeEntity);
+            if (outerScopeVariableEntity) {
+                VariableEntity *variableEntity = new VariableEntity(identifier,
+                                                                    0, // We're beyond semantic analysis, so we don't care what line number it's on.
+                                                                    outerScopeVariableEntity->getType());
+                variableEntity->setLLVMValue(localVariable);
+                ctx->addEntityInScope(identifier, variableEntity);
+            }
             
             ++i;
         }
