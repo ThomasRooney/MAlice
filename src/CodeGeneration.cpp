@@ -116,8 +116,19 @@ namespace MAlice {
         llvm::Value *assignmentValue = NULL;
         walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, 1), &assignmentValue, ctx);
         
-        if (outValue)
-            *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
+        if (outValue) {
+            
+            llvm::Type *containedType = lvalueValue->getType()->getContainedType(0);
+            
+            // If we're assigning into a by-reference array subscript, we have to ensure the types match
+            if (containedType && containedType->isPointerTy()) {
+                llvm::Value *tempAlloca = ctx->getIRBuilder()->CreateAlloca(assignmentValue->getType());
+                ctx->getIRBuilder()->CreateStore(assignmentValue, tempAlloca);
+                
+                *outValue = ctx->getIRBuilder()->CreateStore(tempAlloca, lvalueValue);
+            } else
+                *outValue = ctx->getIRBuilder()->CreateStore(assignmentValue, lvalueValue);
+        }
         
         return true;
     }
@@ -1271,7 +1282,13 @@ namespace MAlice {
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
             if (variableEntity) {
                 llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
-                ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
+                
+                Type type = variableEntity->getType();
+                llvm::Value *value = variableEntity->getLLVMValue();
+                if (!type.isArray())
+                    value = ctx->getIRBuilder()->CreateLoad(value);
+                
+                ctx->getIRBuilder()->CreateStore(value, structValue);
             }
             
             ++i;
@@ -1291,7 +1308,7 @@ namespace MAlice {
             ctx->isSymbolInScope(*it, &entity);
             
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
-            if (variableEntity) {
+            if (variableEntity && !variableEntity->getType().isArray()) {
                 llvm::Value *structValue = ctx->getIRBuilder()->CreateInBoundsGEP(structAlloc, Utilities::llvmStructElementGEPIndexes(i));
                 ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(structValue), variableEntity->getLLVMValue());
             }
