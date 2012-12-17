@@ -375,23 +375,33 @@ namespace MAlice {
                 builder->SetInsertPoint(thenBlock);
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i+1), NULL, ctx);
                 
+                // We've looked at the next node too
+                ++i;
+                
+                // This is the last block we've looked at thus far
+                lastBlock = thenBlock;
+                
                 if (!hasReturnInstruction(thenBlock)) {
                     builder->CreateBr(afterBlock);
                     usesAfterBlock = true;
                 }
                 
-                // Insert the 'else' block
-                function->getBasicBlockList().push_back(elseBlock);
-                builder->SetInsertPoint(elseBlock);
-                
-                // We will want to check whether this block contains a return statement if it is the last block.
-                lastBlock = elseBlock;
-                
-                // We've looked at the next node too
-                ++i;
+                if (i != Utilities::getNumberOfChildNodes(node) - 1) {
+                    // Insert the 'else' block
+                    function->getBasicBlockList().push_back(elseBlock);
+                    builder->SetInsertPoint(elseBlock);
+                    
+                    // We will want to check whether this block contains a return statement if it is the last block.
+                    lastBlock = elseBlock;
+                }
             }
-            else
+            else {
                 walker->generateCodeForNode(node1, NULL, ctx);
+                if (!hasReturnInstruction(lastBlock)) {
+                    builder->CreateBr(afterBlock);
+                    usesAfterBlock = true;
+                }
+            }
         }
         
         if (lastBlock && !hasReturnInstruction(lastBlock))
@@ -650,8 +660,8 @@ namespace MAlice {
         llvm::PHINode *phiNode = ctx->getIRBuilder()->CreatePHI(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeBoolean)), 2,
                                                                 "ortmp");
         
-        phiNode->addIncoming(leftExpressionExitBlock, leftOrBlock);
-        phiNode->addIncoming(rightExpressionExitBlock, rightOrBlock);
+        phiNode->addIncoming(leftExpressionValue, leftExpressionExitBlock);
+        phiNode->addIncoming(rightExpressionValue, rightExpressionExitBlock);
         
         if (outValue)
             *outValue = phiNode;
