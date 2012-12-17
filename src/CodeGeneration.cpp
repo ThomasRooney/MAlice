@@ -442,6 +442,16 @@ namespace MAlice {
         }
         
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
+        std::string inputPrompt = std::string(1, (char)0x0a) + "===> ";
+        
+        llvm::Value *promptStringValue = ctx->getStringTable()->cachedStringConstant(inputPrompt);
+        if (!promptStringValue) {
+            promptStringValue = ctx->getIRBuilder()->CreateGlobalStringPtr(inputPrompt);
+            ctx->getStringTable()->cacheStringConstant(inputPrompt, promptStringValue);
+        }
+        
+        ctx->getIRBuilder()->CreateCall(Utilities::getPrintfFunction(ctx->getModule()),
+                                        promptStringValue);
         
         // Create the scanf() call.
         ctx->getIRBuilder()->CreateCall2(Utilities::getScanfFunction(ctx->getModule()), formatStringValue, value);
