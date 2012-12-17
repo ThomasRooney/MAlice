@@ -68,12 +68,18 @@ namespace MAlice {
             
             llvm::ArrayType *llvmArrayType = llvm::ArrayType::get(Utilities::getLLVMTypeFromType(primitiveType), numElements);
             
-            value = new llvm::GlobalVariable(*(ctx->getModule()),
-                                             llvmArrayType,
-                                             true,
-                                             GlobalVariable::PrivateLinkage,
-                                             llvm::ConstantArray::get(llvmArrayType, initialiser),
-                                             "");
+            llvm::Value *globalVariable = new llvm::GlobalVariable(*(ctx->getModule()),
+                                                                   llvmArrayType,
+                                                                   true,
+                                                                   GlobalVariable::PrivateLinkage,
+                                                                   llvm::ConstantArray::get(llvmArrayType, initialiser),
+                                                                   "");
+            
+            std::vector<llvm::Value*> indices;
+            indices.push_back(llvm::ConstantInt::get(llvm::Type::getInt64Ty(llvm::getGlobalContext()), 0));
+            indices.push_back(llvm::ConstantInt::get(llvm::Type::getInt64Ty(llvm::getGlobalContext()), 0));
+            
+            value = ctx->getIRBuilder()->CreateInBoundsGEP(globalVariable, indices);
         }
         else {
             llvm::Value *numElementsValue = NULL;
