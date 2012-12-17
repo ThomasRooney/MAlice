@@ -42,8 +42,6 @@ operand `10' over operator &&.
 ANTLR Grammar: The parser and lexer are built using ANTLR, which means that one can modify the AST with only a change to the BNF. This makes modifying/extending the language or changing the internal AST produced simple.
 \item
 Visitor Pattern: The way that we validate and produce code is via a programmatic construct that is a well known design pattern, and thus easily understandable by other software engineers. We seperate out the different nodes of our AST into methods meaning that changes made to the code can be localised to these particular leaves of the AST as opposed to having the chance of causing undefined behaviour. 
-\item
-Separation of validation and code generation stages
 \end{itemize}
 
 \subsection{Criticisms}
@@ -113,9 +111,13 @@ An example of this is in the debug information for functions. Clang uses \texttt
 
 \section{Beyond the Specification}
 
-- Interpreter.
-- Language extensions - object-orientation and dynamic memory allocation.
-- Disassembly to MAlice. 
+The purpose of this project is to learn as much as possible about the construction and internals of Compilers, and as such the more interesting directions for extending the project should be under via the overtone of educating oneself. We have covered one of these directions, looking at providing the information debuggers require give meaningful debugging information. 
 
-
+However there are other more interesting directions that we could have gone in were this project to be extended. These include
+\begin{itemize}
+\item Preprocessor
+\item Interpreter
+\item Language Extensions - object-orientation and dynamic memory allocation.
+\item Disassembly
+\end{itemize}
 \end{document}
