@@ -19,20 +19,22 @@
 
 \section{Our Compiler}
 
-One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII caret character to \'point\' to the locations of such syntactic errors as missing tokens, and the tilde character to \'underline\' larger expressions, such as operands to a mathematical operator.
+One of the parts of our compiler that we feel is most useful is the syntactic and semantic error annotations. We were heavily inspired by clang's error messages in this regard, and display an ASCII caret character to `point' to the locations of such syntactic errors as missing tokens, and the tilde character to `underline' larger expressions, such as operands to a mathematical operator.
+
+\subsection{Rigi}
 
 \subsection{Benchmarks}
 
-In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in \'autotest.h\'
+In building our compiler we also constructed an autotester. As part of this autotester, we construct benchmarks on the average time to process a file vs the average time it takes the reference compiler to process a file. This can be seen in `autotest.h' - where it shows that we, on average, are over ten times faster than the reference compiler.
 \begin{verbatim}
-Average Time of Our Compiler / Average Time of Reference Compiler: 10.81822110551374253968
+Average Time of Reference Compiler / Average Time of Our Compiler: 10.81822110551374253968
 \end{verbatim}
 
 \subsection{Our Extension}
 
 For our extension, we took the principle that a language isn't complete until it can be effectively debugged. Rather than go for a full route of building up a debugging infrastructure however, we decided to build in metadata such that compiled Alice files can be debugged using existing debuggers which support the DWARF debugging format. This includes both gdb and lldb.
 
-The end result of this extension is that a compiled alice file can be debugged in gdb. Breakpoints can be set in the .alice code, variables can be printed and code can be stepped through line by line. To activate, pass the \'-g\' flag to the compile executable.
+The end result of this extension is that a compiled alice file can be debugged in gdb. Breakpoints can be set in the .alice code, variables can be printed and code can be stepped through line by line. To activate, pass the `-g' flag to the compile executable.
 
 \begin{verbatim}
 (gdb) list
