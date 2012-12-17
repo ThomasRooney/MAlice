@@ -1263,7 +1263,9 @@ namespace MAlice {
             ctx->isSymbolInScope(*it, &entity);
             
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
-            if (variableEntity) {
+            
+            // Arrays are by-reference so we don't need to put their values back into the struct.
+            if (variableEntity && !variableEntity->getType().isArray()) {
                 llvm::Value *structValue = ctx->getIRBuilder()->CreateGEP(firstArg, Utilities::llvmStructElementGEPIndexes(i));
                 ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
             }
