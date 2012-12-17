@@ -70,7 +70,7 @@ namespace MAlice {
             
             llvm::Value *globalVariable = new llvm::GlobalVariable(*(ctx->getModule()),
                                                                    llvmArrayType,
-                                                                   true,
+                                                                   false,
                                                                    GlobalVariable::PrivateLinkage,
                                                                    llvm::ConstantArray::get(llvmArrayType, initialiser),
                                                                    "");
