@@ -68,12 +68,18 @@ namespace MAlice {
             
             llvm::ArrayType *llvmArrayType = llvm::ArrayType::get(Utilities::getLLVMTypeFromType(primitiveType), numElements);
             
-            value = new llvm::GlobalVariable(*(ctx->getModule()),
-                                             llvmArrayType,
-                                             true,
-                                             GlobalVariable::PrivateLinkage,
-                                             llvm::ConstantArray::get(llvmArrayType, initialiser),
-                                             "");
+            llvm::Value *globalVariable = new llvm::GlobalVariable(*(ctx->getModule()),
+                                                                   llvmArrayType,
+                                                                   false,
+                                                                   GlobalVariable::PrivateLinkage,
+                                                                   llvm::ConstantArray::get(llvmArrayType, initialiser),
+                                                                   "");
+            
+            std::vector<llvm::Value*> indices;
+            indices.push_back(llvm::ConstantInt::get(llvm::Type::getInt64Ty(llvm::getGlobalContext()), 0));
+            indices.push_back(llvm::ConstantInt::get(llvm::Type::getInt64Ty(llvm::getGlobalContext()), 0));
+            
+            value = ctx->getIRBuilder()->CreateInBoundsGEP(globalVariable, indices);
         }
         else {
             llvm::Value *numElementsValue = NULL;
@@ -1233,7 +1239,12 @@ namespace MAlice {
                 VariableEntity *variableEntity = new VariableEntity(identifier,
                                                                     0, // We're beyond semantic analysis, so we don't care what line number it's on.
                                                                     outerScopeVariableEntity->getType());
-                variableEntity->setLLVMValue(localVariable);
+                
+                llvm::Value *value = localVariable;
+                if (variableEntity->getType().isArray())
+                    value = ctx->getIRBuilder()->CreateLoad(value);
+                
+                variableEntity->setLLVMValue(value);
                 ctx->addEntityInScope(identifier, variableEntity);
             }
             
@@ -1258,7 +1269,9 @@ namespace MAlice {
             ctx->isSymbolInScope(*it, &entity);
             
             VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
-            if (variableEntity) {
+            
+            // Arrays are by-reference so we don't need to put their values back into the struct.
+            if (variableEntity && !variableEntity->getType().isArray()) {
                 llvm::Value *structValue = ctx->getIRBuilder()->CreateGEP(firstArg, Utilities::llvmStructElementGEPIndexes(i));
                 ctx->getIRBuilder()->CreateStore(ctx->getIRBuilder()->CreateLoad(variableEntity->getLLVMValue()), structValue);
             }
