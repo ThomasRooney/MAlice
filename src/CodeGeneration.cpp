@@ -1233,7 +1233,12 @@ namespace MAlice {
                 VariableEntity *variableEntity = new VariableEntity(identifier,
                                                                     0, // We're beyond semantic analysis, so we don't care what line number it's on.
                                                                     outerScopeVariableEntity->getType());
-                variableEntity->setLLVMValue(localVariable);
+                
+                llvm::Value *value = localVariable;
+                if (variableEntity->getType().isArray())
+                    value = ctx->getIRBuilder()->CreateLoad(value);
+                
+                variableEntity->setLLVMValue(value);
                 ctx->addEntityInScope(identifier, variableEntity);
             }
             
