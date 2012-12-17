@@ -48,7 +48,7 @@ operand `10' over operator &&.
 
 \subsection{Criticisms}
 
-At the start of milestone 3 we began off integrating code generation into the same visitor functions as those used by validation. The advantage of this was that the code was generated in the same pass as validation. However it quickly became apparent that this was causing some problems. For example, the LLVM libraries functions were treated as a ``black box'' and could cause exceptions that we couldn't produce useful error messages for in cases of incorrect ANTLR AST. To fix this, we decided to ensure that the validation pass was completely separate to the Code generation pass, ensuring that error messages were as complete as possible.
+At the start of milestone 3 we started by integrating code generation into the same visitor functions as those used by validation. The advantage of this was that the code was generated in the same pass as validation. However it quickly became apparent that this was causing some problems. For example, the LLVM libraries functions were treated as a ``black box'' and could cause exceptions that we couldn't produce useful error messages for in cases of incorrect ANTLR AST. To fix this, we decided to ensure that the validation pass was completely separate to the Code generation pass, ensuring that error messages were as complete as possible.
 
 This approach felt sub-optimal due to the fact that we were constructing internal compiler context information, such as scope and variable types, twice. To attune for this fact, we separated code into a set of utility functions, and polymorphism in internal entities, shared such that code was not duplicated.
 
