@@ -92,7 +92,6 @@ namespace MAlice {
             PM.add(llvm::createPromoteMemoryToRegisterPass()); // Promote memory to registers where necessary
             PM.add(llvm::createScalarReplAggregatesPass()); // clean up allcas
             PM.add(llvm::createCFGSimplificationPass()); // Clean up again
-            PM.add(llvm::createConstantPropagationPass()); // Constant Folding
             PM.add(llvm::createLICMPass()); // Loop Invariant optimization
             PM.add(llvm::createLoopDeletionPass()); // Dead loop deletion
             PM.add(llvm::createLoopUnrollPass()); // Unroll small loops
