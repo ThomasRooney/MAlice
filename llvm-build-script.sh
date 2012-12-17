@@ -28,7 +28,7 @@ if [ ! -d llvm ] ; then
 
   cd build
   ../llvm-$LLVM_VERSION.src/configure --enable-optimized --disable-assertions
-  make
+  make -j
   cd ..
   mkdir llvm
   mv build/Release/* llvm
