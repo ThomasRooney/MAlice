@@ -219,15 +219,6 @@ namespace MAlice {
         llvm::Value *lhsValue = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0),
                                                            walker,
                                                            ctx);
-
-        // Change debug line number
-        /*if (ctx->getDGBuilder())
-        {
-          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
-                                                                             Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope())); 
-        }*/
-
         
         llvm::Value *loadValue = ctx->getIRBuilder()->CreateLoad(lhsValue);
         llvm::Value *subValue = ctx->getIRBuilder()->CreateSub(loadValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
@@ -416,15 +407,6 @@ namespace MAlice {
     bool CodeGeneration::generateCodeForIncrementStatementNode(ASTNode node, llvm::Value **outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         llvm::Value *lhsValue = getLLVMValueFromLValueNode(Utilities::getChildNodeAtIndex(node, 0), walker, ctx);
-        
-        // Change debug line number
-        /*if (ctx->getDGBuilder())
-        {
-          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
-                                                                             Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope())); 
-        }*/
-
 
         llvm::Value *loadedValue = ctx->getIRBuilder()->CreateLoad(lhsValue);
         llvm::Value *incrementedValue = ctx->getIRBuilder()->CreateAdd(loadedValue, ConstantInt::get(Utilities::getLLVMTypeFromType(Type(PrimitiveTypeNumber)), 1));
@@ -799,14 +781,6 @@ namespace MAlice {
             ctx->getIRBuilder()->CreateCall(ctx->prettyPrintBoolFunction(), printVal);
             return true;
         }
-        
-        // Change debug line number
-        /*if (ctx->getDGBuilder())
-        {
-          /*  ctx->getIRBuilder()->SetCurrentDebugLocation(llvm::DebugLoc::get(Utilities::getNodeLineNumber(node),
-                                                                             Utilities::getNodeColumnIndex(node),
-                                                                             ctx->getCurrentDBScope())); 
-        }*/
 
         llvm::Value *formatStringValue = ctx->ioFormatStringForExpressionType(type);
         // Create the printf() call.
@@ -983,12 +957,12 @@ namespace MAlice {
         // Add debug info
         if (ctx->getDGBuilder())
         {
-            llvm::DIGlobalVariable debugVar = ctx->getDGBuilder()->createGlobalVariable(identifier,
-                                                    *ctx->getDIFile(),
-                                                    Utilities::getNodeLineNumber(node),
-                                                    Utilities::getDILLVMType(variable->getType(), type, ctx),
-                                                    false,
-                                                    value);
+            ctx->getDGBuilder()->createGlobalVariable(identifier,
+                                                      *ctx->getDIFile(),
+                                                      Utilities::getNodeLineNumber(node),
+                                                      Utilities::getDILLVMType(variable->getType(), type, ctx),
+                                                      false,
+                                                      value);
         }                                       
 
 
@@ -1156,7 +1130,7 @@ namespace MAlice {
                                         NULL,
                                         Utilities::getDILLVMType(parameterEntity->getType(), NULL, ctx),
                                         true);
-                llvm::Instruction *Call = ctx->getDGBuilder()->insertDeclare(alloca, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+                ctx->getDGBuilder()->insertDeclare(alloca, debugVar, ctx->getIRBuilder()->GetInsertBlock());
             }
 
             
@@ -1280,7 +1254,7 @@ namespace MAlice {
                                             NULL,
                                             Utilities::getDILLVMType(variableEntity->getType(), NULL, ctx),
                                             true);
-                    llvm::Instruction *Call = ctx->getDGBuilder()->insertDeclare(localVariable, debugVar, ctx->getIRBuilder()->GetInsertBlock());
+                    ctx->getDGBuilder()->insertDeclare(localVariable, debugVar, ctx->getIRBuilder()->GetInsertBlock());
                 }
             }
             
@@ -1408,7 +1382,7 @@ namespace MAlice {
         if (ctx->getDGBuilder())
         {
             unsigned lineNo = Utilities::getNodeLineNumber(identifierNode);
-            unsigned colNo = Utilities::getNodeColumnIndex(identifierNode);
+            
             llvm::DIFile dbFile = *ctx->getDIFile();
             llvm::DIArray paramArray = llvm::DIArray(0); // TODO: Populate parameters..
             llvm::DIType subType = ctx->getDGBuilder()->createSubroutineType(dbFile, paramArray);
@@ -1419,10 +1393,6 @@ namespace MAlice {
 
             llvm::MDNode * SPN = SP;
 
-//            llvm::DILexicalBlock lexB = ctx->getDGBuilder()->createLexicalBlock(SP, dbFile,
-//                                         lineNo,
-//                                         colNo);
-//            llvm::DIDescriptor D = ctx->getDGBuilder()->createLexicalBlockFile(lexB, dbFile);
             ctx->enterDebugScope(SPN);
 
         }
