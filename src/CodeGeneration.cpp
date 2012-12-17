@@ -364,7 +364,7 @@ namespace MAlice {
                 
                 walker->generateCodeForNode(Utilities::getChildNodeAtIndex(node, i), &condValue, ctx);
                 
-                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then");
+                llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(getGlobalContext(), "then", function);
                 llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(getGlobalContext(), "else");
                 llvm::BasicBlock *headerBlock = builder->GetInsertBlock();
                 
