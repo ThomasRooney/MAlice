@@ -1431,6 +1431,13 @@ namespace MAlice {
 
         bool result = walker->generateCodeForNode(bodyNode, NULL, ctx);
         
+        if (isEntryProcedure) {
+            // Insert an exit() call
+            llvm::Function *exitFunction = Utilities::getExitFunction(ctx->getModule());
+            ctx->getIRBuilder()->CreateCall(exitFunction, llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()),
+                                                                                 0));
+        }
+        
         if (dynamic_cast<ProcedureEntity*>(funcProcEntity)) {
             storeElementsIntoNestedFunctionStruct(ctx);
             
