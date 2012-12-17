@@ -55,7 +55,10 @@ namespace MAlice {
         llvm::Value *value = NULL;
         
         if (!ctx->getCurrentFunctionProcedureEntity()) {
-            int64_t numElements = Utilities::extractValueFromExpressionNode(numElementsNode, walker, ctx);
+            int64_t numElements = 0;
+            if (!Utilities::extractValueFromExpressionNode(numElementsNode, &numElements, walker, ctx))
+                return false;
+            
             std::vector<llvm::Constant*> initialiser;
             Type primitiveType(arrayType.getPrimitiveType());
             

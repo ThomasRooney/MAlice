@@ -1234,24 +1234,46 @@ namespace MAlice {
         return ctx->getDGBuilder()->createBasicType(BTName.c_str(), Size, Align, Encoding);
     }
     
-    int64_t Utilities::extractValueFromExpressionNode(ASTNode node, ASTWalker *walker, CompilerContext *ctx)
+    bool Utilities::extractValueFromExpressionNode(ASTNode node, int64_t *outValue, ASTWalker *walker, CompilerContext *ctx)
     {
         ANTLR3_UINT32 nodeType = getNodeType(node);
         
         switch (nodeType)
         {
             case PLUS:
-                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), walker, ctx) +
-                       extractValueFromExpressionNode(getChildNodeAtIndex(node, 1), walker, ctx);
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), &value1, walker, ctx))
+                    return false;
+                
+                if (!extractValueFromExpressionNode(getChildNodeAtIndex(node, 1), &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = value1 + value2;
+                
+                return true;
+            }
                 break;
                 
             case MINUS:
-                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), walker, ctx) -
-                       extractValueFromExpressionNode(getChildNodeAtIndex(node, 1), walker, ctx);
+            {
+                int64_t value1 = 0, value2 = 0;
+                if (!extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), &value1, walker, ctx))
+                    return false;
+                
+                if (!extractValueFromExpressionNode(getChildNodeAtIndex(node, 1), &value2, walker, ctx))
+                    return false;
+                
+                if (outValue)
+                    *outValue = value1 - value2;
+                
+                return true;
+            }
                 break;
                 
             case EXPRESSION:
-                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), walker, ctx);
+                return extractValueFromExpressionNode(getChildNodeAtIndex(node, 0), outValue, walker, ctx);
                 break;
                 
             case NUMBER_LITERAL:
@@ -1262,7 +1284,22 @@ namespace MAlice {
                 int64_t val;
                 strVal >> val;
                 
-                return val;
+                if (outValue)
+                    *outValue = val;
+                
+                return true;
+            }
+                break;
+                
+            case CHARACTER_LITERAL:
+            {
+                std::string strVal = getNodeText(node);
+                int64_t val = strVal[1]; // The character is padded by single quotes
+                
+                if (outValue)
+                    *outValue = val;
+                
+                return true;
             }
                 break;
                 
@@ -1270,34 +1307,37 @@ namespace MAlice {
             {
                 Entity *entity = NULL;
                 if (!ctx->isSymbolInScope(getNodeText(node), &entity))
-                    return 0;
+                    return false;
                 
                 VariableEntity *variableEntity = dynamic_cast<VariableEntity*>(entity);
                 if (!variableEntity)
-                    return 0;
+                    return false;
                 
                 llvm::Value *value = variableEntity->getLLVMValue();
                 if (!value)
-                    return 0;
+                    return false;
                 
                 llvm::GlobalVariable *globalVariable = llvm::dyn_cast<llvm::GlobalVariable>(value);
                 if (!globalVariable)
-                    return 0;
+                    return false;
                 
                 llvm::Constant *constant = globalVariable->getInitializer();
                 if (!constant)
-                    return 0;
+                    return false;
                 
                 llvm::ConstantInt *constantInt = llvm::dyn_cast<llvm::ConstantInt>(constant);
                 if (!constantInt)
-                    return 0;
+                    return false;
                 
-                return constantInt->getSExtValue();
+                if (outValue)
+                    *outValue = constantInt->getSExtValue();
+                
+                return true;
             }
                 break;
                 
             default:
-                return 0;
+                return false;
         }
     }
     
